@@ -35,7 +35,8 @@ export type PaperId =
   | 'medium-1'
   | 'medium-2'
   | 'hard-1'
-  | 'hard-2';
+  | 'hard-2'
+  | 'hard-3';
 
 export interface WrittenQuestion {
   id: string;
@@ -159,6 +160,7 @@ export const PAPERS: PaperMeta[] = [
   { id: 'medium-2', label: 'Medium Test 2', difficulty: 'Medium', description: 'Web API, DI, debugging, SQL joins',            questionCount: 40, durationMinutes: 60 },
   { id: 'hard-1',   label: 'Hard Test 1',   difficulty: 'Hard',   description: 'Multi-step reasoning, combined concepts',      questionCount: 40, durationMinutes: 60 },
   { id: 'hard-2',   label: 'Hard Test 2',   difficulty: 'Hard',   description: 'Advanced tracing, SQL, DSA, debugging',       questionCount: 40, durationMinutes: 60 },
+  { id: 'hard-3',   label: 'Tricky Logic',  difficulty: 'Hard',   description: 'Nested loops, complex conditions, trick questions', questionCount: 40, durationMinutes: 60 },
 ];
 
 export const CATEGORY_LABELS: Record<Category, string> = {

@@ -2,6 +2,42 @@ import { InterviewQuestion } from '../types';
 
 export const round2Questions: InterviewQuestion[] = [
   {
+    id: 'R2-TRICKY-01',
+    round: 2,
+    category: 'CSharp',
+    difficulty: 'Hard',
+    question: 'How does a `break` statement behave inside a nested loop? If you have 3 nested loops and call `break` in the innermost loop, what happens?',
+    followUps: [
+      'How would you break out of all 3 loops at once in C#?',
+      'What is the difference between `break` and `continue` in this context?'
+    ],
+    expectedAnswer: 'A `break` statement only exits the closest enclosing loop. So if you call `break` in the innermost loop of 3 nested loops, only the 3rd (innermost) loop terminates, and execution continues to the next iteration of the 2nd loop. To break out of all 3 loops, you would need to use a `goto` statement with a label outside the loops, or use boolean flags in the outer loop conditions, or extract the loops into a separate method and use `return`.',
+    keyPoints: [
+      'break only exits the immediate inner loop',
+      'Execution resumes at the next level up',
+      'Mention goto, boolean flags, or return as ways to break out completely'
+    ],
+    tags: ['C#', 'loops', 'tricky']
+  },
+  {
+    id: 'R2-TRICKY-02',
+    round: 2,
+    category: 'CSharp',
+    difficulty: 'Hard',
+    question: 'What is short-circuit evaluation in C#, and how can it be used as a trap in nested conditions?',
+    followUps: [
+      'What is the difference between `&&` and `&` in an if-condition?',
+      'If you have `if (MethodA() && MethodB())`, will MethodB always run?'
+    ],
+    expectedAnswer: 'Short-circuit evaluation means the compiler stops evaluating a logical expression as soon as the result is determined. With `&&` (Logical AND), if the first operand is false, the second is NEVER evaluated. With `||` (Logical OR), if the first is true, the second is NEVER evaluated. A common trap is putting a method with side effects (like `i++` or a database call) on the right side of `&&` — if the left side is false, the side effect never happens! Using `&` (bitwise AND) instead forces both sides to evaluate.',
+    keyPoints: [
+      '&& stops if left side is false; || stops if left side is true',
+      'Right side code might not execute (side-effect trap)',
+      'Bitwise operators (&, |) force full evaluation'
+    ],
+    tags: ['C#', 'conditions', 'tricky']
+  },
+  {
     id: 'R2-001',
     round: 2,
     category: 'CSharp',
