@@ -38,6 +38,79 @@ export const round2Questions: InterviewQuestion[] = [
     tags: ['C#', 'conditions', 'tricky']
   },
   {
+    id: 'R2-CODE-01',
+    round: 2,
+    category: 'DSA',
+    difficulty: 'Medium',
+    question: 'WHITEBOARD TASK: Write a C# program to reverse a string without using the built-in Array.Reverse() or LINQ methods.',
+    followUps: [
+      'What is the time complexity of your solution?',
+      'Can you do it using a `for` loop? What about a `while` loop?',
+      'Why is using StringBuilder better than concatenating strings in a loop here?'
+    ],
+    expectedAnswer: 'The optimal way is to use a `for` loop starting from the end of the string to the beginning, appending each character to a `StringBuilder`. Alternatively, convert the string to a char array, use a two-pointer approach (left and right) to swap characters until they meet in the middle, and then create a new string from the array.',
+    keyPoints: [
+      'Did not use built-in reverse methods',
+      'Mentioned StringBuilder for performance',
+      'Time complexity is O(N)',
+      'Handled null or empty string edge cases'
+    ],
+    tags: ['C#', 'Coding', 'Whiteboard', 'Strings']
+  },
+  {
+    id: 'R2-CODE-02',
+    round: 2,
+    category: 'DSA',
+    difficulty: 'Medium',
+    question: 'WHITEBOARD TASK: Write a C# program to check if a given string is a Palindrome.',
+    followUps: [
+      'How do you handle spaces and capital letters? (e.g., "A man a plan a canal Panama")',
+      'Can you solve it without creating a reversed copy of the string? (Two-pointer approach)'
+    ],
+    expectedAnswer: 'A palindrome reads the same forwards and backwards. The naive approach is reversing the string and comparing it to the original. The optimized approach uses two pointers (one at index 0, one at length-1) moving towards the center, comparing characters. You should also convert the string to lowercase and ignore non-alphanumeric characters.',
+    keyPoints: [
+      'Two-pointer approach is more memory efficient (O(1) space)',
+      'Converted to .ToLower()',
+      'Checked for edge cases (empty string, single character)'
+    ],
+    tags: ['C#', 'Coding', 'Whiteboard', 'Strings']
+  },
+  {
+    id: 'R2-CODE-03',
+    round: 2,
+    category: 'DSA',
+    difficulty: 'Easy',
+    question: 'WHITEBOARD TASK: Write a C# program to print the Fibonacci series up to N terms.',
+    followUps: [
+      'Can you solve it using a `for` loop?',
+      'Can you solve it using recursion? Which one is better for performance and why?'
+    ],
+    expectedAnswer: 'A `for` loop approach initializes a=0, b=1, and calculates c=a+b, then shifts the variables. Recursion `Fib(n) = Fib(n-1) + Fib(n-2)` is elegant but very slow (O(2^n) time complexity) unless memoization is used. The iterative approach is O(n) and preferred for large N.',
+    keyPoints: [
+      'Correctly initialized starting values (0, 1)',
+      'Loop logic correct (c = a+b; a=b; b=c;)',
+      'Understands why simple recursion is bad for Fibonacci'
+    ],
+    tags: ['C#', 'Coding', 'Whiteboard', 'Loops']
+  },
+  {
+    id: 'R2-CODE-04',
+    round: 2,
+    category: 'DSA',
+    difficulty: 'Easy',
+    question: 'WHITEBOARD TASK: Write a C# program to find if an array contains duplicate elements.',
+    followUps: [
+      'What if you use two nested loops? What is the time complexity?',
+      'Can you optimize it using a HashSet?'
+    ],
+    expectedAnswer: 'The naive way uses two nested loops to compare every element (O(N^2) time). A better way is sorting the array first and checking adjacent elements (O(N log N) time). The best way is creating a `HashSet`, iterating through the array, and checking `hashSet.Add(item)`. If it returns false, a duplicate exists (O(N) time and O(N) space).',
+    keyPoints: [
+      'Identified O(N^2) nested loop approach as inefficient',
+      'Mentioned HashSet for O(N) time complexity optimization',
+      'Mentioned Sorting for O(1) space optimization'
+    ],
+    tags: ['C#', 'Coding', 'Whiteboard', 'Arrays']
+  },
     id: 'R2-001',
     round: 2,
     category: 'CSharp',
