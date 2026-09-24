@@ -66,6 +66,35 @@ export default function HomePage() {
           />
         </div>
 
+        {/* Topic-Wise C# Practice */}
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-4">
+            <Code2 className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-bold text-white">Topic-Wise C# Practice</h3>
+            <span className="text-xs bg-blue-900/50 text-blue-300 border border-blue-700/40 px-2 py-0.5 rounded-full font-medium">40 Qs Each</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <TopicCard
+              href="/test-instructions/topic-csharp-basics"
+              label="C# Basics & Types"
+              desc="Data types · Strings · Arrays · ref/out · Enums"
+              color="blue"
+            />
+            <TopicCard
+              href="/test-instructions/topic-csharp-oop"
+              label="OOP Deep Dive"
+              desc="Inheritance · Polymorphism · Interfaces · Abstraction"
+              color="purple"
+            />
+            <TopicCard
+              href="/test-instructions/topic-csharp-adv"
+              label="Advanced C# & Memory"
+              desc="Delegates · LINQ · async/await · Garbage Collection"
+              color="emerald"
+            />
+          </div>
+        </div>
+
         {/* Action Tiles */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           <ActionTile
@@ -189,5 +218,35 @@ function ActionTile({ href, icon, title, desc, bgClass }: ActionTileProps) {
       </div>
       <ChevronRight className="w-4 h-4 text-slate-500 ml-auto flex-shrink-0" />
     </Link>
+  );
+}
+
+interface TopicCardProps {
+  href: string;
+  label: string;
+  desc: string;
+  color: 'blue' | 'purple' | 'emerald';
+}
+
+function TopicCard({ href, label, desc, color }: TopicCardProps) {
+  const colorMap = {
+    blue:    { bg: 'bg-blue-900/20',    border: 'border-blue-700/30 hover:border-blue-500/50',    badge: 'text-blue-400',    btn: 'bg-blue-600 hover:bg-blue-700' },
+    purple:  { bg: 'bg-purple-900/20',  border: 'border-purple-700/30 hover:border-purple-500/50', badge: 'text-purple-400',  btn: 'bg-purple-600 hover:bg-purple-700' },
+    emerald: { bg: 'bg-emerald-900/20', border: 'border-emerald-700/30 hover:border-emerald-500/50', badge: 'text-emerald-400', btn: 'bg-emerald-600 hover:bg-emerald-700' },
+  };
+  const c = colorMap[color];
+  return (
+    <div className={`${c.bg} border ${c.border} rounded-xl p-5 flex flex-col gap-3 transition-all`}>
+      <div>
+        <div className={`font-bold text-white text-base`}>{label}</div>
+        <div className="text-slate-400 text-xs mt-1">{desc}</div>
+      </div>
+      <Link
+        to={href}
+        className={`text-center text-white font-semibold text-sm py-2 px-4 rounded-lg ${c.btn} transition-colors flex items-center justify-center gap-2`}
+      >
+        Start Practice <ChevronRight className="w-4 h-4" />
+      </Link>
+    </div>
   );
 }
