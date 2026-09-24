@@ -8,6 +8,8 @@ import { CheckCircle, XCircle, MinusCircle, ArrowLeft, ChevronDown, ChevronUp } 
 
 export default function AnswerReviewPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
+  const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect' | 'unanswered'>('all');
+  
   const result = sessionId ? getResultById(sessionId) : null;
 
   if (!result) {
@@ -21,8 +23,6 @@ export default function AnswerReviewPage() {
   const session = getSession(result.paperId);
   const questions = getQuestionsForPaper(result.paperId as PaperId);
   const answers = session?.answers || {};
-
-  const [filter, setFilter] = useState<'all' | 'correct' | 'incorrect' | 'unanswered'>('all');
 
   const filteredQuestions = questions.filter(q => {
     const ans = answers[q.id];
@@ -80,9 +80,8 @@ export default function AnswerReviewPage() {
           ))}
         </div>
 
-        {/* Questions */}
         <div className="space-y-4">
-          {filteredQuestions.map((q, i) => (
+          {filteredQuestions.map((q) => (
             <ReviewCard
               key={q.id}
               question={q}

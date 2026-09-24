@@ -42,11 +42,22 @@ export default function Round3Page() {
 
   const updateScore = useCallback((field: keyof InterviewScore, value: number | string) => {
     if (!q) return;
-    setScores(prev => ({
-      ...prev,
-      [q.id]: { ...(prev[q.id] || scoreForQ!), [field]: value } as InterviewScore,
-    }));
-  }, [q, scoreForQ]);
+    setScores(prev => {
+      const existing = prev[q.id] || {
+        questionId: q.id,
+        technicalCorrectness: 0,
+        explanation: 0,
+        problemSolving: 0,
+        codingAbility: 0,
+        communication: 0,
+        notes: '',
+      };
+      return {
+        ...prev,
+        [q.id]: { ...existing, [field]: value } as InterviewScore,
+      };
+    });
+  }, [q]);
 
   const handleSave = () => {
     storeSave({

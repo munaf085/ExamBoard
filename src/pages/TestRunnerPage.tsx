@@ -128,11 +128,6 @@ export default function TestRunnerPage() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [submitted]);
 
-  const handleAutoSubmit = useCallback(() => {
-    if (submitted) return;
-    submitTest();
-  }, [submitted, questions, answers, markedForReview]);
-
   const submitTest = useCallback(() => {
     if (submitted || questions.length === 0) return;
     setSubmitted(true);
