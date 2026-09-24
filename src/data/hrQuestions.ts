@@ -1,0 +1,185 @@
+import { HRQuestion } from '../types';
+
+export const hrQuestions: HRQuestion[] = [
+  {
+    id: 'HR-001',
+    category: 'Introduction',
+    question: 'Tell me about yourself.',
+    guidance: 'Look for a concise, professional summary covering their background, key achievements, and current role.',
+    sampleAnswer: 'I am a software developer with X years of experience...'
+  },
+  {
+    id: 'HR-002',
+    category: 'Introduction',
+    question: 'Why did you choose software development as a career?',
+    guidance: 'Assess genuine interest, passion for problem-solving, and continuous learning.',
+  },
+  {
+    id: 'HR-003',
+    category: 'Introduction',
+    question: 'Walk me through your background and previous experience.',
+    guidance: 'Evaluate how logically they present their career progression and highlight relevant experiences.',
+  },
+  {
+    id: 'HR-004',
+    category: 'Motivation',
+    question: 'Why do you want to join Atyati?',
+    guidance: 'Check if they have researched the company and have valid reasons beyond just getting a job.',
+  },
+  {
+    id: 'HR-005',
+    category: 'Motivation',
+    question: 'Why did you choose .NET as your primary technology stack?',
+    guidance: 'Look for understanding of the ecosystem, not just "it was taught in college".',
+  },
+  {
+    id: 'HR-006',
+    category: 'Motivation',
+    question: 'What interests you the most about this specific role?',
+    guidance: 'Assess alignment between role requirements and candidate\'s career interests.',
+  },
+  {
+    id: 'HR-007',
+    category: 'Motivation',
+    question: 'What are your long-term career aspirations?',
+    guidance: 'Evaluate ambition, self-awareness, and whether their goals align with company opportunities.',
+  },
+  {
+    id: 'HR-008',
+    category: 'Learning',
+    question: 'How do you go about learning a new technology or framework?',
+    guidance: 'Look for structured approaches (docs, tutorials, side projects) and proactive learning.',
+  },
+  {
+    id: 'HR-009',
+    category: 'Learning',
+    question: 'What is the last technical skill or tool you learned on your own?',
+    guidance: 'Check for recent, self-driven learning beyond formal work requirements.',
+  },
+  {
+    id: 'HR-010',
+    category: 'Learning',
+    question: 'How do you handle tasks involving unfamiliar technology?',
+    guidance: 'Evaluate problem-solving attitude, willingness to ask for help, and resourcefulness.',
+  },
+  {
+    id: 'HR-011',
+    category: 'Learning',
+    question: 'Describe your typical study or upskilling routine.',
+    guidance: 'Look for consistency and a realistic approach to professional development.',
+  },
+  {
+    id: 'HR-012',
+    category: 'Communication',
+    question: 'How do you explain complex technical concepts to non-technical stakeholders?',
+    guidance: 'Check for empathy, use of analogies, and avoidance of unnecessary jargon.',
+  },
+  {
+    id: 'HR-013',
+    category: 'Communication',
+    question: 'How would you describe your communication style?',
+    guidance: 'Assess self-awareness and preference for clear, timely, and respectful communication.',
+  },
+  {
+    id: 'HR-014',
+    category: 'Communication',
+    question: 'Tell me about a time you handled a miscommunication at work.',
+    guidance: 'Look for accountability, active listening, and steps taken to resolve and prevent future issues.',
+  },
+  {
+    id: 'HR-015',
+    category: 'Teamwork',
+    question: 'Describe a successful team project you worked on.',
+    guidance: 'Evaluate their role in the team, collaboration, and shared credit.',
+  },
+  {
+    id: 'HR-016',
+    category: 'Teamwork',
+    question: 'How do you handle disagreements with a team member?',
+    guidance: 'Look for professionalism, focus on facts over emotions, and compromise.',
+  },
+  {
+    id: 'HR-017',
+    category: 'Teamwork',
+    question: 'What role do you usually take in a team setting?',
+    guidance: 'Assess whether they are a leader, facilitator, executor, and if they can adapt.',
+  },
+  {
+    id: 'HR-018',
+    category: 'Teamwork',
+    question: 'Can you give an example of a time you helped a teammate struggling with a task?',
+    guidance: 'Evaluate mentorship mindset, empathy, and willingness to collaborate.',
+  },
+  {
+    id: 'HR-019',
+    category: 'Situation',
+    question: 'Tell me about the most difficult technical problem you have solved.',
+    guidance: 'Check analytical thinking, persistence, and the impact of their solution.',
+  },
+  {
+    id: 'HR-020',
+    category: 'Situation',
+    question: 'Have you ever missed a deadline? How did you handle it?',
+    guidance: 'Look for honesty, proactive communication with stakeholders, and lessons learned.',
+  },
+  {
+    id: 'HR-021',
+    category: 'Situation',
+    question: 'Describe a time you received constructive feedback. How did you react?',
+    guidance: 'Assess receptiveness to criticism and ability to apply feedback to improve.',
+  },
+  {
+    id: 'HR-022',
+    category: 'Situation',
+    question: 'How do you handle working under pressure or tight deadlines?',
+    guidance: 'Look for stress management techniques, prioritization skills, and composure.',
+  },
+  {
+    id: 'HR-023',
+    category: 'Strengths',
+    question: 'What do you consider to be your greatest professional strength?',
+    guidance: 'Evaluate self-awareness and relevance of the strength to the role.',
+  },
+  {
+    id: 'HR-024',
+    category: 'Strengths',
+    question: 'What is one technical or soft skill you are currently trying to improve?',
+    guidance: 'Check for honest self-assessment and actionable steps they are taking to improve.',
+  },
+  {
+    id: 'HR-025',
+    category: 'Strengths',
+    question: 'How would your previous manager or peers describe you?',
+    guidance: 'Look for indicators of reliability, teamwork, and technical competence.',
+  },
+  {
+    id: 'HR-026',
+    category: 'CareerGoals',
+    question: 'Where do you see yourself professionally in 5 years?',
+    guidance: 'Assess ambition and alignment with potential career paths within the company.',
+  },
+  {
+    id: 'HR-027',
+    category: 'CareerGoals',
+    question: 'What are your expectations for career growth in your next role?',
+    guidance: 'Evaluate if the company can provide the opportunities they are looking for.',
+  },
+  {
+    id: 'HR-028',
+    category: 'CareerGoals',
+    question: 'How do you define success in your career?',
+    guidance: 'Check their core values (e.g., continuous learning, impact, leadership).',
+  },
+  {
+    id: 'HR-029',
+    category: 'Logistics',
+    question: 'Are you open to relocating for this role if required?',
+    guidance: 'Confirm logistical alignment.',
+  },
+  {
+    id: 'HR-030',
+    category: 'Logistics',
+    question: 'Are you comfortable with the working hours and office attendance policy?',
+    guidance: 'Ensure clear understanding and agreement on working conditions.',
+  }
+];
