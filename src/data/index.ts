@@ -7,6 +7,9 @@ import { hard1Questions } from './questions/hard1';
 import { hard2Questions } from './questions/hard2';
 import { hard3Questions } from './questions/hard3';
 import { csharpOopQuestions } from './questions/csharp_oop';
+import { topicCsharpBasicsQuestions } from './questions/topic_csharp_basics';
+import { topicCsharpOopQuestions } from './questions/topic_csharp_oop';
+import { topicCsharpAdvQuestions } from './questions/topic_csharp_adv';
 
 export const allQuestions: WrittenQuestion[] = [
   ...easy1Questions,
@@ -17,6 +20,9 @@ export const allQuestions: WrittenQuestion[] = [
   ...hard2Questions,
   ...hard3Questions,
   ...csharpOopQuestions,
+  ...topicCsharpBasicsQuestions,
+  ...topicCsharpOopQuestions,
+  ...topicCsharpAdvQuestions,
 ];
 
 export function getQuestionsForPaper(paperId: PaperId): WrittenQuestion[] {
@@ -59,5 +65,6 @@ export function validateQuestions(): { valid: boolean; errors: string[] } {
 
   return { valid: errors.length === 0, errors };
 }
+
 
 

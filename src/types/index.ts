@@ -37,7 +37,10 @@ export type PaperId =
   | 'hard-1'
   | 'hard-2'
   | 'hard-3'
-  | 'csharp-oop-1';
+  | 'csharp-oop-1'
+  | 'topic-csharp-basics'
+  | 'topic-csharp-oop'
+  | 'topic-csharp-adv';
 
 export interface WrittenQuestion {
   id: string;
@@ -163,6 +166,9 @@ export const PAPERS: PaperMeta[] = [
   { id: 'hard-2',   label: 'Hard Test 2',   difficulty: 'Hard',   description: 'Advanced tracing, SQL, DSA, debugging',       questionCount: 40, durationMinutes: 60 },
   { id: 'hard-3',   label: 'Tricky Logic',  difficulty: 'Hard',   description: 'Nested loops, complex conditions, trick questions', questionCount: 40, durationMinutes: 60 },
   { id: 'csharp-oop-1', label: 'C# & OOP Mastery', difficulty: 'Medium', description: 'Dedicated test strictly for C# basics and Object-Oriented Programming', questionCount: 40, durationMinutes: 60 },
+  { id: 'topic-csharp-basics', label: 'Topic: C# Basics & Types', difficulty: 'Medium', description: 'Exclusively covers Value/Ref types, Strings, Arrays, Enums, and Operators', questionCount: 40, durationMinutes: 60 },
+  { id: 'topic-csharp-oop', label: 'Topic: C# OOP Deep Dive', difficulty: 'Hard', description: 'Exclusively covers Inheritance, Polymorphism, Encapsulation, Abstraction, and Interfaces', questionCount: 40, durationMinutes: 60 },
+  { id: 'topic-csharp-adv', label: 'Topic: C# Advanced & Memory', difficulty: 'Hard', description: 'Exclusively covers Delegates, LINQ, Exceptions, Garbage Collection, and async/await', questionCount: 40, durationMinutes: 60 },
 ];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
