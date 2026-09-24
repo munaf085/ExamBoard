@@ -7,11 +7,6 @@ import {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100">
-      {/* Header */}
-      <header className="border-b border-slate-700 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
-        </div>
-      </header>
-
       <main className="max-w-7xl mx-auto px-6 py-10">
         {/* Hero */}
         <div className="text-center mb-12">
