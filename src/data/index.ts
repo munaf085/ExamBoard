@@ -6,6 +6,7 @@ import { medium2Questions } from './questions/medium2';
 import { hard1Questions } from './questions/hard1';
 import { hard2Questions } from './questions/hard2';
 import { hard3Questions } from './questions/hard3';
+import { csharpOopQuestions } from './questions/csharp_oop';
 
 export const allQuestions: WrittenQuestion[] = [
   ...easy1Questions,
@@ -15,6 +16,7 @@ export const allQuestions: WrittenQuestion[] = [
   ...hard1Questions,
   ...hard2Questions,
   ...hard3Questions,
+  ...csharpOopQuestions,
 ];
 
 export function getQuestionsForPaper(paperId: PaperId): WrittenQuestion[] {
@@ -57,4 +59,5 @@ export function validateQuestions(): { valid: boolean; errors: string[] } {
 
   return { valid: errors.length === 0, errors };
 }
+
 

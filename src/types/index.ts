@@ -36,7 +36,8 @@ export type PaperId =
   | 'medium-2'
   | 'hard-1'
   | 'hard-2'
-  | 'hard-3';
+  | 'hard-3'
+  | 'csharp-oop-1';
 
 export interface WrittenQuestion {
   id: string;
@@ -161,6 +162,7 @@ export const PAPERS: PaperMeta[] = [
   { id: 'hard-1',   label: 'Hard Test 1',   difficulty: 'Hard',   description: 'Multi-step reasoning, combined concepts',      questionCount: 40, durationMinutes: 60 },
   { id: 'hard-2',   label: 'Hard Test 2',   difficulty: 'Hard',   description: 'Advanced tracing, SQL, DSA, debugging',       questionCount: 40, durationMinutes: 60 },
   { id: 'hard-3',   label: 'Tricky Logic',  difficulty: 'Hard',   description: 'Nested loops, complex conditions, trick questions', questionCount: 40, durationMinutes: 60 },
+  { id: 'csharp-oop-1', label: 'C# & OOP Mastery', difficulty: 'Medium', description: 'Dedicated test strictly for C# basics and Object-Oriented Programming', questionCount: 40, durationMinutes: 60 },
 ];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
