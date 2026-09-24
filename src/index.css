@@ -121,7 +121,8 @@
     line-height: 1.6;
     color: #e6edf3;
     overflow-x: auto;
-    white-space: pre;
+    white-space: pre-wrap;
+    word-break: break-word;
     margin: 0.75rem 0;
   }
 
