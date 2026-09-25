@@ -11,480 +11,305 @@ export const dataTypesExercises: Record<string, ProgrammingExercise[]> = {
   'variables-and-scope': [
     {
       id: 'dt-var-1',
-      title: '1. Local Variable Declaration, Initialization & Reassignment',
-      problemStatement: `Write a standalone Java program that demonstrates working with local variables inside the main() method:
-1. Declare and initialize a student's name (\`String studentName = "Alex"\`), grade level (\`int gradeLevel = 10\`), and three subject test scores (\`int mathScore = 88\`, \`int scienceScore = 92\`, \`int englishScore = 84\`).
-2. Calculate the total score (\`totalScore\`) and average score (\`averageScore\`) using local variables.
-3. Promote the student by reassigning \`gradeLevel = 11\` (demonstrating variable value mutation without re-declaring the type).
-4. Print the student summary report before and after the grade promotion.
-
-Input Format: None.
-Output Format:
-Student: Alex | Grade: 10
-Math: 88 | Science: 92 | English: 84
-Total: 264 | Average: 88.0
-Promoted to Grade: 11
-
-Example:
-Output:
-Student: Alex | Grade: 10
-Math: 88 | Science: 92 | English: 84
-Total: 264 | Average: 88.0
-Promoted to Grade: 11`,
-      hint: 'Declare variables inside main() using their type (e.g., int gradeLevel = 10;). When updating a variable, do NOT repeat the type; simply write gradeLevel = 11;',
-      solutionCode: `public class StudentGradeReport {
+      title: 'Sum, Difference, Product & Quotient of Two Numbers',
+      problemStatement: `Write a Java program to perform basic arithmetic with local variables:
+1. Declare two integer variables: \`int num1 = 20;\` and \`int num2 = 4;\`.
+2. Calculate and store their sum, difference, product, and quotient in separate local variables.
+3. Print each calculated result with an informative message.`,
+      hint: 'Declare local variables like int sum = num1 + num2; and use System.out.println() to display the values.',
+      solutionCode: `public class BasicArithmetic {
     public static void main(String[] args) {
-        // Step 1: Declare and initialize local variables
-        String studentName = "Alex";
-        int gradeLevel = 10;
-        int mathScore = 88;
-        int scienceScore = 92;
-        int englishScore = 84;
+        int num1 = 20;
+        int num2 = 4;
 
-        // Step 2: Compute derived values into new local variables
-        int totalScore = mathScore + scienceScore + englishScore;
-        double averageScore = totalScore / 3.0;
+        int sum = num1 + num2;
+        int difference = num1 - num2;
+        int product = num1 * num2;
+        int quotient = num1 / num2;
 
-        // Step 3: Print initial report
-        System.out.println("Student: " + studentName + " | Grade: " + gradeLevel);
-        System.out.println("Math: " + mathScore + " | Science: " + scienceScore + " | English: " + englishScore);
-        System.out.println("Total: " + totalScore + " | Average: " + averageScore);
-
-        // Step 4: Reassign gradeLevel (update existing variable without re-declaring type)
-        gradeLevel = 11;
-        System.out.println("Promoted to Grade: " + gradeLevel);
+        System.out.println("First Number: " + num1);
+        System.out.println("Second Number: " + num2);
+        System.out.println("Sum: " + sum);
+        System.out.println("Difference: " + difference);
+        System.out.println("Product: " + product);
+        System.out.println("Quotient: " + quotient);
     }
 }`,
-      output: `Student: Alex | Grade: 10
-Math: 88 | Science: 92 | English: 84
-Total: 264 | Average: 88.0
-Promoted to Grade: 11`,
-      explanation: 'Local variables are declared inside a method (such as main) and live on the JVM thread stack. When declaring a variable, specify its type and name. Once declared, you can mutate (reassign) its value using the variable name alone without repeating the data type.'
+      output: `First Number: 20
+Second Number: 4
+Sum: 24
+Difference: 16
+Product: 80
+Quotient: 5`,
+      explanation: 'Variables store values in memory. In Java, you specify the type (int) and name, then perform arithmetic operations (+, -, *, /) directly with the variable identifiers.'
     },
     {
       id: 'dt-var-2',
-      title: '2. Block Scope & Variable Lifetime with Curly Braces { }',
-      problemStatement: `Write a Java program that demonstrates how block scope works using curly braces { }:
-1. In the main() method, declare an outer local variable \`double cartTotal = 150.0;\`.
-2. Open an inner block with \`{\` and declare a block-scoped variable \`double promoDiscount = 25.0;\`.
-3. Inside the inner block, apply the discount to \`cartTotal\` (\`cartTotal = cartTotal - promoDiscount;\`) and print the discount applied.
-4. Exit the inner block with \`}\`.
-5. In the outer method scope, print the final cart total. Notice that \`cartTotal\` successfully holds the updated price, while \`promoDiscount\` is out of scope and no longer accessible.
-
-Input Format: None.
-Output Format:
-Initial Cart Total: $150.0
-[Inside Promo Block] Applied Discount: $25.0
-Final Checkout Total: $125.0
-
-Example:
-Output:
-Initial Cart Total: $150.0
-[Inside Promo Block] Applied Discount: $25.0
-Final Checkout Total: $125.0`,
-      hint: 'Variables declared inside { } are local to that block. Code inside the block can read and modify outer variables, but outer code cannot see variables declared inside the inner block.',
-      solutionCode: `public class ShoppingCartScope {
+      title: 'Swap Two Numbers Using a Temporary Variable',
+      problemStatement: `Write a Java program to swap the values of two variables:
+1. Declare \`int a = 15;\` and \`int b = 30;\`.
+2. Print their values before swapping.
+3. Use a third helper variable \`int temp;\` to exchange the values so \`a\` becomes 30 and \`b\` becomes 15.
+4. Print their values after swapping.`,
+      hint: 'Copy the value of a into temp first, then overwrite a with b, and finally put temp into b.',
+      solutionCode: `public class SwapWithTemp {
     public static void main(String[] args) {
-        // Outer local variable: accessible throughout main()
-        double cartTotal = 150.0;
-        System.out.println("Initial Cart Total: $" + cartTotal);
+        int a = 15;
+        int b = 30;
 
-        // Inner block: creates an isolated scope
-        {
-            // Block-scoped local variable: only exists between { and }
-            double promoDiscount = 25.0;
-            System.out.println("[Inside Promo Block] Applied Discount: $" + promoDiscount);
+        System.out.println("Before Swap: a = " + a + ", b = " + b);
 
-            // Inner block can freely read and update outer variables
-            cartTotal = cartTotal - promoDiscount;
-        }
-        // At this point, promoDiscount is destroyed from the stack
+        // Step 1: Save a in temp
+        int temp = a;
+        // Step 2: Assign b to a
+        a = b;
+        // Step 3: Put saved original a into b
+        b = temp;
 
-        // cartTotal retains its updated value in the outer scope
-        System.out.println("Final Checkout Total: $" + cartTotal);
+        System.out.println("After Swap: a = " + a + ", b = " + b);
     }
 }`,
-      output: `Initial Cart Total: $150.0
-[Inside Promo Block] Applied Discount: $25.0
-Final Checkout Total: $125.0`,
-      explanation: 'A variable declared inside curly braces { } is scoped only to that block. It is created when execution enters the block and destroyed as soon as execution leaves the block. Inner blocks have access to outer variables, allowing modifications that persist after the inner block exits.'
+      output: `Before Swap: a = 15, b = 30
+After Swap: a = 30, b = 15`,
+      explanation: 'If you directly assign a = b without saving a first, the original value of a (15) is permanently overwritten. A temporary helper variable preserves it during the exchange.'
     },
     {
       id: 'dt-var-3',
-      title: '3. Swapping Two Variables Using a Temporary Local Variable',
-      problemStatement: `Write a Java program to swap the values of two local variables:
-1. Declare \`int x = 42;\` and \`int y = 99;\`.
-2. Print the values before the swap.
-3. Use a third temporary helper variable \`int temp;\` to exchange the values so \`x\` holds 99 and \`y\` holds 42.
-4. Print the values after the swap.
-
-Input Format: None.
-Output Format:
-Before Swap: x = 42, y = 99
-After Swap: x = 99, y = 42
-
-Example:
-Output:
-Before Swap: x = 42, y = 99
-After Swap: x = 99, y = 42`,
-      hint: 'Save the value of x into temp before overwriting x with y. Then assign temp into y.',
-      solutionCode: `public class VariableSwap {
+      title: 'Swap Two Numbers Without Using a Third Variable',
+      problemStatement: `Write a Java program to swap two integer variables WITHOUT creating a third variable:
+1. Declare \`int a = 10;\` and \`int b = 25;\`.
+2. Print their values before swapping.
+3. Use addition and subtraction arithmetic to swap their contents.
+4. Print their values after swapping to verify \`a = 25\` and \`b = 10\`.`,
+      hint: 'First set a = a + b (combined sum). Then b = a - b (gives original a). Finally a = a - b (gives original b).',
+      solutionCode: `public class SwapWithoutTemp {
     public static void main(String[] args) {
-        int x = 42;
-        int y = 99;
+        int a = 10;
+        int b = 25;
 
-        System.out.println("Before Swap: x = " + x + ", y = " + y);
+        System.out.println("Before Swap: a = " + a + ", b = " + b);
 
-        // Step 1: Save x in temporary variable
-        int temp = x;
-        // Step 2: Overwrite x with y's value
-        x = y;
-        // Step 3: Put saved original value into y
-        y = temp;
+        // Step 1: a holds the sum (10 + 25 = 35)
+        a = a + b;
+        // Step 2: b gets the original a (35 - 25 = 10)
+        b = a - b;
+        // Step 3: a gets the original b (35 - 10 = 25)
+        a = a - b;
 
-        System.out.println("After Swap: x = " + x + ", y = " + y);
+        System.out.println("After Swap: a = " + a + ", b = " + b);
     }
 }`,
-      output: `Before Swap: x = 42, y = 99
-After Swap: x = 99, y = 42`,
-      explanation: 'Without a temporary variable, executing x = y would immediately erase the original value of x (42). By declaring int temp = x;, the value 42 is safely preserved on the stack frame before reassigning x.'
+      output: `Before Swap: a = 10, b = 25
+After Swap: a = 25, b = 10`,
+      explanation: 'By accumulating both numbers into a single variable sum (a = a + b), you can extract either original operand using subtraction without needing extra memory.'
     },
     {
       id: 'dt-var-4',
-      title: '4. Employee Salary Slip Breakdown (Multi-Variable Arithmetic)',
-      problemStatement: `Write a salary calculator program using local variables:
-1. Declare \`double basicSalary = 50000.0;\`, \`double hra = 15000.0;\`, \`double specialAllowance = 8000.0;\`, and \`double taxRate = 0.10;\` (10% tax).
-2. Calculate \`grossSalary = basicSalary + hra + specialAllowance;\`.
-3. Calculate \`taxDeduction = grossSalary * taxRate;\`.
-4. Calculate \`netSalary = grossSalary - taxDeduction;\`.
-5. Display each calculated component on the screen.
-
-Input Format: None.
-Output Format:
-Gross Salary: $73000.0
-Tax Deduction (10%): $7300.0
-Net Take-Home Salary: $65700.0
-
-Example:
-Output:
-Gross Salary: $73000.0
-Tax Deduction (10%): $7300.0
-Net Take-Home Salary: $65700.0`,
-      hint: 'Declare each monetary value as a double to preserve decimal precision, then perform straightforward addition and multiplication.',
-      solutionCode: `public class SalarySlip {
+      title: 'Calculate Area and Perimeter of a Rectangle',
+      problemStatement: `Write a Java program to calculate geometry measurements using variables:
+1. Declare two double variables: \`double length = 12.5;\` and \`double width = 5.0;\`.
+2. Calculate the area using formula: \`length * width\`.
+3. Calculate the perimeter using formula: \`2 * (length + width)\`.
+4. Print the length, width, area, and perimeter.`,
+      hint: 'Use the double data type to support decimal numbers for length, width, area, and perimeter.',
+      solutionCode: `public class RectangleCalculator {
     public static void main(String[] args) {
-        double basicSalary = 50000.0;
-        double hra = 15000.0;
-        double specialAllowance = 8000.0;
-        double taxRate = 0.10;
+        double length = 12.5;
+        double width = 5.0;
 
-        double grossSalary = basicSalary + hra + specialAllowance;
-        double taxDeduction = grossSalary * taxRate;
-        double netSalary = grossSalary - taxDeduction;
+        double area = length * width;
+        double perimeter = 2 * (length + width);
 
-        System.out.println("Gross Salary: $" + grossSalary);
-        System.out.println("Tax Deduction (10%): $" + taxDeduction);
-        System.out.println("Net Take-Home Salary: $" + netSalary);
+        System.out.println("Length: " + length);
+        System.out.println("Width: " + width);
+        System.out.println("Area: " + area);
+        System.out.println("Perimeter: " + perimeter);
     }
 }`,
-      output: `Gross Salary: $73000.0
-Tax Deduction (10%): $7300.0
-Net Take-Home Salary: $65700.0`,
-      explanation: 'Decomposing complex real-world calculations into descriptive local variables improves code readability, prevents redundant recalculations, and makes debugging straightforward.'
+      output: `Length: 12.5
+Width: 5.0
+Area: 62.5
+Perimeter: 35.0`,
+      explanation: 'Parentheses (length + width) ensure addition happens before multiplying by 2, respecting standard arithmetic precedence.'
     },
     {
       id: 'dt-var-5',
-      title: '5. Multi-Level Nested Block Scope & Visibility Hierarchy',
-      problemStatement: `Write a Java class demonstrating three concentric levels of block scope:
-1. In \`main()\`, declare \`int outerVal = 100;\`.
-2. Create an inner block with \`{\` containing \`int middleVal = 200;\`. Print the sum of \`outerVal + middleVal\`.
-3. Inside the middle block, create a third innermost block with \`{\` containing \`int innerVal = 300;\`. Print the sum of \`outerVal + middleVal + innerVal\`.
-4. Exit the inner blocks and verify that \`outerVal\` is still accessible in the outermost scope.
-
-Input Format: None.
-Output Format:
-[Outer Scope] outerVal = 100
-[Middle Scope] outerVal + middleVal = 300
-[Innermost Scope] sum = 600
-[Back to Outer Scope] outerVal = 100
-
-Example:
-Output:
-[Outer Scope] outerVal = 100
-[Middle Scope] outerVal + middleVal = 300
-[Innermost Scope] sum = 600
-[Back to Outer Scope] outerVal = 100`,
-      hint: 'Java scopes form a hierarchy: inner blocks can read all variables declared in parent enclosing blocks, but parents can never see into child blocks.',
-      solutionCode: `public class NestedScopeDemo {
+      title: 'Convert Celsius Temperature to Fahrenheit',
+      problemStatement: `Write a Java program to convert temperature from Celsius to Fahrenheit:
+1. Declare a variable \`double celsius = 25.0;\`.
+2. Convert it to Fahrenheit using the standard formula: \`F = (C * 9/5) + 32\`.
+3. Store the result in \`double fahrenheit;\`.
+4. Print both the Celsius and converted Fahrenheit temperatures.`,
+      hint: 'Write 9.0 / 5.0 rather than 9 / 5, because 9 / 5 in Java does integer division and truncates to 1!',
+      solutionCode: `public class TemperatureConverter {
     public static void main(String[] args) {
-        // Level 1: Outer scope
-        int outerVal = 100;
-        System.out.println("[Outer Scope] outerVal = " + outerVal);
+        double celsius = 25.0;
+        double fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
 
-        {
-            // Level 2: Middle scope
-            int middleVal = 200;
-            System.out.println("[Middle Scope] outerVal + middleVal = " + (outerVal + middleVal));
-
-            {
-                // Level 3: Innermost scope
-                int innerVal = 300;
-                int total = outerVal + middleVal + innerVal;
-                System.out.println("[Innermost Scope] sum = " + total);
-            }
-            // innerVal is destroyed here
-        }
-        // middleVal is destroyed here
-
-        System.out.println("[Back to Outer Scope] outerVal = " + outerVal);
+        System.out.println("Temperature in Celsius: " + celsius + "°C");
+        System.out.println("Temperature in Fahrenheit: " + fahrenheit + "°F");
     }
 }`,
-      output: `[Outer Scope] outerVal = 100
-[Middle Scope] outerVal + middleVal = 300
-[Innermost Scope] sum = 600
-[Back to Outer Scope] outerVal = 100`,
-      explanation: 'Scope in Java is lexically bounded by pairs of curly braces. Inner blocks inherit the variables of all enclosing ancestor blocks, but local variables are popped and destroyed from the stack as soon as execution hits their closing brace.'
+      output: `Temperature in Celsius: 25.0°C
+Temperature in Fahrenheit: 77.0°F`,
+      explanation: 'When working with double variables, using floating-point literals like 9.0 and 5.0 ensures exact decimal arithmetic without integer truncation.'
     },
     {
       id: 'dt-var-6',
-      title: '6. Fitness Step Tracker (Accumulating Local Variables)',
-      problemStatement: `Create a step-tracking script simulating a daily fitness log:
-1. Initialize an integer local variable \`int totalSteps = 0;\`.
-2. Add a morning walk: declare \`int morningSteps = 3500;\` and accumulate into \`totalSteps\`. Print progress.
-3. Add an afternoon walk: declare \`int afternoonSteps = 2200;\` and accumulate into \`totalSteps\`. Print progress.
-4. Add an evening jog: declare \`int eveningSteps = 4300;\` and accumulate into \`totalSteps\`. Print progress.
-5. Compute calories burned as \`double calories = totalSteps * 0.04;\` and print the final result.
-
-Input Format: None.
-Output Format:
-Morning: 3500 steps
-After Lunch: 5700 steps
-End of Day: 10000 steps
-Calories Burned: 400.0 kcal
-
-Example:
-Output:
-Morning: 3500 steps
-After Lunch: 5700 steps
-End of Day: 10000 steps
-Calories Burned: 400.0 kcal`,
-      hint: 'Use reassignment: totalSteps = totalSteps + morningSteps; to build up a running total over time.',
-      solutionCode: `public class StepTracker {
+      title: 'Calculate Simple Interest and Total Repayment',
+      problemStatement: `Write a Java program to compute simple interest on a loan:
+1. Declare \`double principal = 10000.0;\`.
+2. Declare \`double rateOfInterest = 7.5;\` (annual percentage).
+3. Declare \`int timeYears = 3;\`.
+4. Calculate simple interest using formula: \`(principal * rate * time) / 100\`.
+5. Calculate total repayment amount: \`principal + interest\`.
+6. Print the breakdown.`,
+      hint: 'Store each parameter in its own variable and multiply them together before dividing by 100.0.',
+      solutionCode: `public class SimpleInterest {
     public static void main(String[] args) {
-        int totalSteps = 0;
+        double principal = 10000.0;
+        double rateOfInterest = 7.5;
+        int timeYears = 3;
 
-        int morningSteps = 3500;
-        totalSteps = totalSteps + morningSteps;
-        System.out.println("Morning: " + totalSteps + " steps");
+        double interest = (principal * rateOfInterest * timeYears) / 100.0;
+        double totalRepayment = principal + interest;
 
-        int afternoonSteps = 2200;
-        totalSteps = totalSteps + afternoonSteps;
-        System.out.println("After Lunch: " + totalSteps + " steps");
-
-        int eveningSteps = 4300;
-        totalSteps = totalSteps + eveningSteps;
-        System.out.println("End of Day: " + totalSteps + " steps");
-
-        double caloriesBurned = totalSteps * 0.04;
-        System.out.println("Calories Burned: " + caloriesBurned + " kcal");
+        System.out.println("Principal Amount: $" + principal);
+        System.out.println("Interest Rate: " + rateOfInterest + "%");
+        System.out.println("Time Period: " + timeYears + " years");
+        System.out.println("Simple Interest: $" + interest);
+        System.out.println("Total Amount to Repay: $" + totalRepayment);
     }
 }`,
-      output: `Morning: 3500 steps
-After Lunch: 5700 steps
-End of Day: 10000 steps
-Calories Burned: 400.0 kcal`,
-      explanation: 'A variable can store changing state over time. In totalSteps = totalSteps + morningSteps;, Java first evaluates the right side using the current value of totalSteps, and then assigns the new sum back into the same memory location.'
+      output: `Principal Amount: $10000.0
+Interest Rate: 7.5%
+Time Period: 3 years
+Simple Interest: $2250.0
+Total Amount to Repay: $12250.0`,
+      explanation: 'Decomposing business calculations into descriptive local variables makes the code easy to understand, verify, and maintain.'
     },
     {
       id: 'dt-var-7',
-      title: '7. Travel Currency Converter (Floating-Point Precision)',
-      problemStatement: `Write a currency exchange calculator:
-1. Declare \`double usdAmount = 250.0;\`.
-2. Declare exchange rates: \`double usdToEur = 0.92;\` and \`double usdToJpy = 155.40;\`.
-3. Compute the equivalent values in Euros and Japanese Yen.
-4. Print formatted currency conversion output.
-
-Input Format: None.
-Output Format:
-USD Amount: $250.0
-Equivalent in Euros: €230.0
-Equivalent in Japanese Yen: ¥38850.0
-
-Example:
-Output:
-USD Amount: $250.0
-Equivalent in Euros: €230.0
-Equivalent in Japanese Yen: ¥38850.0`,
-      hint: 'Multiply usdAmount by each conversion rate to obtain the converted foreign currency total.',
-      solutionCode: `public class CurrencyConverter {
+      title: 'Calculate Item Bill with 18% Tax (GST)',
+      problemStatement: `Write a Java program to calculate the total price of a retail purchase:
+1. Declare \`double itemPrice = 450.0;\`.
+2. Declare \`double taxRate = 0.18;\` (18% sales tax).
+3. Calculate the tax amount: \`itemPrice * taxRate\`.
+4. Calculate the grand total bill: \`itemPrice + taxAmount\`.
+5. Print the item price, tax, and final payable amount.`,
+      hint: 'Multiply itemPrice by taxRate to find the tax charge, then add it to the original item price.',
+      solutionCode: `public class GroceryBill {
     public static void main(String[] args) {
-        double usdAmount = 250.0;
-        double usdToEur = 0.92;
-        double usdToJpy = 155.40;
+        double itemPrice = 450.0;
+        double taxRate = 0.18; // 18% GST
 
-        double eurAmount = usdAmount * usdToEur;
-        double jpyAmount = usdAmount * usdToJpy;
+        double taxAmount = itemPrice * taxRate;
+        double totalBill = itemPrice + taxAmount;
 
-        System.out.println("USD Amount: $" + usdAmount);
-        System.out.println("Equivalent in Euros: €" + eurAmount);
-        System.out.println("Equivalent in Japanese Yen: ¥" + jpyAmount);
+        System.out.println("Item Price: Rs. " + itemPrice);
+        System.out.println("Tax Amount (18%): Rs. " + taxAmount);
+        System.out.println("Final Bill: Rs. " + totalBill);
     }
 }`,
-      output: `USD Amount: $250.0
-Equivalent in Euros: €230.0
-Equivalent in Japanese Yen: ¥38850.0`,
-      explanation: 'Using meaningful identifier names like usdAmount and usdToEur makes currency formulas self-documenting. Using the double type ensures fractional amounts (cents) are preserved.'
+      output: `Item Price: Rs. 450.0
+Tax Amount (18%): Rs. 81.0
+Final Bill: Rs. 531.0`,
+      explanation: 'Using meaningful variable names like itemPrice and taxAmount communicates business logic clearly and avoids hardcoded magic numbers.'
     },
     {
       id: 'dt-var-8',
-      title: '8. Hotel Room Reservation Invoice Calculator',
-      problemStatement: `Write a hotel invoice generator:
-1. Declare \`String guestName = "Sophia";\`.
-2. Declare \`int nightsStayed = 4;\` and \`double nightlyRate = 120.0;\`.
-3. Declare \`double cityTaxRate = 0.08;\` (8%) and \`double cleaningFee = 45.0;\`.
-4. Calculate \`baseCost = nightsStayed * nightlyRate;\`.
-5. Calculate \`taxAmount = baseCost * cityTaxRate;\`.
-6. Calculate \`totalDue = baseCost + taxAmount + cleaningFee;\`.
-7. Print the itemized invoice.
-
-Input Format: None.
-Output Format:
-Guest: Sophia
-Base Room Cost (4 nights @ $120.0): $480.0
-City Tax (8%): $38.4
-Cleaning Fee: $45.0
-Total Balance Due: $563.4
-
-Example:
-Output:
-Guest: Sophia
-Base Room Cost (4 nights @ $120.0): $480.0
-City Tax (8%): $38.4
-Cleaning Fee: $45.0
-Total Balance Due: $563.4`,
-      hint: 'Compute each subtotal into its own local variable before adding them together for the grand total.',
-      solutionCode: `public class HotelInvoice {
+      title: 'Average of 5 Subject Test Scores',
+      problemStatement: `Write a Java program to calculate a student\'s performance across 5 subjects:
+1. Declare integer variables for 5 subject marks: \`english = 78\`, \`math = 92\`, \`science = 85\`, \`history = 88\`, \`art = 90\`.
+2. Calculate total marks obtained.
+3. Calculate the average score by dividing total marks by \`5.0\`.
+4. Display the total marks and average score.`,
+      hint: 'Divide by 5.0 (double) instead of 5 (int) so that decimal fractions in the average are not lost.',
+      solutionCode: `public class StudentAverage {
     public static void main(String[] args) {
-        String guestName = "Sophia";
-        int nightsStayed = 4;
-        double nightlyRate = 120.0;
-        double cityTaxRate = 0.08;
-        double cleaningFee = 45.0;
+        int english = 78;
+        int math = 92;
+        int science = 85;
+        int history = 88;
+        int art = 90;
 
-        double baseCost = nightsStayed * nightlyRate;
-        double taxAmount = baseCost * cityTaxRate;
-        double totalDue = baseCost + taxAmount + cleaningFee;
+        int totalMarks = english + math + science + history + art;
+        double averageMarks = totalMarks / 5.0;
 
-        System.out.println("Guest: " + guestName);
-        System.out.println("Base Room Cost (" + nightsStayed + " nights @ $" + nightlyRate + "): $" + baseCost);
-        System.out.println("City Tax (8%): $" + taxAmount);
-        System.out.println("Cleaning Fee: $" + cleaningFee);
-        System.out.println("Total Balance Due: $" + totalDue);
+        System.out.println("Scores: 78, 92, 85, 88, 90");
+        System.out.println("Total Marks: " + totalMarks + " out of 500");
+        System.out.println("Average Score: " + averageMarks);
     }
 }`,
-      output: `Guest: Sophia
-Base Room Cost (4 nights @ $120.0): $480.0
-City Tax (8%): $38.4
-Cleaning Fee: $45.0
-Total Balance Due: $563.4`,
-      explanation: 'Combining String variables with numeric local variables using the + concatenation operator allows creating clean, human-readable console receipts.'
+      output: `Scores: 78, 92, 85, 88, 90
+Total Marks: 433 out of 500
+Average Score: 86.6`,
+      explanation: 'totalMarks / 5.0 promotes the division to double precision, yielding 86.6 instead of the truncated 86.'
     },
     {
       id: 'dt-var-9',
-      title: '9. Road Trip Mileage & Fuel Expense Analyzer',
-      problemStatement: `Write an automotive trip calculation program:
-1. Declare \`double startOdometer = 14500.0;\` and \`double endOdometer = 15150.0;\`.
-2. Declare \`double fuelLitersUsed = 52.0;\` and \`double pricePerLiter = 1.65;\`.
-3. Calculate total distance traveled: \`endOdometer - startOdometer\`.
-4. Calculate fuel economy (\`km / liter\`): \`distanceTraveled / fuelLitersUsed\`.
-5. Calculate total fuel cost: \`fuelLitersUsed * pricePerLiter\`.
-6. Print the driving trip summary.
-
-Input Format: None.
-Output Format:
-Distance Traveled: 650.0 km
-Fuel Economy: 12.5 km/l
-Total Fuel Expense: $85.8
-
-Example:
-Output:
-Distance Traveled: 650.0 km
-Fuel Economy: 12.5 km/l
-Total Fuel Expense: $85.8`,
-      hint: 'Perform subtraction to find distance first, then use that distance to calculate fuel economy.',
-      solutionCode: `public class TripAnalyzer {
+      title: 'Variable Reassignment & Running Balance',
+      problemStatement: `Write a Java program that demonstrates how a variable changes value over time:
+1. Declare an initial bank balance: \`double balance = 1000.0;\`.
+2. Add a salary deposit of $2500.0 by updating the balance (\`balance = balance + 2500.0;\`). Print the balance.
+3. Deduct rent expense of $800.0 (\`balance = balance - 800.0;\`). Print the balance.
+4. Deduct groceries expense of $150.0 (\`balance = balance - 150.0;\`). Print the final balance.`,
+      hint: 'When reassigning an existing variable, do NOT write the "double" keyword again; simply write balance = balance + 2500.0;.',
+      solutionCode: `public class BankAccountBalance {
     public static void main(String[] args) {
-        double startOdometer = 14500.0;
-        double endOdometer = 15150.0;
-        double fuelLitersUsed = 52.0;
-        double pricePerLiter = 1.65;
+        double balance = 1000.0;
+        System.out.println("Opening Balance: $" + balance);
 
-        double distanceTraveled = endOdometer - startOdometer;
-        double fuelEconomy = distanceTraveled / fuelLitersUsed;
-        double totalFuelCost = fuelLitersUsed * pricePerLiter;
+        // Salary credited: update existing balance
+        balance = balance + 2500.0;
+        System.out.println("After Salary Deposit: $" + balance);
 
-        System.out.println("Distance Traveled: " + distanceTraveled + " km");
-        System.out.println("Fuel Economy: " + fuelEconomy + " km/l");
-        System.out.println("Total Fuel Expense: $" + totalFuelCost);
+        // Rent paid: update existing balance
+        balance = balance - 800.0;
+        System.out.println("After Paying Rent: $" + balance);
+
+        // Groceries paid: update existing balance
+        balance = balance - 150.0;
+        System.out.println("Final Account Balance: $" + balance);
     }
 }`,
-      output: `Distance Traveled: 650.0 km
-Fuel Economy: 12.5 km/l
-Total Fuel Expense: $85.8`,
-      explanation: 'Local variables can derive their initial values from the mathematical results of other local variables in sequential order from top to bottom.'
+      output: `Opening Balance: $1000.0
+After Salary Deposit: $3500.0
+After Paying Rent: $2700.0
+Final Account Balance: $2550.0`,
+      explanation: 'Variables are mutable containers. Once declared, you can update their stored value as many times as needed using the assignment operator (=) without repeating the type.'
     },
     {
       id: 'dt-var-10',
-      title: '10. Guaranteed Local Variable Initialization (Definite Assignment)',
-      problemStatement: `Demonstrate Java's "Definite Assignment" rule in action:
-1. Declare \`double orderTotal = 65.0;\`.
-2. Declare \`double deliveryFee;\` without an initial value.
-3. Using an \`if-else\` structure, assign \`deliveryFee = 0.0;\` if \`orderTotal >= 50.0\`, else assign \`deliveryFee = 5.99;\`.
-4. Show that because both branches guarantee an initialization, the Java compiler permits reading \`deliveryFee\` to compute \`finalTotal = orderTotal + deliveryFee;\`.
-
-Input Format: None.
-Output Format:
-Order Amount: $65.0
-Free Shipping Qualified!
-Delivery Charge: $0.0
-Total Payable: $65.0
-
-Example:
-Output:
-Order Amount: $65.0
-Free Shipping Qualified!
-Delivery Charge: $0.0
-Total Payable: $65.0`,
-      hint: 'If both the if branch AND the else branch assign a value to deliveryFee, Java compiler knows it cannot be uninitialized when reaching the print statement.',
-      solutionCode: `public class DefiniteAssignmentDemo {
+      title: 'Block Scope & Temporary Variable Isolation',
+      problemStatement: `Write a Java program that demonstrates block scope using curly braces { }:
+1. Declare an outer variable \`int accountBalance = 500;\`.
+2. Create an inner block with \`{\` containing a temporary variable \`int giftBonus = 100;\`.
+3. Inside the inner block, add the bonus to \`accountBalance\` and print a confirmation message.
+4. Close the block with \`}\`.
+5. In the outer method scope, print \`accountBalance\`. Confirm that the balance updated, while \`giftBonus\` is out of scope and cannot be accessed.`,
+      hint: 'Variables declared inside { } only exist between { and }. The outer code can see accountBalance, but cannot see giftBonus.',
+      solutionCode: `public class BlockScopeIsolation {
     public static void main(String[] args) {
-        double orderTotal = 65.0;
+        // Outer variable: lives throughout main()
+        int accountBalance = 500;
+        System.out.println("Starting Balance: $" + accountBalance);
 
-        // Declared without initial value:
-        double deliveryFee;
-
-        // Both code paths guarantee initialization:
-        if (orderTotal >= 50.0) {
-            deliveryFee = 0.0;
-            System.out.println("Order Amount: $" + orderTotal);
-            System.out.println("Free Shipping Qualified!");
-        } else {
-            deliveryFee = 5.99;
-            System.out.println("Order Amount: $" + orderTotal);
-            System.out.println("Standard Shipping Applied: $" + deliveryFee);
+        // Inner block: creates an isolated temporary scope
+        {
+            int giftBonus = 100;
+            System.out.println("[Inside Block] Adding Bonus: $" + giftBonus);
+            accountBalance = accountBalance + giftBonus;
         }
+        // giftBonus is destroyed here! Trying to use giftBonus here would cause a compile error.
 
-        // Compiler allows this because deliveryFee is definitely assigned!
-        double totalPayable = orderTotal + deliveryFee;
-        System.out.println("Delivery Charge: $" + deliveryFee);
-        System.out.println("Total Payable: $" + totalPayable);
+        System.out.println("Updated Balance outside block: $" + accountBalance);
     }
 }`,
-      output: `Order Amount: $65.0
-Free Shipping Qualified!
-Delivery Charge: $0.0
-Total Payable: $65.0`,
-      explanation: 'Java uses Definite Assignment analysis. A local variable does not need to be initialized on the line of declaration, provided the compiler can prove that EVERY possible branch assigns a value to it before any read operation occurs.'
+      output: `Starting Balance: $500
+[Inside Block] Adding Bonus: $100
+Updated Balance outside block: $600`,
+      explanation: 'A variable declared inside curly braces { } is scoped exclusively to that block. When execution reaches the closing brace }, that variable is popped off the stack and destroyed, keeping temporary variables isolated.'
     }
   ],
 

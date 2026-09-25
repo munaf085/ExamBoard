@@ -51,7 +51,7 @@ age = 22;`,
       'Local Variables in the main() Method: Any variable declared inside the main() method or inside any code block { } is called a Local Variable. Local variables live in temporary memory (the stack) and exist only while that block of code is executing.',
       'THE #1 JAVA RULE: Local Variables Have NO Default Values! Unlike some other languages, Java will NEVER automatically fill an uninitialized local variable with 0 or null. If you write "int score; System.out.println(score);", the Java compiler halts immediately with an error: "variable score might not have been initialized". You must always assign a value before using it!',
       'Updating and Reassigning Variables: Variables are called "variable" because their values can change over time. Once a variable is declared, you update its value simply by using the variable name with "=": "score = score + 10;". NEVER re-declare the type (e.g. "int score = 50;"), or Java will throw a "variable score is already defined" error.',
-      'Block Scope with Curly Braces { }: In Java, scope is determined strictly by curly braces { }. A variable declared inside an inner block (such as an if-statement or a standalone { } block) is created when entering the block and destroyed the moment Java reaches the closing brace }. It cannot be seen or used outside that block.',
+      'Block Scope with Curly Braces { }: In Java, scope is determined strictly by curly braces { }. A variable declared inside an inner block (such as a standalone { } block) is created when entering the block and destroyed the moment Java reaches the closing brace }. It cannot be seen or used outside that block.',
       'Java Naming Rules (Identifiers): (1) Must start with a letter (a-z, A-Z), an underscore (_), or dollar sign ($)—NEVER a number; (2) Can contain digits after the first character (e.g. "player1" is valid, but "1player" is illegal); (3) Cannot use Java keywords like "class", "public", "int", "static"; (4) Case-sensitive ("age" and "Age" are two distinct variables); (5) Java convention uses camelCase (e.g. "studentExamScore").'
     ],
     diagram: `+-------------------------------------------------------------+
@@ -178,100 +178,116 @@ Final coin balance: 12`
     ],
     interviewQuestions: [
       {
-        question: 'What is the fundamental difference between variable declaration and variable initialization in Java?',
-        answer: 'When I declare a variable like "int score;", I am registering the variable\'s type and identifier with the Java compiler so it reserves appropriate space on the thread stack frame. Initialization is the moment that container receives its very first concrete value, such as "score = 100;". In daily professional development, we almost always combine them into one line—"int score = 100;"—which makes code concise and guarantees the variable cannot be read while uninitialized.',
-        followUp: 'Can you re-declare a variable with the same name in the same scope?',
-        followUpAnswer: 'No, Java will throw a compiler error: "variable score is already defined in method main". You can freely mutate its value with "score = 200;", but repeating the type keyword "int score = 200;" is an illegal duplicate declaration.',
-        keyPhrases: ['compiler registration', 'first assignment', 'combined statement', 'duplicate variable error'],
-        commonMistakeAnswer: 'Assuming re-assigning a new value requires repeating the data type keyword.'
+        question: 'What is the fundamental difference between variable declaration, initialization, and assignment in Java?',
+        answer: 'Declaration informs the Java compiler about the variable\'s type and name—like "int score;"—so it registers the identifier and reserves appropriate memory space. Initialization is giving that variable its very first value, like "score = 100;". Assignment is any time you write a value into the variable, which includes the initial value as well as any later updates (reassignments) like "score = 250;". In everyday programming, we almost always declare and initialize in one line: "int score = 100;".',
+        followUp: 'Can you declare multiple variables of the same data type on a single line in Java?',
+        followUpAnswer: 'Yes! You can write "int x = 10, y = 20, z = 30;" using comma separation. However, in clean professional code, declaring each variable on its own dedicated line is preferred because it makes code far easier to read, comment on, and debug.',
+        keyPhrases: ['compiler registration', 'first assignment', 'reassignment update', 'comma-separated declaration'],
+        commonMistakeAnswer: 'Confusing initial assignment with declaration, or thinking you must repeat the data type keyword when updating.'
       },
       {
-        question: 'Do local variables in Java receive default values like 0 or null?',
-        answer: 'No! Local variables declared inside methods, constructors, or blocks never get default values. Java strictly enforces this at compile time. If you declare "int total;" and attempt to read it via "System.out.println(total);", the compiler halts with the error: "variable total might not have been initialized". Only heap-allocated instance fields and class static variables receive default values.',
-        followUp: 'Why does Java force developers to initialize local variables, but provides defaults for instance variables?',
-        followUpAnswer: 'Performance and bug prevention. Methods are called millions of times and their stack frames are created and destroyed rapidly. Zeroing out stack memory every time a method is pushed would add CPU overhead. Requiring explicit developer initialization eliminates that overhead while ensuring leftover memory bits are never read by mistake.',
-        keyPhrases: ['no default values', 'compile-time error', 'stack frame performance', 'zeroing overhead prevention'],
-        commonMistakeAnswer: 'Assuming local integers default to 0 just like instance variables.'
+        question: 'Do local variables in Java receive default values like 0, 0.0, or false?',
+        answer: 'No, absolutely not. Local variables declared inside the main() method or inside any code block do not receive any default values. Java strictly enforces this at compile time. If you write "int score;" and attempt to print or use it before assigning a value, the compiler stops immediately with the error: "variable score might not have been initialized".',
+        followUp: 'Why does Java strictly refuse to give local variables automatic default values?',
+        followUpAnswer: 'To catch programmer bugs early! When a developer creates a local variable in a method, they usually have specific data intended for it. If Java silently defaulted an uninitialized variable to 0, calculation bugs could slip into production unnoticed. Forcing explicit initialization guarantees every variable intentionally holds valid data before it is read.',
+        keyPhrases: ['no default values', 'compile-time error', 'variable might not have been initialized', 'bug prevention by compiler'],
+        commonMistakeAnswer: 'Believing Java automatically fills local variables with zero or null.'
       },
       {
         question: 'How does block scope work with curly braces { } in Java?',
-        answer: 'In Java, any pair of curly braces { } defines an independent lexical block scope. A variable declared inside that block is allocated on the stack frame when execution enters the opening brace, and it is permanently destroyed the moment execution leaves the closing brace. Any attempt to reference it after the closing brace results in a "cannot find symbol" compile error.',
-        followUp: 'Can code inside an inner block access variables declared in an enclosing outer block?',
-        followUpAnswer: 'Yes, absolutely! Java uses lexical scoping: inner blocks have full read-and-write access to variables declared in any enclosing outer scope. Any modification made to an outer variable inside the block persists even after the inner block terminates.',
-        keyPhrases: ['lexical boundary', 'born at { destroyed at }', 'inner accesses outer', 'cannot find symbol error'],
-        commonMistakeAnswer: 'Thinking variables exist throughout the entire method regardless of inner blocks.'
+        answer: 'In Java, every pair of curly braces { } creates an independent block scope. A variable declared inside a block is born the moment execution enters the block, and it is immediately destroyed when execution reaches the closing brace }. If code outside that block attempts to read or modify that variable, the compiler halts with a "cannot find symbol" error.',
+        followUp: 'Can code inside an inner { } block read or update a variable declared in the enclosing outer block?',
+        followUpAnswer: 'Yes! Scope flows inward. An inner block has full access to any variables declared before it in the outer scope. If the inner block modifies an outer variable—for example "total = total + 10;"—that change permanently persists even after the inner block closes.',
+        keyPhrases: ['lexical boundary', 'born at { and dies at }', 'cannot find symbol error', 'inward scope accessibility'],
+        commonMistakeAnswer: 'Thinking variables created inside an inner block remain available after the block closes.'
       },
       {
-        question: 'What is the "Definite Assignment" rule in Java?',
-        answer: 'Definite Assignment is Java\'s compiler flow analysis rule that verifies every possible execution path assigns a value to a local variable before that variable is ever read. You don\'t have to initialize a variable on the exact line of declaration, but if you initialize it inside an if-else structure, both branches must guarantee an assignment. If even a single path could leave it unassigned, compilation fails.',
-        followUp: 'What happens if you initialize a variable only inside an if block without an else block?',
-        followUpAnswer: 'If the compiler cannot guarantee the if condition will always evaluate to true at runtime, it flags a compile error because the variable is not definitely assigned on the path where the if condition is false.',
-        keyPhrases: ['definite assignment', 'all execution paths', 'guaranteed initialization', 'compiler flow analysis'],
-        commonMistakeAnswer: 'Assuming initializing inside an if statement is always safe without an else fallback.'
+        question: 'What exact compiler error occurs when you try to use a variable outside its block scope, and why?',
+        answer: 'The compiler throws "error: cannot find symbol" pointing directly to the variable name. This happens because Java\'s symbol table only keeps track of identifiers that are currently active in the enclosing scope. Once the closing curly brace } is reached, that variable\'s name is removed from the active symbol table, so the compiler has no knowledge that the variable ever existed.',
+        followUp: 'If you need a value calculated inside a block to be used outside the block, how do you fix this?',
+        followUpAnswer: 'You declare the variable in the outer scope before the block opens (e.g. "int result = 0;"), update its value inside the block ("result = 100;"), and then you can freely read "result" anywhere after the block has finished.',
+        keyPhrases: ['cannot find symbol error', 'active symbol table', 'declare in outer scope first', 'block-level isolation'],
+        commonMistakeAnswer: 'Assuming the error is a runtime NullPointerException instead of a compile-time symbol lookup failure.'
       },
       {
-        question: 'Can you "shadow" or reuse an outer local variable name inside an inner block in Java?',
-        answer: 'No, Java does not permit a local variable in an inner block to have the exact same identifier as a variable in an enclosing outer block. For example, if "int count = 10;" exists in main(), writing "{ int count = 20; }" inside an inner block fails with: "variable count is already defined in scope". Java enforces this to prevent accidental variable shadowing bugs.',
-        followUp: 'Where IS variable shadowing actually allowed in Java?',
-        followUpAnswer: 'Shadowing is allowed between method parameters/local variables and class instance fields. For example, in a setter "public void setAge(int age) { this.age = age; }", the parameter "age" shadows the instance variable "this.age".',
-        keyPhrases: ['no inner block shadowing', 'already defined in scope', 'C++ difference', 'allowed between param and instance field'],
-        commonMistakeAnswer: 'Thinking Java allows re-declaring outer local variables inside inner { } blocks like JavaScript or C++ does.'
+        question: 'What is the difference between reassigning a variable and re-declaring it in Java?',
+        answer: 'Re-declaring is attempting to declare a variable with a type keyword when that name already exists in the same scope (e.g. writing "int score = 10;" and then "int score = 20;"). This causes a compiler error: "variable score is already defined". Reassigning is simply updating the value of an existing variable without the type keyword—"score = 20;"—which is completely valid and expected.',
+        followUp: 'Why does the Java compiler disallow re-declaring a variable with the same name in the same scope?',
+        followUpAnswer: 'It eliminates ambiguity. If two declarations of "int score;" existed in the exact same scope, the compiler would not know whether you intended to create a separate variable or modify the original. By strictly forbidding duplicate declarations, Java keeps variable identity unambiguous.',
+        keyPhrases: ['omit type keyword on update', 'already defined in scope', 'eliminates ambiguity', 'single declaration per scope'],
+        commonMistakeAnswer: 'Writing the data type keyword every time you update a variable.'
       },
       {
-        question: 'Where are local variables stored in JVM memory, and what is their lifecycle?',
-        answer: 'Local variables are stored inside the current thread\'s Stack memory, specifically inside the Stack Frame created for the executing method. When the method is invoked, the frame is pushed onto the thread stack; as variables are declared, stack slots are assigned. The moment the method finishes or exits a block, the memory is instantly reclaimed by unwinding the stack pointer—no Garbage Collector is involved.',
-        followUp: 'What if a local variable references an object, like String s = new String("hello")?',
-        followUpAnswer: 'The reference variable itself ("s") lives on the stack frame and stores the memory address pointing to the actual object data in the Heap. When the method exits, the stack reference is destroyed, leaving the Heap object eligible for Garbage Collection if no other references point to it.',
-        keyPhrases: ['thread stack frame', 'instant stack pointer pop', 'no GC needed for locals', 'reference on stack heap object'],
-        commonMistakeAnswer: 'Thinking local primitive values are managed by the Java Garbage Collector.'
+        question: 'Can two separate, non-overlapping { } blocks in the same method declare variables with the exact same name?',
+        answer: 'Yes, absolutely! For example, if you write "{ int temp = 10; }" followed by another block "{ int temp = 20; }", this compiles and runs without any error. The first "temp" is destroyed the moment the first block closes. By the time the second block begins, that name no longer exists in scope, so declaring a fresh "temp" is 100% legal.',
+        followUp: 'What would happen if the second block was placed INSIDE the first block instead of after it?',
+        followUpAnswer: 'That would fail to compile! If the second block is nested inside the first, the outer "temp" is still alive and active, so declaring "int temp" inside causes a compiler error: "variable temp is already defined in scope".',
+        keyPhrases: ['sibling blocks', 'non-overlapping scopes', 'destroyed before recreated', 'nested duplicate collision'],
+        commonMistakeAnswer: 'Thinking a variable name can only be used once in an entire method even across distinct separate blocks.'
       },
       {
-        question: 'What are Java\'s identifier naming rules and conventions for variables?',
-        answer: 'Java enforces syntax rules at compile time: an identifier must start with a letter, an underscore (_), or a dollar sign ($), and can NEVER begin with a digit. It cannot match any Java reserved keyword like "class", "int", or "return". Conventionally, Java variables follow lowerCamelCase (e.g. "studentTotalScore", "isUserActive") to make code clear and self-documenting.',
-        followUp: 'Is "String _2ndPlace = \\"Silver\\";" a legal variable name in Java?',
-        followUpAnswer: 'Yes, it is legally valid because it starts with an underscore, not a digit. However, from a clean code standpoint, starting identifiers with underscores or dollar signs is heavily discouraged in production code unless auto-generated by tools.',
-        keyPhrases: ['no leading digits', 'no reserved keywords', 'lowerCamelCase convention', 'self-documenting identifiers'],
-        commonMistakeAnswer: 'Confusing language syntax rules (what compiles) with code style conventions (what is professional).'
+        question: 'What are Java\'s strict syntax rules for variable names (identifiers)?',
+        answer: 'Java enforces four syntax rules at compile time: (1) The identifier must start with a letter (A-Z, a-z), an underscore (_), or a dollar sign ($)—it can NEVER start with a digit. (2) After the first character, it can contain digits (e.g. "score1" is legal, but "1score" is illegal). (3) It cannot be a Java reserved keyword like "int", "class", "public", or "return". (4) Variable names are case-sensitive, meaning "score", "Score", and "SCORE" are three completely different variables.',
+        followUp: 'Can a variable name contain special characters like "@", "-", or spaces in Java?',
+        followUpAnswer: 'No. Characters like "@", "#", "-", and spaces are illegal in variable identifiers. The only allowed non-alphanumeric characters are the underscore (_) and the dollar sign ($).',
+        keyPhrases: ['no leading digits', 'no reserved keywords', 'case-sensitive', 'only _ and $ allowed'],
+        commonMistakeAnswer: 'Thinking variable names can start with numbers or contain hyphens like HTML/CSS.'
       },
       {
-        question: 'What does the "final" keyword do when applied to a local variable?',
-        answer: 'When a local variable is marked as final—like "final int MAX_RETRIES = 3;"—its value becomes immutable after its first assignment. Any subsequent attempt to reassign it triggers a compile-time error: "cannot assign a value to final variable". It prevents accidental mutation and clearly documents that the value must remain constant throughout the method.',
-        followUp: 'Can you declare a "blank final" local variable and assign it later?',
-        followUpAnswer: 'Yes! You can declare "final double discount;" and assign it later in an if-else block, as long as it is assigned exactly once before use. If your code attempts to assign it a second time, the compiler rejects it.',
-        keyPhrases: ['assigned exactly once', 'compile-time constant', 'blank final', 'cannot reassign error'],
-        commonMistakeAnswer: 'Believing final variables must always have their value assigned on the line of declaration.'
+        question: 'What is the standard Java naming convention for variables, and why is it important?',
+        answer: 'Java uses lowerCamelCase for variable names: the first word is in lowercase, and every subsequent word starts with an uppercase letter (e.g. "studentAge", "accountBalance", "totalFinalScore"). While violating this convention won\'t prevent compilation, following it is crucial because it makes code instantly readable to other developers and distinguishes variables from Class names, which use UpperCamelCase.',
+        followUp: 'Why should developers avoid single-letter variable names like "a", "b", or "temp1"?',
+        followUpAnswer: 'Single-letter names carry no meaning. When another developer reads "a = b * c;", nobody knows what is being calculated. Writing "totalBill = itemPrice * quantity;" makes the business logic self-documenting without needing extra comments.',
+        keyPhrases: ['lowerCamelCase', 'clean code readability', 'distinguish from classes', 'self-documenting identifiers'],
+        commonMistakeAnswer: 'Using snake_case (student_age) or single-letter names instead of standard Java camelCase.'
       },
       {
-        question: 'What is variable reassignment vs re-declaration, and how do you explain it to a beginner?',
-        answer: 'Think of a labeled storage container. Re-declaration is trying to register a second container with the exact same name in the same room—the Java compiler stops you with an error. Reassignment is simply opening the existing container, removing the old value, and placing a new value inside. In code, declaration specifies the data type ("int count = 1;"), while reassignment uses the variable name alone ("count = 2;").',
-        followUp: 'What common error happens when a beginner attempts to reassign a variable?',
-        followUpAnswer: 'Beginners often write "int count = 2;" a few lines later thinking they are updating it. The compiler throws "variable count is already defined". The fix is simply dropping the "int" keyword: "count = 2;".',
-        keyPhrases: ['storage container analogy', 'mutate existing value', 'omit data type on update', 'duplicate definition error'],
-        commonMistakeAnswer: 'Accidentally repeating the type keyword during reassignment.'
+        question: 'What does the "final" keyword do when you put it in front of a local variable?',
+        answer: 'Adding "final"—like "final int MAX_ATTEMPTS = 3;"—makes that local variable a constant. It can only be assigned a value once. If you later write "MAX_ATTEMPTS = 5;", the Java compiler refuses to compile with the error: "cannot assign a value to final variable MAX_ATTEMPTS". It protects values from being accidentally changed.',
+        followUp: 'What naming convention is conventionally used for final constant variables in Java?',
+        followUpAnswer: 'Constants are conventionally named in UPPER_SNAKE_CASE with capital letters and underscores separating words—such as "MAX_RETRY_COUNT" or "TAX_RATE". This makes it immediately obvious to anyone reading the code that the value is immutable.',
+        keyPhrases: ['single assignment', 'compile-time constant', 'cannot assign to final variable', 'UPPER_SNAKE_CASE convention'],
+        commonMistakeAnswer: 'Thinking final variables can be reassigned if you use the same value again.'
       },
       {
-        question: 'What is the scope and lifetime of a method parameter compared to a local variable?',
-        answer: 'Method parameters are effectively local variables that are initialized automatically by the caller at the instant the method is called. Their scope spans the entire method body from the opening brace { to the closing brace }. In contrast, local variables declared inside the method are only in scope from the line of their declaration downward to the end of their enclosing block.',
-        followUp: 'Can you declare a local variable inside the method with the same name as a parameter?',
-        followUpAnswer: 'No, that causes a compile error: "variable x is already defined in method". Because the parameter already occupies that identifier across the method scope, a local variable cannot reuse that name.',
-        keyPhrases: ['caller-initialized local', 'spans entire method body', 'declared line downward', 'parameter duplicate error'],
-        commonMistakeAnswer: 'Thinking parameters have a broader scope that lives outside the method invocation.'
+        question: 'What happens when you store the result of dividing two integer variables like "int result = 10 / 4;" in Java?',
+        answer: 'The variable "result" will hold 2, NOT 2.5! In Java, when both operands are integers, Java performs integer division, which discards (truncates) any fractional or decimal portion entirely without rounding. It simply drops the ".5".',
+        followUp: 'How would you get the exact decimal answer 2.5 using variables?',
+        followUpAnswer: 'At least one of the numbers must be a floating-point type like double. For example, writing "double result = 10.0 / 4;" or storing 10 in a double variable gives "2.5". When one operand is a double, Java promotes the entire division to decimal arithmetic.',
+        keyPhrases: ['integer division', 'decimal truncation', 'drops fractional part', 'operand promotion to double'],
+        commonMistakeAnswer: 'Expecting 10 / 4 to automatically produce 2.5 or round up to 3.'
       },
       {
-        question: 'Can a local variable in Java be marked as public, private, protected, or static?',
-        answer: 'No! Local variables can never have access modifiers like public, private, or protected, nor can they be marked static. Access modifiers govern visibility across classes and packages, but local variables are already private to their method frame. Attempting to write "public int x = 10;" or "static int y = 20;" inside a method results in a compile error: "illegal start of expression".',
-        followUp: 'What modifier IS permitted on a local variable?',
-        followUpAnswer: 'Only the "final" modifier (and annotations) is permitted on local variables to enforce single-assignment immutability.',
-        keyPhrases: ['no access modifiers on locals', 'no static inside methods', 'illegal start of expression', 'only final is allowed'],
-        commonMistakeAnswer: 'Attempting to create static counters inside a method body.'
+        question: 'How does Java handle printing variables combined with text using the "+" operator, and what is the common beginner trap?',
+        answer: 'The "+" operator in Java is overloaded: when used between numbers, it performs addition, but when either side is a String, it converts the other side to text and glues them together (concatenation). The beginner trap is order of evaluation: Java evaluates from left to right. If you write "System.out.println(\\"Score: \\" + 10 + 20);", it evaluates \\"Score: \\" + 10 to \\"Score: 10\\", and then \\"Score: 10\\" + 20 to \\"Score: 1020\\"!',
+        followUp: 'How do you make Java add the numbers first so it prints "Score: 30"?',
+        followUpAnswer: 'Use parentheses! In Java, parentheses have the highest precedence. Writing "System.out.println(\\"Score: \\" + (10 + 20));" forces Java to compute 10 + 20 = 30 first, producing the intended "Score: 30".',
+        keyPhrases: ['left-to-right evaluation', 'overloaded + operator', 'String concatenation trap', 'parentheses for arithmetic precedence'],
+        commonMistakeAnswer: 'Assuming Java will automatically do all addition before concatenating with text.'
       },
       {
-        question: 'How does variable scope impact memory management and garbage collection in Java?',
-        answer: 'Keeping variable scope as narrow as possible is a core Java clean-architecture principle. If a local variable holds a reference to a large object (like a 100MB dataset or network buffer) at the start of a long method, that object cannot be garbage collected as long as the reference remains on the active stack frame. By declaring variables inside a narrow block { } or delegating to a helper method, the reference goes out of scope immediately, allowing the Garbage Collector to reclaim heap memory promptly.',
-        followUp: 'What is the golden rule of variable declaration location in modern Java?',
-        followUpAnswer: 'Declare variables as close to their first point of use as possible, with the narrowest scope required. This prevents accidental reuse, maximizes readability, and assists memory reclamation.',
-        keyPhrases: ['narrowest scope possible', 'declare near first use', 'stack frame retention', 'early GC eligibility'],
-        commonMistakeAnswer: 'Declaring all variables at the very top of a large method like old C code.'
+        question: 'What is the exact lifecycle of a local variable during program execution?',
+        answer: 'A local variable\'s lifecycle begins at the line of its declaration during execution. Memory is reserved for it, and it holds its value while the enclosing code block runs. The moment execution leaves that code block—when it hits the closing curly brace }—the variable\'s lifecycle ends immediately. Its memory is freed up, and the variable is gone forever.',
+        followUp: 'Can a variable be used before the line where it is declared in the same block?',
+        followUpAnswer: 'No, Java reads code top-down. If you write "x = 10;" on line 5 and "int x;" on line 6, the compiler will error out with "cannot find symbol: variable x". A variable does not exist until its declaration line is reached.',
+        keyPhrases: ['top-down execution', 'born at declaration line', 'dies at closing brace', 'cannot use before declaration'],
+        commonMistakeAnswer: 'Believing Java hoists local variable declarations to the top of the block like JavaScript does.'
+      },
+      {
+        question: 'Why is it considered a best practice in modern Java to declare variables right where they are first used rather than all at the top of the method?',
+        answer: 'In older languages like C, all variables had to be declared at the very top of a function. Modern Java strongly recommends declaring variables right before they are needed. This keeps variable scope as narrow as possible, improves code readability because you don\'t have to scroll up to find a variable\'s type, and prevents accidental reuse or mutation of variables across unrelated sections of code.',
+        followUp: 'What is the rule of thumb for variable scope in clean software engineering?',
+        followUpAnswer: 'The rule of thumb is the "Principle of Least Privilege" for scope: always give a variable the narrowest scope possible. If a variable is only needed inside a specific block, declare it inside that block, not outside it.',
+        keyPhrases: ['narrowest scope possible', 'principle of least privilege', 'declare near first use', 'prevents accidental mutation'],
+        commonMistakeAnswer: 'Thinking declaring all variables at the top of the method is required or cleaner.'
+      },
+      {
+        question: 'How do you swap the values of two variables in Java, and why is a third temporary variable usually needed?',
+        answer: 'If you have "int a = 10;" and "int b = 20;", writing "a = b;" immediately overwrites "a" with 20, losing the original value of 10 forever. To prevent this, we introduce a temporary holding variable: "int temp = a;" (saves 10), then "a = b;" (copies 20 into a), and finally "b = temp;" (copies the saved 10 into b). This cleanly exchanges their values.',
+        followUp: 'Can two integer variables be swapped without using a third variable?',
+        followUpAnswer: 'Yes! You can use arithmetic: "a = a + b;" (holds combined total 30), "b = a - b;" (30 - 20 = 10, so b is now original a), and "a = a - b;" (30 - 10 = 20, so a is now original b). However, in production code, using a temporary variable is preferred because it is clearer to read and avoids potential integer overflow.',
+        keyPhrases: ['temporary holding container', 'prevent overwriting data', 'arithmetic swap', 'overflow risk with arithmetic'],
+        commonMistakeAnswer: 'Writing "a = b; b = a;" which leaves both variables holding the value of b.'
       }
     ],
     miniQuiz: [
@@ -336,18 +352,21 @@ System.out.println(p + " " + q + " " + r);`,
         explanation: 'Java assignment = associates right-to-left. First r becomes 9. Then q receives 9. Finally p receives 9. All three variables print 9.'
       },
       {
-        title: 'Puzzle 4: Guaranteed Constant-Expression Initialization',
-        problemStatement: 'Does Java compile this if block with constant true?',
-        code: `int num;
-if (true) {
-    num = 50;
+        title: 'Puzzle 4: Sibling Blocks Reusing Variable Identifier',
+        problemStatement: 'Can two separate non-overlapping blocks { } declare a variable with the same name?',
+        code: `{
+    int temp = 25;
+    System.out.print(temp + " ");
 }
-System.out.println(num);`,
-        options: ['50', '0', 'null', 'Compiler Error: variable might not have been initialized'],
+{
+    int temp = 50;
+    System.out.print(temp);
+}`,
+        options: ['25 50', '25 25', 'Compiler Error: variable temp is already defined', '50 50'],
         correctOptionIndex: 0,
-        hint: 'Because "true" is a compile-time constant boolean literal, the compiler knows the if block is 100% guaranteed to execute.',
-        solution: '50',
-        explanation: 'Because if (true) uses a compile-time boolean literal, Java definite assignment analysis knows the block cannot be bypassed. Therefore num is guaranteed to be 50.'
+        hint: 'The first temp is destroyed when the first block ends. When the second block begins, temp is a completely fresh declaration.',
+        solution: '25 50',
+        explanation: 'Because the two blocks are non-overlapping siblings, the first "temp" goes out of scope and is destroyed at the first closing brace. The second block can safely declare its own "temp". Output is "25 50".'
       },
       {
         title: 'Puzzle 5: Nested Block Accessing Enclosing Variable',

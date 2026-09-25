@@ -1120,7 +1120,7 @@ export default function JavaSubLessonPage() {
                               </span>
                               <div>
                                 <h4 className="font-bold text-slate-100 text-sm sm:text-base">
-                                  {prog.title}
+                                  {prog.title.replace(/^\d+[\.\s\-]+/, '')}
                                 </h4>
                                 <span className="text-[10px] text-slate-500 font-mono">
                                   Challenge #{pIdx + 1} of {lesson.programmingExercises!.length}
