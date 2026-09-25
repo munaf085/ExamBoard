@@ -3,6 +3,11 @@ import './index.css';
 import HomePage from './pages/HomePage';
 import DotNetDashboard from './pages/DotNetDashboard';
 import JavaDashboard from './pages/JavaDashboard';
+import JavaModulePage from './pages/java/JavaModulePage';
+import JavaMCQPage from './pages/java/JavaMCQPage';
+import JavaFlashcardsPage from './pages/java/JavaFlashcardsPage';
+import JavaMockInterviewPage from './pages/java/JavaMockInterviewPage';
+import JavaRevisionPage from './pages/java/JavaRevisionPage';
 import TestSelectionPage from './pages/TestSelectionPage';
 import TestInstructionsPage from './pages/TestInstructionsPage';
 import TestRunnerPage from './pages/TestRunnerPage';
@@ -23,6 +28,13 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/dotnet" element={<DotNetDashboard />} />
         <Route path="/java" element={<JavaDashboard />} />
+        
+        <Route path="/java/module/:moduleId" element={<JavaModulePage />} />
+        <Route path="/java/mcq/:moduleId" element={<JavaMCQPage />} />
+        <Route path="/java/flashcards" element={<JavaFlashcardsPage />} />
+        <Route path="/java/mock-interview" element={<JavaMockInterviewPage />} />
+        <Route path="/java/revision" element={<JavaRevisionPage />} />
+        
         <Route path="/test-selection" element={<TestSelectionPage />} />
         <Route path="/test-instructions/:paperId" element={<TestInstructionsPage />} />
         <Route path="/test/:paperId" element={<TestRunnerPage />} />

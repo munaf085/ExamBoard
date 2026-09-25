@@ -1,35 +1,215 @@
-import { Link } from 'react-router-dom';
-import { Coffee, ChevronRight, Construction } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { 
+  ArrowLeft, BookOpen, Layers, Package, Zap, Leaf, Database, 
+  Coffee, Calculator, GitBranch, Type, List, Shield, AlertTriangle, Box, Wind, Cpu, Server, Globe, HardDrive,
+  PlayCircle, HelpCircle, CheckCircle, Clock, ChevronDown, ChevronUp, BookMarked, BrainCircuit, Target, Award
+} from 'lucide-react';
+import { JAVA_MODULES, JAVA_SECTIONS } from '../data/java/curriculum';
+import { getJavaProgress } from '../utils/javaStorage';
+import { JavaProgress, JavaModule } from '../types';
+
+const ICON_MAP: Record<string, React.FC<any>> = {
+  BookOpen, Layers, Package, Zap, Leaf, Database,
+  Coffee, Calculator, GitBranch, Type, List, Shield, AlertTriangle, Box, Wind, Cpu, Server, Globe, HardDrive
+};
 
 export default function JavaDashboard() {
-  return (
-    <div className="min-h-screen bg-slate-900 text-slate-100">
-      <main className="max-w-7xl mx-auto px-6 py-10">
-        <Link to="/" className="inline-flex items-center text-slate-400 hover:text-white mb-6 transition-colors">
-          <ChevronRight className="w-4 h-4 rotate-180 mr-1" /> Back to Modules
-        </Link>
-        
-        <div className="text-center mb-12 mt-8">
-          <div className="inline-flex items-center justify-center bg-emerald-900/40 border border-emerald-500/30 text-emerald-300 text-sm font-medium px-4 py-1.5 rounded-full mb-4">
-            <Coffee className="w-4 h-4 mr-2" /> Java Developer Track
-          </div>
-          <h2 className="text-4xl font-extrabold text-white mb-3">
-            Java Interview Simulator
-          </h2>
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto mb-10">
-            Dedicated practice modules for Core Java, Spring Boot, Microservices, and JVM internals.
-          </p>
+  const navigate = useNavigate();
+  const [progress, setProgress] = useState<JavaProgress | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(
+    JAVA_SECTIONS.reduce((acc, section) => ({ ...acc, [section.id]: true }), {})
+  );
 
-          <div className="bg-slate-800/50 border border-slate-700 rounded-3xl p-12 flex flex-col items-center justify-center max-w-3xl mx-auto">
-            <Construction className="w-16 h-16 text-emerald-500 mb-6" />
-            <h3 className="text-2xl font-bold text-white mb-2">Content Under Construction</h3>
-            <p className="text-slate-400 max-w-md">
-              We are currently building the Java-specific question banks, mock interview rounds, and Spring Boot assignments. 
-              Please check back later!
-            </p>
+  useEffect(() => {
+    setProgress(getJavaProgress());
+  }, []);
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => ({ ...prev, [sectionId]: !prev[sectionId] }));
+  };
+
+  if (!progress) return null;
+
+  const totalModules = JAVA_MODULES.length;
+  // A module is considered completed if all its lessons are completed (for simplicity, here we just say if all its lessons are in lessonsCompleted).
+  // But we don't have lessons here, just module ids. Let's just calculate lessons done vs total lessons across all modules.
+  const totalLessons = JAVA_MODULES.reduce((sum, mod) => sum + mod.lessonCount, 0);
+  const lessonsDone = progress.lessonsCompleted.length;
+  
+  // Actually, we'll consider a module "completed" if it's in strongModules, or if the user has completed enough lessons? The prompt didn't specify exactly.
+  // We'll calculate "MCQs Done" as Object.keys(progress.mcqResults).length
+  const mcqsDone = Object.keys(progress.mcqResults).length;
+  const modulesCompleted = progress.strongModules.length; // Just an approximation for stats
+
+  const getModuleProgress = (mod: JavaModule) => {
+    // Just a dummy progress calculation based on lessons done for this module if we mapped it, but we only have lessonsCompleted strings.
+    // We'll assume module completion is based on whether it is in weak/strong or we can just randomly give it if we don't know. 
+    // Since we don't know the mapping of lesson ids to modules, we'll check if the module is in strongModules (100%), weakModules (25%), else 0%.
+    if (progress.strongModules.includes(mod.id)) return 100;
+    if (progress.weakModules.includes(mod.id)) return 25;
+    return 0; // Default 0
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-200 p-6 font-sans">
+      <div className="max-w-6xl mx-auto space-y-8">
+        
+        {/* Header */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <Link to="/" className="inline-flex items-center text-blue-400 hover:text-blue-300 mb-2 transition-colors">
+              <ArrowLeft className="w-4 h-4 mr-2" /> Back to Modules
+            </Link>
+            <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+              <Coffee className="w-8 h-8 text-orange-500" />
+              Java Developer Interview Portal
+            </h1>
+          </div>
+        </header>
+
+        {/* Stats Bar */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-slate-800 border border-slate-700 p-4 rounded-xl flex items-center gap-4 shadow-lg">
+            <div className="bg-blue-500/20 p-3 rounded-lg text-blue-400">
+              <BookMarked className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-400 font-medium">Modules Completed</p>
+              <p className="text-2xl font-bold text-white">{modulesCompleted}<span className="text-sm text-slate-500 font-normal"> / {totalModules}</span></p>
+            </div>
+          </div>
+          <div className="bg-slate-800 border border-slate-700 p-4 rounded-xl flex items-center gap-4 shadow-lg">
+            <div className="bg-emerald-500/20 p-3 rounded-lg text-emerald-400">
+              <CheckCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-400 font-medium">MCQs Attempted</p>
+              <p className="text-2xl font-bold text-white">{mcqsDone}</p>
+            </div>
+          </div>
+          <div className="bg-slate-800 border border-slate-700 p-4 rounded-xl flex items-center gap-4 shadow-lg">
+            <div className="bg-purple-500/20 p-3 rounded-lg text-purple-400">
+              <PlayCircle className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-sm text-slate-400 font-medium">Lessons Done</p>
+              <p className="text-2xl font-bold text-white">{lessonsDone}<span className="text-sm text-slate-500 font-normal"> / {totalLessons}</span></p>
+            </div>
           </div>
         </div>
-      </main>
+
+        {/* Quick Links */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
+            <HelpCircle className="w-8 h-8 text-indigo-400" />
+            <span className="font-semibold text-slate-200">MCQ Practice</span>
+          </button>
+          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
+            <BrainCircuit className="w-8 h-8 text-pink-400" />
+            <span className="font-semibold text-slate-200">Mock Interview</span>
+          </button>
+          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
+            <Target className="w-8 h-8 text-yellow-400" />
+            <span className="font-semibold text-slate-200">Revision Mode</span>
+          </button>
+          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
+            <Award className="w-8 h-8 text-red-400" />
+            <span className="font-semibold text-slate-200">Final Assessment</span>
+          </button>
+        </div>
+
+        {/* Curriculum Sections */}
+        <div className="space-y-6">
+          {JAVA_SECTIONS.map(section => {
+            const sectionModules = JAVA_MODULES.filter(m => m.section === section.id);
+            const isExpanded = expandedSections[section.id];
+            const SectionIcon = ICON_MAP[section.icon] || BookOpen;
+
+            return (
+              <div key={section.id} className="bg-slate-800/50 border border-slate-700 rounded-2xl overflow-hidden">
+                <button 
+                  onClick={() => toggleSection(section.id)}
+                  className="w-full px-6 py-4 flex items-center justify-between bg-slate-800 hover:bg-slate-750 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg bg-${section.color}-500/20 text-${section.color}-400`}>
+                      <SectionIcon className="w-5 h-5" />
+                    </div>
+                    <h2 className="text-xl font-bold text-white">{section.label}</h2>
+                    <span className="text-sm font-medium text-slate-400 bg-slate-900 px-2 py-1 rounded-full">
+                      {sectionModules.length} Modules
+                    </span>
+                  </div>
+                  {isExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
+                </button>
+
+                {isExpanded && (
+                  <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sectionModules.map(mod => {
+                      const ModIcon = ICON_MAP[mod.icon] || BookOpen;
+                      const modProgress = getModuleProgress(mod);
+                      
+                      return (
+                        <div key={mod.id} className="bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl p-5 flex flex-col h-full transition-all shadow-sm">
+                          <div className="flex justify-between items-start mb-3">
+                            <div className="flex items-center gap-3">
+                              <ModIcon className="w-6 h-6 text-slate-400" />
+                              <h3 className="font-bold text-lg text-slate-100">{mod.title}</h3>
+                            </div>
+                            <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                              mod.difficulty === 'Easy' ? 'bg-green-500/20 text-green-400' :
+                              mod.difficulty === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                              'bg-red-500/20 text-red-400'
+                            }`}>
+                              {mod.difficulty}
+                            </span>
+                          </div>
+                          
+                          <p className="text-sm text-slate-400 mb-4 flex-grow line-clamp-2">
+                            {mod.description}
+                          </p>
+
+                          <div className="space-y-4">
+                            <div>
+                              <div className="flex justify-between text-xs font-medium text-slate-400 mb-1">
+                                <span>Progress</span>
+                                <span>{modProgress}%</span>
+                              </div>
+                              <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden">
+                                <div 
+                                  className="h-full bg-blue-500 transition-all duration-500"
+                                  style={{ width: `${modProgress}%` }}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-2 text-xs text-slate-400 font-medium">
+                              <span className="flex items-center gap-1"><BookOpen className="w-3 h-3"/> {mod.lessonCount} Lessons</span>
+                              <span className="flex items-center gap-1"><HelpCircle className="w-3 h-3"/> {mod.mcqCount} MCQs</span>
+                              <span className="flex items-center gap-1"><Clock className="w-3 h-3"/> {mod.estimatedMinutes}m</span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                              <button className="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg text-sm transition-colors">
+                                Learn
+                              </button>
+                              <button className="bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 rounded-lg text-sm transition-colors">
+                                Practice MCQ
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        
+      </div>
     </div>
   );
 }

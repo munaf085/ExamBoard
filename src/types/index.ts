@@ -27,7 +27,14 @@ export type Category =
   | 'Frontend'
   | 'OS'
   | 'Agile'
-  | 'Aptitude';
+  | 'Aptitude'
+  | 'Java'
+  | 'JavaOOP'
+  | 'JavaCollections'
+  | 'JavaAdvanced'
+  | 'JavaSpring'
+  | 'JavaDSA'
+  | 'JavaSQL';
 
 export type PaperId =
   | 'easy-1'
@@ -40,7 +47,13 @@ export type PaperId =
   | 'csharp-oop-1'
   | 'topic-csharp-basics'
   | 'topic-csharp-oop'
-  | 'topic-csharp-adv';
+  | 'topic-csharp-adv'
+  | 'topic-java-basics'
+  | 'topic-java-oop' 
+  | 'topic-java-adv'
+  | 'java-easy-1'
+  | 'java-medium-1'
+  | 'java-final';
 
 export interface WrittenQuestion {
   id: string;
@@ -169,6 +182,12 @@ export const PAPERS: PaperMeta[] = [
   { id: 'topic-csharp-basics', label: 'Topic: C# Basics & Types', difficulty: 'Medium', description: 'Exclusively covers Value/Ref types, Strings, Arrays, Enums, and Operators', questionCount: 40, durationMinutes: 60 },
   { id: 'topic-csharp-oop', label: 'Topic: C# OOP Deep Dive', difficulty: 'Hard', description: 'Exclusively covers Inheritance, Polymorphism, Encapsulation, Abstraction, and Interfaces', questionCount: 40, durationMinutes: 60 },
   { id: 'topic-csharp-adv', label: 'Topic: C# Advanced & Memory', difficulty: 'Hard', description: 'Exclusively covers Delegates, LINQ, Exceptions, Garbage Collection, and async/await', questionCount: 40, durationMinutes: 60 },
+  { id: 'topic-java-basics', label: 'Java Basics & Types', difficulty: 'Easy', description: 'JVM, Data Types, Operators, Control Flow, Strings', questionCount: 40, durationMinutes: 60 },
+  { id: 'topic-java-oop', label: 'Java OOP Deep Dive', difficulty: 'Medium', description: 'Classes, Inheritance, Polymorphism, Abstraction, Interfaces', questionCount: 40, durationMinutes: 60 },
+  { id: 'topic-java-adv', label: 'Java Advanced & Collections', difficulty: 'Hard', description: 'Collections, Generics, Streams, Lambda, Exception Handling', questionCount: 40, durationMinutes: 60 },
+  { id: 'java-easy-1', label: 'Java Mock Test 1', difficulty: 'Easy', description: 'Full mixed Java mock paper for beginners', questionCount: 40, durationMinutes: 60 },
+  { id: 'java-medium-1', label: 'Java Mock Test 2', difficulty: 'Medium', description: 'Intermediate Java mock with code-output and OOP tracing', questionCount: 40, durationMinutes: 60 },
+  { id: 'java-final', label: 'Java Final Assessment', difficulty: 'Hard', description: 'Complete Java assessment covering all topics', questionCount: 40, durationMinutes: 60 },
 ];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
@@ -182,5 +201,141 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   OS:       'Operating Systems',
   Agile:    'Agile / SDLC',
   Aptitude: 'Aptitude',
+  Java: 'Java',
+  JavaOOP: 'Java OOP',
+  JavaCollections: 'Collections & Generics',
+  JavaAdvanced: 'Advanced Java',
+  JavaSpring: 'Spring / Spring Boot',
+  JavaDSA: 'Java DSA',
+  JavaSQL: 'SQL / JDBC',
 };
+
+// ============================================================
+// JAVA INTERVIEW PLATFORM — EXTENDED TYPE DEFINITIONS
+// ============================================================
+
+export interface JavaModule {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: Difficulty;
+  estimatedMinutes: number;
+  icon: string; // lucide icon name
+  topics: string[];
+  prerequisites: string[];
+  lessonCount: number;
+  mcqCount: number;
+  codingCount: number;
+  interviewCount: number;
+  section: JavaSection;
+}
+
+export type JavaSection =
+  | 'fundamentals'
+  | 'oop'
+  | 'collections'
+  | 'advanced'
+  | 'spring'
+  | 'database'
+  | 'dsa'
+  | 'testing';
+
+export interface JavaLesson {
+  id: string;
+  moduleId: string;
+  title: string;
+  order: number;
+  explanation: string;
+  keyConcepts: KeyConcept[];
+  codeExamples: CodeExample[];
+  commonMistakes: string[];
+  interviewTips: string[];
+  revisionPoints: string[];
+}
+
+export interface KeyConcept {
+  term: string;
+  definition: string;
+}
+
+export interface CodeExample {
+  title: string;
+  code: string;
+  output?: string;
+  explanation: string;
+}
+
+export interface JavaMCQ {
+  id: string;
+  moduleId: string;
+  question: string;
+  code?: string;
+  options: string[];
+  correctAnswer: number;
+  explanation: string;
+  difficulty: Difficulty;
+  type: 'conceptual' | 'output' | 'debugging' | 'syntax';
+  tags: string[];
+}
+
+export interface JavaCodingProblem {
+  id: string;
+  moduleId: string;
+  title: string;
+  description: string;
+  inputFormat: string;
+  outputFormat: string;
+  constraints: string;
+  examples: ProblemExample[];
+  difficulty: Difficulty;
+  hints: string[];
+  approach: string;
+  solutionExplanation: string;
+  javaSolution: string;
+  tags: string[];
+}
+
+export interface ProblemExample {
+  input: string;
+  output: string;
+  explanation?: string;
+}
+
+export interface JavaInterviewQuestion {
+  id: string;
+  moduleId: string;
+  question: string;
+  expectedAnswer: string;
+  followUps: string[];
+  keyPoints: string[];
+  difficulty: Difficulty;
+  type: 'definition' | 'why' | 'how' | 'difference' | 'scenario' | 'coding' | 'debugging';
+  tags: string[];
+}
+
+export interface JavaFlashcard {
+  id: string;
+  moduleId: string;
+  front: string;
+  back: string;
+  difficulty: Difficulty;
+  tags: string[];
+}
+
+export interface JavaProgress {
+  lessonsCompleted: string[]; // lesson IDs
+  mcqResults: Record<string, { correct: boolean; attempts: number }>;
+  codingAttempted: string[];
+  interviewReviewed: string[];
+  flashcardsKnown: string[];
+  mockInterviewsDone: number;
+  weakModules: string[];
+  strongModules: string[];
+  lastUpdated: number;
+}
+
+export interface MockInterviewResult {
+  questionId: string;
+  selfScore: 'know' | 'partial' | 'dont-know';
+}
 
