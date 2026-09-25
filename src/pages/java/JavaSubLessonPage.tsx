@@ -5,14 +5,15 @@ import {
   AlertTriangle, Lightbulb, Code2, BookOpen, Terminal,
   Menu, X, Sparkles, ChevronRight, CheckCircle, RotateCcw,
   Eye, EyeOff, Award, Check, ChevronDown, ListFilter,
-  Volume2, ThumbsUp, ThumbsDown, Clock
+  Volume2, ThumbsUp, ThumbsDown, Clock, FileText, Split, CheckSquare
 } from 'lucide-react';
 import {
   DETAILED_LESSONS,
   getDetailedLesson,
   getAllDetailedLessons,
   getAdjacentLessons,
-  DetailedLesson
+  DetailedLesson,
+  PracticeProblem
 } from '../../data/java/detailedLessons';
 import {
   getJavaProgress,
@@ -22,7 +23,7 @@ import {
   SelfEvalRating
 } from '../../utils/javaStorage';
 
-type ActiveTab = 'takeaways' | 'practice' | 'interview' | 'quiz' | 'all';
+type ActiveTab = 'takeaways' | 'cheatsheet' | 'practice' | 'interview' | 'quiz' | 'all';
 
 export default function JavaSubLessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -37,10 +38,10 @@ export default function JavaSubLessonPage() {
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [quizRevealed, setQuizRevealed] = useState<Record<number, boolean>>({});
 
-  // Practice Problem state
-  const [practiceSelected, setPracticeSelected] = useState<number | null>(null);
-  const [practiceRevealed, setPracticeRevealed] = useState(false);
-  const [showHint, setShowHint] = useState(false);
+  // Practice Problems state (multi-problem support)
+  const [practiceSelected, setPracticeSelected] = useState<Record<number, number>>({});
+  const [practiceRevealed, setPracticeRevealed] = useState<Record<number, boolean>>({});
+  const [showHints, setShowHints] = useState<Record<number, boolean>>({});
 
   // Interviewer Question state: which questions have their answers revealed
   const [revealedQuestions, setRevealedQuestions] = useState<Record<number, boolean>>({});
@@ -51,6 +52,13 @@ export default function JavaSubLessonPage() {
 
   const currentLessonIndex = allLessons.findIndex(l => l.id === lesson?.id);
 
+  // Normalize practice problems list
+  const practiceProblemsList: PracticeProblem[] = lesson?.practiceProblems
+    ? lesson.practiceProblems
+    : lesson?.practiceProblem
+    ? [lesson.practiceProblem]
+    : [];
+
   useEffect(() => {
     const progress = getJavaProgress();
     setCompletedLessons(progress.lessonsCompleted || []);
@@ -59,9 +67,9 @@ export default function JavaSubLessonPage() {
     // Reset interactive states when switching lesson
     setQuizAnswers({});
     setQuizRevealed({});
-    setPracticeSelected(null);
-    setPracticeRevealed(false);
-    setShowHint(false);
+    setPracticeSelected({});
+    setPracticeRevealed({});
+    setShowHints({});
     setRevealedQuestions({});
     setActiveTab('takeaways');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -161,6 +169,15 @@ export default function JavaSubLessonPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Quick link to Revision cheat sheets */}
+          <Link
+            to="/java/revision"
+            className="hidden sm:flex items-center gap-1 text-xs text-slate-400 hover:text-blue-300 px-2.5 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 bg-slate-900/80 transition"
+          >
+            <FileText className="w-3.5 h-3.5 text-blue-400" />
+            <span>All Cheatsheets</span>
+          </Link>
+
           {/* Rating Badge */}
           {currentRating && (
             <span
@@ -339,6 +356,18 @@ export default function JavaSubLessonPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab('cheatsheet')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
+                activeTab === 'cheatsheet'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-400" />
+              <span>📋 Cheat Sheet</span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('practice')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
                 activeTab === 'practice'
@@ -347,7 +376,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Practice & Code</span>
+              <span>Examples & Practice ({practiceProblemsList.length + 1})</span>
             </button>
 
             <button
@@ -359,7 +388,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <Award className="w-3.5 h-3.5 text-purple-400" />
-              <span>Self-Evaluate (Q&A)</span>
+              <span>Self-Evaluate ({lesson.interviewQuestions.length} Qs)</span>
             </button>
 
             <button
@@ -453,111 +482,235 @@ export default function JavaSubLessonPage() {
             </div>
           )}
 
-          {/* ── TAB 2: PRACTICE PROBLEM & CODE TRACING ── */}
-          {(activeTab === 'practice' || activeTab === 'all') && (
-            <div className="space-y-5">
-              {/* Practice Challenge Card */}
-              {lesson.practiceProblem && (
-                <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm uppercase tracking-wider">
-                      <Code2 className="w-4 h-4" />
-                      <span>{lesson.practiceProblem.title}</span>
-                    </div>
-                    <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                      Self Practice
-                    </span>
+          {/* ── TAB: DEDICATED TOPIC CHEAT SHEET ── */}
+          {(activeTab === 'cheatsheet' || activeTab === 'all') && (
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-amber-950/20 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
+                    <FileText className="w-4 h-4 text-amber-400" />
+                    <span>Topic Cheat Sheet & Quick Reference</span>
                   </div>
+                  <Link
+                    to="/java/revision"
+                    className="text-xs text-amber-400 hover:underline flex items-center gap-1 font-medium"
+                  >
+                    <span>Full Cheat Sheet</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
 
-                  <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                    {lesson.practiceProblem.problemStatement}
-                  </p>
-
-                  {lesson.practiceProblem.code && (
-                    <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
-                      <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
-                        <code>{lesson.practiceProblem.code}</code>
-                      </pre>
+                {lesson.cheatSheet ? (
+                  <div className="space-y-4">
+                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                      <strong className="text-amber-300">Summary: </strong>
+                      {lesson.cheatSheet.summary}
                     </div>
-                  )}
 
-                  {/* Options if provided */}
-                  {lesson.practiceProblem.options && (
+                    {lesson.cheatSheet.syntaxTemplate && (
+                      <div className="space-y-1.5">
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                          Standard Syntax Template:
+                        </div>
+                        <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                          <pre className="font-mono text-xs sm:text-sm text-amber-300 leading-relaxed">
+                            <code>{lesson.cheatSheet.syntaxTemplate}</code>
+                          </pre>
+                        </div>
+                      </div>
+                    )}
+
+                    {lesson.cheatSheet.rules && (
+                      <div className="space-y-2">
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                          Core Rules:
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {lesson.cheatSheet.rules.map((r, rIdx) => (
+                            <div key={rIdx} className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-xs space-y-1">
+                              <div className="font-bold text-slate-200">📌 {r.rule}</div>
+                              <div className="text-slate-400 leading-relaxed">{r.explanation}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {lesson.cheatSheet.quickComparison && (
+                      <div className="space-y-2">
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                          Interview Comparison Table:
+                        </div>
+                        <div className="overflow-x-auto rounded-xl border border-slate-800">
+                          <table className="w-full text-xs text-left">
+                            <thead className="bg-slate-850 text-slate-300 font-bold uppercase text-[10px]">
+                              <tr>
+                                <th className="p-2.5">Aspect</th>
+                                <th className="p-2.5 text-blue-300">Option A</th>
+                                <th className="p-2.5 text-emerald-300">Option B</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-800 bg-slate-900/60">
+                              {lesson.cheatSheet.quickComparison.map((row, cIdx) => (
+                                <tr key={cIdx} className="hover:bg-slate-800/40">
+                                  <td className="p-2.5 font-semibold text-slate-300">{row.aspect}</td>
+                                  <td className="p-2.5 text-slate-400 font-mono text-[11px]">{row.optionA}</td>
+                                  <td className="p-2.5 text-slate-400 font-mono text-[11px]">{row.optionB}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Fallback auto-generated quick rules from coreExplanation */
+                  <div className="space-y-3">
+                    <p className="text-xs text-slate-400">
+                      Quick Reference Points for {lesson.title}:
+                    </p>
                     <div className="space-y-2">
-                      <div className="text-xs font-semibold text-slate-400">
-                        Select what you predict the output will be:
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {lesson.practiceProblem.options.map((opt, optIdx) => {
-                          const isCorrect = optIdx === lesson.practiceProblem?.correctOptionIndex;
-                          const chosen = practiceSelected === optIdx;
-                          let btnStyle = 'border-slate-800 bg-slate-950/80 text-slate-300 hover:border-slate-700';
-
-                          if (practiceRevealed) {
-                            if (isCorrect) {
-                              btnStyle = 'border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-semibold';
-                            } else if (chosen) {
-                              btnStyle = 'border-rose-500/80 bg-rose-500/20 text-rose-300';
-                            } else {
-                              btnStyle = 'border-slate-800/40 bg-slate-950/40 text-slate-500 opacity-60';
-                            }
-                          } else if (chosen) {
-                            btnStyle = 'border-blue-500 bg-blue-500/20 text-blue-200';
-                          }
-
-                          return (
-                            <button
-                              key={optIdx}
-                              onClick={() => {
-                                setPracticeSelected(optIdx);
-                                setPracticeRevealed(true);
-                              }}
-                              className={`p-3 rounded-xl border text-xs sm:text-sm font-mono text-left transition flex items-center justify-between ${btnStyle}`}
-                            >
-                              <span>{opt}</span>
-                              {practiceRevealed && isCorrect && (
-                                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                              )}
-                            </button>
-                          );
-                        })}
-                      </div>
+                      {lesson.coreExplanation.map((point, pIdx) => (
+                        <div key={pIdx} className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
+                          <CheckSquare className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                          <span>{point}</span>
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
-                  {/* Hint & Tracing Solution Actions */}
-                  <div className="flex flex-wrap items-center gap-2 pt-1">
-                    <button
-                      onClick={() => setShowHint(!showHint)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
-                    >
-                      {showHint ? 'Hide Hint' : '💡 Need a Hint?'}
-                    </button>
-
-                    <button
-                      onClick={() => setPracticeRevealed(!practiceRevealed)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-sm"
-                    >
-                      {practiceRevealed ? 'Hide Step-by-Step Tracing' : 'Reveal Tracing Solution'}
-                    </button>
+          {/* ── TAB 2: PLENTY OF EXAMPLES & PRACTICE PROBLEMS ── */}
+          {(activeTab === 'practice' || activeTab === 'all') && (
+            <div className="space-y-6">
+              {/* Practice Challenges Section */}
+              {practiceProblemsList.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm uppercase tracking-wider">
+                    <Code2 className="w-4 h-4" />
+                    <span>Interactive Practice Problems ({practiceProblemsList.length} Puzzles)</span>
                   </div>
 
-                  {showHint && (
-                    <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed">
-                      <strong>Hint: </strong>{lesson.practiceProblem.hint}
-                    </div>
-                  )}
+                  <div className="space-y-4">
+                    {practiceProblemsList.map((prob, pIdx) => {
+                      const chosen = practiceSelected[pIdx];
+                      const revealed = practiceRevealed[pIdx];
+                      const hintOpen = showHints[pIdx];
 
-                  {practiceRevealed && (
-                    <div className="p-4 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-2">
-                      <div className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-                        Exact Solution: {lesson.practiceProblem.solution}
-                      </div>
-                      <pre className="font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
-                        {lesson.practiceProblem.explanation}
-                      </pre>
-                    </div>
-                  )}
+                      return (
+                        <div
+                          key={pIdx}
+                          className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs sm:text-sm">
+                              <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
+                                {pIdx + 1}
+                              </span>
+                              <span>{prob.title}</span>
+                            </div>
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                              Practice #{pIdx + 1}
+                            </span>
+                          </div>
+
+                          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            {prob.problemStatement}
+                          </p>
+
+                          {prob.code && (
+                            <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                              <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
+                                <code>{prob.code}</code>
+                              </pre>
+                            </div>
+                          )}
+
+                          {/* Options if provided */}
+                          {prob.options && (
+                            <div className="space-y-2">
+                              <div className="text-xs font-semibold text-slate-400">
+                                Select what you predict the output will be:
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {prob.options.map((opt, optIdx) => {
+                                  const isCorrect = optIdx === prob.correctOptionIndex;
+                                  const isChosen = chosen === optIdx;
+                                  let btnStyle = 'border-slate-800 bg-slate-950/80 text-slate-300 hover:border-slate-700';
+
+                                  if (revealed) {
+                                    if (isCorrect) {
+                                      btnStyle = 'border-emerald-500/80 bg-emerald-500/20 text-emerald-300 font-semibold';
+                                    } else if (isChosen) {
+                                      btnStyle = 'border-rose-500/80 bg-rose-500/20 text-rose-300';
+                                    } else {
+                                      btnStyle = 'border-slate-800/40 bg-slate-950/40 text-slate-500 opacity-60';
+                                    }
+                                  } else if (isChosen) {
+                                    btnStyle = 'border-blue-500 bg-blue-500/20 text-blue-200';
+                                  }
+
+                                  return (
+                                    <button
+                                      key={optIdx}
+                                      onClick={() => {
+                                        setPracticeSelected(prev => ({ ...prev, [pIdx]: optIdx }));
+                                        setPracticeRevealed(prev => ({ ...prev, [pIdx]: true }));
+                                      }}
+                                      className={`p-3 rounded-xl border text-xs sm:text-sm font-mono text-left transition flex items-center justify-between ${btnStyle}`}
+                                    >
+                                      <span>{opt}</span>
+                                      {revealed && isCorrect && (
+                                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                                      )}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Actions: Hint & Tracing Solution */}
+                          <div className="flex flex-wrap items-center gap-2 pt-1">
+                            <button
+                              onClick={() => setShowHints(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
+                              className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                            >
+                              {hintOpen ? 'Hide Hint' : '💡 Need a Hint?'}
+                            </button>
+
+                            <button
+                              onClick={() => setPracticeRevealed(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
+                              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition shadow-sm"
+                            >
+                              {revealed ? 'Hide Step-by-Step Tracing' : 'Reveal Tracing Solution'}
+                            </button>
+                          </div>
+
+                          {hintOpen && (
+                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed">
+                              <strong>Hint: </strong>{prob.hint}
+                            </div>
+                          )}
+
+                          {revealed && (
+                            <div className="p-4 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-2">
+                              <div className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                                Exact Solution: {prob.solution}
+                              </div>
+                              <pre className="font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
+                                {prob.explanation}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
 
@@ -566,7 +719,7 @@ export default function JavaSubLessonPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
                     <Code2 className="w-4 h-4" />
-                    <span>{lesson.codeSnippet.title}</span>
+                    <span>Primary Example: {lesson.codeSnippet.title}</span>
                   </div>
                   <span className="text-[10px] font-mono text-slate-500 uppercase">Java 21</span>
                 </div>
@@ -609,6 +762,40 @@ export default function JavaSubLessonPage() {
                   </div>
                 )}
               </div>
+
+              {/* Extra Real-World Code Examples if present */}
+              {lesson.codeExamples && lesson.codeExamples.length > 0 && (
+                <div className="space-y-4">
+                  <div className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+                    <Code2 className="w-4 h-4" />
+                    <span>Additional Real-World Scenarios ({lesson.codeExamples.length} Examples)</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    {lesson.codeExamples.map((ex, exIdx) => (
+                      <div key={exIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-slate-200 text-sm">{ex.title}</h4>
+                          <span className="text-[10px] font-mono text-slate-500 uppercase">Scenario</span>
+                        </div>
+                        <p className="text-xs text-slate-400 leading-relaxed">{ex.description}</p>
+
+                        <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                          <pre className="font-mono text-xs text-emerald-300 leading-relaxed">
+                            <code>{ex.code}</code>
+                          </pre>
+                        </div>
+
+                        {ex.output && (
+                          <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
+                            {ex.output}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
@@ -619,7 +806,7 @@ export default function JavaSubLessonPage() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2 text-purple-300 font-bold text-sm uppercase tracking-wider">
                     <Award className="w-4 h-4 text-purple-400" />
-                    <span>Interviewer Simulator & Self-Evaluation</span>
+                    <span>Interviewer Simulator ({lesson.interviewQuestions.length} Questions)</span>
                   </div>
                   <span className="text-xs text-slate-400">
                     Test how well you would speak in an interview
@@ -684,6 +871,12 @@ export default function JavaSubLessonPage() {
                                     </span>
                                   ))}
                                 </div>
+                              </div>
+                            )}
+
+                            {q.commonMistakeAnswer && (
+                              <div className="p-2.5 rounded-lg bg-rose-950/20 border border-rose-500/25 text-xs text-rose-300">
+                                <strong>Common Fresher Mistake: </strong> {q.commonMistakeAnswer}
                               </div>
                             )}
 

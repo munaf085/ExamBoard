@@ -49,10 +49,24 @@ export interface DetailedLesson {
     answer: string;
     followUp?: string;
     keyPhrases?: string[];
+    commonMistakeAnswer?: string;
   }[];
   miniQuiz: MiniQuizQuestion[];
   practiceProblem?: PracticeProblem;
+  practiceProblems?: PracticeProblem[];
+  codeExamples?: {
+    title: string;
+    description: string;
+    code: string;
+    output?: string;
+  }[];
   interviewTakeaways?: string[];
+  cheatSheet?: {
+    summary: string;
+    syntaxTemplate?: string;
+    rules: { rule: string; explanation: string }[];
+    quickComparison?: { aspect: string; optionA: string; optionB: string }[];
+  };
 }
 
 export const DETAILED_LESSONS: Record<string, DetailedLesson> = {
@@ -678,6 +692,87 @@ Total instances created: 2`
     subtitle: 'Bit sizes, min/max ranges, memory footprints, and literals',
     estimatedMinutes: 15,
     beginnerAnalogy: 'Think of storage containers of different sizes. A thimble (byte) holds only a drop. A coffee mug (short) holds a bit more. A water bottle (int) holds enough for the day. A 20-liter water jug (long) holds huge amounts. If you only need to store a single digit like age (25), putting it in a 20-liter jug wastes space, but using a thimble for a bank balance will overflow immediately.',
+    interviewTakeaways: [
+      '8 Primitives: byte, short, int, long, float, double, char, boolean. Allocated directly on stack for speed.',
+      'Required Literal Suffixes: Long integers require "L" suffix (e.g., 5000000000L). Float decimals require "f" suffix (e.g., 3.14f).',
+      'Char is Numeric: char is an unsigned 16-bit Unicode integer (0 to 65535). "A" + 1 evaluates to 66 (int), not "B"!'
+    ],
+    cheatSheet: {
+      summary: 'Java has 8 primitive types: 4 integer (byte, short, int, long), 2 floating point (float, double), 1 character (char), 1 boolean.',
+      syntaxTemplate: `byte b = 127;          // 8-bit (-128 to 127)
+short s = 32000;       // 16-bit (-32k to 32k)
+int i = 2_000_000;     // 32-bit (Default int)
+long l = 9000000000L;  // 64-bit (Must have L suffix)
+float f = 3.14f;       // 32-bit (Must have f suffix)
+double d = 3.14;       // 64-bit (Default decimal)
+char c = 'A';          // 16-bit Unicode (0 to 65535)
+boolean ok = true;     // true / false (Cannot convert to int!)`,
+      rules: [
+        { rule: 'Default Integer Type', explanation: 'Any whole number literal (e.g. 100) is automatically treated as int by the compiler.' },
+        { rule: 'Default Floating Type', explanation: 'Any fractional decimal literal (e.g. 10.5) is automatically treated as double.' },
+        { rule: 'Underscore Readability', explanation: 'Java 7+ permits underscores anywhere between digits: 1_000_000 is identical to 1000000.' },
+        { rule: 'Boolean Isolation', explanation: 'In Java, boolean is NOT a number. You cannot write if(1) or assign 0/1 to boolean.' }
+      ],
+      quickComparison: [
+        { aspect: 'int vs long', optionA: 'int: 32 bits, max 2.14 billion, no suffix', optionB: 'long: 64 bits, max 9 quintillion, requires L suffix' },
+        { aspect: 'float vs double', optionA: 'float: 32 bits, 7 decimal digits precision, f suffix', optionB: 'double: 64 bits, 15 decimal digits precision, default' },
+        { aspect: 'char vs String', optionA: 'char: Primitive 16-bit Unicode, single quotes', optionB: 'String: Immutable reference object, double quotes' }
+      ]
+    },
+    codeExamples: [
+      {
+        title: 'Example 1: Char Arithmetic & Unicode Values',
+        description: 'Demonstrating how chars behave as numbers under arithmetic operations.',
+        code: `public class CharArithmetic {
+    public static void main(String[] args) {
+        char ch = 'A'; // ASCII/Unicode 65
+        System.out.println("ch: " + ch);
+        System.out.println("ch + 1: " + (ch + 1)); // Prints 66 (int promotion)
+        System.out.println("(char)(ch + 1): " + (char)(ch + 1)); // Prints 'B'
+        System.out.println("'A' + 'B': " + ('A' + 'B')); // 65 + 66 = 131!
+    }
+}`,
+        output: `ch: A
+ch + 1: 66
+(char)(ch + 1): B
+'A' + 'B': 131`
+      },
+      {
+        title: 'Example 2: Number Bases in Java (Binary, Hex, Octal)',
+        description: 'How to write binary (0b), hex (0x), and octal (0) literals in Java.',
+        code: `public class NumberBases {
+    public static void main(String[] args) {
+        int dec = 26;
+        int hex = 0x1A;   // '0x' prefix for Hexadecimal (16 + 10 = 26)
+        int bin = 0b11010;// '0b' prefix for Binary (16 + 8 + 2 = 26)
+        int oct = 032;    // '0' prefix for Octal (3*8 + 2 = 26)
+
+        System.out.println("Dec: " + dec + ", Hex: " + hex + ", Bin: " + bin + ", Oct: " + oct);
+    }
+}`,
+        output: "Dec: 26, Hex: 26, Bin: 26, Oct: 26"
+      }
+    ],
+    practiceProblems: [
+      {
+        title: 'Tracing Challenge 1: Character Addition Trap',
+        problemStatement: 'What does this print to the console? System.out.println(\'1\' + \'2\');',
+        options: ['12', '3', '99', 'Compilation Error'],
+        correctOptionIndex: 2,
+        hint: 'ASCII code for \'1\' is 49 and \'2\' is 50. Arithmetic on chars promotes to int!',
+        solution: '99',
+        explanation: "Because both are single-quoted chars, the '+' operator performs integer addition on their ASCII codes: 49 + 50 = 99."
+      },
+      {
+        title: 'Tracing Challenge 2: Long Literal Overflow Trap',
+        problemStatement: 'What is the output of: long micros = 24 * 60 * 60 * 1000 * 1000;',
+        options: ['86400000000', 'Negative number (Numeric Overflow)', 'Compilation Error', '0'],
+        correctOptionIndex: 1,
+        hint: 'All numbers on the right side are plain ints without L suffix. Multiplication overflows 32-bit int before assignment to long!',
+        solution: 'Negative number (Numeric Overflow)',
+        explanation: 'Because none of the operands have the "L" suffix, the calculation is performed using 32-bit int arithmetic which overflows into a negative value (-1857093632) before being assigned to long!'
+      }
+    ],
     coreExplanation: [
       'Java provides exactly 8 primitive data types for high speed and direct memory efficiency.',
       '1. byte: 8 bits (1 byte). Range: -128 to 127. Great for raw stream bytes.',
@@ -1467,6 +1562,25 @@ Grade: B`
       'The Semicolon Trap: "do { ... } while (condition);" MANDATES a semicolon at the very end. Forgetting ";" causes a compile-time syntax error.',
       'Primary Production Use Case: User menu prompts (display menu options >= 1 time, repeat if invalid input), retry logic on failed network calls.'
     ],
+    cheatSheet: {
+      summary: 'do-while is an exit-controlled / post-tested loop guaranteed to execute its body at least once.',
+      syntaxTemplate: `do {
+    // Statements executed at least once
+    // Counter update (e.g., i++;)
+} while (booleanCondition); // <-- Mandatory semicolon!`,
+      rules: [
+        { rule: 'Execution Guarantee', explanation: 'Condition is evaluated AFTER the loop body finishes. Minimum iterations = 1.' },
+        { rule: 'Syntax Semicolon', explanation: 'Must terminate with a semicolon after while(condition); or code will not compile.' },
+        { rule: 'Scope of Variables', explanation: 'Variables declared inside the do { } block CANNOT be used inside the while(condition) parentheses.' },
+        { rule: 'Pre/Post Increment Trap', explanation: 'Condition like while(x++ < 5) evaluates current x, then increments immediately after check.' }
+      ],
+      quickComparison: [
+        { aspect: 'Condition Evaluation', optionA: 'while: Evaluated BEFORE entering body (Pre-test)', optionB: 'do-while: Evaluated AFTER executing body (Post-test)' },
+        { aspect: 'Minimum Executions', optionA: 'while: 0 times (if initial condition is false)', optionB: 'do-while: 1 time (guaranteed)' },
+        { aspect: 'Semicolon Requirement', optionA: 'while: NO semicolon after while(cond)', optionB: 'do-while: MANDATORY semicolon after while(cond);' },
+        { aspect: 'Best Suited For', optionA: 'while: When loop count depends entirely on external state', optionB: 'do-while: Menus, PIN prompts, reading network stream chunks' }
+      ]
+    },
     coreExplanation: [
       'Pre-test (while): Evaluates condition first. If false initially, executes 0 times.',
       'Post-test (do-while): Executes body first, then evaluates condition at the bottom.',
@@ -1503,8 +1617,83 @@ do-while (Post-test):        [ Run Body ]  <--- (ALWAYS RUNS AT LEAST ONCE)
       output: `Executes once! count = 999
 Finished! Final count = 1000`
     },
+    codeExamples: [
+      {
+        title: 'Example 1: Interactive Menu / Validation Pattern',
+        description: 'Simulating an ATM or Console menu that prompts the user at least once and repeats if invalid.',
+        code: `public class AtmMenuExample {
+    public static void main(String[] args) {
+        int pinAttempt = 1;
+        int maxAttempts = 3;
+        boolean authenticated = false;
+
+        do {
+            System.out.println("Displaying PIN Prompt (Attempt " + pinAttempt + "/" + maxAttempts + ")");
+            // In a real app, read from Scanner. Here we simulate attempt 3 succeeds:
+            if (pinAttempt == 3) {
+                authenticated = true;
+                System.out.println(">> PIN Correct! Access Granted.");
+            } else {
+                System.out.println(">> Invalid PIN. Please try again.");
+            }
+            pinAttempt++;
+        } while (!authenticated && pinAttempt <= maxAttempts);
+    }
+}`,
+        output: `Displaying PIN Prompt (Attempt 1/3)
+>> Invalid PIN. Please try again.
+Displaying PIN Prompt (Attempt 2/3)
+>> Invalid PIN. Please try again.
+Displaying PIN Prompt (Attempt 3/3)
+>> PIN Correct! Access Granted.`
+      },
+      {
+        title: 'Example 2: Digit Reversal with do-while',
+        description: 'Reversing numbers including 0 (where standard while would need a special check).',
+        code: `public class ReverseNumberDoWhile {
+    public static void main(String[] args) {
+        int number = 407;
+        int reversed = 0;
+
+        do {
+            int lastDigit = number % 10;
+            reversed = (reversed * 10) + lastDigit;
+            number /= 10;
+        } while (number > 0);
+
+        System.out.println("Reversed Result: " + reversed); // 704
+    }
+}`,
+        output: `Reversed Result: 704`
+      },
+      {
+        title: 'Example 3: Rolling a Random Dice until Target is Hit',
+        description: 'A game where a player rolls a dice at least once until rolling a 6.',
+        code: `import java.util.Random;
+
+public class DiceRollSimulation {
+    public static void main(String[] args) {
+        Random random = new Random(42); // fixed seed for reproducible trace
+        int roll;
+        int attempts = 0;
+
+        do {
+            roll = random.nextInt(6) + 1; // 1 to 6
+            attempts++;
+            System.out.println("Roll #" + attempts + ": Rolled a " + roll);
+        } while (roll != 6);
+
+        System.out.println("Target 6 reached in " + attempts + " rolls!");
+    }
+}`,
+        output: `Roll #1: Rolled a 2
+Roll #2: Rolled a 5
+Roll #3: Rolled a 6
+Target 6 reached in 3 rolls!`
+      }
+    ],
     practiceProblem: {
-      title: 'Interview Tracing Challenge: Post-Increment in Condition',
+      title: 'Interview Tracing Challenge 1: Post-Increment in Condition',
       problemStatement: 'Interviewers love placing increment operators inside loop conditions. Trace the exact printed output of the following Java snippet without running it:',
       code: `int x = 2;
 do {
@@ -1533,6 +1722,72 @@ Iteration 2:
 Loop terminates!
 - Final print: "End: 10".`
     },
+    practiceProblems: [
+      {
+        title: 'Interview Tracing Challenge 1: Post-Increment in Condition',
+        problemStatement: 'Interviewers love placing increment operators inside loop conditions. Trace the exact printed output of the following Java snippet without running it:',
+        code: `int x = 2;
+do {
+    System.out.print(x + " ");
+    x += 3;
+} while (x++ < 8);
+System.out.println("End: " + x);`,
+        options: [
+          '2 5 End: 6',
+          '2 5 End: 9',
+          '2 5 8 End: 9',
+          '2 5 End: 10'
+        ],
+        correctOptionIndex: 3,
+        hint: 'Remember that "x++ < 8" tests the current value of x against 8, and THEN increments x immediately afterward!',
+        solution: '2 5 End: 10',
+        explanation: 'Iteration 1: prints 2, x becomes 5, (5<8) is true, x increments to 6. Iteration 2: prints 5, x becomes 9, (9<8) is false, x increments to 10. Output: "2 5 End: 10".'
+      },
+      {
+        title: 'Interview Tracing Challenge 2: Pre-Increment vs Post-Increment in Body',
+        problemStatement: 'What does this code snippet print to the console?',
+        code: `int num = 1;
+do {
+    System.out.print(++num + " ");
+} while (num++ < 4);`,
+        options: [
+          '2 4 6',
+          '2 4',
+          '1 2 3 4',
+          '2 3 4'
+        ],
+        correctOptionIndex: 1,
+        hint: 'Notice ++num in the body happens BEFORE print, and num++ in the condition happens AFTER test!',
+        solution: '2 4',
+        explanation: `Step-by-step trace:
+Iteration 1:
+- ++num increments num from 1 to 2. Prints "2 ".
+- Condition check: (num++ < 4) tests (2 < 4) which is TRUE, then num increments to 3.
+Iteration 2:
+- ++num increments num from 3 to 4. Prints "4 ".
+- Condition check: (num++ < 4) tests (4 < 4) which is FALSE, then num increments to 5.
+Loop ends! Final output: "2 4 ".`
+      },
+      {
+        title: 'Interview Tracing Challenge 3: Scope Compilation Trap',
+        problemStatement: 'Will the following code compile or throw an error?',
+        code: `do {
+    int val = 10;
+    System.out.println(val);
+    val--;
+} while (val > 0);`,
+        options: [
+          'Prints 10 down to 1',
+          'Compilation Error: cannot find symbol variable val',
+          'Prints 10 and stops',
+          'Infinite Loop'
+        ],
+        correctOptionIndex: 1,
+        hint: 'Look closely at where "val" is declared. Can the while condition outside the braces see variables declared inside?',
+        solution: 'Compilation Error: cannot find symbol variable val',
+        explanation: 'Because "val" is declared inside the curly braces of the do block, its scope is limited to that block. The while condition is outside the block and cannot resolve the symbol "val".'
+      }
+    ],
     beginnerMistakes: [
       {
         mistake: 'Omitting the semicolon at the end of while: do { ... } while (cond) // Missing ;',
@@ -1550,19 +1805,33 @@ Loop terminates!
         question: 'Under what specific condition will a while loop and a do-while loop behave differently?',
         answer: 'When the loop condition is false on the very first evaluation. A while loop will execute 0 times, whereas a do-while loop will execute exactly 1 time.',
         followUp: 'Can a do-while loop ever execute 0 times?',
-        keyPhrases: ['Initial condition false', 'while executes 0 times', 'do-while executes at least once', 'Cannot execute 0 times']
+        keyPhrases: ['Initial condition false', 'while executes 0 times', 'do-while executes at least once', 'Cannot execute 0 times'],
+        commonMistakeAnswer: 'Saying they always behave identically except for syntax. The core difference is the guaranteed 1st run on false conditions.'
       },
       {
         question: 'Why does Java require a semicolon at the end of a do-while statement?',
         answer: 'Because without the semicolon, the compiler cannot distinguish where the do-while statement ends and where a subsequent, independent while statement begins.',
         followUp: 'What happens if you accidentally put a semicolon after a regular while loop header?',
-        keyPhrases: ['Grammar ambiguity', 'Separates from next statement', 'Syntax requirement']
+        keyPhrases: ['Grammar ambiguity', 'Separates from next statement', 'Syntax requirement'],
+        commonMistakeAnswer: 'Thinking it is just an arbitrary rule. It resolves grammar ambiguity with standard while loops.'
       },
       {
         question: 'Give a real-world scenario where you would choose do-while over while in production.',
         answer: 'Any scenario where user input or an action must precede verification. Classic examples include: 1) ATM pin prompts (prompt PIN at least once, repeat if invalid); 2) Interactive console menus; 3) Network retry with initial attempt before backoff.',
         followUp: 'How would you write an ATM menu with do-while?',
         keyPhrases: ['User input prompt', 'Validation happens after input', 'ATM PIN entry', 'Retry network request']
+      },
+      {
+        question: 'Can a do-while loop result in an infinite loop? Give an example.',
+        answer: 'Yes, if the condition inside while(...) never evaluates to false (e.g. while(true); or forgetting to update the loop counter variable), it will loop forever.',
+        followUp: 'How do you break out of an infinite do-while loop from inside?',
+        keyPhrases: ['while(true)', 'Loop counter not updated', 'Use break keyword']
+      },
+      {
+        question: 'What is the exact output of: int i = 0; do { System.out.print(i + " "); } while (i != 0);',
+        answer: 'It prints "0 ". The body executes once, printing 0. Then (0 != 0) evaluates to false, terminating the loop after exactly one execution.',
+        followUp: 'What would a while loop with the same condition print?',
+        keyPhrases: ['Prints 0', '0 != 0 is false', 'Executes exactly once']
       }
     ],
     miniQuiz: [
