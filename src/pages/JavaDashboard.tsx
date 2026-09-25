@@ -101,22 +101,22 @@ export default function JavaDashboard() {
 
         {/* Quick Links */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
-            <HelpCircle className="w-8 h-8 text-indigo-400" />
+          <Link to="/java/mcq/java-fundamentals" className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md group">
+            <HelpCircle className="w-8 h-8 text-indigo-400 group-hover:scale-110 transition-transform" />
             <span className="font-semibold text-slate-200">MCQ Practice</span>
-          </button>
-          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
-            <BrainCircuit className="w-8 h-8 text-pink-400" />
+          </Link>
+          <Link to="/java/mock-interview" className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md group">
+            <BrainCircuit className="w-8 h-8 text-pink-400 group-hover:scale-110 transition-transform" />
             <span className="font-semibold text-slate-200">Mock Interview</span>
-          </button>
-          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
-            <Target className="w-8 h-8 text-yellow-400" />
+          </Link>
+          <Link to="/java/revision" className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md group">
+            <Target className="w-8 h-8 text-yellow-400 group-hover:scale-110 transition-transform" />
             <span className="font-semibold text-slate-200">Revision Mode</span>
-          </button>
-          <button className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md">
-            <Award className="w-8 h-8 text-red-400" />
-            <span className="font-semibold text-slate-200">Final Assessment</span>
-          </button>
+          </Link>
+          <Link to="/java/flashcards" className="flex flex-col items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 p-4 rounded-xl transition-all shadow-md group">
+            <Award className="w-8 h-8 text-emerald-400 group-hover:scale-110 transition-transform" />
+            <span className="font-semibold text-slate-200">Flashcards</span>
+          </Link>
         </div>
 
         {/* Curriculum Sections */}
@@ -133,7 +133,7 @@ export default function JavaDashboard() {
                   className="w-full px-6 py-4 flex items-center justify-between bg-slate-800 hover:bg-slate-750 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg bg-${section.color}-500/20 text-${section.color}-400`}>
+                    <div className="p-2 rounded-lg bg-blue-500/20 text-blue-400">
                       <SectionIcon className="w-5 h-5" />
                     </div>
                     <h2 className="text-xl font-bold text-white">{section.label}</h2>
@@ -191,12 +191,18 @@ export default function JavaDashboard() {
                             </div>
 
                             <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
-                              <button className="bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg text-sm transition-colors">
+                              <Link 
+                                to={`/java/module/${mod.id}`}
+                                className="text-center bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 rounded-lg text-sm transition-colors block"
+                              >
                                 Learn
-                              </button>
-                              <button className="bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 rounded-lg text-sm transition-colors">
+                              </Link>
+                              <Link 
+                                to={`/java/mcq/${mod.id}`}
+                                className="text-center bg-slate-700 hover:bg-slate-600 text-white font-medium py-2 rounded-lg text-sm transition-colors block"
+                              >
                                 Practice MCQ
-                              </button>
+                              </Link>
                             </div>
                           </div>
                         </div>
