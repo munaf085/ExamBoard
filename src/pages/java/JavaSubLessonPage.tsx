@@ -25,7 +25,7 @@ import {
   toggleSolvedAssignment
 } from '../../utils/javaStorage';
 
-type ActiveTab = 'takeaways' | 'cheatsheet' | 'assignments' | 'practice' | 'interview' | 'quiz' | 'all';
+type ActiveTab = 'lesson' | 'cheatsheet' | 'practice' | 'assignments' | 'interview_qa' | 'self_eval' | 'quiz' | 'all';
 
 export default function JavaSubLessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
@@ -35,8 +35,9 @@ export default function JavaSubLessonPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [selfEvals, setSelfEvals] = useState<Record<string, { rating: SelfEvalRating }>>({});
+  const [questionRatings, setQuestionRatings] = useState<Record<number, SelfEvalRating>>({});
   const [solvedAssignments, setSolvedAssignments] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<ActiveTab>('takeaways');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('lesson');
 
   // Interactive Quiz state
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
@@ -85,13 +86,21 @@ export default function JavaSubLessonPage() {
     setRevealedQuestions({});
     setRevealedExercises({});
     setShowExerciseHints({});
+    setQuestionRatings({});
 
-    // Read initial tab from URL query param ?tab=assignments
+    // Read initial tab from URL query param
     const queryTab = searchParams.get('tab');
-    if (queryTab && ['takeaways', 'cheatsheet', 'assignments', 'practice', 'interview', 'quiz', 'all'].includes(queryTab)) {
-      setActiveTab(queryTab as ActiveTab);
+    if (queryTab) {
+      if (queryTab === 'takeaways' || queryTab === 'lesson') setActiveTab('lesson');
+      else if (queryTab === 'interview' || queryTab === 'interview_qa') setActiveTab('interview_qa');
+      else if (queryTab === 'self-eval' || queryTab === 'self_eval') setActiveTab('self_eval');
+      else if (['lesson', 'cheatsheet', 'practice', 'assignments', 'interview_qa', 'self_eval', 'quiz', 'all'].includes(queryTab)) {
+        setActiveTab(queryTab as ActiveTab);
+      } else {
+        setActiveTab('lesson');
+      }
     } else {
-      setActiveTab('takeaways');
+      setActiveTab('lesson');
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -409,20 +418,22 @@ export default function JavaSubLessonPage() {
             )}
           </div>
 
-          {/* ── FAST TABS FOR INTERVIEW PREP (MOBILE OPTIMIZED) ── */}
+          {/* ── EASY NAVIGATION TABS FOR EACH TOPIC ── */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800 scrollbar-none">
+            {/* 1. lesson(explain everything like kid) */}
             <button
-              onClick={() => setActiveTab('takeaways')}
+              onClick={() => setActiveTab('lesson')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'takeaways'
+                activeTab === 'lesson'
                   ? 'bg-blue-600 text-white shadow-md'
                   : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Interview Summary</span>
+              <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+              <span>Lesson (Explain Like Kid)</span>
             </button>
 
+            {/* 2. 📋 Cheat Sheet */}
             <button
               onClick={() => setActiveTab('cheatsheet')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -435,20 +446,7 @@ export default function JavaSubLessonPage() {
               <span>📋 Cheat Sheet</span>
             </button>
 
-            {lesson.programmingExercises && lesson.programmingExercises.length > 0 && (
-              <button
-                onClick={() => setActiveTab('assignments')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                  activeTab === 'assignments'
-                    ? 'bg-amber-600 text-white shadow-md'
-                    : 'bg-amber-950/40 text-amber-300 hover:text-amber-100 hover:bg-amber-900/50 border border-amber-500/40'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>📝 Practice Assignments ({lesson.programmingExercises.length})</span>
-              </button>
-            )}
-
+            {/* 3. 💻 Examples & Tracing (N) */}
             <button
               onClick={() => setActiveTab('practice')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -461,11 +459,38 @@ export default function JavaSubLessonPage() {
               <span>💻 Examples & Tracing ({practiceProblemsList.length + (lesson.codeExamples?.length || 0) + 1})</span>
             </button>
 
+            {/* 4. Practice problems/assignment(input/output) */}
             <button
-              onClick={() => setActiveTab('interview')}
+              onClick={() => setActiveTab('assignments')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'interview'
+                activeTab === 'assignments'
+                  ? 'bg-amber-600 text-white shadow-md'
+                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+              }`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Practice Problems/Assignment (Input/Output){lesson.programmingExercises && lesson.programmingExercises.length > 0 ? ` (${lesson.programmingExercises.length})` : ''}</span>
+            </button>
+
+            {/* 5. Interview Q&A */}
+            <button
+              onClick={() => setActiveTab('interview_qa')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
+                activeTab === 'interview_qa'
                   ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+              }`}
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Interview Q&A</span>
+            </button>
+
+            {/* 6. Self-Evaluate (3 Qs) */}
+            <button
+              onClick={() => setActiveTab('self_eval')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
+                activeTab === 'self_eval'
+                  ? 'bg-purple-600 text-white shadow-md'
                   : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
               }`}
             >
@@ -473,6 +498,7 @@ export default function JavaSubLessonPage() {
               <span>Self-Evaluate ({lesson.interviewQuestions.length} Qs)</span>
             </button>
 
+            {/* 7. Mini Quiz */}
             <button
               onClick={() => setActiveTab('quiz')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -481,10 +507,11 @@ export default function JavaSubLessonPage() {
                   : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
               }`}
             >
-              <HelpCircle className="w-3.5 h-3.5 text-cyan-400" />
+              <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
               <span>Mini Quiz</span>
             </button>
 
+            {/* 8. All in */}
             <button
               onClick={() => setActiveTab('all')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -494,40 +521,78 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <ListFilter className="w-3.5 h-3.5" />
-              <span>All in One</span>
+              <span>All in</span>
             </button>
           </div>
 
-          {/* ── TAB 1: INTERVIEW SUMMARY / TAKEAWAYS (NO TEXTBOOK FILLER) ── */}
-          {(activeTab === 'takeaways' || activeTab === 'all') && (
+          {/* ── TAB 1: LESSON (EXPLAIN EVERYTHING LIKE A KID) ── */}
+          {(activeTab === 'lesson' || activeTab === 'all') && (
             <div className="space-y-4">
+              {/* 👶 10-Second Kid-Friendly Intuition & Analogy Card */}
+              {lesson.beginnerAnalogy && (
+                <div className="bg-gradient-to-br from-blue-950/40 via-slate-900 to-indigo-950/40 border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2 text-blue-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                    <Lightbulb className="w-4 h-4 text-amber-400" />
+                    <span>👶 Intuition: How a 10-Year-Old Would Understand This</span>
+                  </div>
+                  <div className="p-3.5 rounded-xl bg-slate-950/70 border border-blue-500/20 text-xs sm:text-sm text-blue-100 leading-relaxed italic">
+                    "{lesson.beginnerAnalogy}"
+                  </div>
+                </div>
+              )}
+
+              {/* Step-by-Step Concepts (Kid-Friendly Explanation) */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider">
-                  <Sparkles className="w-4 h-4 text-blue-400" />
-                  <span>3 Golden Rules to Remember in an Interview</span>
+                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
+                  <BookOpen className="w-4 h-4 text-emerald-400" />
+                  <span>Step-by-Step Concepts (Kid-Friendly & Direct)</span>
                 </div>
 
                 <div className="space-y-2.5">
-                  {(lesson.interviewTakeaways || lesson.coreExplanation.slice(0, 3)).map((item, idx) => (
+                  {lesson.coreExplanation.map((point, idx) => (
                     <div
                       key={idx}
                       className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start gap-3 text-xs sm:text-sm text-slate-200 leading-relaxed"
                     >
-                      <span className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center shrink-0 text-xs">
+                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">
                         {idx + 1}
                       </span>
-                      <span>{item}</span>
+                      <span>{point}</span>
                     </div>
                   ))}
                 </div>
               </div>
+
+              {/* 3 Golden Rules To Remember */}
+              {lesson.interviewTakeaways && lesson.interviewTakeaways.length > 0 && (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                  <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider">
+                    <Sparkles className="w-4 h-4 text-blue-400" />
+                    <span>⭐ 3 Golden Rules to Remember in an Interview</span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {lesson.interviewTakeaways.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start gap-3 text-xs sm:text-sm text-slate-200 leading-relaxed"
+                      >
+                        <span className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center shrink-0 text-xs">
+                          {idx + 1}
+                        </span>
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Visual Mental Model */}
               {lesson.diagram && (
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-2">
                   <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
                     <Terminal className="w-4 h-4" />
-                    <span>Visual Mental Model</span>
+                    <span>🗺️ Visual Mental Model (Picture Map)</span>
                   </div>
                   <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
                     <pre className="font-mono text-xs sm:text-sm text-indigo-300 leading-relaxed">
@@ -542,7 +607,7 @@ export default function JavaSubLessonPage() {
                 <div className="bg-rose-950/20 border border-rose-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                   <div className="flex items-center gap-2 text-rose-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
                     <AlertTriangle className="w-4 h-4" />
-                    <span>Interview Traps & Common Gotchas</span>
+                    <span>🛑 Common Traps & "Oops" Mistakes (With Fixes)</span>
                   </div>
                   <div className="space-y-2.5">
                     {lesson.beginnerMistakes.map((item, idx) => (
@@ -1125,17 +1190,17 @@ export default function JavaSubLessonPage() {
             </div>
           )}
 
-          {/* ── TAB 3: INTERVIEWER SIMULATION & SELF-EVALUATION ── */}
-          {(activeTab === 'interview' || activeTab === 'all') && (
+          {/* ── TAB 5: INTERVIEW Q&A ── */}
+          {(activeTab === 'interview_qa' || activeTab === 'all') && (
             <div className="space-y-4">
-              <div className="bg-gradient-to-br from-purple-950/20 via-slate-900 to-slate-900 border border-purple-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+              <div className="bg-gradient-to-br from-indigo-950/20 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-purple-300 font-bold text-sm uppercase tracking-wider">
-                    <Award className="w-4 h-4 text-purple-400" />
-                    <span>Interviewer Simulator ({lesson.interviewQuestions.length} Questions)</span>
+                  <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-wider">
+                    <HelpCircle className="w-4 h-4 text-indigo-400" />
+                    <span>Interview Questions & Model Answers ({lesson.interviewQuestions.length} Questions)</span>
                   </div>
                   <span className="text-xs text-slate-400">
-                    Test how well you would speak in an interview
+                    Comprehensive technical responses and keyword highlights
                   </span>
                 </div>
 
@@ -1146,10 +1211,10 @@ export default function JavaSubLessonPage() {
                     return (
                       <div
                         key={idx}
-                        className="bg-slate-950/80 border border-slate-800 hover:border-purple-500/40 rounded-xl p-4 space-y-3 transition"
+                        className="bg-slate-950/80 border border-slate-800 hover:border-indigo-500/40 rounded-xl p-4 space-y-3 transition"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <h4 className="text-sm sm:text-base font-bold text-purple-200">
+                          <h4 className="text-sm sm:text-base font-bold text-indigo-200">
                             Q{idx + 1}: {q.question}
                           </h4>
                           <button
@@ -1162,21 +1227,21 @@ export default function JavaSubLessonPage() {
                             className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1"
                           >
                             {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                            <span>{isRevealed ? 'Hide' : 'Reveal Answer'}</span>
+                            <span>{isRevealed ? 'Hide Answer' : 'Reveal Answer'}</span>
                           </button>
                         </div>
 
                         {!isRevealed ? (
                           <div className="p-3 rounded-lg bg-slate-900/60 border border-dashed border-slate-800 text-xs text-slate-400 flex items-center gap-2 italic">
-                            <Volume2 className="w-4 h-4 text-purple-400 shrink-0" />
+                            <Volume2 className="w-4 h-4 text-indigo-400 shrink-0" />
                             <span>
-                              Practice answering out loud first, then click "Reveal Answer" to grade yourself!
+                              Think through your technical answer first, then click "Reveal Answer" to check accuracy!
                             </span>
                           </div>
                         ) : (
                           <div className="space-y-3 pt-1">
                             <div className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                              <strong className="text-purple-300 block mb-1">
+                              <strong className="text-indigo-300 block mb-1">
                                 🌟 Ideal Model Answer:
                               </strong>
                               {q.answer}
@@ -1202,7 +1267,7 @@ export default function JavaSubLessonPage() {
 
                             {q.commonMistakeAnswer && (
                               <div className="p-2.5 rounded-lg bg-rose-950/20 border border-rose-500/25 text-xs text-rose-300">
-                                <strong>Common Fresher Mistake: </strong> {q.commonMistakeAnswer}
+                                <strong>🛑 Common Fresher Mistake: </strong> {q.commonMistakeAnswer}
                               </div>
                             )}
 
@@ -1217,11 +1282,105 @@ export default function JavaSubLessonPage() {
                     );
                   })}
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── TAB 6: SELF-EVALUATE ── */}
+          {(activeTab === 'self_eval' || activeTab === 'all') && (
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-purple-950/30 via-slate-900 to-slate-900 border border-purple-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 text-purple-300 font-bold text-sm uppercase tracking-wider">
+                    <Award className="w-4 h-4 text-purple-400" />
+                    <span>Interactive Self-Evaluation ({lesson.interviewQuestions.length} Questions)</span>
+                  </div>
+                  <span className="text-xs text-slate-400">
+                    Grade your speaking fluency to track interview readiness
+                  </span>
+                </div>
+
+                {/* Question Speaking Drills */}
+                <div className="space-y-3">
+                  {lesson.interviewQuestions.map((q, idx) => {
+                    const qRating = questionRatings[idx];
+
+                    return (
+                      <div
+                        key={idx}
+                        className={`p-4 rounded-xl border transition space-y-3 ${
+                          qRating === 'mastered'
+                            ? 'bg-emerald-950/20 border-emerald-500/40'
+                            : qRating === 'partial'
+                            ? 'bg-amber-950/20 border-amber-500/40'
+                            : qRating === 'revise'
+                            ? 'bg-rose-950/20 border-rose-500/40'
+                            : 'bg-slate-950/80 border-slate-800'
+                        }`}
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <div className="font-bold text-xs sm:text-sm text-slate-200">
+                            <span className="text-purple-400 mr-1.5">Q{idx + 1}:</span>
+                            {q.question}
+                          </div>
+                          {qRating && (
+                            <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded self-start sm:self-auto ${
+                              qRating === 'mastered'
+                                ? 'bg-emerald-500/20 text-emerald-300'
+                                : qRating === 'partial'
+                                ? 'bg-amber-500/20 text-amber-300'
+                                : 'bg-rose-500/20 text-rose-300'
+                            }`}>
+                              {qRating}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/60">
+                          <span className="text-[11px] text-slate-400 mr-1">Your Speaking Fluency:</span>
+                          <button
+                            onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'mastered' }))}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                              qRating === 'mastered'
+                                ? 'bg-emerald-600 text-white shadow-sm'
+                                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                            }`}
+                          >
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                            <span>🟢 Mastered</span>
+                          </button>
+                          <button
+                            onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'partial' }))}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                              qRating === 'partial'
+                                ? 'bg-amber-600 text-white shadow-sm'
+                                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                            }`}
+                          >
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            <span>🟡 Needs Polish</span>
+                          </button>
+                          <button
+                            onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'revise' }))}
+                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                              qRating === 'revise'
+                                ? 'bg-rose-600 text-white shadow-sm'
+                                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                            }`}
+                          >
+                            <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
+                            <span>🔴 Revise Again</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 {/* Self-Rating Score Buttons */}
                 <div className="pt-3 border-t border-slate-800 space-y-2">
                   <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    How confident are you with this sub-topic?
+                    Save Overall Sub-Topic Evaluation Rating:
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <button
