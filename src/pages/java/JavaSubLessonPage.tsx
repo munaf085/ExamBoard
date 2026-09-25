@@ -1257,7 +1257,7 @@ export default function JavaSubLessonPage() {
                           </h4>
                           <div className="flex items-center gap-2 shrink-0">
                             <CopyButton
-                              text={`Question: ${q.question}\n\nModel Answer:\n${q.answer}${q.keyPhrases && q.keyPhrases.length > 0 ? `\n\nKey Concepts: ${q.keyPhrases.join(', ')}` : ''}${q.followUp ? `\n\nFollow-up: ${q.followUp}` : ''}`}
+                              text={`Question: ${q.question}\n\nModel Answer:\n${q.answer}${q.keyPhrases && q.keyPhrases.length > 0 ? `\n\nKey Concepts: ${q.keyPhrases.join(', ')}` : ''}${q.commonMistakeAnswer ? `\n\nCommon Mistake: ${q.commonMistakeAnswer}` : ''}${q.followUp ? `\n\nFollow-up Question: ${q.followUp}` : ''}${q.followUpAnswer ? `\nFollow-up Answer: ${q.followUpAnswer}` : ''}`}
                               label="Copy Q&A"
                             />
                             <button
@@ -1316,8 +1316,15 @@ export default function JavaSubLessonPage() {
                             )}
 
                             {q.followUp && (
-                              <div className="text-xs text-cyan-300 bg-cyan-950/30 border border-cyan-500/30 rounded-lg p-2.5">
-                                <strong>Expected Follow-Up Question: </strong> {q.followUp}
+                              <div className="text-xs text-cyan-300 bg-cyan-950/30 border border-cyan-500/30 rounded-lg p-2.5 space-y-1.5">
+                                <div>
+                                  <strong>Expected Follow-Up Question: </strong> {q.followUp}
+                                </div>
+                                {q.followUpAnswer && (
+                                  <div className="pt-1.5 border-t border-cyan-500/20 text-slate-200 leading-relaxed">
+                                    <strong className="text-cyan-400">💡 Confident Follow-Up Answer: </strong> {q.followUpAnswer}
+                                  </div>
+                                )}
                               </div>
                             )}
                           </div>

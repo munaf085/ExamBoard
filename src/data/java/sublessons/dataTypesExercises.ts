@@ -108,6 +108,383 @@ Final Checkout Total: $125.0`,
 [Inside Promo Block] Applied Discount: $25.0
 Final Checkout Total: $125.0`,
       explanation: 'A variable declared inside curly braces { } is scoped only to that block. It is created when execution enters the block and destroyed as soon as execution leaves the block. Inner blocks have access to outer variables, allowing modifications that persist after the inner block exits.'
+    },
+    {
+      id: 'dt-var-3',
+      title: '3. Swapping Two Variables Using a Temporary Local Variable',
+      problemStatement: `Write a Java program to swap the values of two local variables:
+1. Declare \`int x = 42;\` and \`int y = 99;\`.
+2. Print the values before the swap.
+3. Use a third temporary helper variable \`int temp;\` to exchange the values so \`x\` holds 99 and \`y\` holds 42.
+4. Print the values after the swap.
+
+Input Format: None.
+Output Format:
+Before Swap: x = 42, y = 99
+After Swap: x = 99, y = 42
+
+Example:
+Output:
+Before Swap: x = 42, y = 99
+After Swap: x = 99, y = 42`,
+      hint: 'Save the value of x into temp before overwriting x with y. Then assign temp into y.',
+      solutionCode: `public class VariableSwap {
+    public static void main(String[] args) {
+        int x = 42;
+        int y = 99;
+
+        System.out.println("Before Swap: x = " + x + ", y = " + y);
+
+        // Step 1: Save x in temporary variable
+        int temp = x;
+        // Step 2: Overwrite x with y's value
+        x = y;
+        // Step 3: Put saved original value into y
+        y = temp;
+
+        System.out.println("After Swap: x = " + x + ", y = " + y);
+    }
+}`,
+      output: `Before Swap: x = 42, y = 99
+After Swap: x = 99, y = 42`,
+      explanation: 'Without a temporary variable, executing x = y would immediately erase the original value of x (42). By declaring int temp = x;, the value 42 is safely preserved on the stack frame before reassigning x.'
+    },
+    {
+      id: 'dt-var-4',
+      title: '4. Employee Salary Slip Breakdown (Multi-Variable Arithmetic)',
+      problemStatement: `Write a salary calculator program using local variables:
+1. Declare \`double basicSalary = 50000.0;\`, \`double hra = 15000.0;\`, \`double specialAllowance = 8000.0;\`, and \`double taxRate = 0.10;\` (10% tax).
+2. Calculate \`grossSalary = basicSalary + hra + specialAllowance;\`.
+3. Calculate \`taxDeduction = grossSalary * taxRate;\`.
+4. Calculate \`netSalary = grossSalary - taxDeduction;\`.
+5. Display each calculated component on the screen.
+
+Input Format: None.
+Output Format:
+Gross Salary: $73000.0
+Tax Deduction (10%): $7300.0
+Net Take-Home Salary: $65700.0
+
+Example:
+Output:
+Gross Salary: $73000.0
+Tax Deduction (10%): $7300.0
+Net Take-Home Salary: $65700.0`,
+      hint: 'Declare each monetary value as a double to preserve decimal precision, then perform straightforward addition and multiplication.',
+      solutionCode: `public class SalarySlip {
+    public static void main(String[] args) {
+        double basicSalary = 50000.0;
+        double hra = 15000.0;
+        double specialAllowance = 8000.0;
+        double taxRate = 0.10;
+
+        double grossSalary = basicSalary + hra + specialAllowance;
+        double taxDeduction = grossSalary * taxRate;
+        double netSalary = grossSalary - taxDeduction;
+
+        System.out.println("Gross Salary: $" + grossSalary);
+        System.out.println("Tax Deduction (10%): $" + taxDeduction);
+        System.out.println("Net Take-Home Salary: $" + netSalary);
+    }
+}`,
+      output: `Gross Salary: $73000.0
+Tax Deduction (10%): $7300.0
+Net Take-Home Salary: $65700.0`,
+      explanation: 'Decomposing complex real-world calculations into descriptive local variables improves code readability, prevents redundant recalculations, and makes debugging straightforward.'
+    },
+    {
+      id: 'dt-var-5',
+      title: '5. Multi-Level Nested Block Scope & Visibility Hierarchy',
+      problemStatement: `Write a Java class demonstrating three concentric levels of block scope:
+1. In \`main()\`, declare \`int outerVal = 100;\`.
+2. Create an inner block with \`{\` containing \`int middleVal = 200;\`. Print the sum of \`outerVal + middleVal\`.
+3. Inside the middle block, create a third innermost block with \`{\` containing \`int innerVal = 300;\`. Print the sum of \`outerVal + middleVal + innerVal\`.
+4. Exit the inner blocks and verify that \`outerVal\` is still accessible in the outermost scope.
+
+Input Format: None.
+Output Format:
+[Outer Scope] outerVal = 100
+[Middle Scope] outerVal + middleVal = 300
+[Innermost Scope] sum = 600
+[Back to Outer Scope] outerVal = 100
+
+Example:
+Output:
+[Outer Scope] outerVal = 100
+[Middle Scope] outerVal + middleVal = 300
+[Innermost Scope] sum = 600
+[Back to Outer Scope] outerVal = 100`,
+      hint: 'Java scopes form a hierarchy: inner blocks can read all variables declared in parent enclosing blocks, but parents can never see into child blocks.',
+      solutionCode: `public class NestedScopeDemo {
+    public static void main(String[] args) {
+        // Level 1: Outer scope
+        int outerVal = 100;
+        System.out.println("[Outer Scope] outerVal = " + outerVal);
+
+        {
+            // Level 2: Middle scope
+            int middleVal = 200;
+            System.out.println("[Middle Scope] outerVal + middleVal = " + (outerVal + middleVal));
+
+            {
+                // Level 3: Innermost scope
+                int innerVal = 300;
+                int total = outerVal + middleVal + innerVal;
+                System.out.println("[Innermost Scope] sum = " + total);
+            }
+            // innerVal is destroyed here
+        }
+        // middleVal is destroyed here
+
+        System.out.println("[Back to Outer Scope] outerVal = " + outerVal);
+    }
+}`,
+      output: `[Outer Scope] outerVal = 100
+[Middle Scope] outerVal + middleVal = 300
+[Innermost Scope] sum = 600
+[Back to Outer Scope] outerVal = 100`,
+      explanation: 'Scope in Java is lexically bounded by pairs of curly braces. Inner blocks inherit the variables of all enclosing ancestor blocks, but local variables are popped and destroyed from the stack as soon as execution hits their closing brace.'
+    },
+    {
+      id: 'dt-var-6',
+      title: '6. Fitness Step Tracker (Accumulating Local Variables)',
+      problemStatement: `Create a step-tracking script simulating a daily fitness log:
+1. Initialize an integer local variable \`int totalSteps = 0;\`.
+2. Add a morning walk: declare \`int morningSteps = 3500;\` and accumulate into \`totalSteps\`. Print progress.
+3. Add an afternoon walk: declare \`int afternoonSteps = 2200;\` and accumulate into \`totalSteps\`. Print progress.
+4. Add an evening jog: declare \`int eveningSteps = 4300;\` and accumulate into \`totalSteps\`. Print progress.
+5. Compute calories burned as \`double calories = totalSteps * 0.04;\` and print the final result.
+
+Input Format: None.
+Output Format:
+Morning: 3500 steps
+After Lunch: 5700 steps
+End of Day: 10000 steps
+Calories Burned: 400.0 kcal
+
+Example:
+Output:
+Morning: 3500 steps
+After Lunch: 5700 steps
+End of Day: 10000 steps
+Calories Burned: 400.0 kcal`,
+      hint: 'Use reassignment: totalSteps = totalSteps + morningSteps; to build up a running total over time.',
+      solutionCode: `public class StepTracker {
+    public static void main(String[] args) {
+        int totalSteps = 0;
+
+        int morningSteps = 3500;
+        totalSteps = totalSteps + morningSteps;
+        System.out.println("Morning: " + totalSteps + " steps");
+
+        int afternoonSteps = 2200;
+        totalSteps = totalSteps + afternoonSteps;
+        System.out.println("After Lunch: " + totalSteps + " steps");
+
+        int eveningSteps = 4300;
+        totalSteps = totalSteps + eveningSteps;
+        System.out.println("End of Day: " + totalSteps + " steps");
+
+        double caloriesBurned = totalSteps * 0.04;
+        System.out.println("Calories Burned: " + caloriesBurned + " kcal");
+    }
+}`,
+      output: `Morning: 3500 steps
+After Lunch: 5700 steps
+End of Day: 10000 steps
+Calories Burned: 400.0 kcal`,
+      explanation: 'A variable can store changing state over time. In totalSteps = totalSteps + morningSteps;, Java first evaluates the right side using the current value of totalSteps, and then assigns the new sum back into the same memory location.'
+    },
+    {
+      id: 'dt-var-7',
+      title: '7. Travel Currency Converter (Floating-Point Precision)',
+      problemStatement: `Write a currency exchange calculator:
+1. Declare \`double usdAmount = 250.0;\`.
+2. Declare exchange rates: \`double usdToEur = 0.92;\` and \`double usdToJpy = 155.40;\`.
+3. Compute the equivalent values in Euros and Japanese Yen.
+4. Print formatted currency conversion output.
+
+Input Format: None.
+Output Format:
+USD Amount: $250.0
+Equivalent in Euros: €230.0
+Equivalent in Japanese Yen: ¥38850.0
+
+Example:
+Output:
+USD Amount: $250.0
+Equivalent in Euros: €230.0
+Equivalent in Japanese Yen: ¥38850.0`,
+      hint: 'Multiply usdAmount by each conversion rate to obtain the converted foreign currency total.',
+      solutionCode: `public class CurrencyConverter {
+    public static void main(String[] args) {
+        double usdAmount = 250.0;
+        double usdToEur = 0.92;
+        double usdToJpy = 155.40;
+
+        double eurAmount = usdAmount * usdToEur;
+        double jpyAmount = usdAmount * usdToJpy;
+
+        System.out.println("USD Amount: $" + usdAmount);
+        System.out.println("Equivalent in Euros: €" + eurAmount);
+        System.out.println("Equivalent in Japanese Yen: ¥" + jpyAmount);
+    }
+}`,
+      output: `USD Amount: $250.0
+Equivalent in Euros: €230.0
+Equivalent in Japanese Yen: ¥38850.0`,
+      explanation: 'Using meaningful identifier names like usdAmount and usdToEur makes currency formulas self-documenting. Using the double type ensures fractional amounts (cents) are preserved.'
+    },
+    {
+      id: 'dt-var-8',
+      title: '8. Hotel Room Reservation Invoice Calculator',
+      problemStatement: `Write a hotel invoice generator:
+1. Declare \`String guestName = "Sophia";\`.
+2. Declare \`int nightsStayed = 4;\` and \`double nightlyRate = 120.0;\`.
+3. Declare \`double cityTaxRate = 0.08;\` (8%) and \`double cleaningFee = 45.0;\`.
+4. Calculate \`baseCost = nightsStayed * nightlyRate;\`.
+5. Calculate \`taxAmount = baseCost * cityTaxRate;\`.
+6. Calculate \`totalDue = baseCost + taxAmount + cleaningFee;\`.
+7. Print the itemized invoice.
+
+Input Format: None.
+Output Format:
+Guest: Sophia
+Base Room Cost (4 nights @ $120.0): $480.0
+City Tax (8%): $38.4
+Cleaning Fee: $45.0
+Total Balance Due: $563.4
+
+Example:
+Output:
+Guest: Sophia
+Base Room Cost (4 nights @ $120.0): $480.0
+City Tax (8%): $38.4
+Cleaning Fee: $45.0
+Total Balance Due: $563.4`,
+      hint: 'Compute each subtotal into its own local variable before adding them together for the grand total.',
+      solutionCode: `public class HotelInvoice {
+    public static void main(String[] args) {
+        String guestName = "Sophia";
+        int nightsStayed = 4;
+        double nightlyRate = 120.0;
+        double cityTaxRate = 0.08;
+        double cleaningFee = 45.0;
+
+        double baseCost = nightsStayed * nightlyRate;
+        double taxAmount = baseCost * cityTaxRate;
+        double totalDue = baseCost + taxAmount + cleaningFee;
+
+        System.out.println("Guest: " + guestName);
+        System.out.println("Base Room Cost (" + nightsStayed + " nights @ $" + nightlyRate + "): $" + baseCost);
+        System.out.println("City Tax (8%): $" + taxAmount);
+        System.out.println("Cleaning Fee: $" + cleaningFee);
+        System.out.println("Total Balance Due: $" + totalDue);
+    }
+}`,
+      output: `Guest: Sophia
+Base Room Cost (4 nights @ $120.0): $480.0
+City Tax (8%): $38.4
+Cleaning Fee: $45.0
+Total Balance Due: $563.4`,
+      explanation: 'Combining String variables with numeric local variables using the + concatenation operator allows creating clean, human-readable console receipts.'
+    },
+    {
+      id: 'dt-var-9',
+      title: '9. Road Trip Mileage & Fuel Expense Analyzer',
+      problemStatement: `Write an automotive trip calculation program:
+1. Declare \`double startOdometer = 14500.0;\` and \`double endOdometer = 15150.0;\`.
+2. Declare \`double fuelLitersUsed = 52.0;\` and \`double pricePerLiter = 1.65;\`.
+3. Calculate total distance traveled: \`endOdometer - startOdometer\`.
+4. Calculate fuel economy (\`km / liter\`): \`distanceTraveled / fuelLitersUsed\`.
+5. Calculate total fuel cost: \`fuelLitersUsed * pricePerLiter\`.
+6. Print the driving trip summary.
+
+Input Format: None.
+Output Format:
+Distance Traveled: 650.0 km
+Fuel Economy: 12.5 km/l
+Total Fuel Expense: $85.8
+
+Example:
+Output:
+Distance Traveled: 650.0 km
+Fuel Economy: 12.5 km/l
+Total Fuel Expense: $85.8`,
+      hint: 'Perform subtraction to find distance first, then use that distance to calculate fuel economy.',
+      solutionCode: `public class TripAnalyzer {
+    public static void main(String[] args) {
+        double startOdometer = 14500.0;
+        double endOdometer = 15150.0;
+        double fuelLitersUsed = 52.0;
+        double pricePerLiter = 1.65;
+
+        double distanceTraveled = endOdometer - startOdometer;
+        double fuelEconomy = distanceTraveled / fuelLitersUsed;
+        double totalFuelCost = fuelLitersUsed * pricePerLiter;
+
+        System.out.println("Distance Traveled: " + distanceTraveled + " km");
+        System.out.println("Fuel Economy: " + fuelEconomy + " km/l");
+        System.out.println("Total Fuel Expense: $" + totalFuelCost);
+    }
+}`,
+      output: `Distance Traveled: 650.0 km
+Fuel Economy: 12.5 km/l
+Total Fuel Expense: $85.8`,
+      explanation: 'Local variables can derive their initial values from the mathematical results of other local variables in sequential order from top to bottom.'
+    },
+    {
+      id: 'dt-var-10',
+      title: '10. Guaranteed Local Variable Initialization (Definite Assignment)',
+      problemStatement: `Demonstrate Java's "Definite Assignment" rule in action:
+1. Declare \`double orderTotal = 65.0;\`.
+2. Declare \`double deliveryFee;\` without an initial value.
+3. Using an \`if-else\` structure, assign \`deliveryFee = 0.0;\` if \`orderTotal >= 50.0\`, else assign \`deliveryFee = 5.99;\`.
+4. Show that because both branches guarantee an initialization, the Java compiler permits reading \`deliveryFee\` to compute \`finalTotal = orderTotal + deliveryFee;\`.
+
+Input Format: None.
+Output Format:
+Order Amount: $65.0
+Free Shipping Qualified!
+Delivery Charge: $0.0
+Total Payable: $65.0
+
+Example:
+Output:
+Order Amount: $65.0
+Free Shipping Qualified!
+Delivery Charge: $0.0
+Total Payable: $65.0`,
+      hint: 'If both the if branch AND the else branch assign a value to deliveryFee, Java compiler knows it cannot be uninitialized when reaching the print statement.',
+      solutionCode: `public class DefiniteAssignmentDemo {
+    public static void main(String[] args) {
+        double orderTotal = 65.0;
+
+        // Declared without initial value:
+        double deliveryFee;
+
+        // Both code paths guarantee initialization:
+        if (orderTotal >= 50.0) {
+            deliveryFee = 0.0;
+            System.out.println("Order Amount: $" + orderTotal);
+            System.out.println("Free Shipping Qualified!");
+        } else {
+            deliveryFee = 5.99;
+            System.out.println("Order Amount: $" + orderTotal);
+            System.out.println("Standard Shipping Applied: $" + deliveryFee);
+        }
+
+        // Compiler allows this because deliveryFee is definitely assigned!
+        double totalPayable = orderTotal + deliveryFee;
+        System.out.println("Delivery Charge: $" + deliveryFee);
+        System.out.println("Total Payable: $" + totalPayable);
+    }
+}`,
+      output: `Order Amount: $65.0
+Free Shipping Qualified!
+Delivery Charge: $0.0
+Total Payable: $65.0`,
+      explanation: 'Java uses Definite Assignment analysis. A local variable does not need to be initialized on the line of declaration, provided the compiler can prove that EVERY possible branch assigns a value to it before any read operation occurs.'
     }
   ],
 

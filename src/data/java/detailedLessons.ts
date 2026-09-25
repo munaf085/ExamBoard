@@ -58,6 +58,7 @@ export interface DetailedLesson {
     question: string;
     answer: string;
     followUp?: string;
+    followUpAnswer?: string;
     keyPhrases?: string[];
     commonMistakeAnswer?: string;
   }[];
