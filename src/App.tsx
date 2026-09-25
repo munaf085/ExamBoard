@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './index.css';
 import HomePage from './pages/HomePage';
+import DotNetDashboard from './pages/DotNetDashboard';
+import JavaDashboard from './pages/JavaDashboard';
 import TestSelectionPage from './pages/TestSelectionPage';
 import TestInstructionsPage from './pages/TestInstructionsPage';
 import TestRunnerPage from './pages/TestRunnerPage';
@@ -19,6 +21,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/dotnet" element={<DotNetDashboard />} />
+        <Route path="/java" element={<JavaDashboard />} />
         <Route path="/test-selection" element={<TestSelectionPage />} />
         <Route path="/test-instructions/:paperId" element={<TestInstructionsPage />} />
         <Route path="/test/:paperId" element={<TestRunnerPage />} />
