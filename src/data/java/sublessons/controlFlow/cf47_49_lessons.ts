@@ -2,13 +2,13 @@ import { DetailedLesson } from '../../detailedLessons';
 
 export const cf47_49_lessons: Record<string, DetailedLesson> = {
   // ============================================================
-  // LESSON 4.7: THE DO-WHILE LOOP (RUNS >= 1 TIME)
+  // LESSON 5.4: THE DO-WHILE LOOP (RUNS >= 1 TIME)
   // ============================================================
   'do-while-loop': {
     id: 'do-while-loop',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
-    lessonNumber: 'Lesson 4.7',
+    moduleId: 'java-loops',
+    moduleTitle: '5. Loops & Iterations',
+    lessonNumber: 'Lesson 5.4',
     title: 'The do-while Loop (Runs >= 1 Time)',
     subtitle: 'Post-condition evaluation, the mandatory semicolon, variable scope boundaries, and interactive validation loops',
     estimatedMinutes: 15,
@@ -546,13 +546,13 @@ System.out.println(iterations + ":" + count);`,
   },
 
   // ============================================================
-  // LESSON 4.8: BREAK, CONTINUE & LABELED STATEMENTS
+  // LESSON 5.5: BREAK, CONTINUE & LABELED STATEMENTS
   // ============================================================
   'break-continue-labeled': {
     id: 'break-continue-labeled',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
-    lessonNumber: 'Lesson 4.8',
+    moduleId: 'java-loops',
+    moduleTitle: '5. Loops & Iterations',
+    lessonNumber: 'Lesson 5.5',
     title: 'Break, Continue & Labeled Statements',
     subtitle: 'Early loop termination, skipping iterations, labeled multi-level jumps, and unreachable code traps',
     estimatedMinutes: 18,
@@ -1129,13 +1129,13 @@ System.out.println(executions);`,
   },
 
   // ============================================================
-  // LESSON 4.9: NESTED LOOPS & LOOP TRACING
+  // LESSON 5.6: NESTED LOOPS & LOOP TRACING
   // ============================================================
   'nested-loops-and-tracing': {
     id: 'nested-loops-and-tracing',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
-    lessonNumber: 'Lesson 4.9',
+    moduleId: 'java-loops',
+    moduleTitle: '5. Loops & Iterations',
+    lessonNumber: 'Lesson 5.6',
     title: 'Nested Loops & Loop Tracing',
     subtitle: 'Multi-dimensional iterations, coordinate grids, total iteration calculations, and systematic execution tracing',
     estimatedMinutes: 20,

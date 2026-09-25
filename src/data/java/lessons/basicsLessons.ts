@@ -168,28 +168,32 @@ Safely guarded against null!`
     ]
   },
 
-  // ── MODULE 4: Control Flow ─────────────────────────────────
+  // ── MODULE 4: Decision Making & Branching ─────────────────
   'java-control-flow': {
-    intro: 'Control flow determines the branching and iterative execution paths of programs. Java provides conditionals (if-else, switch) and loops (for, while, do-while) along with jump statements (break, continue, return).',
+    intro: 'Decision making constructs direct the program execution flow along different branches based on boolean evaluations and switch matching.',
     keyConcepts: [
-      { term: 'if / else if / else', definition: 'Sequential conditional branching based on boolean conditions.' },
-      { term: 'switch Statement & Expressions', definition: 'Matches byte, short, int, char, String, or enum. Java 14+ introduces switch expressions using -> syntax without fall-through.', example: 'switch (day) { case 1 -> "Mon"; default -> "Other"; }' },
-      { term: 'Loops', definition: 'for (counted), enhanced for-each (collections/arrays), while (pre-condition), do-while (post-condition, runs at least once).' },
-      { term: 'break vs continue', definition: 'break exits the nearest loop or switch. continue skips the remainder of current iteration and moves to next loop step.' },
+      { term: 'if / else if / else', definition: 'Sequential conditional branching based strictly on boolean expressions. Definite assignment ensures local variables are initialized across all paths.' },
+      { term: 'Traditional switch', definition: 'Matches byte, short, int, char, String, or enum. Requires break statements to prevent fall-through.', example: 'switch (opt) { case 1: doSomething(); break; default: break; }' },
+      { term: 'Modern switch Expressions (->)', definition: 'Introduced in Java 14. Uses arrow syntax (->), eliminates accidental fall-through, allows multiple comma-separated labels, and can yield values.', example: 'String res = switch (day) { case 1, 7 -> "Weekend"; default -> "Weekday"; };' },
+      { term: 'Short-Circuit Logic', definition: 'Operators && and || halt evaluation the instant the outcome is determined, protecting against null pointers or division by zero.', example: 'if (str != null && !str.isEmpty()) { ... }' },
     ],
     codeExamples: [
       {
-        title: 'do-while and Switch Expressions',
-        code: `public class ControlFlowDemo {
+        title: 'Decision Making with If-Else and Switch Expressions',
+        code: `public class DecisionDemo {
     public static void main(String[] args) {
-        // do-while always executes at least once
-        int count = 10;
-        do {
-            System.out.println("Runs once even when count is: " + count);
-            count++;
-        } while (count < 5);
+        int score = 85;
+        String grade;
+        if (score >= 90) {
+            grade = "A";
+        } else if (score >= 80) {
+            grade = "B";
+        } else {
+            grade = "C";
+        }
+        System.out.println("Grade: " + grade);
 
-        // Modern Switch
+        // Modern switch expression
         String day = "WED";
         String type = switch (day) {
             case "MON", "TUE", "WED", "THU", "FRI" -> "Weekday";
@@ -199,28 +203,83 @@ Safely guarded against null!`
         System.out.println("Day type: " + type);
     }
 }`,
-        output: `Runs once even when count is: 10
-Day type: Weekday`
+        output: `Grade: B\nDay type: Weekday`
       }
     ],
     commonMistakes: [
       'Omitting break in traditional switch statements causing unintentional fall-through.',
-      'Modifying collection while iterating in enhanced for-each loop causing ConcurrentModificationException.',
+      'Placing a semicolon after if condition: if (score >= 90); terminates the branch immediately.',
     ],
     interviewTips: [
-      'Labeled break allows breaking out of nested outer loops: outer: for (...) { break outer; }',
+      'Java conditions must strictly evaluate to boolean; "if (1)" does not compile.',
+      'Definite assignment: compiler verifies local variables are assigned across all branches before reading.',
     ],
     interviewQuestions: [
-      { q: 'What is the key difference between while and do-while loops?', a: 'while checks condition before loop body executes (0 or more times). do-while checks condition after executing body (always executes at least once).' },
+      { q: 'Why does switch expression not require break statements?', a: 'Modern switch expressions using arrow syntax (->) have no fall-through by design. Only the expression or block to the right of the matched arrow executes.' },
     ],
     revisionPoints: [
-      'do-while executes at least once',
+      'if conditions require strict boolean expressions',
       'Modern switch (Java 14+) uses -> to eliminate fall-through',
-      'break terminates loop; continue skips current step',
+      'Definite assignment prevents reading uninitialized local variables',
     ]
   },
 
-  // ── MODULE 5: Strings & String Pool ────────────────────────
+  // ── MODULE 5: Loops & Iterations ───────────────────────────
+  'java-loops': {
+    intro: 'Loops enable repetitive execution of code blocks. Java provides count-controlled loops (for), pre-condition loops (while), post-condition loops (do-while), enhanced collection traversal (for-each), and jump statements (break, continue, labeled jumps).',
+    keyConcepts: [
+      { term: 'for Loop', definition: 'Count-controlled loop with header (initialization; condition; update). Variables declared in header are scoped strictly inside the loop.' },
+      { term: 'Enhanced for-each', definition: 'Indexless, forward-only traversal over arrays and collections. Read-only for primitive array elements.', example: 'for (int num : numbers) { System.out.println(num); }' },
+      { term: 'while Loop', definition: 'Entry-controlled loop that tests condition before every iteration (can execute 0 times).' },
+      { term: 'do-while Loop', definition: 'Exit-controlled loop that tests condition after loop body completes. Always executes at least once (>= 1 time).' },
+      { term: 'break & continue', definition: 'break exits the nearest loop immediately. continue skips the remainder of the current iteration and jumps to next iteration.' },
+      { term: 'Labeled Statements', definition: 'Labels enable break or continue to target specific outer nested loops cleanly without flags.', example: 'outer: for (...) { for (...) { if (done) break outer; } }' },
+    ],
+    codeExamples: [
+      {
+        title: 'Loops and Jumps in Action',
+        code: `public class LoopsDemo {
+    public static void main(String[] args) {
+        // do-while always executes at least once
+        int count = 10;
+        do {
+            System.out.println("Runs once even when count is: " + count);
+            count++;
+        } while (count < 5);
+
+        // for-each loop
+        int[] scores = {90, 85, 78};
+        int sum = 0;
+        for (int s : scores) {
+            sum += s;
+        }
+        System.out.println("Sum: " + sum);
+    }
+}`,
+        output: `Runs once even when count is: 10\nSum: 253`
+      }
+    ],
+    commonMistakes: [
+      'Missing state update in while loop causing infinite loop.',
+      'Accidental semicolon after while: while (condition); creates an empty busy-wait.',
+      'Assuming enhanced for-each reassignments modify the underlying array.',
+    ],
+    interviewTips: [
+      'Labeled break allows breaking out of nested outer loops: outer: for (...) { break outer; }',
+      'In a for loop, continue jumps to update expression; in while loop, continue jumps to condition.',
+    ],
+    interviewQuestions: [
+      { q: 'What is the key difference between while and do-while loops?', a: 'while checks condition before loop body executes (0 or more times). do-while checks condition after executing body (always executes at least once).' },
+      { q: 'Can you modify array elements using enhanced for-each?', a: 'No, for primitive arrays the loop variable is a copy by value. Reassigning it does not alter array contents.' },
+    ],
+    revisionPoints: [
+      'do-while executes at least once (post-condition test)',
+      'for loop counter variables are scoped exclusively inside the loop',
+      'break terminates nearest loop; labeled break terminates specified outer loop',
+    ]
+  },
+
+  // ── MODULE 6: Strings & String Pool ────────────────────────
   'java-strings': {
     intro: 'String is the most heavily used reference class in Java. Java Strings are immutable and cached in a special memory area called the String Constant Pool (SCP) in the heap to maximize memory efficiency and thread safety.',
     keyConcepts: [

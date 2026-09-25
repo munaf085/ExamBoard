@@ -12,7 +12,7 @@ export const JAVA_SECTIONS = [
 ] as const;
 
 export const JAVA_MODULES: JavaModule[] = [
-  // ── SECTION 1: BASICS & FUNDAMENTALS (1 - 7) ────────────────────────
+  // ── SECTION 1: BASICS & FUNDAMENTALS (1 - 8) ────────────────────────
   {
     id: 'java-fundamentals',
     title: '1. Java Fundamentals',
@@ -60,22 +60,37 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-control-flow',
-    title: '4. Control Flow & Loops',
-    description: 'if-else, modern switch expressions (->), for, while, do-while (runs >= 1 time), break/continue',
+    title: '4. Decision Making & Branching',
+    description: 'if-else ladders, strict boolean conditions, traditional switch statement fall-through, modern switch expressions (->)',
     difficulty: 'Easy',
-    estimatedMinutes: 45,
+    estimatedMinutes: 38,
     icon: 'GitBranch',
-    topics: ['if-else', 'Switch Expressions', 'for loop', 'do-while', 'break vs continue', 'Nested Loops'],
+    topics: ['if-else Ladders', 'Switch Statement', 'Switch Expressions (->)', 'Short-Circuit Logic', 'Definite Assignment'],
     prerequisites: ['java-operators'],
-    lessonCount: 5,
+    lessonCount: 3,
     mcqCount: 20,
-    codingCount: 5,
-    interviewCount: 8,
+    codingCount: 10,
+    interviewCount: 10,
+    section: 'fundamentals',
+  },
+  {
+    id: 'java-loops',
+    title: '5. Loops & Iterations',
+    description: 'for loop deep dive, enhanced for-each, while pre-condition loops, do-while post-condition loops, break/continue, nested loops & tracing',
+    difficulty: 'Easy',
+    estimatedMinutes: 60,
+    icon: 'Repeat',
+    topics: ['for Loop Deep Dive', 'Enhanced For-Each', 'while Loop', 'do-while Loop', 'break & continue', 'Nested Loops & Tracing'],
+    prerequisites: ['java-control-flow'],
+    lessonCount: 6,
+    mcqCount: 20,
+    codingCount: 10,
+    interviewCount: 10,
     section: 'fundamentals',
   },
   {
     id: 'java-strings',
-    title: '5. Strings & String Pool',
+    title: '6. Strings & String Pool',
     description: 'String immutability, String Constant Pool (SCP), == vs .equals(), StringBuilder vs StringBuffer',
     difficulty: 'Easy',
     estimatedMinutes: 50,
@@ -90,13 +105,13 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-arrays',
-    title: '6. Arrays & 2D Matrix',
+    title: '7. Arrays & 2D Matrix',
     description: '1D & 2D arrays, .length property vs .length() method, Arrays utility class, reversal algorithms',
     difficulty: 'Easy',
     estimatedMinutes: 50,
     icon: 'List',
     topics: ['1D Arrays', '2D Matrix', 'Arrays.sort()', 'Binary Search', 'Two Pointers Reversal', 'Second Largest'],
-    prerequisites: ['java-control-flow'],
+    prerequisites: ['java-loops'],
     lessonCount: 4,
     mcqCount: 15,
     codingCount: 10,
@@ -105,13 +120,13 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-methods',
-    title: '7. Methods & Recursion',
+    title: '8. Methods & Recursion',
     description: 'Method signatures, strictly pass-by-value, method overloading, recursion base cases, varargs',
     difficulty: 'Easy',
     estimatedMinutes: 40,
     icon: 'Zap',
     topics: ['Pass-by-Value', 'Method Overloading', 'Recursion', 'Base Conditions', 'varargs', 'static vs instance'],
-    prerequisites: ['java-control-flow'],
+    prerequisites: ['java-loops'],
     lessonCount: 3,
     mcqCount: 15,
     codingCount: 5,
@@ -119,10 +134,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'fundamentals',
   },
 
-  // ── SECTION 2: OBJECT-ORIENTED PROGRAMMING (8 - 13) ──────────────────
+  // ── SECTION 2: OBJECT-ORIENTED PROGRAMMING (9 - 14) ──────────────────
   {
     id: 'java-oop-basics',
-    title: '8. OOP Fundamentals',
+    title: '9. OOP Fundamentals',
     description: 'Classes, heap objects, default vs parameterized constructors, this() constructor chaining, static fields',
     difficulty: 'Medium',
     estimatedMinutes: 60,
@@ -137,7 +152,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-encapsulation',
-    title: '9. Encapsulation & Data Hiding',
+    title: '10. Encapsulation & Data Hiding',
     description: 'private fields, public getters/setters with validation, 4 access modifiers, immutable class pattern',
     difficulty: 'Medium',
     estimatedMinutes: 45,
@@ -152,7 +167,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-inheritance',
-    title: '10. Inheritance & Hierarchy',
+    title: '11. Inheritance & Hierarchy',
     description: 'extends keyword, super() constructor chaining, single class inheritance, avoiding diamond problem',
     difficulty: 'Medium',
     estimatedMinutes: 60,
@@ -167,7 +182,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-polymorphism',
-    title: '11. Polymorphism & Dispatch',
+    title: '12. Polymorphism & Dispatch',
     description: 'Overloading (compile-time) vs Overriding (runtime), Dynamic Method Dispatch, covariant return types',
     difficulty: 'Medium',
     estimatedMinutes: 55,
@@ -182,7 +197,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-abstraction',
-    title: '12. Abstraction & Interfaces',
+    title: '13. Abstraction & Interfaces',
     description: 'Abstract classes vs Interfaces, Java 8 default/static methods, functional interfaces, contract design',
     difficulty: 'Medium',
     estimatedMinutes: 55,
@@ -197,7 +212,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-object-class',
-    title: '13. Object Class & Contract',
+    title: '14. Object Class & Contract',
     description: 'Root Object class, toString(), equals() and hashCode() contract, memory leak prevention in HashMaps',
     difficulty: 'Medium',
     estimatedMinutes: 45,
@@ -211,10 +226,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'oop',
   },
 
-  // ── SECTION 3: DATA STRUCTURES & ALGORITHMS (14 - 16) ───────────────
+  // ── SECTION 3: DATA STRUCTURES & ALGORITHMS (15 - 17) ───────────────
   {
     id: 'java-dsa-foundations',
-    title: '14. DSA Foundations & Searching',
+    title: '15. DSA Foundations & Searching',
     description: 'Big O asymptotic notation, Linear Search, Binary Search (midpoint overflow), Merge Sort vs Quick Sort',
     difficulty: 'Medium',
     estimatedMinutes: 60,
@@ -229,7 +244,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-dsa-stacks-queues',
-    title: '15. Stacks, Queues & Lists',
+    title: '16. Stacks, Queues & Lists',
     description: 'LIFO Stack using ArrayDeque, FIFO Queue, Singly & Doubly Linked Lists, Floyd cycle detection',
     difficulty: 'Medium',
     estimatedMinutes: 65,
@@ -244,7 +259,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-dsa-patterns',
-    title: '16. Two Pointers & Sliding Window',
+    title: '17. Two Pointers & Sliding Window',
     description: 'Two Pointers converging technique, Sliding Window subarray optimization (O(n) vs O(n^2)), Backtracking',
     difficulty: 'Hard',
     estimatedMinutes: 70,
@@ -258,10 +273,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'dsa',
   },
 
-  // ── SECTION 4: COLLECTIONS & GENERICS (17 - 19) ──────────────────────
+  // ── SECTION 4: COLLECTIONS & GENERICS (18 - 20) ──────────────────────
   {
     id: 'java-collections',
-    title: '17. Collections Framework',
+    title: '18. Collections Framework',
     description: 'List, Set, Queue hierarchies, ArrayList vs LinkedList, TreeSet, PriorityQueue, Comparable vs Comparator',
     difficulty: 'Medium',
     estimatedMinutes: 70,
@@ -276,7 +291,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-hashing',
-    title: '18. Hashing & HashMap Internals',
+    title: '19. Hashing & HashMap Internals',
     description: 'HashMap bucket arrays, hash calculation, collision linked-list chaining, Java 8 Red-Black treeification',
     difficulty: 'Hard',
     estimatedMinutes: 60,
@@ -291,7 +306,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-generics',
-    title: '19. Generics & Type Safety',
+    title: '20. Generics & Type Safety',
     description: 'Compile-time type safety, Type Erasure, bounded types (<T extends Number>), Wildcards, PECS rule',
     difficulty: 'Medium',
     estimatedMinutes: 45,
@@ -305,10 +320,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'collections',
   },
 
-  // ── SECTION 5: ADVANCED CORE JAVA (20 - 24) ──────────────────────────
+  // ── SECTION 5: ADVANCED CORE JAVA (21 - 25) ──────────────────────────
   {
     id: 'java-exceptions',
-    title: '20. Exception Handling',
+    title: '21. Exception Handling',
     description: 'Throwable hierarchy, Checked vs Unchecked exceptions, try-catch-finally, try-with-resources',
     difficulty: 'Medium',
     estimatedMinutes: 50,
@@ -323,7 +338,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-streams',
-    title: '21. Java 8+ Streams & Lambdas',
+    title: '22. Java 8+ Streams & Lambdas',
     description: 'Lambda syntax, Functional Interfaces, Stream intermediate (lazy) vs terminal operations, Collectors, Optional',
     difficulty: 'Hard',
     estimatedMinutes: 70,
@@ -338,7 +353,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-multithreading',
-    title: '22. Multithreading & Concurrency',
+    title: '23. Multithreading & Concurrency',
     description: 'Thread vs Runnable, synchronized locks, volatile visibility, deadlock avoidance, ExecutorService thread pools',
     difficulty: 'Hard',
     estimatedMinutes: 65,
@@ -353,7 +368,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-jvm',
-    title: '23. JVM & Memory Management',
+    title: '24. JVM & Memory Management',
     description: 'Heap vs Stack memory, Metaspace, Generational Garbage Collection (Eden/Survivor/Tenured), G1 GC, memory leaks',
     difficulty: 'Hard',
     estimatedMinutes: 55,
@@ -368,7 +383,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-io',
-    title: '24. File I/O & Serialization',
+    title: '25. File I/O & Serialization',
     description: 'Byte vs Character streams, BufferedReader, NIO.2 Path and Files, Serializable interface, transient keyword',
     difficulty: 'Medium',
     estimatedMinutes: 45,
@@ -382,10 +397,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'advanced',
   },
 
-  // ── SECTION 6: DATABASE & SQL (25 - 26) ──────────────────────────────
+  // ── SECTION 6: DATABASE & SQL (26 - 27) ──────────────────────────────
   {
     id: 'java-sql',
-    title: '25. SQL for Java Developers',
+    title: '26. SQL for Java Developers',
     description: 'Query execution order, INNER/LEFT JOINs, WHERE vs HAVING, Indexes, Normalization, ACID transactions',
     difficulty: 'Medium',
     estimatedMinutes: 60,
@@ -400,7 +415,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-jdbc',
-    title: '26. JDBC & Transactions',
+    title: '27. JDBC & Transactions',
     description: 'JDBC Driver, Connection, Statement vs PreparedStatement (SQL Injection prevention), HikariCP pool, commit/rollback',
     difficulty: 'Medium',
     estimatedMinutes: 50,
@@ -414,10 +429,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'database',
   },
 
-  // ── SECTION 7: SPRING & MICROSERVICES (27 - 31) ──────────────────────
+  // ── SECTION 7: SPRING & MICROSERVICES (28 - 32) ──────────────────────
   {
     id: 'java-spring',
-    title: '27. Spring Core & IoC',
+    title: '28. Spring Core & IoC',
     description: 'Inversion of Control (IoC), Constructor Dependency Injection, Beans, Stereotypes (@Service, @Repository), Scopes',
     difficulty: 'Hard',
     estimatedMinutes: 70,
@@ -432,7 +447,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-spring-boot',
-    title: '28. Spring Boot Architecture',
+    title: '29. Spring Boot Architecture',
     description: 'Auto-configuration, Starters, @SpringBootApplication, embedded Tomcat, application.properties, Profiles, Actuator',
     difficulty: 'Hard',
     estimatedMinutes: 65,
@@ -447,7 +462,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-rest',
-    title: '29. REST APIs with Spring Boot',
+    title: '30. REST APIs with Spring Boot',
     description: '@RestController, HTTP status codes, DTOs, @Valid Jakarta validation, @RestControllerAdvice global error handling',
     difficulty: 'Hard',
     estimatedMinutes: 65,
@@ -462,7 +477,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-jpa',
-    title: '30. Spring Data JPA & Hibernate',
+    title: '31. Spring Data JPA & Hibernate',
     description: 'ORM, @Entity, relationships (@ManyToOne, @OneToMany), FetchType.LAZY, solving N+1 problem with JOIN FETCH',
     difficulty: 'Hard',
     estimatedMinutes: 65,
@@ -477,7 +492,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-security',
-    title: '31. Spring Security & JWT',
+    title: '32. Spring Security & JWT',
     description: 'Authentication vs Authorization, SecurityFilterChain, JWT token anatomy, BCrypt password hashing, CORS & CSRF',
     difficulty: 'Hard',
     estimatedMinutes: 65,
@@ -491,10 +506,10 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'spring',
   },
 
-  // ── SECTION 8: TESTING & ENGINEERING (32 - 34) ───────────────────────
+  // ── SECTION 8: TESTING & ENGINEERING (33 - 35) ───────────────────────
   {
     id: 'java-testing',
-    title: '32. Testing (JUnit 5 & Mockito)',
+    title: '33. Testing (JUnit 5 & Mockito)',
     description: 'Unit vs Integration testing, JUnit 5 annotations, assertions, Mockito @Mock and @InjectMocks, stubbing & verification',
     difficulty: 'Medium',
     estimatedMinutes: 55,
@@ -509,7 +524,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-design-patterns',
-    title: '33. Design Patterns',
+    title: '34. Design Patterns',
     description: 'Gang of Four patterns: Singleton (thread-safe double check/enum), Factory, Builder, Strategy, Observer, Repository',
     difficulty: 'Hard',
     estimatedMinutes: 60,
@@ -524,7 +539,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-clean-code',
-    title: '34. Clean Code & SOLID Principles',
+    title: '35. Clean Code & SOLID Principles',
     description: 'Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion, DRY & KISS',
     difficulty: 'Medium',
     estimatedMinutes: 50,

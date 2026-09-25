@@ -2,13 +2,13 @@ import { DetailedLesson } from '../../detailedLessons';
 
 export const cf44_46_lessons: Record<string, DetailedLesson> = {
   // ─────────────────────────────────────────────────────────────
-  // LESSON 4.4: The For Loop Deep Dive
+  // LESSON 5.1: The For Loop Deep Dive
   // ─────────────────────────────────────────────────────────────
   'for-loop-deep-dive': {
     id: 'for-loop-deep-dive',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
-    lessonNumber: 'Lesson 4.4',
+    moduleId: 'java-loops',
+    moduleTitle: '5. Loops & Iterations',
+    lessonNumber: 'Lesson 5.1',
     title: 'The For Loop Deep Dive',
     subtitle: 'Mastering the three-part loop header, execution cycle, multi-variable declarations, and loop variable scoping',
     estimatedMinutes: 15,
@@ -485,13 +485,13 @@ Left: 3, Right: 7 | Distance: 4`
   },
 
   // ─────────────────────────────────────────────────────────────
-  // LESSON 4.5: The Enhanced For-Each Loop
+  // LESSON 5.2: The Enhanced For-Each Loop
   // ─────────────────────────────────────────────────────────────
   'enhanced-for-each': {
     id: 'enhanced-for-each',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
-    lessonNumber: 'Lesson 4.5',
+    moduleId: 'java-loops',
+    moduleTitle: '5. Loops & Iterations',
+    lessonNumber: 'Lesson 5.2',
     title: 'The Enhanced For-Each Loop',
     subtitle: 'Simplified array traversal, read-only iteration semantics, indexless processing, and performance',
     estimatedMinutes: 12,
@@ -1003,13 +1003,13 @@ Short name: Rome`
   },
 
   // ─────────────────────────────────────────────────────────────
-  // LESSON 4.6: The While Loop (Pre-Condition Loop)
+  // LESSON 5.3: The While Loop (Pre-Condition Loop)
   // ─────────────────────────────────────────────────────────────
   'while-loop': {
     id: 'while-loop',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
-    lessonNumber: 'Lesson 4.6',
+    moduleId: 'java-loops',
+    moduleTitle: '5. Loops & Iterations',
+    lessonNumber: 'Lesson 5.3',
     title: 'The While Loop (Pre-Condition Loop)',
     subtitle: 'Entry-controlled repetition, indefinite iterations, state evolution, and avoiding infinite loops',
     estimatedMinutes: 12,

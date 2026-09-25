@@ -40,6 +40,7 @@ export const JAVA_MCQ_MAP: Record<string, JavaMCQ[]> = {
   'java-data-types': javaDataTypesQuestions as any,
   'java-strings': javaStringsQuestions as any,
   'java-control-flow': javaControlFlowQuestions as any,
+  'java-loops': javaControlFlowQuestions as any,
   'java-oop-basics': javaOOPQuestions as any,
   'java-inheritance': javaOOPQuestions as any,
   'java-abstraction': javaOOPQuestions as any,

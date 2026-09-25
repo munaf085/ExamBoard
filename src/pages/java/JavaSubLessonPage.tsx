@@ -419,7 +419,7 @@ export default function JavaSubLessonPage() {
               <span>📋 Cheat Sheet</span>
             </button>
 
-            {/* 3. 💻 Examples & Tracing (N) */}
+            {/* 3. 💻 Examples & Tracing */}
             <button
               onClick={() => setActiveTab('practice')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -429,10 +429,10 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>💻 Examples & Tracing ({practiceProblemsList.length + (lesson.codeExamples?.length || 0) + 1})</span>
+              <span>💻 Examples & Tracing ({practiceProblemsList.length})</span>
             </button>
 
-            {/* 4. Practice problems/assignment(input/output) */}
+            {/* 4. Practice Coding Assignments */}
             <button
               onClick={() => setActiveTab('assignments')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -442,7 +442,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>Practice Problems/Assignment (Input/Output){lesson.programmingExercises && lesson.programmingExercises.length > 0 ? ` (${lesson.programmingExercises.length})` : ''}</span>
+              <span>📝 Coding Practice ({lesson.programmingExercises?.length || 0})</span>
             </button>
 
             {/* 5. Interview Q&A */}
@@ -455,10 +455,10 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Interview Q&A</span>
+              <span>Interview Q&A ({lesson.interviewQuestions?.length || 0})</span>
             </button>
 
-            {/* 6. Self-Evaluate (3 Qs) */}
+            {/* 6. Self-Evaluate */}
             <button
               onClick={() => setActiveTab('self_eval')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -468,7 +468,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <Award className="w-3.5 h-3.5 text-purple-400" />
-              <span>Self-Evaluate ({lesson.interviewQuestions.length} Qs)</span>
+              <span>Self-Evaluate</span>
             </button>
 
             {/* 7. Mini Quiz */}
@@ -481,7 +481,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Mini Quiz</span>
+              <span>Mini Quiz ({lesson.miniQuiz?.length || 0})</span>
             </button>
 
             {/* 8. All in */}

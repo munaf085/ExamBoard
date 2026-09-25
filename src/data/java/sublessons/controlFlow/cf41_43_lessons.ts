@@ -7,7 +7,7 @@ export const cf41_43_lessons: Record<string, DetailedLesson> = {
   'if-else-ladder': {
     id: 'if-else-ladder',
     moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
+    moduleTitle: '4. Decision Making & Branching',
     lessonNumber: 'Lesson 4.1',
     title: 'If-Else Ladders & Decision Making',
     subtitle: 'Branching execution paths, strict boolean conditions, short-circuit logic, and definite assignment',
@@ -579,7 +579,7 @@ System.out.print("Plan=" + planCode);`,
   'switch-statement': {
     id: 'switch-statement',
     moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
+    moduleTitle: '4. Decision Making & Branching',
     lessonNumber: 'Lesson 4.2',
     title: 'The Traditional Switch Statement & Fall-Through',
     subtitle: 'Multi-way jump tables, supported selector types, intentional vs accidental fall-through, and block scoping',
@@ -1192,7 +1192,7 @@ switch (k) {
   'switch-expressions': {
     id: 'switch-expressions',
     moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow',
+    moduleTitle: '4. Decision Making & Branching',
     lessonNumber: 'Lesson 4.3',
     title: 'Modern Switch Expressions (->)',
     subtitle: 'Arrow syntax, producing values, exhaustiveness enforcement, multi-label matching, and the yield keyword',

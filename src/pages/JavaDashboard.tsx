@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, BookOpen, Layers, Package, Zap, Leaf, Database, 
-  Coffee, Calculator, GitBranch, Type, List, Shield, AlertTriangle, Box, Wind, Cpu, Server, Globe, HardDrive,
+  Coffee, Calculator, GitBranch, Repeat, Type, List, Shield, AlertTriangle, Box, Wind, Cpu, Server, Globe, HardDrive,
   PlayCircle, HelpCircle, CheckCircle, Clock, ChevronDown, ChevronUp, BookMarked, BrainCircuit, Target, Award
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../data/java/curriculum';
@@ -11,7 +11,7 @@ import { JavaProgress, JavaModule } from '../types';
 
 const ICON_MAP: Record<string, React.FC<any>> = {
   BookOpen, Layers, Package, Zap, Leaf, Database,
-  Coffee, Calculator, GitBranch, Type, List, Shield, AlertTriangle, Box, Wind, Cpu, Server, Globe, HardDrive
+  Coffee, Calculator, GitBranch, Repeat, Type, List, Shield, AlertTriangle, Box, Wind, Cpu, Server, Globe, HardDrive
 };
 
 export default function JavaDashboard() {
