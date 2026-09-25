@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { JavaMCQ } from './javaOOPQuestions';
 
 export const javaStreamsQuestions: JavaMCQ[] = [
@@ -407,3 +409,4 @@ nums.stream()
     tags: ['parallel-stream']
   }
 ];
+

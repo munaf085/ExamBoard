@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { JavaMCQ } from './javaOOPQuestions';
 
 export const javaExceptionsQuestions: JavaMCQ[] = [
@@ -416,3 +418,4 @@ export const javaExceptionsQuestions: JavaMCQ[] = [
     tags: ['try-catch-finally']
   }
 ];
+

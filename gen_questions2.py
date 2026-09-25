@@ -345,65 +345,64 @@ def clean_text(text):
     text = text.replace('‘', "'").replace('’', "'")
     text = text.replace('—', '-')
     text = text.replace('…', '...')
-    # keep only ascii
     return "".join([c for c in text if ord(c) < 128])
 
 def write_file(path, var_name, data):
     import os
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'w', encoding='ascii') as f:
-        f.write('export interface JavaInterviewQuestion {\\n')
-        f.write('  id: string;\\n')
-        f.write('  moduleId: string;\\n')
-        f.write('  question: string;\\n')
-        f.write('  expectedAnswer: string;\\n')
-        f.write('  followUps: string[];\\n')
-        f.write('  keyPoints: string[];\\n')
-        f.write('  difficulty: "Easy" | "Medium" | "Hard";\\n')
-        f.write('  type: "definition" | "why" | "how" | "difference" | "scenario" | "coding" | "debugging";\\n')
-        f.write('  tags: string[];\\n')
-        f.write('}\\n\\n')
+        f.write('export interface JavaInterviewQuestion {\n')
+        f.write('  id: string;\n')
+        f.write('  moduleId: string;\n')
+        f.write('  question: string;\n')
+        f.write('  expectedAnswer: string;\n')
+        f.write('  followUps: string[];\n')
+        f.write('  keyPoints: string[];\n')
+        f.write('  difficulty: "Easy" | "Medium" | "Hard";\n')
+        f.write('  type: "definition" | "why" | "how" | "difference" | "scenario" | "coding" | "debugging";\n')
+        f.write('  tags: string[];\n')
+        f.write('}\n\n')
         
-        f.write(f'export const {var_name}: JavaInterviewQuestion[] = [\\n')
+        f.write(f'export const {var_name}: JavaInterviewQuestion[] = [\n')
         for i, q in enumerate(data):
-            f.write('  {\\n')
-            f.write(f'    id: "{clean_text(q["id"])}",\\n')
-            f.write(f'    moduleId: "{clean_text(q["moduleId"])}",\\n')
+            f.write('  {\n')
+            f.write(f'    id: "{clean_text(q["id"])}",\n')
+            f.write(f'    moduleId: "{clean_text(q["moduleId"])}",\n')
             
             q_str = clean_text(q["question"]).replace('"', '\\"')
             ans_str = clean_text(q["expectedAnswer"]).replace('"', '\\"')
-            f.write(f'    question: "{q_str}",\\n')
-            f.write(f'    expectedAnswer: "{ans_str}",\\n')
+            f.write(f'    question: "{q_str}",\n')
+            f.write(f'    expectedAnswer: "{ans_str}",\n')
             
-            f.write('    followUps: [\\n')
+            f.write('    followUps: [\n')
             for fu in q['followUps']:
                 fu_str = clean_text(fu).replace('"', '\\"')
-                f.write(f'      "{fu_str}",\\n')
-            f.write('    ],\\n')
+                f.write(f'      "{fu_str}",\n')
+            f.write('    ],\n')
             
-            f.write('    keyPoints: [\\n')
+            f.write('    keyPoints: [\n')
             for kp in q['keyPoints']:
                 kp_str = clean_text(kp).replace('"', '\\"')
-                f.write(f'      "{kp_str}",\\n')
-            f.write('    ],\\n')
+                f.write(f'      "{kp_str}",\n')
+            f.write('    ],\n')
             
-            f.write(f'    difficulty: "{clean_text(q["difficulty"])}",\\n')
+            f.write(f'    difficulty: "{clean_text(q["difficulty"])}",\n')
             
             t = clean_text(q["type"])
             if t == "best-practice" or t == "performance":
                 t = "definition"
-            f.write(f'    type: "{t}",\\n')
+            f.write(f'    type: "{t}",\n')
             
-            f.write('    tags: [\\n')
+            f.write('    tags: [\n')
             for tag in q['tags']:
-                f.write(f'      "{clean_text(tag)}",\\n')
-            f.write('    ]\\n')
+                f.write(f'      "{clean_text(tag)}",\n')
+            f.write('    ]\n')
             f.write('  }')
             if i < len(data) - 1:
                 f.write(',')
-            f.write('\\n')
-        f.write('];\\n')
+            f.write('\n')
+        f.write('];\n')
 
-write_file(r'c:\\Users\\keert\\Mun\\ExamBoard\\src\\data\\java\\interviews\\javaRound3Questions.ts', 'javaRound3Questions', questions2)
-write_file(r'c:\\Users\\keert\\Mun\\ExamBoard\\src\\data\\java\\interviews\\javaInterviewTraps.ts', 'javaInterviewTraps', questions3)
+write_file(r'c:\Users\keert\Mun\ExamBoard\src\data\java\interviews\javaRound3Questions.ts', 'javaRound3Questions', questions2)
+write_file(r'c:\Users\keert\Mun\ExamBoard\src\data\java\interviews\javaInterviewTraps.ts', 'javaInterviewTraps', questions3)
 print('Done!')

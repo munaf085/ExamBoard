@@ -16,10 +16,9 @@ export { javaCollectionsQuestions } from './questions/javaCollectionsQuestions';
 export { javaStreamsQuestions } from './questions/javaStreamsQuestions';
 
 // Interview Questions
-// export { javaRound2Questions } from './interviews/javaRound2Questions';
-// javaRound3Questions and javaInterviewTraps temporarily excluded pending unicode fix
-// export { javaRound3Questions } from './interviews/javaRound3Questions';
-// export { javaInterviewTraps } from './interviews/javaInterviewTraps';
+// export { javaRound2Questions } from './interviews/javaRound2Questions'; // file being restored
+export { javaRound3Questions } from './interviews/javaRound3Questions';
+export { javaInterviewTraps } from './interviews/javaInterviewTraps';
 
 // Flashcards & Coding
 export { javaFlashcards } from './javaFlashcards';

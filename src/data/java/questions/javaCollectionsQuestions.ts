@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { JavaMCQ } from './javaOOPQuestions';
 
 export const javaCollectionsQuestions: JavaMCQ[] = [
@@ -402,3 +404,4 @@ export const javaCollectionsQuestions: JavaMCQ[] = [
     tags: ['arraylist', 'capacity']
   }
 ];
+

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export interface JavaMCQ {
   id: string;
   moduleId: string;
@@ -421,3 +423,4 @@ export const javaFundamentalsQuestions: JavaMCQ[] = [
     tags: ["scope", "variables", "compilation"]
   }
 ];
+

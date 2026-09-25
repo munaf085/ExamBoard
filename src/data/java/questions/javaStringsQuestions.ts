@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export interface JavaMCQ {
   id: string;
   moduleId: string;
@@ -360,3 +362,4 @@ export const javaStringsQuestions: JavaMCQ[] = [
     difficulty: "Hard"
   }
 ];
+

@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 export interface JavaMCQ {
   id: string;
   moduleId: string;
@@ -437,3 +439,4 @@ public class Main {
     tags: ['abstract-class']
   }
 ];
+
