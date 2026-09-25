@@ -11,89 +11,103 @@ export const dataTypesExercises: Record<string, ProgrammingExercise[]> = {
   'variables-and-scope': [
     {
       id: 'dt-var-1',
-      title: '1. Demonstrate Local vs Instance vs Static Variable Scope',
-      problemStatement: `Write a Java class that illustrates the three levels of variable scope:
-1. Static variable: Shared across all instances (\`static int counter\`).
-2. Instance variable: Unique to each instance (\`String accountHolder\`).
-3. Local variable: Scoped strictly within a method (\`double depositAmount\`).
-
-The program must create two account objects, update the static counter, and print each field to prove how they differ.
+      title: '1. Local Variable Declaration, Initialization & Reassignment',
+      problemStatement: `Write a standalone Java program that demonstrates working with local variables inside the main() method:
+1. Declare and initialize a student's name (\`String studentName = "Alex"\`), grade level (\`int gradeLevel = 10\`), and three subject test scores (\`int mathScore = 88\`, \`int scienceScore = 92\`, \`int englishScore = 84\`).
+2. Calculate the total score (\`totalScore\`) and average score (\`averageScore\`) using local variables.
+3. Promote the student by reassigning \`gradeLevel = 11\` (demonstrating variable value mutation without re-declaring the type).
+4. Print the student summary report before and after the grade promotion.
 
 Input Format: None.
 Output Format:
-Account 1: Alice, Balance: 500.0
-Account 2: Bob, Balance: 750.0
-Total Accounts Created: 2
+Student: Alex | Grade: 10
+Math: 88 | Science: 92 | English: 84
+Total: 264 | Average: 88.0
+Promoted to Grade: 11
 
 Example:
 Output:
-Account 1: Alice, Balance: 500.0
-Account 2: Bob, Balance: 750.0
-Total Accounts Created: 2`,
-      hint: 'Declare `static int counter = 0;` at class level, `String name; double balance;` as instance fields, and local variables inside `main` or helper methods.',
-      solutionCode: `public class ScopeDemonstrator {
-    // Static variable (class-level, shared)
-    static int totalAccounts = 0;
-
-    // Instance variables (unique to each object)
-    String accountHolder;
-    double balance;
-
-    public ScopeDemonstrator(String name, double initialDeposit) {
-        this.accountHolder = name;
-        this.balance = initialDeposit;
-        totalAccounts++;
-    }
-
+Student: Alex | Grade: 10
+Math: 88 | Science: 92 | English: 84
+Total: 264 | Average: 88.0
+Promoted to Grade: 11`,
+      hint: 'Declare variables inside main() using their type (e.g., int gradeLevel = 10;). When updating a variable, do NOT repeat the type; simply write gradeLevel = 11;',
+      solutionCode: `public class StudentGradeReport {
     public static void main(String[] args) {
-        // Local variables inside main
-        ScopeDemonstrator acc1 = new ScopeDemonstrator("Alice", 500.0);
-        ScopeDemonstrator acc2 = new ScopeDemonstrator("Bob", 750.0);
+        // Step 1: Declare and initialize local variables
+        String studentName = "Alex";
+        int gradeLevel = 10;
+        int mathScore = 88;
+        int scienceScore = 92;
+        int englishScore = 84;
 
-        System.out.println("Account 1: " + acc1.accountHolder + ", Balance: " + acc1.balance);
-        System.out.println("Account 2: " + acc2.accountHolder + ", Balance: " + acc2.balance);
-        System.out.println("Total Accounts Created: " + totalAccounts);
+        // Step 2: Compute derived values into new local variables
+        int totalScore = mathScore + scienceScore + englishScore;
+        double averageScore = totalScore / 3.0;
+
+        // Step 3: Print initial report
+        System.out.println("Student: " + studentName + " | Grade: " + gradeLevel);
+        System.out.println("Math: " + mathScore + " | Science: " + scienceScore + " | English: " + englishScore);
+        System.out.println("Total: " + totalScore + " | Average: " + averageScore);
+
+        // Step 4: Reassign gradeLevel (update existing variable without re-declaring type)
+        gradeLevel = 11;
+        System.out.println("Promoted to Grade: " + gradeLevel);
     }
 }`,
-      output: `Account 1: Alice, Balance: 500.0
-Account 2: Bob, Balance: 750.0
-Total Accounts Created: 2`,
-      explanation: 'Static variables live in the JVM Method Area (Metaspace) and are shared. Instance variables live in heap memory inside their respective objects. Local variables live in the thread stack frame and are destroyed when the method terminates.'
+      output: `Student: Alex | Grade: 10
+Math: 88 | Science: 92 | English: 84
+Total: 264 | Average: 88.0
+Promoted to Grade: 11`,
+      explanation: 'Local variables are declared inside a method (such as main) and live on the JVM thread stack. When declaring a variable, specify its type and name. Once declared, you can mutate (reassign) its value using the variable name alone without repeating the data type.'
     },
     {
       id: 'dt-var-2',
-      title: '2. Variable Shadowing and `this` Keyword',
-      problemStatement: `Create a Java class \`Student\` that has an instance variable \`int score\`. In its setter method \`setScore(int score)\`, the parameter has the exact same name as the instance field (shadowing it). Use the \`this\` keyword to resolve the shadowing and ensure the instance field receives the value.
+      title: '2. Block Scope & Variable Lifetime with Curly Braces { }',
+      problemStatement: `Write a Java program that demonstrates how block scope works using curly braces { }:
+1. In the main() method, declare an outer local variable \`double cartTotal = 150.0;\`.
+2. Open an inner block with \`{\` and declare a block-scoped variable \`double promoDiscount = 25.0;\`.
+3. Inside the inner block, apply the discount to \`cartTotal\` (\`cartTotal = cartTotal - promoDiscount;\`) and print the discount applied.
+4. Exit the inner block with \`}\`.
+5. In the outer method scope, print the final cart total. Notice that \`cartTotal\` successfully holds the updated price, while \`promoDiscount\` is out of scope and no longer accessible.
 
-Input Format: \`int inputScore = 95\`
+Input Format: None.
 Output Format:
-Before: 0
-After Setting: 95
+Initial Cart Total: $150.0
+[Inside Promo Block] Applied Discount: $25.0
+Final Checkout Total: $125.0
 
 Example:
-Input: inputScore = 88
 Output:
-Before: 0
-After Setting: 88`,
-      hint: 'In `setScore(int score)`, write `this.score = score;` so Java knows the left side belongs to the current object instance.',
-      solutionCode: `public class Student {
-    int score = 0; // instance variable
-
-    public void setScore(int score) {
-        // 'this.score' refers to the instance variable, 'score' refers to parameter
-        this.score = score;
-    }
-
+Initial Cart Total: $150.0
+[Inside Promo Block] Applied Discount: $25.0
+Final Checkout Total: $125.0`,
+      hint: 'Variables declared inside { } are local to that block. Code inside the block can read and modify outer variables, but outer code cannot see variables declared inside the inner block.',
+      solutionCode: `public class ShoppingCartScope {
     public static void main(String[] args) {
-        Student s = new Student();
-        System.out.println("Before: " + s.score);
-        s.setScore(95);
-        System.out.println("After Setting: " + s.score);
+        // Outer local variable: accessible throughout main()
+        double cartTotal = 150.0;
+        System.out.println("Initial Cart Total: $" + cartTotal);
+
+        // Inner block: creates an isolated scope
+        {
+            // Block-scoped local variable: only exists between { and }
+            double promoDiscount = 25.0;
+            System.out.println("[Inside Promo Block] Applied Discount: $" + promoDiscount);
+
+            // Inner block can freely read and update outer variables
+            cartTotal = cartTotal - promoDiscount;
+        }
+        // At this point, promoDiscount is destroyed from the stack
+
+        // cartTotal retains its updated value in the outer scope
+        System.out.println("Final Checkout Total: $" + cartTotal);
     }
 }`,
-      output: `Before: 0
-After Setting: 95`,
-      explanation: 'When a local parameter has the same identifier as an instance variable, the local variable shadows the outer one. The `this` keyword explicitly qualifies the reference to the current object instance.'
+      output: `Initial Cart Total: $150.0
+[Inside Promo Block] Applied Discount: $25.0
+Final Checkout Total: $125.0`,
+      explanation: 'A variable declared inside curly braces { } is scoped only to that block. It is created when execution enters the block and destroyed as soon as execution leaves the block. Inner blocks have access to outer variables, allowing modifications that persist after the inner block exits.'
     }
   ],
 

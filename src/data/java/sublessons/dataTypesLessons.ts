@@ -7,85 +7,216 @@ export const dataTypesLessons: Record<string, DetailedLesson> = {
     moduleTitle: '2. Data Types & Variables',
     lessonNumber: 'Lesson 2.1',
     title: 'Variables, Declaration & Scope',
-    subtitle: 'Local vs Instance vs Static variables and memory lifetimes',
+    subtitle: 'What is a variable, declaration vs initialization, local variables in main(), and block scope',
     estimatedMinutes: 12,
-    beginnerAnalogy: 'Think of variables as labeled boxes. A Local variable is like a sticky note on your desk: you write on it during a phone call, and when the call ends, you throw it away. An Instance variable is like a nametag worn by an employee: it stays as long as the employee is in the office. A Static variable is like the company billboard outside: there is only one billboard, and all employees share it.',
-    coreExplanation: [
-      'A variable is a named memory location that holds a value.',
-      'Java requires two things: (1) Type (what kind of data), (2) Identifier Name: "int score = 100;"',
-      'Java has 3 types of variables based on scope:',
-      '1. Local Variables: Declared inside a method, constructor, or block {}. Stored on the Stack. Destroyed when method exits. MUST be manually initialized before use (they have NO default values!).',
-      '2. Instance Variables (Fields): Declared inside a class but outside methods. Stored on the Heap inside the object. Created when object is created with new; destroyed when object is garbage collected. Automatically initialized to default values (0, null, false).',
-      '3. Static Variables (Class Variables): Declared with "static" keyword. Stored in Metaspace. Only ONE copy exists per class, shared across all objects of that class.',
+    beginnerAnalogy: 'Think of a variable as a labeled storage box in computer memory. You first choose what kind of items the box can hold (its data type, like int for whole numbers). Next, you write a label on the box so you can find it later (its name, like "score"). Finally, you place a value inside the box (assignment, like "score = 100"). When you need the value, you simply refer to the box by its label!',
+    interviewTakeaways: [
+      'Two Essential Parts: Every Java variable requires a Data Type (what it holds) and an Identifier Name (how you refer to it): "int score = 100;".',
+      'Local Variables Have NO Default Values: Variables declared inside main() or any method MUST be initialized before reading. Attempting to use an uninitialized local variable causes a compile error.',
+      'Reassignment vs Re-declaration: To change a variable\'s value, use "score = 150;". Never re-type the data type ("int score = 150;"), or Java will throw a duplicate variable error.',
+      'Block Scope ({ }): A variable lives only within the curly braces where it was declared. Once execution exits that block, the variable is permanently destroyed.'
     ],
-    diagram: `class Account {
-    static String bankName = "Federal Bank"; // Static: 1 shared copy
-    double balance;                          // Instance: 1 per object
+    cheatSheet: {
+      summary: 'A variable is a named memory location that stores data. In Java, variables must have a declared type and must be initialized before reading.',
+      syntaxTemplate: `// 1. Declaration only:
+dataType variableName;          // e.g. int score;
 
-    void deposit(double amount) {            // Local: exists only during
-        double tax = amount * 0.01;          // deposit() method call!
-        balance += (amount - tax);
-    }
-}`,
+// 2. Initialization / Assignment:
+variableName = value;           // e.g. score = 100;
+
+// 3. Combined Declaration + Initialization (Best Practice):
+dataType variableName = value;  // e.g. int age = 21;
+double price = 19.99;
+String name = "Alex";
+boolean isEnrolled = true;
+
+// 4. Reassigning a new value (do NOT repeat dataType):
+age = 22;`,
+      rules: [
+        { rule: 'Strong Typing', explanation: 'Java is strongly typed: a variable declared as int can ONLY store integer values, not text or decimals.' },
+        { rule: 'No Defaults for Local Variables', explanation: 'Local variables in main() have no default values and must be assigned before use.' },
+        { rule: 'Block Scope ({ })', explanation: 'Variables declared inside an inner block { } cannot be accessed outside those curly braces.' },
+        { rule: 'Naming Convention', explanation: 'Use camelCase for variable names: studentAge, totalScore, accountBalance.' }
+      ],
+      quickComparison: [
+        { aspect: 'Declaration', optionA: 'Tells Java the type and name: int score;', optionB: 'Allocates memory reference without assigning value' },
+        { aspect: 'Initialization', optionA: 'Assigns the first value: score = 100;', optionB: 'Can be done on same line or later before reading' },
+        { aspect: 'Reassignment', optionA: 'Updates value: score = 200; (no type keyword)', optionB: 'Writing "int score = 200;" again causes compiler error' },
+        { aspect: 'Local Scope', optionA: 'Inside method/block: exists on stack frame', optionB: 'Destroyed immediately when closing brace } is reached' }
+      ]
+    },
+    coreExplanation: [
+      'What is a Variable? A variable is a named container in computer memory that holds a value while your program is running. You can think of it as a labeled box where you store data that your code needs to remember, update, and use.',
+      'Declaration vs Initialization: Declaration announces to Java what kind of data the variable holds and what its name is (e.g. "int age;"). Initialization is the act of giving that variable its initial value using the assignment operator "=" (e.g. "age = 25;"). In everyday Java, you typically combine both into one line: "int age = 25;".',
+      'Local Variables in the main() Method: Any variable declared inside the main() method or inside any code block { } is called a Local Variable. Local variables live in temporary memory (the stack) and exist only while that block of code is executing.',
+      'THE #1 JAVA RULE: Local Variables Have NO Default Values! Unlike some other languages, Java will NEVER automatically fill an uninitialized local variable with 0 or null. If you write "int score; System.out.println(score);", the Java compiler halts immediately with an error: "variable score might not have been initialized". You must always assign a value before using it!',
+      'Updating and Reassigning Variables: Variables are called "variable" because their values can change over time. Once a variable is declared, you update its value simply by using the variable name with "=": "score = score + 10;". NEVER re-declare the type (e.g. "int score = 50;"), or Java will throw a "variable score is already defined" error.',
+      'Block Scope with Curly Braces { }: In Java, scope is determined strictly by curly braces { }. A variable declared inside an inner block (such as an if-statement or a standalone { } block) is created when entering the block and destroyed the moment Java reaches the closing brace }. It cannot be seen or used outside that block.',
+      'Java Naming Rules (Identifiers): (1) Must start with a letter (a-z, A-Z), an underscore (_), or dollar sign ($)—NEVER a number; (2) Can contain digits after the first character (e.g. "player1" is valid, but "1player" is illegal); (3) Cannot use Java keywords like "class", "public", "int", "static"; (4) Case-sensitive ("age" and "Age" are two distinct variables); (5) Java convention uses camelCase (e.g. "studentExamScore").'
+    ],
+    diagram: `+-------------------------------------------------------------+
+|  public static void main(String[] args) {                   |
+|                                                             |
+|      int age = 21;          [ Memory: age = 21 ]            |
+|      String name = "Alex";  [ Memory: name = "Alex" ]       |
+|                                                             |
+|      +-- Inner Block { } ---------------------------------+  |
+|      |  int bonus = 50;     [ Memory: bonus = 50 ]        |  |
+|      |                                                    |  |
+|      |  // "age", "name", AND "bonus" are accessible here |  |
+|      +----------------------------------------------------+  |
+|                                                             |
+|      // "bonus" is DESTROYED when reaching } above!         |
+|      // Attempting to print "bonus" here causes an error:   |
+|      // "cannot find symbol: variable bonus"                |
+|                                                             |
+|      // "age" and "name" remain accessible until main() ends|
++-------------------------------------------------------------+`,
     codeSnippet: {
-      title: 'Comparing the 3 Variable Scopes in Code',
-      code: `public class ScopeDemo {
-    static int staticCounter = 0; // Static
-    int instanceId;               // Instance
-
-    public ScopeDemo(int id) {
-        this.instanceId = id;
-        staticCounter++;
-    }
-
-    public void calculate() {
-        int localVar = 50; // Local: must be initialized!
-        System.out.println("Instance ID: " + instanceId);
-        System.out.println("Local Var: " + localVar);
-        System.out.println("Total instances created: " + staticCounter);
-    }
-
+      title: 'Declaring, Initializing, and Updating Local Variables',
+      code: `public class VariableBasics {
     public static void main(String[] args) {
-        ScopeDemo obj1 = new ScopeDemo(101);
-        ScopeDemo obj2 = new ScopeDemo(102);
+        // 1. Declaring and initializing local variables of various types
+        int studentAge = 20;
+        double gpa = 3.85;
+        String studentName = "Alex";
+        boolean isEnrolled = true;
 
-        obj1.calculate();
+        System.out.println("Student Name: " + studentName);
+        System.out.println("Age: " + studentAge);
+        System.out.println("GPA: " + gpa);
+        System.out.println("Enrolled: " + isEnrolled);
+
+        // 2. Reassigning / Updating variable values over time
+        studentAge = 21;             // Reassignment (notice: no "int" keyword!)
+        gpa = 3.90;                  // Updated GPA
+        System.out.println("Updated Age on Birthday: " + studentAge);
+        System.out.println("Updated GPA after semester: " + gpa);
+
+        // 3. Block Scope: Variables created inside { } live only inside { }
+        {
+            int semesterCredits = 15; // Local strictly to this inner block
+            System.out.println("Credits inside block: " + semesterCredits);
+            System.out.println("Student inside block: " + studentName); // Accessible!
+        }
+        // System.out.println(semesterCredits); // ERROR! semesterCredits was destroyed above!
     }
 }`,
       lineByLineExplanation: [
-        { line: 'static int staticCounter', explanation: 'Shared by all ScopeDemo objects. Increments on every constructor call.' },
-        { line: 'int instanceId', explanation: 'Each object has its own unique instanceId copy.' },
-        { line: 'int localVar = 50', explanation: 'Lives on stack frame of calculate(). Disappears once calculate() returns.' },
+        { line: 'int studentAge = 20;', explanation: 'Declares an integer variable named studentAge and initializes it to 20.' },
+        { line: 'studentAge = 21;', explanation: 'Updates the value of studentAge to 21. We do NOT write "int" again because it is already declared.' },
+        { line: '{ int semesterCredits = 15; }', explanation: 'Defines an inner block. semesterCredits is born at the opening brace { and destroyed at the closing brace }.' },
+        { line: 'System.out.println(studentName);', explanation: 'The outer variable studentName is fully accessible inside inner blocks.' }
       ],
-      output: `Instance ID: 101
-Local Var: 50
-Total instances created: 2`
+      output: `Student Name: Alex
+Age: 20
+GPA: 3.85
+Enrolled: true
+Updated Age on Birthday: 21
+Updated GPA after semester: 3.9
+Credits inside block: 15
+Student inside block: Alex`
     },
+    codeExamples: [
+      {
+        title: 'Example 1: The Uninitialized Local Variable Compiler Error',
+        description: 'Demonstrating why local variables MUST be initialized before reading them in Java.',
+        code: `public class UninitializedDemo {
+    public static void main(String[] args) {
+        int score; // Declared, but NOT initialized!
+
+        // The following line would FAIL to compile:
+        // System.out.println(score); // error: variable score might not have been initialized
+
+        // Fix: Give it a value before using it!
+        score = 100;
+        System.out.println("Now score is safely initialized: " + score);
+    }
+}`,
+        output: 'Now score is safely initialized: 100'
+      },
+      {
+        title: 'Example 2: Accumulating & Updating a Running Counter',
+        description: 'Showing how a variable varies by adding to its previous value.',
+        code: `public class CounterDemo {
+    public static void main(String[] args) {
+        int totalCoins = 0;
+        System.out.println("Starting coins: " + totalCoins);
+
+        totalCoins = totalCoins + 5;  // Earn 5 coins
+        System.out.println("After quest: " + totalCoins);
+
+        totalCoins = totalCoins + 10; // Earn 10 more coins
+        System.out.println("After treasure chest: " + totalCoins);
+
+        totalCoins = totalCoins - 3;  // Spent 3 coins
+        System.out.println("Final coin balance: " + totalCoins);
+    }
+}`,
+        output: `Starting coins: 0
+After quest: 5
+After treasure chest: 15
+Final coin balance: 12`
+      }
+    ],
     beginnerMistakes: [
       {
         mistake: 'Trying to use a local variable without initializing it (e.g. "int total; System.out.println(total);").',
-        whyItHappens: 'Assuming local variables have default values like instance fields do.',
-        howToFix: 'Compile error occurs! Always initialize local variables: "int total = 0;".'
+        whyItHappens: 'Assuming Java automatically fills local variables with default values like 0.',
+        howToFix: 'Always assign an initial value before reading a local variable: "int total = 0;".'
+      },
+      {
+        mistake: 'Re-declaring the variable type when reassigning a value: "int score = 10; ... int score = 20;".',
+        whyItHappens: 'Forgetting that data type is only written ONCE during declaration.',
+        howToFix: 'When changing an existing variable, omit the type keyword: "score = 20;".'
+      },
+      {
+        mistake: 'Trying to access a variable outside the curly braces { } where it was created.',
+        whyItHappens: 'Not realizing that variables are destroyed when execution exits their enclosing block.',
+        howToFix: 'Declare the variable in the outer scope before the block if you need to use its value afterward.'
       }
     ],
     interviewQuestions: [
       {
+        question: 'What is the difference between variable declaration and variable initialization in Java?',
+        answer: 'Declaration informs the Java compiler about the variable\'s type and identifier name so memory can be reserved (e.g. "int score;"). Initialization is the act of assigning a concrete value to that variable for the first time (e.g. "score = 100;"). In Java, declaration and initialization can be combined in one line: "int score = 100;".',
+        followUp: 'Can you re-declare a variable with the same name in the same scope?',
+        keyPhrases: ['type and name registration', 'first assignment', 'combined declaration + initialization', 'duplicate variable error'],
+        commonMistakeAnswer: 'Confusing assignment with declaration.'
+      },
+      {
         question: 'Do local variables get default values in Java?',
-        answer: 'No! Local variables in Java do not get default values. If you attempt to read a local variable before explicitly assigning a value to it, the Java compiler will report a compile-time error: "variable might not have been initialized". Instance and static variables, however, get default values (0, 0.0, false, null).'
+        answer: 'No! Local variables in Java (variables declared inside methods, constructors, or blocks) do NOT receive default values. If you attempt to read or print a local variable before explicitly assigning a value to it, the Java compiler reports a compile-time error: "variable might not have been initialized".',
+        followUp: 'Why does Java enforce this rule for local variables?',
+        keyPhrases: ['no default values', 'compile-time error', 'uninitialized variable prevention', 'safety on stack'],
+        commonMistakeAnswer: 'Assuming local integers default to 0.'
+      },
+      {
+        question: 'How does block scope work with curly braces { } in Java?',
+        answer: 'A variable\'s scope is limited to the block { } in which it is declared. It is allocated on the stack frame when execution enters the block and is destroyed the moment execution leaves the closing brace }. Code outside that block cannot see or access the variable.',
+        followUp: 'Can an inner block access variables declared in an enclosing outer block?',
+        keyPhrases: ['bounded by curly braces', 'stack allocation and destruction', 'inner block sees outer variables', 'outer block cannot see inner variables'],
+        commonMistakeAnswer: 'Thinking variables exist throughout the entire method regardless of inner blocks.'
       }
     ],
     miniQuiz: [
       {
-        question: 'Where are local variables stored in memory?',
-        options: ['Heap memory', 'Stack memory', 'Metaspace', 'Hard drive'],
-        correctIndex: 1,
-        explanation: 'Local variables and method call frames are allocated on the Stack and discarded when the method finishes.'
+        question: 'What happens when you compile this code: int total; System.out.println(total); inside main()?',
+        options: ['Prints 0', 'Prints null', 'Compilation Error: variable total might not have been initialized', 'Throws NullPointerException at runtime'],
+        correctIndex: 2,
+        explanation: 'Local variables in Java have no default values. Attempting to read an uninitialized local variable causes a compile-time error.'
       },
       {
-        question: 'What is the default value of an uninitialized boolean instance variable?',
-        options: ['true', 'null', 'false', '0'],
+        question: 'Which of the following is an ILLEGAL variable name in Java?',
+        options: ['totalScore', '_userAge', '2ndPlayer', '$balance'],
         correctIndex: 2,
-        explanation: 'Boolean instance variables default to false.'
+        explanation: 'In Java, variable names cannot start with a digit. "2ndPlayer" is illegal, while "player2" would be legal.'
+      },
+      {
+        question: 'When a variable is declared inside an inner block { int temp = 10; }, where can it be accessed?',
+        options: ['Anywhere inside that inner block only', 'Anywhere in the entire main() method', 'Across all methods in the class', 'Inside any file in the same package'],
+        correctIndex: 0,
+        explanation: 'Variables declared inside an inner block { } are scoped strictly to that block and are destroyed when execution reaches the closing brace }.'
       }
     ]
   },
