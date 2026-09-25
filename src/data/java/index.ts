@@ -16,7 +16,7 @@ export { javaCollectionsQuestions } from './questions/javaCollectionsQuestions';
 export { javaStreamsQuestions } from './questions/javaStreamsQuestions';
 
 // Interview Questions
-// export { javaRound2Questions } from './interviews/javaRound2Questions'; // file being restored
+export { javaRound2Questions } from './interviews/javaRound2Questions';
 export { javaRound3Questions } from './interviews/javaRound3Questions';
 export { javaInterviewTraps } from './interviews/javaInterviewTraps';
 
