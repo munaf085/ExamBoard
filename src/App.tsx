@@ -8,6 +8,7 @@ import JavaMCQPage from './pages/java/JavaMCQPage';
 import JavaFlashcardsPage from './pages/java/JavaFlashcardsPage';
 import JavaMockInterviewPage from './pages/java/JavaMockInterviewPage';
 import JavaRevisionPage from './pages/java/JavaRevisionPage';
+import JavaSyllabusPage from './pages/java/JavaSyllabusPage';
 import TestSelectionPage from './pages/TestSelectionPage';
 import TestInstructionsPage from './pages/TestInstructionsPage';
 import TestRunnerPage from './pages/TestRunnerPage';
@@ -34,6 +35,7 @@ function App() {
         <Route path="/java/flashcards" element={<JavaFlashcardsPage />} />
         <Route path="/java/mock-interview" element={<JavaMockInterviewPage />} />
         <Route path="/java/revision" element={<JavaRevisionPage />} />
+        <Route path="/java/syllabus" element={<JavaSyllabusPage />} />
         
         <Route path="/test-selection" element={<TestSelectionPage />} />
         <Route path="/test-instructions/:paperId" element={<TestInstructionsPage />} />

@@ -127,13 +127,22 @@ export default function JavaModulePage() {
 
       {/* ── LEFT SIDEBAR ── */}
       <aside className="w-80 min-h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
-        <div className="p-4 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-800/95 backdrop-blur z-10">
-          <Link to="/java" className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 text-sm font-semibold">
-            <ArrowLeft className="w-4 h-4" /> Java Dashboard
+        <div className="p-4 border-b border-slate-700 flex flex-col gap-2.5 sticky top-0 bg-slate-800/95 backdrop-blur z-10">
+          <div className="flex items-center justify-between">
+            <Link to="/java" className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 text-sm font-semibold">
+              <ArrowLeft className="w-4 h-4" /> Java Dashboard
+            </Link>
+            <span className="text-xs font-mono bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+              {completed.length}/{JAVA_MODULES.length} Done
+            </span>
+          </div>
+          <Link
+            to="/java/syllabus"
+            className="flex items-center justify-center gap-2 bg-slate-750 hover:bg-slate-700 text-emerald-300 text-xs py-1.5 px-3 rounded-lg border border-emerald-500/20 font-semibold transition-colors"
+          >
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>📋 View Full Syllabus (One Page)</span>
           </Link>
-          <span className="text-xs font-mono bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
-            {completed.length}/{JAVA_MODULES.length} Done
-          </span>
         </div>
 
         {/* Sidebar Topics Menu */}

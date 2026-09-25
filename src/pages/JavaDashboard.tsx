@@ -64,7 +64,34 @@ export default function JavaDashboard() {
               Java Developer Interview Portal
             </h1>
           </div>
+          <Link
+            to="/java/syllabus"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg border border-emerald-400/30 transition-all hover:scale-105"
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>📋 View Full Syllabus (One Page)</span>
+          </Link>
         </header>
+
+        {/* Full Syllabus Banner */}
+        <div className="bg-gradient-to-r from-emerald-950/40 via-slate-800 to-slate-800 border border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-md">
+          <div className="flex items-center gap-3.5">
+            <div className="p-2.5 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="font-bold text-white text-sm md:text-base">Complete 34-Module Zero-Gap Java Syllabus</h3>
+              <p className="text-xs text-slate-400">Search topics, track preparation checklist, and export or print as PDF.</p>
+            </div>
+          </div>
+          <Link
+            to="/java/syllabus"
+            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-2 shadow-md transition-all flex-shrink-0"
+          >
+            <span>Open Syllabus Page</span>
+            <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
+          </Link>
+        </div>
 
         {/* Stats Bar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
