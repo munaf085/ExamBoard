@@ -46,6 +46,9 @@ export default function JavaSubLessonPage() {
   // Interviewer Question state: which questions have their answers revealed
   const [revealedQuestions, setRevealedQuestions] = useState<Record<number, boolean>>({});
 
+  // Analogy expand toggle (collapsed by default to save space)
+  const [analogyOpen, setAnalogyOpen] = useState(false);
+
   const lesson: DetailedLesson | undefined = lessonId ? getDetailedLesson(lessonId) : undefined;
   const adjacent = lesson ? getAdjacentLessons(lesson.id) : { prev: undefined, next: undefined };
   const allLessons = getAllDetailedLessons();
@@ -309,36 +312,55 @@ export default function JavaSubLessonPage() {
 
         {/* ── LESSON CONTENT AREA ── */}
         <main className="flex-1 p-3 sm:p-5 md:p-8 max-w-4xl mx-auto w-full space-y-5">
-          {/* Header Card */}
-          <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-slate-850 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-lg">
-            <div className="flex flex-wrap items-center gap-2 mb-2 text-xs">
-              <span className="font-semibold px-2 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                {lesson.moduleTitle}
-              </span>
-              <span className="text-slate-400 flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-slate-500" />
-                ~{lesson.estimatedMinutes} mins
-              </span>
-              <span className="text-slate-500">·</span>
-              <span className="text-slate-400">
-                Lesson {currentLessonIndex + 1} of {allLessons.length}
-              </span>
+          {/* Compact, Slim Header Card */}
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 shadow-sm">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
+              <div className="flex items-center gap-2 text-xs">
+                <span className="font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px]">
+                  {lesson.lessonNumber}
+                </span>
+                <span className="text-slate-400 font-medium truncate max-w-[200px] sm:max-w-xs">
+                  {lesson.moduleTitle}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                <span>⏱ ~{lesson.estimatedMinutes}m read</span>
+                <span>·</span>
+                <span>Topic {currentLessonIndex + 1}/{allLessons.length}</span>
+              </div>
             </div>
 
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-extrabold text-white tracking-tight mb-1.5">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight">
               {lesson.title}
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
               {lesson.subtitle}
             </p>
 
-            {/* Quick Intuition Analogy */}
-            <div className="mt-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-2.5">
-              <Lightbulb className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <p className="text-xs sm:text-sm text-amber-200/90 leading-relaxed italic">
-                "{lesson.beginnerAnalogy}"
-              </p>
-            </div>
+            {/* Compact Collapsible 10-Second Analogy Bar */}
+            {lesson.beginnerAnalogy && (
+              <div className="mt-2.5 pt-2 border-t border-slate-800/80">
+                <button
+                  onClick={() => setAnalogyOpen(!analogyOpen)}
+                  className="w-full flex items-center justify-between text-[11px] text-amber-400/90 hover:text-amber-300 font-medium transition py-0.5"
+                >
+                  <span className="flex items-center gap-1.5 truncate">
+                    <Lightbulb className="w-3.5 h-3.5 shrink-0 text-amber-400" />
+                    <span className="truncate">
+                      {analogyOpen ? 'Analogy: ' : '💡 10-Sec Intuition: ' + lesson.beginnerAnalogy}
+                    </span>
+                  </span>
+                  <span className="text-[10px] text-slate-500 font-mono shrink-0 ml-2">
+                    {analogyOpen ? 'Collapse ▲' : 'Expand ▼'}
+                  </span>
+                </button>
+                {analogyOpen && (
+                  <p className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed italic">
+                    "{lesson.beginnerAnalogy}"
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           {/* ── FAST TABS FOR INTERVIEW PREP (MOBILE OPTIMIZED) ── */}
