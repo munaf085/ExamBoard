@@ -40,11 +40,12 @@ export const controlFlowLessons: Record<string, DetailedLesson> = {
       ]
     },
     coreExplanation: [
-      'The "if" statement executes a block of code ONLY if the condition evaluates to true.',
-      'The "else if" ladder allows checking multiple conditions sequentially from top to bottom.',
-      'The moment ONE condition evaluates to true, its block executes and ALL subsequent else-if branches are skipped!',
-      'The final "else" block acts as a fallback default when none of the preceding conditions were true.',
-      'STRICT JAVA RULE: In C/C++, you can write "if (x)" where x is an integer. In Java, conditions MUST be of type boolean! "if (1)" will NOT compile!'
+      'The if-else statement is Java\'s fundamental decision-making construct, enabling programs to execute different code paths depending on boolean runtime conditions.',
+      'Sequential First-Match-Wins Rule: In an if-else if-else ladder, Java evaluates each conditional expression sequentially from top to bottom. The moment ONE condition evaluates to true, the statements inside that specific block execute immediately, and Java completely skips all subsequent else-if and else branches.',
+      'Strict Boolean Enforcement: In languages like C and C++, any non-zero integer evaluates to truthy. In Java, conditions MUST strictly evaluate to a primitive boolean type (true or false). Writing "if (1)" or "if (score = 100)" will fail compilation with "incompatible types: int cannot be converted to boolean".',
+      'The Fallback Else Block: The optional trailing "else" block executes only when every preceding condition in the ladder has evaluated to false, ensuring a guaranteed default path.',
+      'Short-Circuit Compound Evaluation: When combining conditions using logical AND (&&) or logical OR (||), Java evaluates operands from left to right and stops evaluating as soon as the result is determined. This enables safe null checking, e.g., if (user != null && user.isActive()).',
+      'Brace Conventions & The Dangling Else Trap: Although Java permits omitting curly braces for single-statement bodies, doing so can cause confusing "dangling else" ambiguities where an else binds unexpectedly to the inner if. Professional Java code standards mandate using braces {} for all conditional blocks.'
     ],
     diagram: `[ Evaluate Condition 1 ] -> true -> [ Execute Block 1 ] -> (Skip Rest)
           | false
@@ -908,11 +909,12 @@ System.out.println(rating);`,
       ]
     },
     coreExplanation: [
-      'The traditional for loop is the standard count-controlled iteration mechanism in Java.',
-      'Header execution order: (1) Init (once) -> (2) Condition -> (3) Body -> (4) Update -> (5) Back to Condition.',
-      'Scope rule: Variables declared in the initialization section (like "int i = 0") are local to the for loop.',
-      'Multiple variables of the SAME type can be initialized and updated using commas: "for (int i = 0, j = 10; i < j; i++, j--)".',
-      'The condition must evaluate to a boolean expression. If omitted (e.g. for (;;)), the condition defaults to true.'
+      'The traditional for loop is Java\'s standard count-controlled iteration statement, optimized for executing a block of code a known or bounded number of times.',
+      'Strict 4-Step Execution Sequence: (1) Initialization runs exactly once when entering the loop; (2) Boolean condition is evaluated before every single iteration; (3) If condition is true, the loop body executes; (4) The update statement executes at the conclusion of each iteration; (5) Program flow returns to step 2.',
+      'Variable Scope Isolation: Any variable declared inside the for loop header (e.g. for (int i = 0; ...)) is locally scoped to the loop block. It is allocated on the stack frame when the loop starts and destroyed when the loop terminates, preventing namespace pollution.',
+      'Multiple Control Variables: Java permits multiple variables in the initialization and update sections separated by commas, provided they share the exact same type: for (int i = 0, j = 10; i < j; i++, j--).',
+      'All 3 Header Parts Are Optional: Writing for (;;) is 100% valid Java and creates an intentional infinite loop equivalent to while(true).',
+      'The Semicolon Bug: Writing "for (int i = 0; i < 5; i++);" binds an empty null statement as the loop body. The loop will increment i to 5 silently, and the following block inside {} will execute once with i = 5.'
     ],
     diagram: `[ Initialization (runs once) ]
            |
@@ -1408,11 +1410,13 @@ for (int n : numbers) {
       ]
     },
     coreExplanation: [
-      'A while loop is an entry-controlled loop: it tests the condition first before executing the body even once.',
-      'If the condition is initially false, the loop body executes ZERO times.',
-      'While loops are ideal when the number of iterations is indeterminate (e.g., reading until end of file, processing a queue).',
-      'COMMON BUG: Forgetting to increment the loop variable inside the body results in an infinite loop that locks up the thread.',
-      'A semicolon immediately following "while (condition);" creates an empty loop body, often creating an instant infinite busy-wait.'
+      'A while loop is a fundamental control flow statement in Java that allows a block of code to be executed repeatedly as long as a specified boolean condition evaluates to true.',
+      'Entry-Controlled Lifecycle: The condition is evaluated each time BEFORE the loop body executes. If the condition is initially false on the very first evaluation, the loop body is completely bypassed (minimum executions = 0 times).',
+      'Cyclic Re-evaluation: The condition is usually a boolean expression. If true, the code inside the loop executes. Once the body finishes executing, the condition is evaluated again. If still true, the loop runs again. This process continues until the condition evaluates to false, at which point execution transfers immediately to the statement following the loop.',
+      'Indeterminate vs Determinate Iteration: While loops are commonly used when the number of iterations required to complete a task is NOT known in advance (e.g. reading from a network stream until EOF, waiting for valid user input, traversing linked nodes, or converging on mathematical tolerance). In contrast, standard for-loops are preferred when the exact count of iterations is known upfront.',
+      'Loop State & Variable Progression: Every well-structured while loop consists of three distinct phases: (1) Loop variable initialization before the while statement, (2) Condition testing at the head of the loop, and (3) State update/progression inside the body.',
+      'Preventing Infinite Loops: It is critical to ensure that the condition will eventually evaluate to false. Forgetting to update the loop counter or state variable inside the loop body leaves the condition permanently true, causing an infinite loop that locks the executing thread and spikes CPU usage.',
+      'The Semicolon Bug: Placing an accidental semicolon directly after "while (condition);" binds an empty statement as the body of the loop. If the condition is true, this creates an instant infinite busy-wait freeze.'
     ],
     diagram: `[ Condition Check ] --(false)--> [ EXIT (0 runs) ]
         | (true)
@@ -1651,9 +1655,12 @@ while (n > 1) {
       ]
     },
     coreExplanation: [
-      'Pre-test (while): Evaluates condition first. If false initially, executes 0 times.',
-      'Post-test (do-while): Executes body first, then evaluates condition at the bottom.',
-      'If the condition evaluates to true, control jumps back to the top of "do {". If false, the loop terminates.'
+      'The do-while loop is Java\'s exit-controlled (post-tested) iteration construct, distinguished by the absolute guarantee that its body statements will execute at least once (minimum executions = 1).',
+      'Post-Condition Evaluation: Unlike the while loop which checks its condition at the entrance, do-while executes the entire body first, and only tests the boolean condition at the bottom upon reaching the while(condition); statement.',
+      'Cyclic Jump Logic: If the bottom condition evaluates to true, program execution jumps immediately back to the beginning of the "do {" block. If the condition evaluates to false, the loop terminates and execution falls through to the next statement.',
+      'The Mandatory Semicolon Rule: In Java syntax, a do-while loop MUST terminate with a semicolon following the condition: do { ... } while (condition);. Omitting this semicolon results in a compile-time syntax error.',
+      'Variable Scope Limitation: A common beginner error is declaring a loop control variable inside the "do" block and then attempting to reference it in the while condition. Variables declared inside {} are destroyed at the closing brace; therefore, any variable used in the condition must be declared BEFORE the "do" block.',
+      'Real-World Production Scenarios: The do-while loop is the industry-standard choice for interactive console menus (where the menu must be printed at least once before asking for choice), ATM PIN entry validation (prompting user at least once), and network retry logic with exponential backoff.'
     ],
     diagram: `while (Pre-test):       [ Condition Check ] -> false -> [ Exit (0 runs) ]
                                | true

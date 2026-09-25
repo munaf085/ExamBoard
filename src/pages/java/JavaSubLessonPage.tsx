@@ -499,35 +499,182 @@ export default function JavaSubLessonPage() {
 
           {/* ── TAB 1: LESSON OVERVIEW ── */}
           {(activeTab === 'lesson' || activeTab === 'all') && (
-            <div className="space-y-4">
-              {/* Step-by-Step Concepts */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
-                  <BookOpen className="w-4 h-4 text-emerald-400" />
-                  <span>Step-by-Step Concepts (Clear & Intuitive)</span>
+            <div className="space-y-6">
+              {/* Core Conceptual Deep-Dive */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm sm:text-base uppercase tracking-wider">
+                    <BookOpen className="w-5 h-5 text-emerald-400" />
+                    <span>Comprehensive Concept Breakdown</span>
+                  </div>
+                  <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
+                    {lesson.estimatedMinutes} min study
+                  </span>
                 </div>
 
-                <div className="space-y-2.5">
+                {lesson.subtitle && (
+                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium">
+                    {lesson.subtitle}
+                  </p>
+                )}
+
+                <div className="space-y-3 pt-1">
                   {lesson.coreExplanation.map((point, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start gap-3 text-xs sm:text-sm text-slate-200 leading-relaxed"
+                      className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800/80 flex items-start gap-3.5 text-xs sm:text-sm text-slate-200 leading-relaxed"
                     >
-                      <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs">
+                      <span className="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center shrink-0 text-xs mt-0.5 border border-emerald-500/30">
                         {idx + 1}
                       </span>
-                      <span>{point}</span>
+                      <span className="leading-relaxed">{point}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* 3 Golden Rules To Remember */}
+              {/* Standard Java Syntax & Anatomy */}
+              {lesson.cheatSheet?.syntaxTemplate && (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-amber-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                      <Terminal className="w-4 h-4 text-amber-400" />
+                      <span>Formal Java Syntax & Structure</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-amber-300/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                      Standard Grammar
+                    </span>
+                  </div>
+
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 sm:p-4 overflow-x-auto shadow-inner">
+                    <pre className="font-mono text-xs sm:text-sm text-amber-300 leading-relaxed">
+                      <code>{lesson.cheatSheet.syntaxTemplate}</code>
+                    </pre>
+                  </div>
+
+                  {lesson.cheatSheet.summary && (
+                    <p className="text-xs text-slate-400 leading-relaxed italic">
+                      📌 {lesson.cheatSheet.summary}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Primary Code Walkthrough in Action */}
+              {lesson.codeSnippet && (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm sm:text-base">
+                      <Code2 className="w-5 h-5 text-emerald-400" />
+                      <span>Illustrated Code Example: {lesson.codeSnippet.title}</span>
+                    </div>
+                    <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800 self-start sm:self-auto">
+                      Fully Runnable Java
+                    </span>
+                  </div>
+
+                  {/* Code Block */}
+                  <div className="bg-slate-950 border border-emerald-500/30 rounded-xl p-4 overflow-x-auto shadow-inner">
+                    <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
+                      <code>{lesson.codeSnippet.code}</code>
+                    </pre>
+                  </div>
+
+                  {/* Line by line explanation */}
+                  {lesson.codeSnippet.lineByLineExplanation && lesson.codeSnippet.lineByLineExplanation.length > 0 && (
+                    <div className="space-y-2 pt-1">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                        <CheckSquare className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>Line-by-Line Code Breakdown:</span>
+                      </h4>
+                      <div className="space-y-2">
+                        {lesson.codeSnippet.lineByLineExplanation.map((item, idx) => (
+                          <div
+                            key={idx}
+                            className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800/70 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3"
+                          >
+                            <code className="font-mono text-emerald-400 font-bold shrink-0 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/20">
+                              {item.line}
+                            </code>
+                            <span className="text-slate-300">{item.explanation}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Console Output */}
+                  {lesson.codeSnippet.output && (
+                    <div className="space-y-1.5 pt-1">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                        Sample Run / Console Output:
+                      </div>
+                      <div className="bg-black/80 border border-slate-800 rounded-xl p-3.5 font-mono text-xs sm:text-sm text-slate-200 whitespace-pre shadow-inner">
+                        {lesson.codeSnippet.output}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Visual Mental Model */}
+              {lesson.diagram && (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-2.5">
+                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                    <Terminal className="w-4 h-4" />
+                    <span>🗺️ Execution Flow & Visual Mental Model</span>
+                  </div>
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                    <pre className="font-mono text-xs sm:text-sm text-indigo-300 leading-relaxed">
+                      {lesson.diagram}
+                    </pre>
+                  </div>
+                </div>
+              )}
+
+              {/* Additional Practical Real-World Scenarios */}
+              {lesson.codeExamples && lesson.codeExamples.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-blue-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                    <Code2 className="w-4 h-4" />
+                    <span>Practical Real-World Scenarios ({lesson.codeExamples.length} Examples)</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    {lesson.codeExamples.map((ex, exIdx) => (
+                      <div key={exIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-slate-100 text-sm">{ex.title}</h4>
+                          <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                            Scenario #{exIdx + 1}
+                          </span>
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{ex.description}</p>
+
+                        <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                          <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
+                            <code>{ex.code}</code>
+                          </pre>
+                        </div>
+
+                        {ex.output && (
+                          <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
+                            <span className="text-slate-500 text-[10px] uppercase block mb-1">Expected Output:</span>
+                            {ex.output}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Key Engineering Rules To Remember */}
               {lesson.interviewTakeaways && lesson.interviewTakeaways.length > 0 && (
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                   <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider">
                     <Sparkles className="w-4 h-4 text-blue-400" />
-                    <span>⭐ 3 Golden Rules to Remember in an Interview</span>
+                    <span>⭐ Key Engineering Rules & Interview Takeaways</span>
                   </div>
 
                   <div className="space-y-2.5">
@@ -536,27 +683,12 @@ export default function JavaSubLessonPage() {
                         key={idx}
                         className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start gap-3 text-xs sm:text-sm text-slate-200 leading-relaxed"
                       >
-                        <span className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center shrink-0 text-xs">
+                        <span className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center shrink-0 text-xs mt-0.5">
                           {idx + 1}
                         </span>
                         <span>{item}</span>
                       </div>
                     ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Visual Mental Model */}
-              {lesson.diagram && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-2">
-                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
-                    <Terminal className="w-4 h-4" />
-                    <span>🗺️ Visual Mental Model (Picture Map)</span>
-                  </div>
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
-                    <pre className="font-mono text-xs sm:text-sm text-indigo-300 leading-relaxed">
-                      {lesson.diagram}
-                    </pre>
                   </div>
                 </div>
               )}
