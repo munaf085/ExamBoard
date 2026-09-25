@@ -77,6 +77,16 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "aspect": "Refactoring Risk",
           "optionA": "Encapsulated: Zero impact on external client code",
           "optionB": "Unencapsulated: High risk; modifying field names breaks clients"
+        },
+        {
+          "aspect": "Complexity & Overhead",
+          "optionA": "Encapsulated: O(1) time, zero memory penalty; JIT compiler inlines getters/setters",
+          "optionB": "Unencapsulated: O(1) direct access but zero validation and high architectural debt"
+        },
+        {
+          "aspect": "ABI & Binary Compatibility",
+          "optionA": "Encapsulated: Preserves binary compatibility when internal representation evolves",
+          "optionB": "Unencapsulated: Breaks ABI binary compatibility whenever field types or layouts change"
         }
       ]
     },
@@ -280,6 +290,36 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         "hint": "Math.min clamps the total volume to MAX_CAP (100).",
         "solution": "100",
         "explanation": "First add(60) sets volume to min(60, 100) = 60. Second add(70) evaluates min(60 + 70 = 130, 100) = 100. The invariant volume <= 100 is strictly enforced."
+      },
+      {
+        "title": "Puzzle 9: Defensive Value Clamping in Method Chain",
+        "problemStatement": "What will be printed when this program runs?",
+        "code": "public class EncapsulationChainPuzzle {\n    static class ProgressTracker {\n        private int percent = 0;\n        public ProgressTracker advance(int delta) {\n            if (delta > 0) {\n                this.percent = Math.min(100, this.percent + delta);\n            }\n            return this;\n        }\n        public int getPercent() { return percent; }\n    }\n    public static void main(String[] args) {\n        ProgressTracker pt = new ProgressTracker();\n        pt.advance(40).advance(50).advance(30).advance(-20);\n        System.out.println(pt.getPercent());\n    }\n}",
+        "options": [
+          "100",
+          "120",
+          "80",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Trace each advance() call and check the delta > 0 guard and Math.min(100, ...) clamp.",
+        "solution": "100",
+        "explanation": "pt.advance(40) sets percent to 40. advance(50) sets percent to min(100, 90) = 90. advance(30) sets percent to min(100, 120) = 100. advance(-20) fails delta > 0, doing nothing. The final percent is 100."
+      },
+      {
+        "title": "Puzzle 10: Same-Class Direct Access Across Different Instances",
+        "problemStatement": "Does this code compile, and what does it print?",
+        "code": "public class PrivateAccessAcrossInstances {\n    static class SecretBox {\n        private int secretCode;\n        public SecretBox(int code) { this.secretCode = code; }\n        public boolean hasSameCode(SecretBox other) {\n            return this.secretCode == other.secretCode;\n        }\n    }\n    public static void main(String[] args) {\n        SecretBox b1 = new SecretBox(42);\n        SecretBox b2 = new SecretBox(42);\n        System.out.println(b1.hasSameCode(b2));\n    }\n}",
+        "options": [
+          "true",
+          "Compilation Error: secretCode has private access in SecretBox",
+          "false",
+          "Throws IllegalAccessException at runtime"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "In Java, does private mean 'accessible only by this exact object' or 'accessible by any code inside this class'?",
+        "solution": "true",
+        "explanation": "In Java, access modifiers enforce class-level encapsulation, NOT object-level encapsulation! Any method inside SecretBox can access private fields of ANY SecretBox instance, including other.secretCode. The comparison 42 == 42 evaluates to true."
       }
     ],
     "interviewQuestions": [
@@ -611,6 +651,16 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "aspect": "Top-Level Class Allowed",
           "optionA": "Private & Protected: FORBIDDEN (Compile error)",
           "optionB": "Default & Public: ALLOWED"
+        },
+        {
+          "aspect": "Bytecode Dispatch Instruction",
+          "optionA": "Private methods: invokespecial (static non-virtual dispatch without vtable lookup)",
+          "optionB": "Public / Protected methods: invokevirtual (dynamic dispatch with vtable indirection)"
+        },
+        {
+          "aspect": "API Encapsulation Boundary",
+          "optionA": "Private & Default: Implementation secrecy within class or package boundary",
+          "optionB": "Protected & Public: Contractual exposure to external callers and cross-package subclasses"
         }
       ]
     },
@@ -814,6 +864,36 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         "hint": "Can a static method access a private static field in the same class?",
         "solution": "777",
         "explanation": "Within the same class, private members (both static and instance) are fully accessible to static methods of that class. getKey() cleanly returns 777."
+      },
+      {
+        "title": "Puzzle 9: Private Constructor Singleton Access",
+        "problemStatement": "What does this program print?",
+        "code": "public class PrivateConstructorPuzzle {\n    static class DatabaseConnection {\n        private static DatabaseConnection instance = new DatabaseConnection();\n        private int id = 101;\n        private DatabaseConnection() {}\n        public static DatabaseConnection getInstance() {\n            return instance;\n        }\n        public int getId() { return id; }\n    }\n    public static void main(String[] args) {\n        DatabaseConnection c1 = DatabaseConnection.getInstance();\n        DatabaseConnection c2 = DatabaseConnection.getInstance();\n        System.out.println((c1 == c2) + \" \" + c1.getId());\n    }\n}",
+        "options": [
+          "true 101",
+          "false 101",
+          "Compilation Error: constructor DatabaseConnection() is private",
+          "Throws IllegalAccessException"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Can static methods inside a class invoke that class's private constructor?",
+        "solution": "true 101",
+        "explanation": "A private constructor prevents instantiation by outside classes, but methods of the declaring class can freely call it. DatabaseConnection.getInstance() returns the cached singleton. Both c1 and c2 hold identical object references, so c1 == c2 is true, and c1.getId() is 101."
+      },
+      {
+        "title": "Puzzle 10: Local Variable Modifier Illegality",
+        "problemStatement": "What happens when attempting to compile this method?",
+        "code": "public class LocalModifierPuzzle {\n    public static void main(String[] args) {\n        public int x = 42;\n        System.out.println(x);\n    }\n}",
+        "options": [
+          "Compilation Error: illegal start of expression / modifier public not allowed here",
+          "Prints 42",
+          "Runtime Exception",
+          "Warning only, prints 42"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Can access modifiers be placed on local variables inside method bodies?",
+        "solution": "Compilation Error: illegal start of expression / modifier public not allowed here",
+        "explanation": "Access modifiers (public, protected, private) can only be placed on class members (fields, methods, constructors, nested classes). Local variables live on the thread stack and are governed strictly by lexical block scope; applying access modifiers to them is an immediate compile-time syntax error."
       }
     ],
     "interviewQuestions": [
@@ -1145,6 +1225,16 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "aspect": "Performance Overhead",
           "optionA": "Defensive Copying: Allocates heap memory for clone; safe against tampering",
           "optionB": "Direct Reference: Zero allocation; vulnerable to silent state corruption"
+        },
+        {
+          "aspect": "Time & Space Complexity",
+          "optionA": "Defensive Copy: O(n) time, O(n) heap memory for array allocation",
+          "optionB": "Direct Ref: O(1) time, O(1) memory, but critical security flaw"
+        },
+        {
+          "aspect": "Thread Safety Guarantee",
+          "optionA": "Defensive Copy: Isolated local snapshot immune to concurrent race conditions",
+          "optionB": "Direct Ref: High risk of data races and dirty reads across threads"
         }
       ]
     },
@@ -1348,6 +1438,36 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         "hint": "Both inbound and outbound defensive copying are active. Can any external mutation reach this.nums?",
         "solution": "5-6-7",
         "explanation": "Inbound cloning protected Sequence against original[0] = 99. Outbound cloning protected Sequence against view[1] = 88. The internal array remains {5, 6, 7}. Output: 5-6-7."
+      },
+      {
+        "title": "Puzzle 9: Defensive Copy of Mutable Date / Object Reference",
+        "problemStatement": "What is printed by this program?",
+        "code": "public class MutableDatePuzzle {\n    static class Event {\n        private java.util.Date timestamp;\n        public Event(java.util.Date d) {\n            this.timestamp = new java.util.Date(d.getTime()); // Inbound copy\n        }\n        public java.util.Date getTimestamp() {\n            return new java.util.Date(this.timestamp.getTime()); // Outbound copy\n        }\n    }\n    public static void main(String[] args) {\n        java.util.Date d = new java.util.Date(1000L);\n        Event ev = new Event(d);\n        d.setTime(5000L);\n        java.util.Date retrieved = ev.getTimestamp();\n        retrieved.setTime(9000L);\n        System.out.println(ev.getTimestamp().getTime());\n    }\n}",
+        "options": [
+          "1000",
+          "5000",
+          "9000",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Both the constructor and the getter create fresh java.util.Date copies using getTime().",
+        "solution": "1000",
+        "explanation": "Because both inbound constructor and outbound getter use defensive copying (allocating a fresh new Date(getTime())), neither mutating caller variable 'd' to 5000 nor mutating the retrieved Date to 9000 impacts the internal timestamp field. It safely remains 1000."
+      },
+      {
+        "title": "Puzzle 10: Array Elements Mutation via Direct Getter Leak",
+        "problemStatement": "What does this code print?",
+        "code": "public class LeakyArrayGetterPuzzle {\n    static class Vault {\n        private int[] pins = {111, 222, 333};\n        public int[] getPins() {\n            return pins; // Insecure: direct reference leak!\n        }\n    }\n    public static void main(String[] args) {\n        Vault v = new Vault();\n        int[] exposed = v.getPins();\n        exposed[0] = 999;\n        System.out.println(v.getPins()[0]);\n    }\n}",
+        "options": [
+          "999",
+          "111",
+          "Compilation Error: cannot assign to private array",
+          "0"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Does getPins() return a clone, or does it return the private field pointer directly?",
+        "solution": "999",
+        "explanation": "Because getPins() returned the private 'pins' reference directly without cloning, 'exposed' points to the exact same array on the Heap. 'exposed[0] = 999' mutates the private array directly! v.getPins()[0] returns 999, illustrating the danger of representation exposure."
       }
     ],
     "interviewQuestions": [
@@ -1680,6 +1800,16 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "aspect": "Hash Code Stability",
           "optionA": "Mutable Class: Hash code changes if fields change (breaks sets/maps)",
           "optionB": "Immutable Class: Hash code is strictly constant and cacheable"
+        },
+        {
+          "aspect": "Complexity & Allocation Model",
+          "optionA": "Mutable Class: O(1) in-place update, zero heap allocations per modification",
+          "optionB": "Immutable Class: O(1) read, O(k) allocation for new instance with modified fields"
+        },
+        {
+          "aspect": "JMM Safe Publication Guarantee",
+          "optionA": "Mutable Class: Requires explicit synchronized/locks/volatile to prevent stale reads",
+          "optionB": "Immutable Class: Guaranteed safe publication across threads via JLS §17.5 final field freeze"
         }
       ]
     },
@@ -1883,6 +2013,36 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         "hint": "Java is pass-by-value. In increment(), s = s.add(10) assigns to the local parameter copy only.",
         "solution": "5",
         "explanation": "Inside increment(), s.add(10) creates a new Step(15) and assigns it to local parameter 's'. The caller's 's' reference in main() is untouched, pointing to Step(5). Output: 5."
+      },
+      {
+        "title": "Puzzle 9: Subclassing Non-Final Immutable Class Trap",
+        "problemStatement": "What does this program print?",
+        "code": "public class NonFinalImmutableTrap {\n    static class BrokenImmutable {\n        private final int val;\n        public BrokenImmutable(int val) { this.val = val; }\n        public int getVal() { return val; }\n    }\n    static class RogueSubclass extends BrokenImmutable {\n        private int mutableVal;\n        public RogueSubclass(int val) { super(val); this.mutableVal = val; }\n        public void setVal(int v) { this.mutableVal = v; }\n        @Override\n        public int getVal() { return mutableVal; }\n    }\n    public static void main(String[] args) {\n        RogueSubclass rogue = new RogueSubclass(10);\n        BrokenImmutable ref = rogue;\n        rogue.setVal(99);\n        System.out.println(ref.getVal());\n    }\n}",
+        "options": [
+          "99",
+          "10",
+          "Compilation Error: Cannot override getVal()",
+          "Throws ClassCastException"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "BrokenImmutable was not declared final. Can RogueSubclass override getVal() dynamically?",
+        "solution": "99",
+        "explanation": "Because BrokenImmutable was NOT declared 'final', RogueSubclass extended it and overrode getVal() to return its own mutable field! Polymorphism dispatches ref.getVal() to RogueSubclass.getVal(), returning 99. This demonstrates why the 'final' class modifier is mandatory for immutable classes."
+      },
+      {
+        "title": "Puzzle 10: Defensive Copying of Array in Immutable Class",
+        "problemStatement": "What is printed by this code?",
+        "code": "public class ImmutableArraySafetyPuzzle {\n    public static final class ImmutableRecord {\n        private final int[] values;\n        public ImmutableRecord(int[] vals) {\n            this.values = (vals != null) ? vals.clone() : new int[0];\n        }\n        public int[] getValues() {\n            return values.clone();\n        }\n        public int sum() {\n            int s = 0;\n            for (int v : values) s += v;\n            return s;\n        }\n    }\n    public static void main(String[] args) {\n        int[] data = {10, 20, 30};\n        ImmutableRecord rec = new ImmutableRecord(data);\n        data[0] = 100;\n        int[] copy = rec.getValues();\n        copy[1] = 200;\n        System.out.println(rec.sum());\n    }\n}",
+        "options": [
+          "60",
+          "150",
+          "240",
+          "330"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Check if mutations to 'data' or 'copy' affect the internal cloned array.",
+        "solution": "60",
+        "explanation": "Because ImmutableRecord applies both inbound defensive copying in the constructor and outbound defensive copying in getValues(), external mutations to 'data' (setting index 0 to 100) and to 'copy' (setting index 1 to 200) have zero impact on the internal array. The sum remains 10 + 20 + 30 = 60."
       }
     ],
     "interviewQuestions": [
