@@ -85,12 +85,35 @@ import { dataTypesLessons } from './sublessons/dataTypesLessons';
 import { operatorsLessons } from './sublessons/operatorsLessons';
 import { controlFlowLessons } from './sublessons/controlFlowLessons';
 
-export const DETAILED_LESSONS: Record<string, DetailedLesson> = {
+import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
+import { dataTypesExercises } from './sublessons/dataTypesExercises';
+import { operatorsExercises } from './sublessons/operatorsExercises';
+import { controlFlowExercises } from './sublessons/controlFlowExercises';
+
+export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
+  ...fundamentalsExercises,
+  ...dataTypesExercises,
+  ...operatorsExercises,
+  ...controlFlowExercises,
+};
+
+const rawLessons: Record<string, DetailedLesson> = {
   ...fundamentalsLessons,
   ...dataTypesLessons,
   ...operatorsLessons,
   ...controlFlowLessons,
 };
+
+// Populate programmingExercises for every sub-lesson so none is empty
+export const DETAILED_LESSONS: Record<string, DetailedLesson> = Object.fromEntries(
+  Object.entries(rawLessons).map(([key, lesson]) => [
+    key,
+    {
+      ...lesson,
+      programmingExercises: ALL_SUBLESSON_EXERCISES[lesson.id] || lesson.programmingExercises || [],
+    }
+  ])
+);
 
 // ============================================================
 // HELPER FUNCTIONS FOR SUB-LESSON NAVIGATION

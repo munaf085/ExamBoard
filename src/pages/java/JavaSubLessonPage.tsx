@@ -690,172 +690,7 @@ export default function JavaSubLessonPage() {
             </div>
           )}
 
-          {/* ── TAB: DEDICATED HANDS-ON CODING ASSIGNMENTS ── */}
-          {(activeTab === 'assignments' || (activeTab === 'all' && lesson.programmingExercises && lesson.programmingExercises.length > 0)) && (
-            <div className="space-y-4">
-              {lesson.programmingExercises && lesson.programmingExercises.length > 0 ? (
-                <>
-                  {/* Assignment Progress Header */}
-                  <div className="bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
-                          <Sparkles className="w-4 h-4 text-amber-400" />
-                          <span>Practice Coding Assignments ({lesson.programmingExercises.length} Challenges)</span>
-                        </div>
-                        <p className="text-xs text-slate-400 mt-1">
-                          Solve these hands-on coding problems on your own first! Then click reveal to review optimal Java solutions, step-by-step logic, and expected test outputs.
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 self-start sm:self-center">
-                        <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          {lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length} / {lesson.programmingExercises.length} Solved
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden border border-slate-700/60">
-                      <div
-                        className="bg-gradient-to-r from-amber-500 to-emerald-400 h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${Math.round(
-                            (lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length /
-                              lesson.programmingExercises.length) *
-                              100
-                          )}%`
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Assignment Problem Cards */}
-                  <div className="space-y-4">
-                    {lesson.programmingExercises.map((prog, pIdx) => {
-                      const isRevealed = revealedExercises[pIdx];
-                      const isHint = showExerciseHints[pIdx];
-                      const assignmentKey = `${lesson.id}-ex-${pIdx}`;
-                      const isSolved = solvedAssignments.includes(assignmentKey);
-
-                      return (
-                        <div
-                          key={pIdx}
-                          className={`border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5 transition ${
-                            isSolved
-                              ? 'bg-slate-900/90 border-emerald-500/40 shadow-emerald-950/20'
-                              : 'bg-slate-900 border-slate-800'
-                          }`}
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800/80">
-                            <div className="flex items-center gap-2.5">
-                              <span className={`w-7 h-7 rounded-full font-bold flex items-center justify-center text-xs shrink-0 ${
-                                isSolved
-                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                              }`}>
-                                {pIdx + 1}
-                              </span>
-                              <div>
-                                <h4 className="font-bold text-slate-100 text-sm sm:text-base">
-                                  {prog.title}
-                                </h4>
-                                <span className="text-[10px] text-slate-500 font-mono">
-                                  Challenge #{pIdx + 1} of {lesson.programmingExercises!.length}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex items-center gap-2 self-start sm:self-center">
-                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                                Assignment
-                              </span>
-                              <button
-                                onClick={() => handleToggleSolvedAssignment(assignmentKey)}
-                                className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
-                                  isSolved
-                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
-                                }`}
-                              >
-                                <CheckCircle2 className="w-3.5 h-3.5" />
-                                <span>{isSolved ? 'Solved ✓' : 'Mark Solved'}</span>
-                              </button>
-                            </div>
-                          </div>
-
-                          <div className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/50 p-3.5 rounded-xl border border-slate-800/60">
-                            <strong className="text-amber-300/90 block mb-1 uppercase text-[11px] tracking-wide">
-                              Problem Statement:
-                            </strong>
-                            <p className="whitespace-pre-wrap">{prog.problemStatement}</p>
-                          </div>
-
-                          <div className="flex flex-wrap items-center gap-2 pt-1">
-                            {prog.hint && (
-                              <button
-                                onClick={() => setShowExerciseHints(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
-                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5"
-                              >
-                                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
-                                <span>{isHint ? 'Hide Hint' : '💡 Need a Hint?'}</span>
-                              </button>
-                            )}
-                            <button
-                              onClick={() => setRevealedExercises(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
-                              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5"
-                            >
-                              {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                              <span>{isRevealed ? 'Hide Solution' : 'Reveal Complete Java Solution'}</span>
-                            </button>
-                          </div>
-
-                          {isHint && prog.hint && (
-                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed">
-                              <strong className="text-amber-300">💡 Hint: </strong>{prog.hint}
-                            </div>
-                          )}
-
-                          {isRevealed && (
-                            <div className="space-y-3 pt-2">
-                              <div className="space-y-1.5">
-                                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-emerald-400">
-                                  <span>Optimal Java Implementation:</span>
-                                  <span className="text-[10px] text-slate-500 font-mono">Java 8+ / 17 / 21</span>
-                                </div>
-                                <div className="bg-slate-950 border border-emerald-500/30 rounded-xl p-3.5 overflow-x-auto shadow-inner">
-                                  <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
-                                    <code>{prog.solutionCode}</code>
-                                  </pre>
-                                </div>
-                              </div>
-
-                              {prog.output && (
-                                <div className="space-y-1">
-                                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                    Sample Run / Expected Output:
-                                  </div>
-                                  <div className="bg-black/80 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
-                                    {prog.output}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </>
-              ) : (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-slate-400">
-                  <p className="text-sm">No programming assignments specified for this sub-lesson yet.</p>
-                  <p className="text-xs text-slate-500 mt-1">Check out the Examples & Tracing tab for code walkthroughs.</p>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ── TAB 2: PLENTY OF EXAMPLES & PRACTICE PROBLEMS ── */}
+          {/* ── TAB 3: PLENTY OF EXAMPLES & PRACTICE PROBLEMS ── */}
           {(activeTab === 'practice' || activeTab === 'all') && (
             <div className="space-y-6">
               {/* Practice Challenges Section */}
@@ -1067,75 +902,156 @@ export default function JavaSubLessonPage() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
 
-              {/* Hands-On Programming Exercises */}
-              {lesson.programmingExercises && lesson.programmingExercises.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between border-t border-slate-800/80 pt-4">
-                    <div className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                      <Sparkles className="w-4 h-4 text-amber-400" />
-                      <span>Hands-On Programming Exercises ({lesson.programmingExercises.length} Challenges)</span>
+          {/* ── TAB 4: DEDICATED HANDS-ON CODING ASSIGNMENTS ── */}
+          {(activeTab === 'assignments' || (activeTab === 'all' && lesson.programmingExercises && lesson.programmingExercises.length > 0)) && (
+            <div className="space-y-4">
+              {lesson.programmingExercises && lesson.programmingExercises.length > 0 ? (
+                <>
+                  {/* Assignment Progress Header */}
+                  <div className="bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
+                          <Sparkles className="w-4 h-4 text-amber-400" />
+                          <span>Practice Coding Assignments ({lesson.programmingExercises.length} Challenges)</span>
+                        </div>
+                        <p className="text-xs text-slate-400 mt-1">
+                          Solve these hands-on coding problems on your own first! Then click reveal to review optimal Java solutions, step-by-step logic, and expected test outputs.
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 self-start sm:self-center">
+                        <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                          {lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length} / {lesson.programmingExercises.length} Solved
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[10px] text-slate-500 font-normal hidden sm:inline">Click to reveal Java code solution</span>
+
+                    {/* Progress Bar */}
+                    <div className="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden border border-slate-700/60">
+                      <div
+                        className="bg-gradient-to-r from-amber-500 to-emerald-400 h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${Math.round(
+                            (lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length /
+                              lesson.programmingExercises.length) *
+                              100
+                          )}%`
+                        }}
+                      />
+                    </div>
                   </div>
 
+                  {/* Assignment Problem Cards */}
                   <div className="space-y-4">
                     {lesson.programmingExercises.map((prog, pIdx) => {
                       const isRevealed = revealedExercises[pIdx];
                       const isHint = showExerciseHints[pIdx];
+                      const assignmentKey = `${lesson.id}-ex-${pIdx}`;
+                      const isSolved = solvedAssignments.includes(assignmentKey);
 
                       return (
-                        <div key={pIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-bold text-amber-300 text-sm flex items-center gap-2">
-                              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">
+                        <div
+                          key={pIdx}
+                          className={`border rounded-2xl p-4 sm:p-5 shadow-sm space-y-3.5 transition ${
+                            isSolved
+                              ? 'bg-slate-900/90 border-emerald-500/40 shadow-emerald-950/20'
+                              : 'bg-slate-900 border-slate-800'
+                          }`}
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-800/80">
+                            <div className="flex items-center gap-2.5">
+                              <span className={`w-7 h-7 rounded-full font-bold flex items-center justify-center text-xs shrink-0 ${
+                                isSolved
+                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                              }`}>
                                 {pIdx + 1}
                               </span>
-                              <span>{prog.title}</span>
-                            </h4>
-                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                              Exercise #{pIdx + 1}
-                            </span>
+                              <div>
+                                <h4 className="font-bold text-slate-100 text-sm sm:text-base">
+                                  {prog.title}
+                                </h4>
+                                <span className="text-[10px] text-slate-500 font-mono">
+                                  Challenge #{pIdx + 1} of {lesson.programmingExercises!.length}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 self-start sm:self-center">
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                                Assignment
+                              </span>
+                              <button
+                                onClick={() => handleToggleSolvedAssignment(assignmentKey)}
+                                className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
+                                  isSolved
+                                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                                    : 'bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700'
+                                }`}
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>{isSolved ? 'Solved ✓' : 'Mark Solved'}</span>
+                              </button>
+                            </div>
                           </div>
 
-                          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                            {prog.problemStatement}
-                          </p>
+                          <div className="text-xs sm:text-sm text-slate-300 leading-relaxed bg-slate-950/50 p-3.5 rounded-xl border border-slate-800/60">
+                            <strong className="text-amber-300/90 block mb-1 uppercase text-[11px] tracking-wide">
+                              Problem Statement:
+                            </strong>
+                            <p className="whitespace-pre-wrap">{prog.problemStatement}</p>
+                          </div>
 
-                          <div className="flex items-center gap-2 pt-1">
+                          <div className="flex flex-wrap items-center gap-2 pt-1">
                             {prog.hint && (
                               <button
                                 onClick={() => setShowExerciseHints(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
-                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1.5"
                               >
-                                {isHint ? 'Hide Hint' : '💡 Need a Hint?'}
+                                <Lightbulb className="w-3.5 h-3.5 text-amber-400" />
+                                <span>{isHint ? 'Hide Hint' : '💡 Need a Hint?'}</span>
                               </button>
                             )}
                             <button
                               onClick={() => setRevealedExercises(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
-                              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 hover:bg-amber-500 text-white transition shadow-sm"
+                              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm flex items-center gap-1.5"
                             >
-                              {isRevealed ? 'Hide Java Solution' : 'Reveal Java Solution'}
+                              {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                              <span>{isRevealed ? 'Hide Solution' : 'Reveal Complete Java Solution'}</span>
                             </button>
                           </div>
 
                           {isHint && prog.hint && (
-                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed">
-                              <strong>Hint: </strong>{prog.hint}
+                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed">
+                              <strong className="text-amber-300">💡 Hint: </strong>{prog.hint}
                             </div>
                           )}
 
                           {isRevealed && (
-                            <div className="space-y-2 pt-2">
-                              <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
-                                <pre className="font-mono text-xs text-emerald-300 leading-relaxed">
-                                  <code>{prog.solutionCode}</code>
-                                </pre>
+                            <div className="space-y-3 pt-2">
+                              <div className="space-y-1.5">
+                                <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+                                  <span>Optimal Java Implementation:</span>
+                                  <span className="text-[10px] text-slate-500 font-mono">Java 8+ / 17 / 21</span>
+                                </div>
+                                <div className="bg-slate-950 border border-emerald-500/30 rounded-xl p-3.5 overflow-x-auto shadow-inner">
+                                  <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
+                                    <code>{prog.solutionCode}</code>
+                                  </pre>
+                                </div>
                               </div>
+
                               {prog.output && (
-                                <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
-                                  <span className="text-slate-500 text-[10px] uppercase block mb-1">Expected Output:</span>
-                                  {prog.output}
+                                <div className="space-y-1">
+                                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                    Sample Run / Expected Output:
+                                  </div>
+                                  <div className="bg-black/80 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
+                                    {prog.output}
+                                  </div>
                                 </div>
                               )}
                             </div>
@@ -1144,6 +1060,11 @@ export default function JavaSubLessonPage() {
                       );
                     })}
                   </div>
+                </>
+              ) : (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-slate-400">
+                  <p className="text-sm">No programming assignments specified for this sub-lesson yet.</p>
+                  <p className="text-xs text-slate-500 mt-1">Check out the Examples & Tracing tab for code walkthroughs.</p>
                 </div>
               )}
             </div>
