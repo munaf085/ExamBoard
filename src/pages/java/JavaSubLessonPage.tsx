@@ -1069,19 +1069,8 @@ export default function JavaSubLessonPage() {
                           <span>Practice Coding Assignments ({lesson.programmingExercises.length} Challenges)</span>
                         </div>
                         <p className="text-xs text-slate-400 mt-1">
-                          Progressive mastery from Beginner to Expert. Solve hands-on on your own first, then reveal the runnable Java solution!
+                          Solve hands-on on your own first, then reveal the runnable Java solution!
                         </p>
-                        <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Challenges 1–3: Easy (Foundations)
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-semibold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Challenges 4–7: Medium (Real-World)
-                          </span>
-                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[11px] font-semibold">
-                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Challenges 8–10: Hard (Expert Edge-Cases)
-                          </span>
-                        </div>
                       </div>
                       <div className="flex items-center gap-2 self-start sm:self-center">
                         <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
