@@ -10,17 +10,18 @@ export const cf44_46_lessons: Record<string, DetailedLesson> = {
     moduleTitle: '5. Loops & Iterations',
     lessonNumber: 'Lesson 5.1',
     title: 'The For Loop Deep Dive',
-    subtitle: 'Mastering the three-part loop header, execution cycle, multi-variable declarations, and loop variable scoping',
-    estimatedMinutes: 15,
+    subtitle: 'Mastering the three-part loop header, execution cycle, multi-variable declarations, scoping rules, and complexity patterns',
+    estimatedMinutes: 18,
     beginnerAnalogy: 'Think of an Olympic swimmer practicing laps. Before entering the water, the coach sets the counter to lap 1 (initialization, happens once). Before pushing off for each lap, the swimmer glances at the scoreboard to check if they have reached the goal of 10 laps (condition check, happens before each lap). The swimmer swims across the pool (loop body). After reaching the far wall, the swimmer clicks the lap counter by +1 (update expression, happens after the lap). If the counter reaches 11, the swimmer exits the pool.',
     coreExplanation: [
-      'The standard `for` loop is Java\'s primary count-controlled iteration construct, designed for scenarios where the number of repetitions is known or bounded before loop entry.',
+      'The standard `for` loop is Java\'s primary count-controlled iteration construct, best suited for iterations where the initialization, condition, and update naturally belong together.',
       'The loop header consists of three distinct clauses separated by semicolons: `for (initialization; condition; update)`. All three clauses are optional, but the two separating semicolons are mandatory.',
-      'The strict lifecycle execution order is: (1) Execute the initialization expression exactly once upon entering the loop; (2) Evaluate the termination condition boolean; (3) If true, execute the loop body; (4) Execute the update expression; (5) Repeat from step 2 until the condition evaluates to false.',
-      'Loop Counter Variable Scoping: Variables declared inside the initialization clause (e.g., `for (int i = 0; ...)`) are local exclusively to the loop block. Attempting to read or modify `i` after the closing brace produces a compile-time "cannot find symbol" error.',
-      'Multiple Variables in the Header: Java permits declaring multiple comma-separated variables in the initialization clause, provided they share the exact same data type (e.g., `for (int i = 0, j = 10; i < j; i++, j--)`).',
-      'Update Flexibility: The update expression is not restricted to `i++`. You can increment by any step (`i += 2`), decrement (`i--`), multiply geometrically (`i *= 2`), or perform multiple comma-separated updates (`i++, j--`).',
-      'The Infinite Loop Contract: Omitting the condition clause defaults implicitly to `true`. Consequently, `for (;;)` produces a legal, infinite loop identical in bytecode behavior to `while (true)`.'
+      'Execution Lifecycle: (1) Execute initialization expression(s) exactly once upon entry; (2) Evaluate the condition boolean expression; (3) If true, execute the loop body; (4) Execute the update expression(s); (5) Repeat from step 2 until the condition evaluates to false.',
+      'Loop Counter Scoping: A variable declared in the initialization clause (e.g., `for (int i = 0; ...)`) has block scope restricted strictly to the loop header and body. If you need the counter after the loop terminates, declare it in the enclosing scope before the header.',
+      'Update Clause Statement Restrictions: The update clause must consist of legal statement expressions: assignments (e.g., `i = i + 2`), prefix/postfix increments/decrements (`i++`, `--i`), or method calls. Arbitrary non-statement expressions like `i < 5` or `i + 1` cause a compile-time "not a statement" error.',
+      'Multiple Variables in Header: You may declare multiple variables in the initialization clause, provided they share the exact same data type (e.g., `for (int i = 0, j = 10; i < j; i++, j--)`). Mixed types like `int i = 0, double d = 1.0` are illegal.',
+      'Jump Statements Preview: A `continue` statement inside the loop skips the remaining body statements and jumps immediately to the update expression before re-evaluating the condition. A `break` statement exits the loop immediately, bypassing the update clause.',
+      'The Infinite Loop Contract: Omitting the condition clause defaults implicitly to `true`. Consequently, `for (;;)` produces a legal, infinite loop that compiles to the exact same bytecode branching structure as `while (true)`.'
     ],
     diagram: `+-----------------------------------------------------------+
 |                  FOR LOOP EXECUTION CYCLE                 |
@@ -39,8 +40,11 @@ export const cf44_46_lessons: Record<string, DetailedLesson> = {
    |   [ 3. LOOP BODY ]     [ EXIT LOOP ]
    |      System.out.println(i);
    |      |
-   |      v
-   |   [ 4. UPDATE ]  (Post-step: i++)
+   |      +--------------------+ (continue jumps here)
+   |      |                    |
+   |      v                    | (break exits directly)
+   |   [ 4. UPDATE ] <---------+
+   |      Post-step: i++
    +------+`,
     codeSnippet: {
       title: 'Counting Even Numbers and Accumulating Sum',
@@ -87,17 +91,48 @@ T-minus: 5 seconds
 Ignition!`
       },
       {
-        title: 'Two-Pointer Converging Loop Header',
-        description: 'Demonstrates initializing two loop variables of the same type and updating both simultaneously in a single header.',
-        code: `public class ConvergingPointers {
+        title: 'Optional Clauses & Counter Scope Comparison',
+        description: 'Contrasting a counter declared in the header vs declared prior in the enclosing block, and omitting initialization or update clauses.',
+        code: `public class OptionalClausesAndScope {
     public static void main(String[] args) {
-        for (int left = 1, right = 9; left < right; left += 2, right -= 2) {
-            System.out.println("Left: " + left + ", Right: " + right + " | Distance: " + (right - left));
+        // Example A: Variable declared in outer scope persists after loop
+        int counter = 0;
+        for (; counter < 3; counter++) {
+            System.out.print(counter + " ");
+        }
+        System.out.println("| Counter after loop: " + counter);
+
+        // Example B: Update performed inside the body, update clause omitted
+        for (int k = 1; k <= 4; ) {
+            System.out.print(k + " ");
+            k *= 2; // manual update
+        }
+        System.out.println();
+    }
+}`,
+        output: `0 1 2 | Counter after loop: 3
+1 2 4 `
+      },
+      {
+        title: 'Two-Pointer Converging Loop with Break and Continue',
+        description: 'Demonstrates multi-variable initialization and how continue jumps directly to the update clause while break terminates immediately.',
+        code: `public class LoopControlFlow {
+    public static void main(String[] args) {
+        for (int left = 1, right = 9; left < right; left++, right--) {
+            if (left == 3) {
+                // Skips printing for left=3, but still increments left & decrements right!
+                continue;
+            }
+            if (left > 4) {
+                break;
+            }
+            System.out.println("Pair: (" + left + ", " + right + ") | Diff: " + (right - left));
         }
     }
 }`,
-        output: `Left: 1, Right: 9 | Distance: 8
-Left: 3, Right: 7 | Distance: 4`
+        output: `Pair: (1, 9) | Diff: 8
+Pair: (2, 8) | Diff: 6
+Pair: (4, 6) | Diff: 2`
       },
       {
         title: 'Geometric Progression via Multiplicative Step',
@@ -111,6 +146,25 @@ Left: 3, Right: 7 | Distance: 4`
     }
 }`,
         output: '1 2 4 8 16 32'
+      },
+      {
+        title: 'The Integer Overflow Trap',
+        description: 'Demonstrates what occurs when a loop counter reaches Integer.MAX_VALUE and wraps around to negative values.',
+        code: `public class IntegerOverflowTrap {
+    public static void main(String[] args) {
+        // Counting near Integer.MAX_VALUE
+        int max = Integer.MAX_VALUE;
+        int steps = 0;
+        for (int i = max - 2; i > 0; i++) {
+            System.out.println("Step " + (++steps) + ": i = " + i);
+        }
+        System.out.println("Loop exited because i wrapped to negative Integer.MIN_VALUE!");
+    }
+}`,
+        output: `Step 1: i = 2147483645
+Step 2: i = 2147483646
+Step 3: i = 2147483647
+Loop exited because i wrapped to negative Integer.MIN_VALUE!`
       }
     ],
     cheatSheet: {
@@ -121,17 +175,19 @@ Left: 3, Right: 7 | Distance: 4`
       rules: [
         { rule: 'Initialization Timing', explanation: 'Runs exactly once before the condition is ever tested. Can declare multiple variables of the same type.' },
         { rule: 'Pre-Test Condition', explanation: 'Evaluated before every iteration (including the first). If initially false, the loop body executes 0 times.' },
-        { rule: 'Post-Iteration Update', explanation: 'Executes strictly at the end of each iteration, immediately before the condition is re-evaluated.' },
+        { rule: 'Post-Iteration Update', explanation: 'Executes strictly at the end of each iteration, immediately before the condition is re-evaluated. Must be a statement expression.' },
         { rule: 'Block Scope of Counter', explanation: 'Variables declared in the header exist only within the loop construct and cannot be accessed outside.' },
+        { rule: 'Continue vs Break', explanation: 'continue jumps immediately to the update expression; break immediately exits the loop entirely.' },
         { rule: 'Omitted Clauses', explanation: 'All three parts are optional. Omitting the condition creates an infinite loop: for (;;) is identical to while (true).' },
         { rule: 'Semicolon Hazard', explanation: 'Placing a semicolon directly after the header (for (...);) binds an empty body, running the loop to completion before executing the next block once.' }
       ],
       quickComparison: [
-        { aspect: 'Iteration Count', optionA: 'for: Ideal when the number of iterations is known or bounded upfront', optionB: 'while: Ideal when the number of iterations depends on dynamic runtime conditions' },
-        { aspect: 'Counter Scope', optionA: 'for: Confined strictly to loop block if declared in header', optionB: 'while: Initialized before the loop and remains in outer scope afterwards' },
-        { aspect: 'Header Compactness', optionA: 'for: Init, condition, and update unified in 1 line', optionB: 'while: Distributed across outer scope, loop header, and body bottom' },
-        { aspect: 'Infinite Loop Syntax', optionA: 'for: for (;;)', optionB: 'while: while (true)' },
-        { aspect: 'Minimum Executions', optionA: 'for: 0 (if initial condition is false)', optionB: 'while: 0 (if initial condition is false)' }
+        { aspect: 'Linear Step (i++)', optionA: 'for (int i = 0; i < n; i++)', optionB: 'Time: O(n) | Space: O(1) — Standard canonical traversal' },
+        { aspect: 'Skip Step (i += k)', optionA: 'for (int i = 0; i < n; i += k)', optionB: 'Time: O(n/k) = O(n) | Space: O(1) — Even/odd or stride sampling' },
+        { aspect: 'Geometric (i *= 2)', optionA: 'for (int i = 1; i <= n; i *= 2)', optionB: 'Time: O(log n) | Space: O(1) — Powers, binary subdivisions' },
+        { aspect: 'Two Pointers', optionA: 'for (int i = 0, j = n-1; i < j; i++, j--)', optionB: 'Time: O(n) | Space: O(1) — Converging bilateral scans' },
+        { aspect: 'Nested Loops', optionA: 'for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) }', optionB: 'Time: O(n^2) | Space: O(1) — Matrix / grid iterations' },
+        { aspect: 'for vs while Bytecode', optionA: 'for: Compiles to conditional branches (if_icmp*) & jumps (goto)', optionB: 'while: Compiles to identical branch and jump instructions (goto, if_icmp*)' }
       ]
     },
     beginnerMistakes: [
@@ -146,14 +202,19 @@ Left: 3, Right: 7 | Distance: 4`
         howToFix: 'Adopt standard idioms: use `for (int i = 0; i < n; i++)` to repeat `n` times from 0 to n-1, and `for (int i = 1; i <= n; i++)` to repeat `n` times from 1 to n.'
       },
       {
-        mistake: 'Attempting to declare multiple variables of different types in the header: `for (int i = 0, double d = 1.0; ...)`',
-        whyItHappens: 'Assuming the comma acts as a general statement separator allowing multiple distinct variable declarations.',
-        howToFix: 'Java only permits declaring multiple variables of the SAME type in the header (e.g., `for (int i = 0, j = 10; ...)`). If different types are needed, declare them before the loop.'
+        mistake: 'Infinite loop due to wrong step direction or integer overflow: `for (int i = 0; i >= 0; i++)` or `for (int i = 10; i > 0; i++)`',
+        whyItHappens: 'Typing `i++` instead of `i--` when counting backwards, or relying on `i >= 0` with integer overflow wrapping back to negative.',
+        howToFix: 'Double check that the update expression steps towards the termination boundary. For decrementing loops, use `i--`. Avoid `i >= 0` with increments.'
       },
       {
         mistake: 'Unintentionally modifying the loop counter inside the loop body: `for (int i = 0; i < 10; i++) { i++; }`',
         whyItHappens: 'Adding manual increments inside the body while also retaining the header update, causing the counter to advance twice per cycle and skip values.',
         howToFix: 'Rely on the header update clause (`i++`) to advance the loop counter. Avoid mutating the primary counter variable inside the body unless building custom skip logic.'
+      },
+      {
+        mistake: 'Placing a non-statement expression in the update clause: `for (int i = 0; i < 5; i < 5)` or `for (int i = 0; i < 5; i + 1)`',
+        whyItHappens: 'Assuming the update slot can take any expression, including comparisons or pure values.',
+        howToFix: 'The update slot only accepts statement expressions (assignments, pre/post increment or decrement, or method calls). Use `i++` or `i = i + 1`.'
       }
     ],
     practiceProblems: [
@@ -319,25 +380,57 @@ Left: 3, Right: 7 | Distance: 4`
       },
       {
         question: 'What is the scope of a variable declared inside the for loop header?',
-        answer: 'A variable declared within the for loop initialization clause, such as `for (int i = 0; ...)`, is scoped strictly to the loop header and its body block. Once the loop terminates and control leaves the loop\'s closing brace, the variable ceases to exist and is garbage collected if applicable. Any attempt to reference it outside causes a compile-time "cannot find symbol" error.',
+        answer: 'A variable declared within the for loop initialization clause, such as `for (int i = 0; ...)`, is scoped strictly to the loop header and its body block. Once the loop terminates and control leaves the loop\'s closing brace, the variable ceases to exist. Any attempt to reference it outside causes a compile-time "cannot find symbol" error.',
         followUp: 'How can you retain the final value of the loop counter after the loop terminates?',
         followUpAnswer: 'Declare the variable outside and before the loop header: `int i; for (i = 0; i < 10; i++) { ... }`. Because `i` was declared in the enclosing scope, it remains accessible after the loop finishes, holding the value that caused the condition to fail (e.g. 10).',
         keyPhrases: ['Block scope', 'Cannot find symbol', 'Declare outside loop to preserve value'],
         commonMistakeAnswer: 'Assuming the loop variable automatically persists in the method scope.'
       },
       {
+        question: 'How does a for loop differ from a while loop in terms of syntax, design intent, and bytecode?',
+        answer: 'In terms of design intent, a `for` loop is preferred when initialization, condition testing, and iteration stepping naturally belong together (count-controlled or bounded iteration), which keeps the loop counter strictly scoped. A `while` loop is preferred for indefinite or state-based iteration where loop continuation depends on dynamic conditions (e.g., waiting for user input or a flag change). At the JVM bytecode level, neither loop has a distinct instruction: both compile into identical conditional jump opcodes (such as `if_icmpge` or `if_icmplt`) and unconditional jump opcodes (`goto`).',
+        followUp: 'Why is a for loop considered cleaner than a while loop for counter-based loops?',
+        followUpAnswer: 'Because a for loop encapsulates the counter lifecycle in one place. In a while loop, the counter must be declared outside (polluting outer scope), and the update must be placed inside the body, where an accidental continue can bypass the update and trigger an infinite loop.',
+        keyPhrases: ['Syntactic consolidation', 'No distinct bytecode instruction', 'Goto and conditional branches (if_icmp*)', 'Encapsulated counter lifecycle'],
+        commonMistakeAnswer: 'Claiming that for loops have dedicated bytecode instructions or run faster than while loops.'
+      },
+      {
         question: 'Is it legal syntax in Java to omit all three expressions in the for loop header?',
-        answer: 'Yes, `for (;;)` is completely valid Java syntax. When the initialization is omitted, nothing runs on entry. When the update is omitted, no step action occurs at the end of each iteration. When the condition is omitted, Java\'s language specification defines it as implicitly evaluating to `true`. Therefore, `for (;;)` constructs an infinite loop that compiles down to the exact same bytecode as `while (true)`.',
+        answer: 'Yes, `for (;;)` is completely valid Java syntax. When the initialization is omitted, nothing runs on entry. When the update is omitted, no step action occurs at the end of each iteration. When the condition is omitted, Java\'s language specification defines it as implicitly evaluating to `true`. Therefore, `for (;;)` constructs an infinite loop that compiles down to the exact same bytecode branching structure as `while (true)`.',
         followUp: 'Does the compiler allow code directly after `for (;;)` if there is no break statement inside?',
         followUpAnswer: 'No. The Java compiler performs reachability analysis. If a `for (;;)` block contains no `break` or return path, any statement written after the loop will fail compilation with an "unreachable statement" error.',
         keyPhrases: ['for (;;)', 'Implicitly true condition', 'Unreachable statement error', 'Bytecode equivalence to while(true)'],
         commonMistakeAnswer: 'Thinking that omitting the condition causes a syntax error or defaults to false.'
       },
       {
+        question: 'What are the restrictions on the update clause in a Java for loop?',
+        answer: 'Java strictly requires expressions in the update clause to be "statement expressions". According to the Java Language Specification (JLS), statement expressions include only: (1) Assignment expressions (e.g. `i = i + 1`, `i += 2`); (2) Pre-increment/decrement expressions (`++i`, `--i`); (3) Post-increment/decrement expressions (`i++`, `i--`); and (4) Method invocations. Standalone relational or boolean expressions like `i < 10` or arithmetic operations without assignment like `i + 1` cause a compile-time "not a statement" error.',
+        followUp: 'Can you call a void method in the update clause?',
+        followUpAnswer: 'Yes! Any method invocation is a statement expression, so `for (int i = 0; i < 5; printProgress())` is syntactically valid in Java.',
+        keyPhrases: ['Statement expressions only', 'JLS specification', 'Assignments, increments, decrements, method calls', 'Not a statement compiler error'],
+        commonMistakeAnswer: 'Thinking any valid Java expression can be placed in the update clause.'
+      },
+      {
+        question: 'What is the Integer Overflow trap in for loops, and how can it cause an infinite loop?',
+        answer: 'In Java, 32-bit signed integers wrap around from `Integer.MAX_VALUE` (2,147,483,647) to `Integer.MIN_VALUE` (-2,147,483,648) when incremented. If a loop is written as `for (int i = 0; i <= Integer.MAX_VALUE; i++)`, the condition `i <= Integer.MAX_VALUE` is ALWAYS true for all 32-bit integers. When `i` reaches `Integer.MAX_VALUE`, `i++` wraps it to `Integer.MIN_VALUE`, which is still `<= Integer.MAX_VALUE`. Consequently, the loop never terminates and runs forever.',
+        followUp: 'How do you safely iterate across the entire positive integer range without overflow?',
+        followUpAnswer: 'Use a larger primitive type like `long` for the loop counter: `for (long i = 0; i <= Integer.MAX_VALUE; i++)`. Because `long` has 64 bits, it will comfortably hold `Integer.MAX_VALUE + 1` without wrapping.',
+        keyPhrases: ['Integer.MAX_VALUE wrap around', 'Integer.MIN_VALUE', 'Condition always true', 'Use long to prevent overflow'],
+        commonMistakeAnswer: 'Assuming Java throws an ArithmeticException when an int counter overflows.'
+      },
+      {
+        question: 'What is the behavior of continue vs break inside a for loop?',
+        answer: '`break` unconditionally exits the entire for loop immediately; control jumps to the statement following the loop\'s closing brace, and neither the remaining loop body nor the update clause runs. `continue`, by contrast, terminates ONLY the current iteration; control jumps straight to the loop\'s update clause (e.g. `i++`), executes it, and then re-evaluates the condition for the next iteration.',
+        followUp: 'How does continue in a while loop differ dangerously from continue in a for loop?',
+        followUpAnswer: 'In a while loop, if the increment statement is written at the bottom of the body, a `continue` will skip past that increment, leaving the counter unchanged and causing an infinite loop. In a for loop, `continue` is guaranteed to execute the header update clause.',
+        keyPhrases: ['break exits loop', 'continue skips to update clause', 'while loop continue danger'],
+        commonMistakeAnswer: 'Believing continue bypasses the for loop update clause.'
+      },
+      {
         question: 'Can you initialize multiple variables in a single for loop header? What are the restrictions?',
         answer: 'Yes, you can initialize multiple variables in the header using a comma-separated list, but they must all share the exact same data type. For example, `for (int i = 0, j = 10; i < j; i++, j--)` is valid because both `i` and `j` are `int`. However, `for (int i = 0, double d = 0.5; ...)` is a syntax error because Java does not allow multiple type specifiers in a single declaration statement.',
         followUp: 'Can the update section also execute multiple statements?',
-        followUpAnswer: 'Yes. The update section can contain multiple comma-separated expression statements, such as `i++, j--, step *= 2`. Unlike the initialization section, these are statement expressions and do not involve type declarations.',
+        followUpAnswer: 'Yes. The update section can contain multiple comma-separated statement expressions, such as `i++, j--, step *= 2`. Unlike the initialization section, these are statement expressions and do not involve type declarations.',
         keyPhrases: ['Same data type requirement', 'Comma-separated expressions', 'Multiple update statements'],
         commonMistakeAnswer: 'Claiming that Java forbids multiple variables or allows declaring different types separated by commas.'
       },
@@ -350,44 +443,12 @@ Left: 3, Right: 7 | Distance: 4`
         commonMistakeAnswer: 'Thinking the semicolon causes an immediate compilation syntax error on the header itself.'
       },
       {
-        question: 'How does a for loop differ from a while loop in terms of design intent and bytecode?',
-        answer: 'From a design intent perspective, a `for` loop is preferred for definite iteration where the loop bounds or counts are known before entering, keeping the counter lifecycle consolidated in one line. A `while` loop is preferred for indefinite iteration where termination depends on runtime events or state changes. At the bytecode level, however, both compile into nearly identical conditional branch (`if_icmpge`) and jump (`goto`) instructions.',
-        followUp: 'When would you prefer a while loop over a for loop for an indexed counter?',
-        followUpAnswer: 'You would rarely prefer while for a standard counter, but it is useful when the counter increment is non-uniform or conditionally determined across multiple nested branches within the body.',
-        keyPhrases: ['Definite vs indefinite iteration', 'Bytecode equivalence (goto, if_icmpge)', 'Consolidated counter lifecycle'],
-        commonMistakeAnswer: 'Asserting that for loops are inherently faster than while loops in Java.'
-      },
-      {
-        question: 'Can you use floating-point variables (like float or double) as loop counters in a for loop?',
-        answer: 'Syntactically, Java allows `float` and `double` in loop headers, such as `for (double d = 0.0; d <= 1.0; d += 0.1)`. However, doing so is strongly discouraged in production code due to IEEE 754 floating-point rounding errors. Cumulative precision loss can cause the loop to run one more or one fewer iteration than expected. Integer counters should always be used instead, deriving the floating-point value via division if needed.',
-        followUp: 'How would you rewrite `for (double d = 0.0; d <= 1.0; d += 0.1)` safely?',
-        followUpAnswer: 'Use an integer loop from 0 to 10: `for (int i = 0; i <= 10; i++) { double d = i / 10.0; }`. This guarantees exactly 11 deterministic iterations.',
-        keyPhrases: ['IEEE 754 precision issues', 'Accumulated rounding error', 'Use integer counter and derive float'],
-        commonMistakeAnswer: 'Stating that floating-point counters are illegal syntax in Java.'
-      },
-      {
-        question: 'What is the effect of putting a boolean expression in the update clause of a for loop?',
-        answer: 'Java requires the update clause to be a statement expression, such as an assignment, pre/post increment or decrement, or method call. An isolated boolean expression like `i < 10` or `flag == true` in the update position is not a statement expression and causes a compile-time error: "not a statement".',
-        followUp: 'What are the only permitted expression types in the update clause?',
-        followUpAnswer: 'Only assignment expressions (`i = i + 1`), prefix/postfix expressions (`i++`, `--i`), and method invocations are permitted as statement expressions in the update slot.',
-        keyPhrases: ['Not a statement', 'Statement expression requirement', 'Assignments and increments only'],
-        commonMistakeAnswer: 'Thinking any arbitrary expression can be placed in the update clause.'
-      },
-      {
-        question: 'What is an off-by-one error (OBOE) in a for loop, and how do you prevent it?',
-        answer: 'An off-by-one error occurs when a loop iterates either one time too many or one time too few, typically caused by using `<=` instead of `<` (or vice versa), or initializing a counter to 1 instead of 0. To prevent it, Java developers stick to established standard idioms: for zero-based sequences (like arrays of size N), always use `for (int i = 0; i < N; i++)`. For 1-based ranges up to N inclusive, use `for (int i = 1; i <= N; i++)`.',
-        followUp: 'What is the classic consequence of an off-by-one error when indexing an array in a loop?',
-        followUpAnswer: 'Using `i <= array.length` instead of `i < array.length` attempts to read `array[array.length]`, throwing an `ArrayIndexOutOfBoundsException` on the final iteration.',
-        keyPhrases: ['OBOE', 'Zero-based idiom: i = 0; i < N; i++', 'ArrayIndexOutOfBoundsException'],
-        commonMistakeAnswer: 'Assuming boundary errors are caught at compile time.'
-      },
-      {
-        question: 'Can you modify the loop variable within the body of a for loop? Is it good practice?',
-        answer: 'Yes, Java allows modifying the loop counter inside the body, but it is considered poor practice and a code smell in production. Modifying the counter in both the body and the header obscures the loop\'s termination logic, makes the iteration count unpredictable, and frequently introduces subtle infinite loops or skipped elements. If dynamic stepping is required, a `while` loop conveys the intent much more clearly.',
-        followUp: 'Is there any legitimate scenario where modifying the counter in the body is acceptable?',
-        followUpAnswer: 'One rare scenario is consuming an escape sequence or multi-character token in an indexed parser, where `i++` is used to skip the trailing character of a 2-character token.',
-        keyPhrases: ['Code smell', 'Obscures termination logic', 'Prefer while loop for irregular stepping'],
-        commonMistakeAnswer: 'Thinking Java makes loop variables immutable in for loops.'
+        question: 'How does a traditional indexed for loop compare to an enhanced for-each loop?',
+        answer: 'A traditional for loop provides explicit access to the iteration index, allows iterating in reverse, skipping elements with custom step increments (`i += 2`), modifying array elements by index, or traversing multiple arrays in parallel. An enhanced for-each loop is cleaner and eliminates off-by-one errors, but is read-only regarding array elements, offers no index variable, and only iterates forward one element at a time.',
+        followUp: 'Can you remove elements from a collection using a traditional indexed for loop vs enhanced for-each?',
+        followUpAnswer: 'In an enhanced for-each loop, modifying or removing from a collection throws `ConcurrentModificationException`. In an indexed for loop on a List, you can remove elements by index, provided you adjust the index (`i--`) to account for element shifting, though using an `Iterator` is safer.',
+        keyPhrases: ['Index access', 'Forward only vs custom step', 'ConcurrentModificationException', 'Read-only iteration'],
+        commonMistakeAnswer: 'Assuming for-each can iterate backward or modify array contents.'
       }
     ],
     miniQuiz: [

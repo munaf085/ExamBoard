@@ -7,21 +7,82 @@ export const cf44_46_exercises: Record<string, ProgrammingExercise[]> = {
   'for-loop-deep-dive': [
     {
       id: 'cf44-ex-1',
+      title: 'Reverse an Integer Number',
+      problemStatement: `Write a Java program to reverse the digits of an integer using a for loop.
+Given \`int original = 12345;\`, extract digits from right to left and reconstruct the reversed number.
+
+Input Format: An integer variable \`int original = 12345;\`
+Output Format: Print "Original: [original] | Reversed: [reversed]".
+
+Example:
+Input: original = 12345
+Output: Original: 12345 | Reversed: 54321`,
+      hint: 'Use a for loop header with no initial condition variable: `for (int n = original; n != 0; n /= 10)`. In each iteration, extract `n % 10` and append to `reversed * 10`.',
+      solutionCode: `public class ReverseNumber {
+    public static void main(String[] args) {
+        int original = 12345;
+        int reversed = 0;
+
+        for (int n = original; n != 0; n /= 10) {
+            int digit = n % 10;
+            reversed = reversed * 10 + digit;
+        }
+
+        System.out.println("Original: " + original + " | Reversed: " + reversed);
+    }
+}`,
+      output: 'Original: 12345 | Reversed: 54321',
+      explanation: 'The loop divides n by 10 in each pass. Digits extracted in order: 5, 4, 3, 2, 1. Accumulating reversed = reversed * 10 + digit yields 54321.'
+    },
+    {
+      id: 'cf44-ex-2',
+      title: 'Count Number of Digits',
+      problemStatement: `Write a Java program to count the number of digits in an integer using a for loop.
+For \`int num = 987654;\`, the count is 6. If \`num = 0\`, the count is 1.
+
+Input Format: An integer variable \`int num = 987654;\`
+Output Format: Print "Number: [num] | Digit count: [count]".
+
+Example:
+Input: num = 987654
+Output: Number: 987654 | Digit count: 6`,
+      hint: 'Handle 0 as a special case (`count = 1`). Otherwise, use `for (int temp = Math.abs(num); temp > 0; temp /= 10)` and increment count on each pass.',
+      solutionCode: `public class CountDigits {
+    public static void main(String[] args) {
+        int num = 987654;
+        int count = 0;
+
+        if (num == 0) {
+            count = 1;
+        } else {
+            for (int temp = Math.abs(num); temp > 0; temp /= 10) {
+                count++;
+            }
+        }
+
+        System.out.println("Number: " + num + " | Digit count: " + count);
+    }
+}`,
+      output: 'Number: 987654 | Digit count: 6',
+      explanation: 'Dividing 987654 by 10 repeatedly requires 6 divisions before temp reaches 0: 98765, 9876, 987, 98, 9, 0.'
+    },
+    {
+      id: 'cf44-ex-3',
       title: 'Factorial Calculator',
       problemStatement: `Write a Java program to compute the factorial of a positive integer N using a standard for loop.
-Recall that N! = N * (N - 1) * (N - 2) * ... * 1. For N = 5, the factorial is 5 * 4 * 3 * 2 * 1 = 120.
+Recall that N! = N * (N - 1) * ... * 1. For N = 6, 6! = 720.
 
-Input Format: An integer variable \`int n = 5;\`
+Input Format: An integer variable \`int n = 6;\`
 Output Format: Print "Factorial of [n] is [result]".
 
 Example:
-Input: n = 5
-Output: Factorial of 5 is 120`,
-      hint: 'Initialize an accumulator variable `int fact = 1;` before the loop. Run a for loop starting at 1 up to n, multiplying `fact *= i;` on each step.',
+Input: n = 6
+Output: Factorial of 6 is 720`,
+      hint: 'Initialize an accumulator variable `long fact = 1;` before the loop. Run a for loop starting at 1 up to n, multiplying `fact *= i;` on each step.',
       solutionCode: `public class FactorialCalculator {
     public static void main(String[] args) {
-        int n = 5;
-        int fact = 1;
+        int n = 6;
+        long fact = 1;
 
         for (int i = 1; i <= n; i++) {
             fact *= i;
@@ -30,160 +91,145 @@ Output: Factorial of 5 is 120`,
         System.out.println("Factorial of " + n + " is " + fact);
     }
 }`,
-      output: 'Factorial of 5 is 120',
-      explanation: 'The loop counter i runs from 1 to 5 inclusive. In each iteration, fact is multiplied by i: 1*1=1, 1*2=2, 2*3=6, 6*4=24, 24*5=120.'
-    },
-    {
-      id: 'cf44-ex-2',
-      title: 'Multiplication Table Generator',
-      problemStatement: `Write a Java program to print the multiplication table for a given integer N from 1 through 10.
-
-Input Format: An integer variable \`int n = 7;\`
-Output Format: Print 10 lines, each formatted as "[n] x [i] = [product]".
-
-Example:
-Input: n = 7
-Output:
-7 x 1 = 7
-7 x 2 = 14
-...
-7 x 10 = 70`,
-      hint: 'Use a for loop with counter `i` starting at 1 and ending at 10 (`i <= 10`). In each iteration, calculate `n * i` and print.',
-      solutionCode: `public class MultiplicationTable {
-    public static void main(String[] args) {
-        int n = 7;
-
-        for (int i = 1; i <= 10; i++) {
-            System.out.println(n + " x " + i + " = " + (n * i));
-        }
-    }
-}`,
-      output: `7 x 1 = 7
-7 x 2 = 14
-7 x 3 = 21
-7 x 4 = 28
-7 x 5 = 35
-7 x 6 = 42
-7 x 7 = 49
-7 x 8 = 56
-7 x 9 = 63
-7 x 10 = 70`,
-      explanation: 'The loop executes exactly 10 times, incrementing i by 1 each time. Each pass computes and displays the product of 7 and i.'
-    },
-    {
-      id: 'cf44-ex-3',
-      title: 'Sum of Multiples of Three or Five',
-      problemStatement: `Write a Java program to calculate the sum of all natural numbers up to a given limit that are multiples of 3 or 5.
-
-Input Format: An integer variable \`int limit = 20;\`
-Output Format: Print "Sum of multiples: [sum]".
-
-Example:
-Input: limit = 20
-Multiples: 3, 5, 6, 9, 10, 12, 15, 18, 20
-Output: Sum of multiples: 98`,
-      hint: 'Loop from 1 to limit. Inside the loop, test `if (i % 3 == 0 || i % 5 == 0)` and add `i` to an accumulator.',
-      solutionCode: `public class MultiplesSum {
-    public static void main(String[] args) {
-        int limit = 20;
-        int sum = 0;
-
-        for (int i = 1; i <= limit; i++) {
-            if (i % 3 == 0 || i % 5 == 0) {
-                sum += i;
-            }
-        }
-
-        System.out.println("Sum of multiples: " + sum);
-    }
-}`,
-      output: 'Sum of multiples: 98',
-      explanation: 'The numbers 3, 5, 6, 9, 10, 12, 15, 18, and 20 satisfy the modulo condition. Adding them yields 98.'
+      output: 'Factorial of 6 is 720',
+      explanation: 'The loop counter i runs from 1 to 6 inclusive. In each iteration, fact is multiplied by i: 1*1=1, 1*2=2, 2*3=6, 6*4=24, 24*5=120, 120*6=720.'
     },
     {
       id: 'cf44-ex-4',
-      title: 'Rocket Launch Countdown',
-      problemStatement: `Write a Java program that simulates a rocket launch countdown from 10 down to 1, followed by "Liftoff!".
-Each number must be printed on the same line separated by spaces.
+      title: 'Prime Number Checker',
+      problemStatement: `Write a Java program to determine whether a given integer N is a prime number using a for loop with early termination.
+A prime number is a natural number greater than 1 that has no positive divisors other than 1 and itself.
 
-Input Format: An integer variable \`int start = 10;\`
-Output Format: Print the countdown numbers followed by "Liftoff!".
+Input Format: An integer variable \`int n = 29;\`
+Output Format: Print "[n] is prime: [true/false]".
 
 Example:
-Input: start = 10
-Output: 10 9 8 7 6 5 4 3 2 1 Liftoff!`,
-      hint: 'Initialize the loop counter to start, use condition `timer >= 1`, and update with `timer--`. Use `System.out.print` inside the loop.',
-      solutionCode: `public class RocketCountdown {
+Input: n = 29
+Output: 29 is prime: true`,
+      hint: 'A number is prime if it has no divisors from 2 up to `sqrt(n)`. Use `for (int i = 2; i * i <= n; i++)`. If `n % i == 0`, set flag to false and break.',
+      solutionCode: `public class PrimeChecker {
     public static void main(String[] args) {
-        int start = 10;
+        int n = 29;
+        boolean isPrime = (n > 1);
 
-        for (int timer = start; timer >= 1; timer--) {
-            System.out.print(timer + " ");
+        for (int i = 2; i * i <= n; i++) {
+            if (n % i == 0) {
+                isPrime = false;
+                break;
+            }
         }
-        System.out.println("Liftoff!");
+
+        System.out.println(n + " is prime: " + isPrime);
     }
 }`,
-      output: '10 9 8 7 6 5 4 3 2 1 Liftoff!',
-      explanation: 'The loop decrements timer by 1 after each pass. When timer reaches 0, the condition timer >= 1 evaluates to false and the loop terminates.'
+      output: '29 is prime: true',
+      explanation: 'The loop checks divisors i=2, 3, 4, 5 (since 5*5=25 <= 29). None divide 29 evenly, so isPrime remains true.'
     },
     {
       id: 'cf44-ex-5',
-      title: 'Powers of Two Progression',
-      problemStatement: `Write a Java program using a multiplicative for loop step to print powers of 2 starting at 1 up to a given maximum value.
+      title: 'Greatest Common Divisor (GCD)',
+      problemStatement: `Write a Java program to find the Greatest Common Divisor (GCD) of two positive integers using a for loop.
+The GCD of two numbers is the largest positive integer that divides both without a remainder.
 
-Input Format: An integer variable \`int max = 128;\`
-Output Format: Print the powers of two separated by spaces.
+Input Format:
+- \`int a = 48;\`
+- \`int b = 18;\`
+
+Output Format: Print "GCD of [a] and [b] is [gcd]".
 
 Example:
-Input: max = 128
-Output: 1 2 4 8 16 32 64 128`,
-      hint: 'Set up the loop header as `for (int val = 1; val <= max; val *= 2)`.',
-      solutionCode: `public class PowersOfTwoProgression {
+Input: a = 48, b = 18
+Output: GCD of 48 and 18 is 6`,
+      hint: 'The GCD cannot exceed min(a, b). Start a loop from min(a, b) counting down to 1. The first i that divides both evenly is the GCD.',
+      solutionCode: `public class GCDCalculator {
     public static void main(String[] args) {
-        int max = 128;
+        int a = 48;
+        int b = 18;
+        int gcd = 1;
 
-        for (int val = 1; val <= max; val *= 2) {
-            System.out.print(val + " ");
+        int min = (a < b) ? a : b;
+        for (int i = min; i >= 1; i--) {
+            if (a % i == 0 && b % i == 0) {
+                gcd = i;
+                break;
+            }
         }
-        System.out.println();
+
+        System.out.println("GCD of " + a + " and " + b + " is " + gcd);
     }
 }`,
-      output: '1 2 4 8 16 32 64 128',
-      explanation: 'Rather than adding 1, the update expression multiplies val by 2 (val *= 2) on every iteration, doubling its value geometrically.'
+      output: 'GCD of 48 and 18 is 6',
+      explanation: 'Counting downward from 18: 18, 17, ..., 6. 48 % 6 == 0 and 18 % 6 == 0. The loop immediately breaks with gcd = 6.'
     },
     {
       id: 'cf44-ex-6',
-      title: 'Converging Pointers Symmetric Sum',
-      problemStatement: `Write a Java program using a two-variable for loop header where one pointer starts at 1 and increases by 1, while the other starts at 10 and decreases by 1.
-The loop continues as long as \`left < right\`. Print each pair and their sum.
+      title: 'Armstrong Number Checker',
+      problemStatement: `Write a Java program to check whether a given 3-digit number is an Armstrong number.
+An Armstrong number of 3 digits is an integer where the sum of the cubes of its digits equals the number itself (e.g. 153 = 1^3 + 5^3 + 3^3 = 1 + 125 + 27 = 153).
 
-Input Format: Header declaration \`int left = 1, right = 10;\`
-Output Format: Print each pair as "[left] + [right] = [sum]".
+Input Format: An integer variable \`int num = 153;\`
+Output Format: Print "[num] is Armstrong: [true/false]".
 
 Example:
-Output:
-1 + 10 = 11
-2 + 9 = 11
-3 + 8 = 11
-4 + 7 = 11
-5 + 6 = 11`,
-      hint: 'Use `for (int left = 1, right = 10; left < right; left++, right--)` to advance both pointers simultaneously.',
-      solutionCode: `public class ConvergingPointersSum {
+Input: num = 153
+Output: 153 is Armstrong: true`,
+      hint: 'Extract each digit using `temp % 10`, compute `digit * digit * digit`, add it to an accumulator, and step with `temp /= 10`. Compare sum to original.',
+      solutionCode: `public class ArmstrongChecker {
     public static void main(String[] args) {
-        for (int left = 1, right = 10; left < right; left++, right--) {
-            System.out.println(left + " + " + right + " = " + (left + right));
+        int num = 153;
+        int sum = 0;
+
+        for (int temp = num; temp > 0; temp /= 10) {
+            int digit = temp % 10;
+            sum += digit * digit * digit;
         }
+
+        boolean isArmstrong = (sum == num);
+        System.out.println(num + " is Armstrong: " + isArmstrong);
     }
 }`,
-      output: `1 + 10 = 11
-2 + 9 = 11
-3 + 8 = 11
-4 + 7 = 11
-5 + 6 = 11`,
-      explanation: 'In each step, left increases by 1 and right decreases by 1. When left=6 and right=5, the condition 6 < 5 is false, terminating the loop after exactly 5 iterations.'
+      output: '153 is Armstrong: true',
+      explanation: 'Digits of 153 are 3, 5, 1. Cubes: 27 + 125 + 1 = 153. Because sum == num, 153 is an Armstrong number.'
     },
     {
       id: 'cf44-ex-7',
+      title: 'Converging Two-Pointer Pair Search',
+      problemStatement: `Write a Java program using a two-variable for loop header where \`left\` starts at 1 and \`right\` starts at 10.
+In each iteration, calculate the product \`left * right\`. If the product equals a target value, print the pair and terminate early using \`break\`.
+
+Input Format:
+- \`int target = 24;\`
+- Header declaration \`int left = 1, right = 10;\`
+
+Output Format: Print "Found pair: [left] * [right] = [target]".
+
+Example:
+Input: target = 24
+Output: Found pair: 3 * 8 = 24`,
+      hint: 'Use `for (int left = 1, right = 10; left < right; left++, right--)`. Test `if (left * right == target) break;`.',
+      solutionCode: `public class TwoPointerSearch {
+    public static void main(String[] args) {
+        int target = 24;
+        boolean found = false;
+
+        for (int left = 1, right = 10; left < right; left++, right--) {
+            if (left * right == target) {
+                System.out.println("Found pair: " + left + " * " + right + " = " + target);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("No pair found");
+        }
+    }
+}`,
+      output: 'Found pair: 3 * 8 = 24',
+      explanation: 'Iteration 1: left=1, right=10 (prod=10). Iteration 2: left=2, right=9 (prod=18). Iteration 3: left=3, right=8 (prod=24 == target). Loop breaks.'
+    },
+    {
+      id: 'cf44-ex-8',
       title: 'Fibonacci Sequence Generator',
       problemStatement: `Write a Java program to print the first N numbers of the Fibonacci sequence using a for loop.
 The sequence starts with 0 and 1, and each subsequent number is the sum of the previous two.
@@ -214,77 +260,7 @@ Output: 0 1 1 2 3 5 8 13`,
       explanation: 'The loop executes 8 times. In each iteration, it prints the current term first, then calculates the next term and shifts values forward.'
     },
     {
-      id: 'cf44-ex-8',
-      title: 'Range Evens Sum and Count',
-      problemStatement: `Write a Java program to calculate both the count and the sum of all even numbers in a given inclusive range [start, end].
-
-Input Format:
-- \`int start = 4;\`
-- \`int end = 16;\`
-
-Output Format: Print "Count: [count], Sum: [sum]".
-
-Example:
-Input: start = 4, end = 16
-Even numbers: 4, 6, 8, 10, 12, 14, 16 (7 numbers)
-Output: Count: 7, Sum: 70`,
-      hint: 'Loop from start to end with step 1. If `i % 2 == 0`, increment count and add `i` to sum.',
-      solutionCode: `public class RangeEvensCalculator {
-    public static void main(String[] args) {
-        int start = 4;
-        int end = 16;
-        int count = 0;
-        int sum = 0;
-
-        for (int i = start; i <= end; i++) {
-            if (i % 2 == 0) {
-                count++;
-                sum += i;
-            }
-        }
-
-        System.out.println("Count: " + count + ", Sum: " + sum);
-    }
-}`,
-      output: 'Count: 7, Sum: 70',
-      explanation: 'The even numbers between 4 and 16 are 4, 6, 8, 10, 12, 14, and 16. Total count is 7, and their sum is 70.'
-    },
-    {
       id: 'cf44-ex-9',
-      title: 'Square and Cube Table',
-      problemStatement: `Write a Java program to print the square and cube for each number from 1 to 5.
-
-Input Format: An integer variable \`int limit = 5;\`
-Output Format: Print 5 lines in the format "N: [n], Sq: [sq], Cube: [cube]".
-
-Example:
-Output:
-N: 1, Sq: 1, Cube: 1
-N: 2, Sq: 4, Cube: 8
-N: 3, Sq: 9, Cube: 27
-N: 4, Sq: 16, Cube: 64
-N: 5, Sq: 25, Cube: 125`,
-      hint: 'Run a for loop from 1 to limit. Compute `i * i` and `i * i * i` on each step.',
-      solutionCode: `public class PowersTable {
-    public static void main(String[] args) {
-        int limit = 5;
-
-        for (int i = 1; i <= limit; i++) {
-            int sq = i * i;
-            int cube = i * i * i;
-            System.out.println("N: " + i + ", Sq: " + sq + ", Cube: " + cube);
-        }
-    }
-}`,
-      output: `N: 1, Sq: 1, Cube: 1
-N: 2, Sq: 4, Cube: 8
-N: 3, Sq: 9, Cube: 27
-N: 4, Sq: 16, Cube: 64
-N: 5, Sq: 25, Cube: 125`,
-      explanation: 'The loop executes 5 times, computing and printing the algebraic square and cube for each integer from 1 to 5.'
-    },
-    {
-      id: 'cf44-ex-10',
       title: 'Alternating Series Summation',
       problemStatement: `Write a Java program to compute the alternating series sum for N terms:
 S = 1 - 2 + 3 - 4 + 5 - 6 + ... up to N.
@@ -315,6 +291,46 @@ Output: Alternating sum for n=10: -5`,
 }`,
       output: 'Alternating sum for n=10: -5',
       explanation: 'Odd numbers (1, 3, 5, 7, 9) contribute +25. Even numbers (2, 4, 6, 8, 10) contribute -30. Total sum = 25 - 30 = -5.'
+    },
+    {
+      id: 'cf44-ex-10',
+      title: 'Primes in a Range Finder',
+      problemStatement: `Write a Java program to find and print all prime numbers in an inclusive range [start, end] using nested for loops and early termination.
+
+Input Format:
+- \`int start = 10;\`
+- \`int end = 30;\`
+
+Output Format: Print "Primes between [start] and [end]: " followed by the primes separated by spaces.
+
+Example:
+Input: start = 10, end = 30
+Output: Primes between 10 and 30: 11 13 17 19 23 29`,
+      hint: 'Outer loop tests each number from start to end. Inner loop tests divisors d from 2 up to `d * d <= num`. If divisor found, mark composite and break.',
+      solutionCode: `public class PrimesInRange {
+    public static void main(String[] args) {
+        int start = 10;
+        int end = 30;
+
+        System.out.print("Primes between " + start + " and " + end + ": ");
+        for (int num = start; num <= end; num++) {
+            if (num < 2) continue;
+            boolean isPrime = true;
+            for (int d = 2; d * d <= num; d++) {
+                if (num % d == 0) {
+                    isPrime = false;
+                    break;
+                }
+            }
+            if (isPrime) {
+                System.out.print(num + " ");
+            }
+        }
+        System.out.println();
+    }
+}`,
+      output: 'Primes between 10 and 30: 11 13 17 19 23 29',
+      explanation: 'Iterating through numbers 10 to 30, the inner loop verifies primality by trial division up to sqrt(num). The primes found are 11, 13, 17, 19, 23, and 29.'
     }
   ],
 
