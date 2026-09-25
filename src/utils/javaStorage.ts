@@ -63,3 +63,28 @@ export function updateWeakStrong(moduleId: string, score: number): void {
 export function resetJavaProgress(): void {
   localStorage.removeItem(JAVA_PROGRESS_KEY);
 }
+
+// ─────────────────────────────────────────────────────────────
+// LESSON SELF-EVALUATION INTERVIEW RATINGS
+// ─────────────────────────────────────────────────────────────
+const JAVA_SELF_EVAL_KEY = 'java_self_eval';
+
+export type SelfEvalRating = 'mastered' | 'partial' | 'revise';
+
+export interface SelfEvalRecord {
+  lessonId: string;
+  rating: SelfEvalRating;
+  timestamp: number;
+}
+
+export function getSelfEvaluations(): Record<string, SelfEvalRecord> {
+  const raw = localStorage.getItem(JAVA_SELF_EVAL_KEY);
+  if (!raw) return {};
+  try { return JSON.parse(raw); } catch { return {}; }
+}
+
+export function saveSelfEvaluation(lessonId: string, rating: SelfEvalRating): void {
+  const evals = getSelfEvaluations();
+  evals[lessonId] = { lessonId, rating, timestamp: Date.now() };
+  localStorage.setItem(JAVA_SELF_EVAL_KEY, JSON.stringify(evals));
+}

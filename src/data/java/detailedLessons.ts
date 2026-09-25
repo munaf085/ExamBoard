@@ -11,6 +11,17 @@ export interface MiniQuizQuestion {
   explanation: string;
 }
 
+export interface PracticeProblem {
+  title: string;
+  problemStatement: string;
+  code?: string;
+  options?: string[];
+  correctOptionIndex?: number;
+  hint: string;
+  solution: string;
+  explanation: string;
+}
+
 export interface DetailedLesson {
   id: string;
   moduleId: string;
@@ -37,8 +48,11 @@ export interface DetailedLesson {
     question: string;
     answer: string;
     followUp?: string;
+    keyPhrases?: string[];
   }[];
   miniQuiz: MiniQuizQuestion[];
+  practiceProblem?: PracticeProblem;
+  interviewTakeaways?: string[];
 }
 
 export const DETAILED_LESSONS: Record<string, DetailedLesson> = {
@@ -1445,67 +1459,118 @@ Grade: B`
     moduleTitle: '4. Control Flow & Loops',
     lessonNumber: 'Lesson 4.7',
     title: 'The do-while Loop (Runs >= 1 Time)',
-    subtitle: 'Post-condition checking, ATM menus, and loop execution guarantees',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Think of an amusement park ride where you must pay after the ride. A "while" loop checks your ticket before you get on (if ticket invalid, you ride 0 times). A "do-while" loop puts you on the ride first, and checks your ticket at the exit: you are guaranteed to experience the ride at least once, even if your ticket expires!',
-    coreExplanation: [
-      'In a standard "while" loop, condition is evaluated BEFORE the loop body executes. If false initially, loop runs 0 times.',
-      'In a "do-while" loop, the loop body executes FIRST, and the condition is evaluated at the end (Post-Condition).',
-      'Execution Guarantee: A do-while loop ALWAYS executes at least once, no matter what condition is passed.',
-      'Classic Use Case: User Input Menus (show the menu options at least once, then prompt user to repeat if invalid).',
-      'Syntax note: Notice the semicolon at the very end of while condition: "do { ... } while (condition);"',
+    subtitle: 'Post-condition checking, loop execution guarantees & interview tracing traps',
+    estimatedMinutes: 6,
+    beginnerAnalogy: 'Think of an amusement park ride where ticket checking happens at the EXIT. A "while" loop checks your ticket before entering (if expired, 0 rides). A "do-while" loop lets you ride first, then checks ticket at the exit. You are 100% guaranteed to ride at least once!',
+    interviewTakeaways: [
+      'Guaranteed Execution: Runs at least once (>= 1) because the body executes FIRST before the condition is evaluated (Post-Condition check).',
+      'The Semicolon Trap: "do { ... } while (condition);" MANDATES a semicolon at the very end. Forgetting ";" causes a compile-time syntax error.',
+      'Primary Production Use Case: User menu prompts (display menu options >= 1 time, repeat if invalid input), retry logic on failed network calls.'
     ],
-    diagram: `while loop (Pre-condition):
-[ Check Condition ] -> false? -> [ EXIT (0 runs) ]
-         | true
-   [ Run Body ]
+    coreExplanation: [
+      'Pre-test (while): Evaluates condition first. If false initially, executes 0 times.',
+      'Post-test (do-while): Executes body first, then evaluates condition at the bottom.',
+      'If the condition evaluates to true, control jumps back to the top of "do {". If false, the loop terminates.'
+    ],
+    diagram: `while (Pre-test):       [ Condition Check ] -> false -> [ Exit (0 runs) ]
+                               | true
+                           [ Body ]
 
-do-while loop (Post-condition):
-   [ Run Body ] (Guaranteed at least 1 run!)
-         |
-[ Check Condition ] -> false? -> [ EXIT ]
-         | true
-     [ Repeat ]`,
+do-while (Post-test):        [ Run Body ]  <--- (ALWAYS RUNS AT LEAST ONCE)
+                               |
+                       [ Condition Check ] -> false -> [ Exit (>= 1 run) ]
+                               | true
+                       (Repeats to Body)`,
     codeSnippet: {
-      title: 'Interactive Menu Pattern with do-while',
+      title: 'do-while in Action: Guaranteed 1 Execution Even When False',
       code: `public class DoWhileDemo {
     public static void main(String[] args) {
-        int count = 100;
+        int count = 999;
 
-        // Even though count < 5 is FALSE, body runs once!
+        // Even though (count < 5) is completely FALSE initially:
         do {
-            System.out.println("This prints even when count is 100! (count = " + count + ")");
+            System.out.println("Executes once! count = " + count);
             count++;
-        } while (count < 5);
+        } while (count < 5); // Notice the required semicolon!
 
-        System.out.println("Loop terminated. Final count: " + count);
+        System.out.println("Finished! Final count = " + count);
     }
 }`,
       lineByLineExplanation: [
-        { line: 'do { ... } while (count < 5);', explanation: 'Body executes once before checking (101 < 5) which is false, exiting loop.' },
+        { line: 'do { ... }', explanation: 'Body runs immediately without evaluating any condition.' },
+        { line: 'while (count < 5);', explanation: 'Evaluates (1000 < 5) which is false. Loop terminates cleanly.' },
       ],
-      output: `This prints even when count is 100! (count = 100)
-Loop terminated. Final count: 101`
+      output: `Executes once! count = 999
+Finished! Final count = 1000`
+    },
+    practiceProblem: {
+      title: 'Interview Tracing Challenge: Post-Increment in Condition',
+      problemStatement: 'Interviewers love placing increment operators inside loop conditions. Trace the exact printed output of the following Java snippet without running it:',
+      code: `int x = 2;
+do {
+    System.out.print(x + " ");
+    x += 3;
+} while (x++ < 8);
+System.out.println("End: " + x);`,
+      options: [
+        '2 5 End: 6',
+        '2 5 End: 9',
+        '2 5 8 End: 9',
+        '2 5 End: 10'
+      ],
+      correctOptionIndex: 3,
+      hint: 'Remember that "x++ < 8" tests the current value of x against 8, and THEN increments x immediately afterward, regardless of whether the condition was true or false!',
+      solution: '2 5 End: 10',
+      explanation: `Step-by-step trace:
+Iteration 1:
+- Print "2 "
+- x becomes 2 + 3 = 5
+- Check condition: (x++ < 8) -> evaluates (5 < 8) which is TRUE, then x increments to 6!
+Iteration 2:
+- Print "5 "
+- x becomes 6 + 3 = 9
+- Check condition: (x++ < 8) -> evaluates (9 < 8) which is FALSE, then x increments to 10!
+Loop terminates!
+- Final print: "End: 10".`
     },
     beginnerMistakes: [
       {
-        mistake: 'Forgetting the semicolon after while: do { ... } while (condition) // missing ;',
-        whyItHappens: 'Regular while loops don\'t have a semicolon after the parentheses.',
+        mistake: 'Omitting the semicolon at the end of while: do { ... } while (cond) // Missing ;',
+        whyItHappens: 'Regular while loops don\'t have a semicolon after parentheses.',
         howToFix: 'Remember: do-while ALWAYS ends with a semicolon after while (...);'
+      },
+      {
+        mistake: 'Accidentally creating an infinite loop by re-declaring variables inside the do block.',
+        whyItHappens: 'Variables declared inside "do { ... }" cannot be seen by "while(cond);" because of block scope.',
+        howToFix: 'Declare loop counter variables OUTSIDE the do-while block.'
       }
     ],
     interviewQuestions: [
       {
-        question: 'Under what condition will a while loop and do-while loop behave differently?',
-        answer: 'When the loop continuation condition is false on the very first evaluation. A while loop will execute 0 times, whereas a do-while loop will execute exactly 1 time.'
+        question: 'Under what specific condition will a while loop and a do-while loop behave differently?',
+        answer: 'When the loop condition is false on the very first evaluation. A while loop will execute 0 times, whereas a do-while loop will execute exactly 1 time.',
+        followUp: 'Can a do-while loop ever execute 0 times?',
+        keyPhrases: ['Initial condition false', 'while executes 0 times', 'do-while executes at least once', 'Cannot execute 0 times']
+      },
+      {
+        question: 'Why does Java require a semicolon at the end of a do-while statement?',
+        answer: 'Because without the semicolon, the compiler cannot distinguish where the do-while statement ends and where a subsequent, independent while statement begins.',
+        followUp: 'What happens if you accidentally put a semicolon after a regular while loop header?',
+        keyPhrases: ['Grammar ambiguity', 'Separates from next statement', 'Syntax requirement']
+      },
+      {
+        question: 'Give a real-world scenario where you would choose do-while over while in production.',
+        answer: 'Any scenario where user input or an action must precede verification. Classic examples include: 1) ATM pin prompts (prompt PIN at least once, repeat if invalid); 2) Interactive console menus; 3) Network retry with initial attempt before backoff.',
+        followUp: 'How would you write an ATM menu with do-while?',
+        keyPhrases: ['User input prompt', 'Validation happens after input', 'ATM PIN entry', 'Retry network request']
       }
     ],
     miniQuiz: [
       {
-        question: 'How many times does "int i = 5; do { i++; } while (i < 5);" execute?',
+        question: 'How many times will "int i = 5; do { i++; } while (i < 5);" execute?',
         options: ['0 times', '1 time', '5 times', 'Infinite loop'],
         correctIndex: 1,
-        explanation: 'do-while executes the body once before checking the condition (6 < 5 is false), so it runs exactly 1 time.'
+        explanation: 'do-while executes the body first (i becomes 6). Then (6 < 5) evaluates to false. So it runs exactly 1 time.'
       }
     ]
   },
