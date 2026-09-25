@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronUp, Star, ExternalLink, Award
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
+import { getLessonsForModule } from '../../data/java/detailedLessons';
 import { getJavaProgress, markLessonComplete } from '../../utils/javaStorage';
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
@@ -286,32 +287,87 @@ export default function JavaSyllabusPage() {
                                 </span>
                               </div>
 
-                              <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+                               <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
                                 {mod.description}
                               </p>
 
-                              {/* Topics Pills */}
-                              <div className="flex flex-wrap gap-1.5 pt-1">
-                                {mod.topics.map((topic, tIdx) => (
-                                  <span
-                                    key={tIdx}
-                                    className="bg-slate-800 text-slate-300 border border-slate-700/80 px-2 py-0.5 rounded text-[11px] font-mono"
-                                  >
-                                    {topic}
-                                  </span>
-                                ))}
-                              </div>
+                              {/* Dedicated Sub-Lessons if available */}
+                              {(() => {
+                                const subLessons = getLessonsForModule(mod.id);
+                                if (subLessons.length > 0) {
+                                  return (
+                                    <div className="pt-2 space-y-1.5">
+                                      <div className="text-[11px] font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
+                                        <BookOpen className="w-3.5 h-3.5" />
+                                        <span>Granular Sub-Lessons ({subLessons.length}):</span>
+                                      </div>
+                                      <div className="flex flex-wrap gap-1.5">
+                                        {subLessons.map(sub => {
+                                          const isSubDone = completed.includes(sub.id);
+                                          return (
+                                            <Link
+                                              key={sub.id}
+                                              to={`/java/lesson/${sub.id}`}
+                                              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs border transition-all ${
+                                                isSubDone
+                                                  ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-300 hover:border-emerald-500/60'
+                                                  : 'bg-slate-800/90 border-slate-700 text-slate-300 hover:border-blue-500/60 hover:text-white'
+                                              }`}
+                                            >
+                                              {isSubDone ? (
+                                                <CheckCircle className="w-3 h-3 text-emerald-400" />
+                                              ) : (
+                                                <span className="text-[10px] text-blue-400 font-mono font-bold">{sub.lessonNumber}</span>
+                                              )}
+                                              <span>{sub.title}</span>
+                                            </Link>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  /* Fallback: Topics Pills */
+                                  <div className="flex flex-wrap gap-1.5 pt-1">
+                                    {mod.topics.map((topic, tIdx) => (
+                                      <span
+                                        key={tIdx}
+                                        className="bg-slate-800 text-slate-300 border border-slate-700/80 px-2 py-0.5 rounded text-[11px] font-mono"
+                                      >
+                                        {topic}
+                                      </span>
+                                    ))}
+                                  </div>
+                                );
+                              })()}
                             </div>
 
                             {/* Right: Actions */}
                             <div className="flex sm:flex-row lg:flex-col gap-2 flex-shrink-0 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-800">
-                              <Link
-                                to={`/java/module/${mod.id}`}
-                                className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm"
-                              >
-                                <BookOpen className="w-3.5 h-3.5" />
-                                <span>Learn Lesson</span>
-                              </Link>
+                              {(() => {
+                                const subLessons = getLessonsForModule(mod.id);
+                                if (subLessons.length > 0) {
+                                  return (
+                                    <Link
+                                      to={`/java/lesson/${subLessons[0].id}`}
+                                      className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm"
+                                    >
+                                      <BookOpen className="w-3.5 h-3.5" />
+                                      <span>Start Sub-Lessons</span>
+                                    </Link>
+                                  );
+                                }
+                                return (
+                                  <Link
+                                    to={`/java/module/${mod.id}`}
+                                    className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm"
+                                  >
+                                    <BookOpen className="w-3.5 h-3.5" />
+                                    <span>Learn Lesson</span>
+                                  </Link>
+                                );
+                              })()}
                               <Link
                                 to={`/java/mcq/${mod.id}`}
                                 className="flex-1 lg:flex-initial inline-flex items-center justify-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold px-4 py-2 rounded-lg text-xs transition-colors shadow-sm"

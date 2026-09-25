@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
 import { ALL_JAVA_LESSONS } from '../../data/java/lessons/index';
+import { getLessonsForModule } from '../../data/java/detailedLessons';
 import { getJavaProgress, markLessonComplete } from '../../utils/javaStorage';
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
@@ -103,6 +104,7 @@ export default function JavaModulePage() {
   const lesson = ALL_JAVA_LESSONS[activeModule];
   const moduleInfo = JAVA_MODULES.find(m => m.id === activeModule);
   const isDone = completed.includes(activeModule);
+  const subLessons = getLessonsForModule(activeModule);
 
   const toggleSection = (secId: string) => {
     setExpandedSections(prev => ({ ...prev, [secId]: !prev[secId] }));
@@ -174,19 +176,35 @@ export default function JavaModulePage() {
                     {sectionModules.map(m => {
                       const done = completed.includes(m.id);
                       const active = m.id === activeModule;
+                      const modSubLessons = getLessonsForModule(m.id);
                       return (
-                        <button
-                          key={m.id}
-                          onClick={() => handleTopicClick(m.id)}
-                          className={`w-full text-left px-3 py-2 rounded-lg transition-all flex items-center justify-between gap-2 text-xs ${
-                            active
-                              ? 'bg-emerald-600/25 text-emerald-300 border border-emerald-500/40 font-semibold'
-                              : 'hover:bg-slate-700/70 text-slate-300'
-                          }`}
-                        >
-                          <span className="truncate">{m.title}</span>
-                          {done && <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />}
-                        </button>
+                        <div key={m.id} className="space-y-1">
+                          <button
+                            onClick={() => handleTopicClick(m.id)}
+                            className={`w-full text-left px-3 py-2 rounded-lg transition-all flex items-center justify-between gap-2 text-xs ${
+                              active
+                                ? 'bg-emerald-600/25 text-emerald-300 border border-emerald-500/40 font-semibold'
+                                : 'hover:bg-slate-700/70 text-slate-300'
+                            }`}
+                          >
+                            <span className="truncate">{m.title}</span>
+                            {done && <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />}
+                          </button>
+
+                          {active && modSubLessons.length > 0 && (
+                            <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-blue-500/40 ml-2">
+                              {modSubLessons.map(sub => (
+                                <Link
+                                  key={sub.id}
+                                  to={`/java/lesson/${sub.id}`}
+                                  className="block px-2 py-1 rounded text-[11px] text-slate-400 hover:text-blue-300 hover:bg-slate-800/80 truncate transition"
+                                >
+                                  {sub.lessonNumber}: {sub.title}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
@@ -263,6 +281,57 @@ export default function JavaModulePage() {
               </button>
             </div>
           </div>
+
+          {/* Granular Sub-Lessons Banner if Available */}
+          {subLessons.length > 0 && (
+            <div className="bg-gradient-to-r from-blue-950/50 via-slate-900 to-indigo-950/40 border border-blue-500/30 rounded-2xl p-5 mb-6 shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                  <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider">
+                    <BookOpen className="w-4 h-4" />
+                    <span>Granular Topic-by-Topic Sub-Lessons ({subLessons.length})</span>
+                  </div>
+                  <p className="text-xs text-slate-300 mt-1">
+                    Each inner topic has its own dedicated page with analogies, line-by-line tracing, common traps, and mini-quizzes.
+                  </p>
+                </div>
+                <Link
+                  to={`/java/lesson/${subLessons[0].id}`}
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-md shrink-0"
+                >
+                  <span>Start Lesson 1</span>
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                {subLessons.map((sub) => {
+                  const isSubDone = completed.includes(sub.id);
+                  return (
+                    <Link
+                      key={sub.id}
+                      to={`/java/lesson/${sub.id}`}
+                      className="group p-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-slate-700/70 hover:border-blue-500/50 transition flex flex-col justify-between"
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <span className="text-[10px] font-mono font-bold text-blue-400 px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">
+                          {sub.lessonNumber}
+                        </span>
+                        {isSubDone ? (
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        ) : (
+                          <span className="text-[10px] text-slate-500 font-mono">{sub.estimatedMinutes}m</span>
+                        )}
+                      </div>
+                      <div className="text-xs font-semibold text-slate-200 group-hover:text-blue-300 transition line-clamp-2">
+                        {sub.title}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {lesson ? (
             <>
