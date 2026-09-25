@@ -43,12 +43,10 @@ export default function JavaDashboard() {
   const modulesCompleted = progress.strongModules.length; // Just an approximation for stats
 
   const getModuleProgress = (mod: JavaModule) => {
-    // Just a dummy progress calculation based on lessons done for this module if we mapped it, but we only have lessonsCompleted strings.
-    // We'll assume module completion is based on whether it is in weak/strong or we can just randomly give it if we don't know. 
-    // Since we don't know the mapping of lesson ids to modules, we'll check if the module is in strongModules (100%), weakModules (25%), else 0%.
+    if (progress.lessonsCompleted.includes(mod.id)) return 100;
     if (progress.strongModules.includes(mod.id)) return 100;
-    if (progress.weakModules.includes(mod.id)) return 25;
-    return 0; // Default 0
+    if (progress.weakModules.includes(mod.id)) return 50;
+    return 0;
   };
 
   return (
