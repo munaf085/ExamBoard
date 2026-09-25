@@ -391,111 +391,113 @@ export default function JavaSubLessonPage() {
             )}
           </div>
 
-          {/* ── EASY NAVIGATION TABS FOR EACH TOPIC ── */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800 scrollbar-none">
-            {/* 1. Lesson */}
-            <button
-              onClick={() => setActiveTab('lesson')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'lesson'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-              <span>Lesson</span>
-            </button>
+          {/* ── EASY NAVIGATION TABS FOR EACH TOPIC (STICKY & MOBILE-OPTIMIZED) ── */}
+          <div className="sticky top-[49px] sm:top-[53px] z-30 bg-slate-950/95 backdrop-blur-md pt-2 pb-2 -mx-3 px-3 sm:-mx-4 sm:px-4 md:-mx-6 md:px-6 border-b border-slate-800/90 shadow-sm">
+            <div className="flex items-center gap-1.5 overflow-x-auto scroll-smooth overscroll-x-contain scrollbar-none pb-0.5">
+              {/* 1. Lesson */}
+              <button
+                onClick={() => setActiveTab('lesson')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'lesson'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+                <span>Lesson</span>
+              </button>
 
-            {/* 2. 📋 Cheat Sheet */}
-            <button
-              onClick={() => setActiveTab('cheatsheet')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'cheatsheet'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <FileText className="w-3.5 h-3.5 text-amber-400" />
-              <span>📋 Cheat Sheet</span>
-            </button>
+              {/* 2. 📋 Cheat Sheet */}
+              <button
+                onClick={() => setActiveTab('cheatsheet')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'cheatsheet'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <FileText className="w-3.5 h-3.5 text-amber-400" />
+                <span>📋 Cheat Sheet</span>
+              </button>
 
-            {/* 3. 💻 Examples & Tracing */}
-            <button
-              onClick={() => setActiveTab('practice')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'practice'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>💻 Examples & Tracing ({practiceProblemsList.length})</span>
-            </button>
+              {/* 3. 💻 Examples & Tracing */}
+              <button
+                onClick={() => setActiveTab('practice')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'practice'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <Code2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>💻 <span className="hidden sm:inline">Examples & </span>Tracing ({practiceProblemsList.length})</span>
+              </button>
 
-            {/* 4. Practice Coding Assignments */}
-            <button
-              onClick={() => setActiveTab('assignments')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'assignments'
-                  ? 'bg-amber-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              <span>📝 Coding Practice ({lesson.programmingExercises?.length || 0})</span>
-            </button>
+              {/* 4. Practice Coding Assignments */}
+              <button
+                onClick={() => setActiveTab('assignments')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'assignments'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>📝 <span className="hidden sm:inline">Coding </span>Practice ({lesson.programmingExercises?.length || 0})</span>
+              </button>
 
-            {/* 5. Interview Q&A */}
-            <button
-              onClick={() => setActiveTab('interview_qa')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'interview_qa'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Interview Q&A ({lesson.interviewQuestions?.length || 0})</span>
-            </button>
+              {/* 5. Interview Q&A */}
+              <button
+                onClick={() => setActiveTab('interview_qa')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'interview_qa'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                <span><span className="hidden sm:inline">Interview </span>Q&A ({lesson.interviewQuestions?.length || 0})</span>
+              </button>
 
-            {/* 6. Self-Evaluate */}
-            <button
-              onClick={() => setActiveTab('self_eval')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'self_eval'
-                  ? 'bg-purple-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <Award className="w-3.5 h-3.5 text-purple-400" />
-              <span>Self-Evaluate</span>
-            </button>
+              {/* 6. Self-Evaluate */}
+              <button
+                onClick={() => setActiveTab('self_eval')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'self_eval'
+                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <Award className="w-3.5 h-3.5 text-purple-400" />
+                <span>Self-Eval<span className="hidden sm:inline">uate</span></span>
+              </button>
 
-            {/* 7. Mini Quiz */}
-            <button
-              onClick={() => setActiveTab('quiz')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'quiz'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-              }`}
-            >
-              <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Mini Quiz ({lesson.miniQuiz?.length || 0})</span>
-            </button>
+              {/* 7. Mini Quiz */}
+              <button
+                onClick={() => setActiveTab('quiz')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'quiz'
+                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                }`}
+              >
+                <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
+                <span><span className="hidden sm:inline">Mini </span>Quiz ({lesson.miniQuiz?.length || 0})</span>
+              </button>
 
-            {/* 8. All in */}
-            <button
-              onClick={() => setActiveTab('all')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
-                activeTab === 'all'
-                  ? 'bg-slate-700 text-white'
-                  : 'bg-slate-900 text-slate-500 hover:text-slate-300 border border-slate-800'
-              }`}
-            >
-              <ListFilter className="w-3.5 h-3.5" />
-              <span>All in</span>
-            </button>
+              {/* 8. All in */}
+              <button
+                onClick={() => setActiveTab('all')}
+                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                  activeTab === 'all'
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-900 text-slate-500 hover:text-slate-300 border border-slate-800'
+                }`}
+              >
+                <ListFilter className="w-3.5 h-3.5" />
+                <span>All<span className="hidden sm:inline">-in-One</span></span>
+              </button>
+            </div>
           </div>
 
           {/* ── TAB 1: LESSON OVERVIEW ── */}

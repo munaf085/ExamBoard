@@ -85,17 +85,26 @@ import { fundamentalsLessons } from './sublessons/fundamentalsLessons';
 import { dataTypesLessons } from './sublessons/dataTypesLessons';
 import { operatorsLessons } from './sublessons/operatorsLessons';
 import { controlFlowLessons } from './sublessons/controlFlowLessons';
+import { stringsLessons } from './sublessons/stringsLessons';
+import { arraysLessons } from './sublessons/arraysLessons';
+import { methodsLessons } from './sublessons/methodsLessons';
 
 import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
 import { dataTypesExercises } from './sublessons/dataTypesExercises';
 import { operatorsExercises } from './sublessons/operatorsExercises';
 import { controlFlowExercises } from './sublessons/controlFlowExercises';
+import { stringsExercises } from './sublessons/stringsExercises';
+import { arraysExercises } from './sublessons/arraysExercises';
+import { methodsExercises } from './sublessons/methodsExercises';
 
 export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...fundamentalsExercises,
   ...dataTypesExercises,
   ...operatorsExercises,
   ...controlFlowExercises,
+  ...stringsExercises,
+  ...arraysExercises,
+  ...methodsExercises,
 };
 
 const rawLessons: Record<string, DetailedLesson> = {
@@ -103,6 +112,9 @@ const rawLessons: Record<string, DetailedLesson> = {
   ...dataTypesLessons,
   ...operatorsLessons,
   ...controlFlowLessons,
+  ...stringsLessons,
+  ...arraysLessons,
+  ...methodsLessons,
 };
 
 // Populate programmingExercises for every sub-lesson so none is empty
@@ -143,6 +155,32 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'variables': 'variables-and-scope',
     'primitive-types': 'primitive-types-deep-dive',
     'wrapper-class': 'wrapper-classes',
+    'strings': 'string-immutability-and-memory',
+    'string': 'string-immutability-and-memory',
+    'string-pool': 'string-immutability-and-memory',
+    'string-immutability': 'string-immutability-and-memory',
+    'string-equality': 'string-equality-and-comparisons',
+    'string-methods': 'string-methods-and-manipulation',
+    'stringbuilder': 'stringbuilder-vs-stringbuffer',
+    'string-builder': 'stringbuilder-vs-stringbuffer',
+    'arrays': 'array-declaration-and-memory',
+    'array': 'array-declaration-and-memory',
+    'array-memory': 'array-declaration-and-memory',
+    'array-traversals': 'array-traversals-and-algorithms',
+    'array-algorithms': 'array-traversals-and-algorithms',
+    'arrays-class': 'arrays-utility-class',
+    'arrays-utility': 'arrays-utility-class',
+    '2d-arrays': 'two-dimensional-arrays-and-matrices',
+    'matrices': 'two-dimensional-arrays-and-matrices',
+    'matrix': 'two-dimensional-arrays-and-matrices',
+    'methods': 'method-anatomy-and-returns',
+    'method': 'method-anatomy-and-returns',
+    'pass-by-value': 'pass-by-value-deep-dive',
+    'method-overloading': 'method-overloading-and-varargs',
+    'overloading': 'method-overloading-and-varargs',
+    'varargs': 'method-overloading-and-varargs',
+    'recursion': 'recursion-and-call-stack',
+    'call-stack': 'recursion-and-call-stack',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
