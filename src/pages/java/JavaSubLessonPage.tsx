@@ -420,7 +420,7 @@ export default function JavaSubLessonPage() {
 
           {/* ── EASY NAVIGATION TABS FOR EACH TOPIC ── */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-800 scrollbar-none">
-            {/* 1. lesson(explain everything like kid) */}
+            {/* 1. Lesson */}
             <button
               onClick={() => setActiveTab('lesson')}
               className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
@@ -430,7 +430,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-              <span>Lesson (Explain Like Kid)</span>
+              <span>Lesson</span>
             </button>
 
             {/* 2. 📋 Cheat Sheet */}
@@ -525,15 +525,15 @@ export default function JavaSubLessonPage() {
             </button>
           </div>
 
-          {/* ── TAB 1: LESSON (EXPLAIN EVERYTHING LIKE A KID) ── */}
+          {/* ── TAB 1: LESSON OVERVIEW ── */}
           {(activeTab === 'lesson' || activeTab === 'all') && (
             <div className="space-y-4">
-              {/* 👶 10-Second Kid-Friendly Intuition & Analogy Card */}
+              {/* 10-Second Intuition & Analogy Card */}
               {lesson.beginnerAnalogy && (
                 <div className="bg-gradient-to-br from-blue-950/40 via-slate-900 to-indigo-950/40 border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                   <div className="flex items-center gap-2 text-blue-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
                     <Lightbulb className="w-4 h-4 text-amber-400" />
-                    <span>👶 Intuition: How a 10-Year-Old Would Understand This</span>
+                    <span>💡 Core Intuition & Real-World Analogy</span>
                   </div>
                   <div className="p-3.5 rounded-xl bg-slate-950/70 border border-blue-500/20 text-xs sm:text-sm text-blue-100 leading-relaxed italic">
                     "{lesson.beginnerAnalogy}"
@@ -541,11 +541,11 @@ export default function JavaSubLessonPage() {
                 </div>
               )}
 
-              {/* Step-by-Step Concepts (Kid-Friendly Explanation) */}
+              {/* Step-by-Step Concepts */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
                   <BookOpen className="w-4 h-4 text-emerald-400" />
-                  <span>Step-by-Step Concepts (Kid-Friendly & Direct)</span>
+                  <span>Step-by-Step Concepts (Clear & Intuitive)</span>
                 </div>
 
                 <div className="space-y-2.5">
