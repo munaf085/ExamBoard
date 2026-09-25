@@ -55,9 +55,6 @@ export default function JavaSubLessonPage() {
   const [revealedExercises, setRevealedExercises] = useState<Record<number, boolean>>({});
   const [showExerciseHints, setShowExerciseHints] = useState<Record<number, boolean>>({});
 
-  // Analogy expand toggle (collapsed by default to save space)
-  const [analogyOpen, setAnalogyOpen] = useState(false);
-
   const lesson: DetailedLesson | undefined = lessonId ? getDetailedLesson(lessonId) : undefined;
   const adjacent = lesson ? getAdjacentLessons(lesson.id) : { prev: undefined, next: undefined };
   const allLessons = getAllDetailedLessons();
@@ -370,31 +367,6 @@ export default function JavaSubLessonPage() {
               {lesson.subtitle}
             </p>
 
-            {/* Compact Collapsible 10-Second Analogy Bar */}
-            {lesson.beginnerAnalogy && (
-              <div className="mt-2.5 pt-2 border-t border-slate-800/80">
-                <button
-                  onClick={() => setAnalogyOpen(!analogyOpen)}
-                  className="w-full flex items-center justify-between text-[11px] text-amber-400/90 hover:text-amber-300 font-medium transition py-0.5"
-                >
-                  <span className="flex items-center gap-1.5 truncate">
-                    <Lightbulb className="w-3.5 h-3.5 shrink-0 text-amber-400" />
-                    <span className="truncate">
-                      {analogyOpen ? 'Analogy: ' : '💡 10-Sec Intuition: ' + lesson.beginnerAnalogy}
-                    </span>
-                  </span>
-                  <span className="text-[10px] text-slate-500 font-mono shrink-0 ml-2">
-                    {analogyOpen ? 'Collapse ▲' : 'Expand ▼'}
-                  </span>
-                </button>
-                {analogyOpen && (
-                  <p className="mt-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200/90 leading-relaxed italic">
-                    "{lesson.beginnerAnalogy}"
-                  </p>
-                )}
-              </div>
-            )}
-
             {/* Direct Quick-Jump Callout for Practice Coding Assignments */}
             {lesson.programmingExercises && lesson.programmingExercises.length > 0 && (
               <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between">
@@ -528,19 +500,6 @@ export default function JavaSubLessonPage() {
           {/* ── TAB 1: LESSON OVERVIEW ── */}
           {(activeTab === 'lesson' || activeTab === 'all') && (
             <div className="space-y-4">
-              {/* 10-Second Intuition & Analogy Card */}
-              {lesson.beginnerAnalogy && (
-                <div className="bg-gradient-to-br from-blue-950/40 via-slate-900 to-indigo-950/40 border border-blue-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                  <div className="flex items-center gap-2 text-blue-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
-                    <Lightbulb className="w-4 h-4 text-amber-400" />
-                    <span>💡 Core Intuition & Real-World Analogy</span>
-                  </div>
-                  <div className="p-3.5 rounded-xl bg-slate-950/70 border border-blue-500/20 text-xs sm:text-sm text-blue-100 leading-relaxed italic">
-                    "{lesson.beginnerAnalogy}"
-                  </div>
-                </div>
-              )}
-
               {/* Step-by-Step Concepts */}
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                 <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
