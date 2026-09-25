@@ -47,11 +47,13 @@ String[] parts = str.split(",");`,
         { rule: 'Defensive Bounds Check', explanation: 'Always check (index >= 0 && index < str.length()) before invoking charAt(index) to avoid StringIndexOutOfBoundsException.' }
       ],
       quickComparison: [
-        { aspect: 'Method Pair', optionA: 'Option A', optionB: 'Option B' },
         { aspect: 'length() vs .length', optionA: 'str.length(): Method call on String objects', optionB: 'arr.length: Public final field on array types' },
         { aspect: 'replace vs replaceAll', optionA: 'replace(): Literal character/string match', optionB: 'replaceAll(): Compiles target into a Regular Expression' },
         { aspect: 'trim() vs strip()', optionA: 'trim(): Strips ASCII <= 32 whitespace only', optionB: 'strip(): Unicode-compliant whitespace removal (Java 11+)' },
-        { aspect: 'isEmpty() vs isBlank()', optionA: 'isEmpty(): true ONLY if length() == 0', optionB: 'isBlank(): true if length() == 0 OR string contains only whitespace' }
+        { aspect: 'isEmpty() vs isBlank()', optionA: 'isEmpty(): true ONLY if length() == 0', optionB: 'isBlank(): true if length() == 0 OR string contains only whitespace' },
+        { aspect: 'Time Complexity', optionA: 'charAt(), length(): O(1) direct offset access', optionB: 'substring(), indexOf(), replace(): O(n) array traversal' },
+        { aspect: 'Space Complexity', optionA: 'Inspection methods: O(1) auxiliary space', optionB: 'substring(), split(), replace(): Allocates new heap objects' },
+        { aspect: 'Java 7u6+ Substring Fix', optionA: 'Java 6: Shared char[] buffer (O(1) time, memory leak)', optionB: 'Java 7u6+: Copies fresh array (O(n) time, memory safe)' }
       ]
     },
     coreExplanation: [
@@ -331,6 +333,41 @@ System.out.print(parts.length + "-" + parts[0]);`,
         hint: 'Notice the double backslash "\\\\." correctly escapes the regex dot.',
         solution: '4-192',
         explanation: 'Because the dot is escaped with "\\\\.", split treats it as a literal period delimiter. The string splits into 4 parts: ["192", "168", "1", "1"]. parts.length is 4, and parts[0] is "192".'
+      },
+      {
+        title: 'Puzzle 9: Tracing indexOf with FromIndex Offset',
+        problemStatement: 'What does this code snippet print?',
+        code: `String text = "banana";
+int firstA = text.indexOf('a');
+int nextA = text.indexOf('a', firstA + 1);
+int missing = text.indexOf('z');
+System.out.println(firstA + " " + nextA + " " + missing);`,
+        options: [
+          '1 3 -1',
+          '1 2 -1',
+          '0 2 -1',
+          '1 3 0'
+        ],
+        correctOptionIndex: 0,
+        hint: 'indexOf with fromIndex starts scanning at fromIndex. If not found, indexOf returns -1.',
+        solution: '1 3 -1',
+        explanation: 'First \'a\' is at index 1. text.indexOf(\'a\', 2) scans from index 2 onwards and finds the next \'a\' at index 3. Searching for \'z\' fails and returns -1. Output is "1 3 -1".'
+      },
+      {
+        title: 'Puzzle 10: Distinguishing isEmpty vs isBlank vs trim',
+        problemStatement: 'Trace the boolean outputs of this whitespace inspection:',
+        code: `String s = " \\t\\n ";
+System.out.println(s.isEmpty() + " " + s.isBlank() + " " + s.trim().isEmpty());`,
+        options: [
+          'false true true',
+          'true true true',
+          'false false true',
+          'false true false'
+        ],
+        correctOptionIndex: 0,
+        hint: 'isEmpty checks if length == 0. isBlank checks if string is empty or contains only whitespace.',
+        solution: 'false true true',
+        explanation: 's contains 4 whitespace characters: length() is 4, so isEmpty() is false. Because all characters are whitespace, isBlank() evaluates to true. Calling s.trim() strips all surrounding spaces/tabs/newlines, producing an empty string "" whose isEmpty() is true. Output: "false true true".'
       }
     ],
     interviewQuestions: [

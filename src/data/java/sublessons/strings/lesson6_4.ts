@@ -42,11 +42,13 @@ String finalResult = sb.toString();`,
         { rule: 'Capacity Expansion Formula', explanation: 'When buffer exceeds capacity, new capacity = `(oldCapacity * 2) + 2`. This amortizes resizing to O(1) time.' }
       ],
       quickComparison: [
-        { aspect: 'Feature', optionA: 'StringBuilder', optionB: 'StringBuffer' },
-        { aspect: 'Introduced In', optionA: 'Java 5 (Modern)', optionB: 'Java 1.0 (Legacy)' },
-        { aspect: 'Thread Safety', optionA: 'Not thread-safe (Unsynchronized)', optionB: 'Thread-safe (Synchronized methods)' },
-        { aspect: 'Performance', optionA: 'Fastest (No lock acquisition overhead)', optionB: 'Slower due to method synchronization locks' },
-        { aspect: 'Primary Use Case', optionA: 'Single-thread loops, local methods, builders', optionB: 'Multi-threaded legacy shared logging' }
+        { aspect: 'Introduced In', optionA: 'Java 5 (Modern standard)', optionB: 'Java 1.0 (Legacy standard)' },
+        { aspect: 'Thread Safety', optionA: 'Not thread-safe (Unsynchronized, single-thread)', optionB: 'Thread-safe (Synchronized methods)' },
+        { aspect: 'Performance', optionA: 'Fastest (Zero lock acquisition overhead)', optionB: 'Slower due to method synchronization monitor locks' },
+        { aspect: 'Time Complexity', optionA: 'append(): Amortized O(1); insert()/delete(): O(n)', optionB: 'append(): Amortized O(1) + synchronized lock wait' },
+        { aspect: 'Space Complexity', optionA: 'Internal byte[] buffer sized to capacity(); O(1) aux', optionB: 'Internal byte[] buffer sized to capacity(); O(1) aux' },
+        { aspect: 'equals() Implementation', optionA: 'Inherits Object.equals (reference == comparison)', optionB: 'Inherits Object.equals (reference == comparison)' },
+        { aspect: 'Primary Use Case', optionA: 'Local method loops, string generation, builders', optionB: 'Multi-threaded legacy shared logging across threads' }
       ]
     },
     coreExplanation: [
@@ -330,6 +332,40 @@ System.out.print(sb);`,
         hint: 'Does appending 10 characters exceed an initial capacity of 50?',
         solution: '50',
         explanation: 'Because 10 characters easily fit inside the pre-allocated capacity of 50, no expansion occurs. The capacity remains 50.'
+      },
+      {
+        title: 'Puzzle 9: Equals on Distinct StringBuilders',
+        problemStatement: 'Trace the output printed to the console:',
+        code: `StringBuilder sb1 = new StringBuilder("Alpha");
+StringBuilder sb2 = new StringBuilder("Alpha");
+System.out.println((sb1.equals(sb2)) + " " + (sb1.toString().equals(sb2.toString())));`,
+        options: [
+          'false true',
+          'true true',
+          'false false',
+          'true false'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Does StringBuilder override equals() from java.lang.Object?',
+        solution: 'false true',
+        explanation: 'StringBuilder inherits Object.equals(), which tests reference equality (==). Because sb1 and sb2 are two distinct instances in heap memory, sb1.equals(sb2) is false. Calling toString() produces String objects that override equals() to compare character values, returning true.'
+      },
+      {
+        title: 'Puzzle 10: Automatic Capacity Expansion Formula',
+        problemStatement: 'What are the length and capacity printed by this snippet?',
+        code: `StringBuilder sb = new StringBuilder();
+sb.append("0123456789abcdefg");
+System.out.println(sb.length() + " " + sb.capacity());`,
+        options: [
+          '17 34',
+          '17 17',
+          '17 32',
+          '17 16'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Default capacity is 16. Appending 17 characters triggers the expansion formula: (oldCapacity * 2) + 2.',
+        solution: '17 34',
+        explanation: 'The default initial capacity is 16. Appending 17 characters exceeds 16, triggering capacity expansion to (16 * 2) + 2 = 34. The length is 17 and the newly allocated capacity is 34. Output: "17 34".'
       }
     ],
     interviewQuestions: [

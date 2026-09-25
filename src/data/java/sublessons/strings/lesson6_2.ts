@@ -43,6 +43,9 @@ boolean safe = "EXPECTED".equals(untrustedInput);`,
         { aspect: 'What is Compared?', optionA: 'Memory reference addresses (Stack pointers)', optionB: 'Underlying character sequence values (Heap payload)' },
         { aspect: 'SCP Literals ("a" == "a")', optionA: 'true (both point to the same SCP address)', optionB: 'true (same characters)' },
         { aspect: 'new String() Comparison', optionA: 'false (distinct heap addresses)', optionB: 'true (identical character content)' },
+        { aspect: 'Time Complexity', optionA: '== is O(1) pointer reference comparison', optionB: '.equals() is O(1) length check + worst case O(n) char comparison' },
+        { aspect: 'Auxiliary Space', optionA: 'O(1) memory overhead', optionB: 'O(1) auxiliary space (no extra object creation)' },
+        { aspect: 'Bytecode Instruction', optionA: 'Compiled to if_acmpeq / if_acmpne', optionB: 'Compiled to invokevirtual java/lang/String.equals' },
         { aspect: 'Null Safety', optionA: 'Safe: null == null returns true; s == null works', optionB: 'Throws NullPointerException if caller is null' }
       ]
     },
@@ -335,6 +338,44 @@ System.out.print(full == direct);`,
         hint: 'What does intern() return when the literal "CodeBase" already exists in the pool?',
         solution: 'true',
         explanation: 'The literal "CodeBase" ensures that "CodeBase" is in the String Constant Pool. When (part + "Base").intern() is called, it returns the pool reference. Hence full == direct evaluates to true.'
+      },
+      {
+        title: 'Puzzle 9: Final vs Non-Final Concatenation Equality',
+        problemStatement: 'What does this code snippet print?',
+        code: `final String f1 = "Ja";
+String v1 = "Ja";
+String s1 = f1 + "va";
+String s2 = v1 + "va";
+String s3 = "Java";
+System.out.println((s1 == s3) + " " + (s2 == s3));`,
+        options: [
+          'true false',
+          'true true',
+          'false false',
+          'false true'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Compile-time constants (final String) are folded into SCP literals by javac; non-final variables are evaluated at runtime.',
+        solution: 'true false',
+        explanation: 'Because f1 is declared final and initialized with a compile-time constant literal, f1 + "va" is folded by javac into the literal "Java" in the constant pool (s1 == s3 is true). In contrast, v1 is a mutable variable reference, forcing v1 + "va" to allocate a new String object on the heap at runtime (s2 == s3 is false).'
+      },
+      {
+        title: 'Puzzle 10: Lexicographical Comparison with compareTo',
+        problemStatement: 'Trace the boolean outputs printed by this code:',
+        code: `String a = "Apple";
+String b = "Application";
+String c = "Apple";
+System.out.println((a.compareTo(b) < 0) + " " + (a.compareTo(c) == 0));`,
+        options: [
+          'true true',
+          'false true',
+          'true false',
+          'false false'
+        ],
+        correctOptionIndex: 0,
+        hint: 'compareTo checks characters character-by-character. \'e\' has ASCII 101, whereas \'i\' has ASCII 105.',
+        solution: 'true true',
+        explanation: 'At index 4, "Apple" has \'e\' (101) and "Application" has \'i\' (105). 101 - 105 = -4, which is less than 0, yielding true. Comparing identical strings a.compareTo(c) yields 0, which equals 0 (true). Final output: "true true".'
       }
     ],
     interviewQuestions: [

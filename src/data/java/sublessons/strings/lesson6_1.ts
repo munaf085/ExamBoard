@@ -40,6 +40,8 @@ String s3 = s2.intern(); // s3 == s1 is true!`,
         { aspect: 'Duplicate Handling', optionA: 'Literal: Automatically deduplicated; reuses existing pool reference', optionB: 'new String(): Bypasses pool reuse; allocates new heap object every time' },
         { aspect: 'Equality with ==', optionA: 's1 == s2 for identical literals: true', optionB: 's1 == new String(s1): false (distinct memory addresses)' },
         { aspect: 'Performance', optionA: 'Literal: Zero allocation overhead if literal already exists in SCP', optionB: 'new String(): Heap allocation and garbage collection overhead' },
+        { aspect: 'Memory Footprint (Java 9+)', optionA: 'Compact Strings: 1 byte per Latin-1 char + 1 byte coder flag', optionB: 'UTF-16 encoding: 2 bytes per char when multibyte chars present' },
+        { aspect: 'Time Complexity', optionA: 'Literal resolution: O(1) hash pool lookup', optionB: 'new String(s): O(n) array copy overhead' },
         { aspect: 'Best Practice', optionA: 'Literal: Standard idiomatic Java; always preferred', optionB: 'new String(): Anti-pattern; avoid unless explicit separate identity is required' }
       ]
     },
@@ -316,6 +318,43 @@ System.out.print((p1.intern() == p2.intern()) + " " + (p1 == p2));`,
         hint: 'Does p1.intern() return the same SCP reference as p2.intern()?',
         solution: 'true false',
         explanation: 'p1 and p2 are two distinct objects on the heap, so p1 == p2 is false. However, both p1.intern() and p2.intern() look up "KAFKA" in the String Constant Pool and return the exact same canonical reference, making p1.intern() == p2.intern() true.'
+      },
+      {
+        title: 'Puzzle 9: Substring Reference Check on Full String',
+        problemStatement: 'Trace the output printed to the console:',
+        code: `String a = "Java";
+String b = a.substring(0, 4);
+String c = a.substring(1, 3);
+System.out.println((a == b) + " " + (a.equals(b)) + " " + (c == "av"));`,
+        options: [
+          'true true false',
+          'false true true',
+          'true true true',
+          'false true false'
+        ],
+        correctOptionIndex: 0,
+        hint: 'In Java, substring(0, length()) returns "this" directly without new allocation, whereas partial slices create new heap strings.',
+        solution: 'true true false',
+        explanation: 'a.substring(0, 4) recognizes that the substring spans the entire string and returns reference a itself (so a == b is true and equals is true). Meanwhile, substring(1, 3) allocates a new heap String "av"; comparing this new runtime object to the SCP literal "av" using == evaluates to false.'
+      },
+      {
+        title: 'Puzzle 10: Reassignment vs In-Place Mutation Trap',
+        problemStatement: 'What is the final printed output of str?',
+        code: `String str = "Hello";
+str.concat(" World");
+str.toUpperCase();
+str = str.replace('e', 'a');
+System.out.println(str);`,
+        options: [
+          'Hallo',
+          'HALLO WORLD',
+          'HELLO WORLD',
+          'Hello'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Because Strings are immutable, methods return a new string. If the return value is not captured, the modification is lost.',
+        solution: 'Hallo',
+        explanation: 'concat(" World") and toUpperCase() produce new String objects whose return references are ignored, leaving str as "Hello". Finally, str = str.replace(\'e\', \'a\') captures the returned reference, assigning "Hallo" to str.'
       }
     ],
     interviewQuestions: [
