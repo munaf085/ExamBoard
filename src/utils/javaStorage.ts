@@ -88,3 +88,23 @@ export function saveSelfEvaluation(lessonId: string, rating: SelfEvalRating): vo
   evals[lessonId] = { lessonId, rating, timestamp: Date.now() };
   localStorage.setItem(JAVA_SELF_EVAL_KEY, JSON.stringify(evals));
 }
+
+// ─────────────────────────────────────────────────────────────
+// PRACTICE ASSIGNMENTS SOLVED TRACKER
+// ─────────────────────────────────────────────────────────────
+const JAVA_SOLVED_ASSIGNMENTS_KEY = 'java_solved_assignments';
+
+export function getSolvedAssignments(): string[] {
+  const raw = localStorage.getItem(JAVA_SOLVED_ASSIGNMENTS_KEY);
+  if (!raw) return [];
+  try { return JSON.parse(raw) as string[]; } catch { return []; }
+}
+
+export function toggleSolvedAssignment(assignmentKey: string): boolean {
+  const solved = getSolvedAssignments();
+  const exists = solved.includes(assignmentKey);
+  const updated = exists ? solved.filter(k => k !== assignmentKey) : [...solved, assignmentKey];
+  localStorage.setItem(JAVA_SOLVED_ASSIGNMENTS_KEY, JSON.stringify(updated));
+  return !exists;
+}
+

@@ -4,12 +4,12 @@ import {
   BookOpen, Code, AlertTriangle, Target, RefreshCw,
   CheckCircle, ChevronDown, ChevronRight, ArrowLeft,
   Lightbulb, Star, Coffee, List, Shield, Layers, GitBranch,
-  Package, Zap, Database, Leaf
+  Package, Zap, Database, Leaf, Sparkles
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
 import { ALL_JAVA_LESSONS } from '../../data/java/lessons/index';
 import { getLessonsForModule } from '../../data/java/detailedLessons';
-import { getJavaProgress, markLessonComplete } from '../../utils/javaStorage';
+import { getJavaProgress, markLessonComplete, getSolvedAssignments } from '../../utils/javaStorage';
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
   fundamentals: Coffee,
@@ -72,6 +72,7 @@ export default function JavaModulePage() {
   const { moduleId } = useParams<{ moduleId: string }>();
   const navigate = useNavigate();
   const [completed, setCompleted] = useState<string[]>([]);
+  const [solvedAssignments, setSolvedAssignments] = useState<string[]>([]);
   const [activeModule, setActiveModule] = useState(moduleId || 'java-fundamentals');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     fundamentals: true,
@@ -88,6 +89,7 @@ export default function JavaModulePage() {
   useEffect(() => {
     const p = getJavaProgress();
     setCompleted(p.lessonsCompleted);
+    setSolvedAssignments(getSolvedAssignments());
   }, []);
 
   useEffect(() => {
@@ -105,6 +107,16 @@ export default function JavaModulePage() {
   const moduleInfo = JAVA_MODULES.find(m => m.id === activeModule);
   const isDone = completed.includes(activeModule);
   const subLessons = getLessonsForModule(activeModule);
+  const allModuleExercises = subLessons.flatMap(sub =>
+    (sub.programmingExercises || []).map((ex, idx) => ({
+      ...ex,
+      subLessonId: sub.id,
+      subLessonNum: sub.lessonNumber,
+      subLessonTitle: sub.title,
+      exerciseIndex: idx,
+      key: `${sub.id}-ex-${idx}`
+    }))
+  );
 
   const toggleSection = (secId: string) => {
     setExpandedSections(prev => ({ ...prev, [secId]: !prev[secId] }));
@@ -325,6 +337,70 @@ export default function JavaModulePage() {
                       </div>
                       <div className="text-xs font-semibold text-slate-200 group-hover:text-blue-300 transition line-clamp-2">
                         {sub.title}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Hands-On Practice Coding Assignments Banner */}
+          {allModuleExercises.length > 0 && (
+            <div className="bg-gradient-to-r from-amber-950/40 via-slate-900 to-amber-900/20 border border-amber-500/30 rounded-2xl p-5 mb-6 shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                <div>
+                  <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Hands-On Coding Assignments ({allModuleExercises.length} Challenges)</span>
+                  </div>
+                  <p className="text-xs text-slate-300 mt-1">
+                    Self-evaluation coding problems with clear problem statements, hints, and verified solutions.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    {allModuleExercises.filter(ex => solvedAssignments.includes(ex.key)).length} / {allModuleExercises.length} Solved
+                  </span>
+                  <Link
+                    to={`/java/lesson/${allModuleExercises[0].subLessonId}?tab=assignments`}
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition shadow-md shrink-0"
+                  >
+                    <span>Start Solving</span>
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+                {allModuleExercises.map((ex, exIdx) => {
+                  const isSolved = solvedAssignments.includes(ex.key);
+                  return (
+                    <Link
+                      key={exIdx}
+                      to={`/java/lesson/${ex.subLessonId}?tab=assignments`}
+                      className={`group p-3 rounded-xl border transition flex flex-col justify-between ${
+                        isSolved
+                          ? 'bg-slate-900/90 border-emerald-500/30 hover:border-emerald-500/60'
+                          : 'bg-slate-900/90 border-slate-700/70 hover:border-amber-500/50'
+                      }`}
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-1.5">
+                        <span className="text-[10px] font-mono font-bold text-amber-400 px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
+                          {ex.subLessonNum} · #{ex.exerciseIndex + 1}
+                        </span>
+                        {isSolved ? (
+                          <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
+                            <CheckCircle className="w-3.5 h-3.5" /> Solved
+                          </span>
+                        ) : (
+                          <span className="text-[10px] text-slate-500 font-mono truncate max-w-[110px]">
+                            {ex.subLessonTitle}
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs font-semibold text-slate-200 group-hover:text-amber-300 transition line-clamp-2">
+                        {ex.title}
                       </div>
                     </Link>
                   );
