@@ -96,27 +96,81 @@ export const DETAILED_LESSONS: Record<string, DetailedLesson> = {
 // HELPER FUNCTIONS FOR SUB-LESSON NAVIGATION
 // ============================================================
 
-export function getDetailedLesson(id: string): DetailedLesson | undefined {
-  return DETAILED_LESSONS[id];
+export function getDetailedLesson(id?: string): DetailedLesson | undefined {
+  if (!id) return undefined;
+  if (DETAILED_LESSONS[id]) return DETAILED_LESSONS[id];
+
+  const cleanId = id.trim().toLowerCase();
+  if (DETAILED_LESSONS[cleanId]) return DETAILED_LESSONS[cleanId];
+
+  // Specific common aliases
+  const aliases: Record<string, string> = {
+    'if-else-ladders': 'if-else-ladder',
+    'if-else': 'if-else-ladder',
+    'while-loops': 'while-loop',
+    'for-loop': 'for-loop-deep-dive',
+    'for-loops': 'for-loop-deep-dive',
+    'do-while-loops': 'do-while-loop',
+    'do-while': 'do-while-loop',
+    'nested-loops': 'nested-loops-and-tracing',
+    'switch': 'switch-statement',
+    'switches': 'switch-statement',
+    'switch-expression': 'switch-expressions',
+    'variables': 'variables-and-scope',
+    'primitive-types': 'primitive-types-deep-dive',
+    'wrapper-class': 'wrapper-classes',
+  };
+
+  if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
+    return DETAILED_LESSONS[aliases[cleanId]];
+  }
+
+  // If ending with 's', try singular
+  if (cleanId.endsWith('s') && DETAILED_LESSONS[cleanId.slice(0, -1)]) {
+    return DETAILED_LESSONS[cleanId.slice(0, -1)];
+  }
+
+  // If singular, try plural
+  if (DETAILED_LESSONS[cleanId + 's']) {
+    return DETAILED_LESSONS[cleanId + 's'];
+  }
+
+  // Search across all lessons by fuzzy slug or title
+  return Object.values(DETAILED_LESSONS).find(l =>
+    l.id.toLowerCase() === cleanId ||
+    l.id.toLowerCase().replace(/s$/, '') === cleanId.replace(/s$/, '') ||
+    l.id.replace(/-/g, '').toLowerCase() === cleanId.replace(/-/g, '').toLowerCase() ||
+    l.title.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanId.replace(/[^a-z0-9]/g, '')
+  );
 }
 
 export function getAllDetailedLessons(): DetailedLesson[] {
-  return Object.values(DETAILED_LESSONS).sort((a, b) =>
+  const uniqueLessons = new Map<string, DetailedLesson>();
+  for (const lesson of Object.values(DETAILED_LESSONS)) {
+    uniqueLessons.set(lesson.id, lesson);
+  }
+  return Array.from(uniqueLessons.values()).sort((a, b) =>
     a.lessonNumber.localeCompare(b.lessonNumber, undefined, { numeric: true })
   );
 }
 
 export function getLessonsForModule(moduleId: string): DetailedLesson[] {
-  return Object.values(DETAILED_LESSONS)
-    .filter(l => l.moduleId === moduleId)
-    .sort((a, b) => a.lessonNumber.localeCompare(b.lessonNumber, undefined, { numeric: true }));
+  const uniqueLessons = new Map<string, DetailedLesson>();
+  for (const lesson of Object.values(DETAILED_LESSONS)) {
+    if (lesson.moduleId === moduleId) {
+      uniqueLessons.set(lesson.id, lesson);
+    }
+  }
+  return Array.from(uniqueLessons.values()).sort((a, b) =>
+    a.lessonNumber.localeCompare(b.lessonNumber, undefined, { numeric: true })
+  );
 }
 
 export function getAdjacentLessons(currentId: string): { prev?: DetailedLesson; next?: DetailedLesson } {
-  const current = DETAILED_LESSONS[currentId];
+  const current = getDetailedLesson(currentId);
   if (!current) return {};
   const moduleLessons = getLessonsForModule(current.moduleId);
-  const idx = moduleLessons.findIndex(l => l.id === currentId);
+  const idx = moduleLessons.findIndex(l => l.id === current.id);
   if (idx !== -1) {
     return {
       prev: idx > 0 ? moduleLessons[idx - 1] : undefined,
@@ -124,7 +178,7 @@ export function getAdjacentLessons(currentId: string): { prev?: DetailedLesson; 
     };
   }
   const all = getAllDetailedLessons();
-  const allIdx = all.findIndex(l => l.id === currentId);
+  const allIdx = all.findIndex(l => l.id === current.id);
   return {
     prev: allIdx > 0 ? all[allIdx - 1] : undefined,
     next: allIdx < all.length - 1 ? all[allIdx + 1] : undefined
