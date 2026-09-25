@@ -22,3 +22,8 @@ npm-debug.log*
 .env
 .env.local
 .env.*.local
+
+# Python cache
+__pycache__/
+*.pyc
+

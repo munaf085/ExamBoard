@@ -88,6 +88,7 @@ import { controlFlowLessons } from './sublessons/controlFlowLessons';
 import { stringsLessons } from './sublessons/stringsLessons';
 import { arraysLessons } from './sublessons/arraysLessons';
 import { methodsLessons } from './sublessons/methodsLessons';
+import { oopLessons } from './sublessons/oopLessons';
 
 import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
 import { dataTypesExercises } from './sublessons/dataTypesExercises';
@@ -96,6 +97,7 @@ import { controlFlowExercises } from './sublessons/controlFlowExercises';
 import { stringsExercises } from './sublessons/stringsExercises';
 import { arraysExercises } from './sublessons/arraysExercises';
 import { methodsExercises } from './sublessons/methodsExercises';
+import { oopExercises } from './sublessons/oopExercises';
 
 export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...fundamentalsExercises,
@@ -105,6 +107,7 @@ export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...stringsExercises,
   ...arraysExercises,
   ...methodsExercises,
+  ...oopExercises,
 };
 
 const rawLessons: Record<string, DetailedLesson> = {
@@ -115,6 +118,7 @@ const rawLessons: Record<string, DetailedLesson> = {
   ...stringsLessons,
   ...arraysLessons,
   ...methodsLessons,
+  ...oopLessons,
 };
 
 // Populate programmingExercises for every sub-lesson so none is empty
@@ -181,6 +185,44 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'varargs': 'method-overloading-and-varargs',
     'recursion': 'recursion-and-call-stack',
     'call-stack': 'recursion-and-call-stack',
+    'classes': 'classes-objects-instantiation',
+    'class': 'classes-objects-instantiation',
+    'objects': 'classes-objects-instantiation',
+    'object': 'classes-objects-instantiation',
+    'constructors': 'constructors-and-chaining',
+    'constructor': 'constructors-and-chaining',
+    'static': 'static-vs-instance-members',
+    'encapsulation': 'encapsulation-principles',
+    'access-modifiers': 'access-modifiers-deep-dive',
+    'getters-setters': 'getters-setters-defensive-copying',
+    'immutability': 'immutable-class-pattern',
+    'immutable': 'immutable-class-pattern',
+    'inheritance': 'extends-and-is-a',
+    'extends': 'extends-and-is-a',
+    'super': 'super-constructor-chaining',
+    'overriding': 'method-overriding-rules',
+    'final': 'final-keyword-in-oop',
+    'polymorphism': 'compile-vs-runtime-polymorphism',
+    'dynamic-dispatch': 'dynamic-method-dispatch',
+    'vtable': 'dynamic-method-dispatch',
+    'casting': 'casting-and-classcastexception',
+    'downcasting': 'casting-and-classcastexception',
+    'upcasting': 'casting-and-classcastexception',
+    'instanceof': 'instanceof-and-pattern-matching',
+    'pattern-matching': 'instanceof-and-pattern-matching',
+    'abstraction': 'abstract-classes-and-methods',
+    'abstract-class': 'abstract-classes-and-methods',
+    'abstract': 'abstract-classes-and-methods',
+    'interfaces': 'interfaces-contracts-and-types',
+    'interface': 'interfaces-contracts-and-types',
+    'default-methods': 'default-and-static-methods',
+    'object-class': 'object-root-class',
+    'tostring': 'tostring-and-representation',
+    'equals-hashcode': 'equals-hashcode-contract',
+    'equals': 'equals-hashcode-contract',
+    'hashcode': 'equals-hashcode-contract',
+    'cloning': 'cloning-shallow-deep-copy',
+    'clone': 'cloning-shallow-deep-copy',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
