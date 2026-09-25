@@ -4,7 +4,7 @@ import {
   BookOpen, Code, AlertTriangle, Target, RefreshCw,
   CheckCircle, ChevronDown, ChevronRight, ArrowLeft,
   Lightbulb, Star, Coffee, List, Shield, Layers, GitBranch,
-  Package, Zap, Database, Leaf, Sparkles
+  Package, Zap, Database, Leaf, Sparkles, Menu, X
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
 import { ALL_JAVA_LESSONS } from '../../data/java/lessons/index';
@@ -74,6 +74,7 @@ export default function JavaModulePage() {
   const [completed, setCompleted] = useState<string[]>([]);
   const [solvedAssignments, setSolvedAssignments] = useState<string[]>([]);
   const [activeModule, setActiveModule] = useState(moduleId || 'java-fundamentals');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     fundamentals: true,
     oop: true,
@@ -84,6 +85,22 @@ export default function JavaModulePage() {
     spring: false,
     testing: false,
   });
+  const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({
+    'java-fundamentals': true,
+    'java-data-types': true,
+    'java-operators': true,
+    'java-control-flow': true,
+    'java-loops': true,
+    'java-strings': true,
+    'java-arrays': true,
+    'java-methods': true,
+    'java-oop-basics': true,
+    'java-encapsulation': true,
+    'java-inheritance': true,
+    'java-polymorphism': true,
+    'java-abstraction': true,
+    'java-object-class': true,
+  });
   const [forceExpandAll, setForceExpandAll] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -92,21 +109,24 @@ export default function JavaModulePage() {
     setSolvedAssignments(getSolvedAssignments());
   }, []);
 
+  const currentModuleId = moduleId || activeModule;
+
   useEffect(() => {
-    if (moduleId) {
-      setActiveModule(moduleId);
+    if (currentModuleId) {
+      setActiveModule(currentModuleId);
+      setExpandedModules(prev => ({ ...prev, [currentModuleId]: true }));
       // Automatically expand section containing active module
-      const targetMod = JAVA_MODULES.find(m => m.id === moduleId);
+      const targetMod = JAVA_MODULES.find(m => m.id === currentModuleId || m.id.toLowerCase() === currentModuleId.toLowerCase());
       if (targetMod) {
         setExpandedSections(prev => ({ ...prev, [targetMod.section]: true }));
       }
     }
-  }, [moduleId]);
+  }, [currentModuleId]);
 
-  const lesson = ALL_JAVA_LESSONS[activeModule];
-  const moduleInfo = JAVA_MODULES.find(m => m.id === activeModule);
-  const isDone = completed.includes(activeModule);
-  const subLessons = getLessonsForModule(activeModule);
+  const lesson = ALL_JAVA_LESSONS[currentModuleId];
+  const moduleInfo = JAVA_MODULES.find(m => m.id === currentModuleId || m.id.toLowerCase() === currentModuleId.toLowerCase());
+  const isDone = completed.includes(currentModuleId);
+  const subLessons = getLessonsForModule(currentModuleId);
   const allModuleExercises = subLessons.flatMap(sub =>
     (sub.programmingExercises || []).map((ex, idx) => ({
       ...ex,
@@ -122,33 +142,57 @@ export default function JavaModulePage() {
     setExpandedSections(prev => ({ ...prev, [secId]: !prev[secId] }));
   };
 
+  const toggleModuleAccordion = (e: React.MouseEvent, mId: string) => {
+    e.stopPropagation();
+    setExpandedModules(prev => ({ ...prev, [mId]: !prev[mId] }));
+  };
+
   const handleMarkDone = () => {
-    markLessonComplete(activeModule);
-    setCompleted(prev => [...prev, activeModule]);
+    markLessonComplete(currentModuleId);
+    setCompleted(prev => [...prev, currentModuleId]);
   };
 
   const handleTopicClick = (id: string) => {
     setActiveModule(id);
-    navigate(`/java/module/${id}`, { replace: true });
+    setExpandedModules(prev => ({ ...prev, [id]: true }));
+    navigate(`/java/module/${id}`);
   };
 
   // Find next module in syllabus
-  const currentIndex = JAVA_MODULES.findIndex(m => m.id === activeModule);
+  const currentIndex = JAVA_MODULES.findIndex(m => m.id === currentModuleId);
   const nextModule = currentIndex >= 0 && currentIndex < JAVA_MODULES.length - 1 ? JAVA_MODULES[currentIndex + 1] : null;
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex font-sans">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col lg:flex-row font-sans relative">
+
+      {/* ── MOBILE BACKDROP ── */}
+      {mobileSidebarOpen && (
+        <div
+          onClick={() => setMobileSidebarOpen(false)}
+          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 lg:hidden"
+        />
+      )}
 
       {/* ── LEFT SIDEBAR ── */}
-      <aside className="w-80 min-h-screen bg-slate-800 border-r border-slate-700 flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+      <aside className={`fixed lg:sticky top-0 bottom-0 left-0 w-80 max-w-[85vw] bg-slate-800 border-r border-slate-700 flex-shrink-0 h-screen overflow-y-auto z-50 transition-transform duration-200 shadow-2xl lg:shadow-none ${
+        mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      }`}>
         <div className="p-4 border-b border-slate-700 flex flex-col gap-2.5 sticky top-0 bg-slate-800/95 backdrop-blur z-10">
           <div className="flex items-center justify-between">
             <Link to="/java" className="flex items-center gap-2 text-emerald-400 hover:text-emerald-300 text-sm font-semibold">
               <ArrowLeft className="w-4 h-4" /> Java Dashboard
             </Link>
-            <span className="text-xs font-mono bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
-              {completed.length}/{JAVA_MODULES.length} Done
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono bg-slate-900 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                {completed.length}/{JAVA_MODULES.length} Done
+              </span>
+              <button
+                onClick={() => setMobileSidebarOpen(false)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white lg:hidden"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
           <Link
             to="/java/syllabus"
@@ -164,7 +208,7 @@ export default function JavaModulePage() {
           {JAVA_SECTIONS.map(section => {
             const isSecOpen = expandedSections[section.id];
             const sectionModules = JAVA_MODULES.filter(m => m.section === section.id);
-            const hasActiveModule = sectionModules.some(m => m.id === activeModule);
+            const hasActiveModule = sectionModules.some(m => m.id === currentModuleId);
             const SecIcon = SECTION_ICONS[section.id] || BookOpen;
 
             return (
@@ -187,31 +231,50 @@ export default function JavaModulePage() {
                   <div className="p-1 space-y-0.5 bg-slate-900/70 border-t border-slate-800">
                     {sectionModules.map(m => {
                       const done = completed.includes(m.id);
-                      const active = m.id === activeModule;
+                      const active = m.id === currentModuleId;
                       const modSubLessons = getLessonsForModule(m.id);
+                      const isModOpen = expandedModules[m.id] ?? (active || m.section === 'oop');
+
                       return (
                         <div key={m.id} className="space-y-1">
-                          <button
-                            onClick={() => handleTopicClick(m.id)}
-                            className={`w-full text-left px-3 py-2 rounded-lg transition-all flex items-center justify-between gap-2 text-xs ${
-                              active
-                                ? 'bg-emerald-600/25 text-emerald-300 border border-emerald-500/40 font-semibold'
-                                : 'hover:bg-slate-700/70 text-slate-300'
-                            }`}
-                          >
-                            <span className="truncate">{m.title}</span>
-                            {done && <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />}
-                          </button>
+                          <div className={`w-full rounded-lg transition-all flex items-center justify-between gap-1 text-xs ${
+                            active
+                              ? 'bg-emerald-600/25 text-emerald-300 border border-emerald-500/40 font-semibold'
+                              : 'hover:bg-slate-700/70 text-slate-300'
+                          }`}>
+                            <button
+                              onClick={() => {
+                                handleTopicClick(m.id);
+                                setMobileSidebarOpen(false);
+                              }}
+                              className="flex-1 text-left px-3 py-2 truncate flex items-center justify-between gap-1.5"
+                            >
+                              <span className="truncate">{m.title}</span>
+                              {done && <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0" />}
+                            </button>
 
-                          {active && modSubLessons.length > 0 && (
-                            <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-blue-500/40 ml-2">
+                            {modSubLessons.length > 0 && (
+                              <button
+                                onClick={(e) => toggleModuleAccordion(e, m.id)}
+                                className="p-1.5 text-slate-400 hover:text-white rounded hover:bg-slate-700/60 mr-1"
+                                title={`${modSubLessons.length} Sub-Lessons`}
+                              >
+                                {isModOpen ? <ChevronDown className="w-3 h-3 text-emerald-400" /> : <ChevronRight className="w-3 h-3 text-slate-400" />}
+                              </button>
+                            )}
+                          </div>
+
+                          {isModOpen && modSubLessons.length > 0 && (
+                            <div className="pl-3 pr-1 py-1 space-y-1 border-l-2 border-emerald-500/40 ml-3">
                               {modSubLessons.map(sub => (
                                 <Link
                                   key={sub.id}
                                   to={`/java/lesson/${sub.id}`}
-                                  className="block px-2 py-1 rounded text-[11px] text-slate-400 hover:text-blue-300 hover:bg-slate-800/80 truncate transition"
+                                  onClick={() => setMobileSidebarOpen(false)}
+                                  className="block px-2 py-1 rounded text-[11px] text-slate-400 hover:text-emerald-300 hover:bg-slate-800/80 truncate transition"
                                 >
-                                  {sub.lessonNumber}: {sub.title}
+                                  <span className="font-mono text-emerald-400 font-bold mr-1">{sub.lessonNumber}:</span>
+                                  <span>{sub.title}</span>
                                 </Link>
                               ))}
                             </div>
@@ -228,7 +291,7 @@ export default function JavaModulePage() {
           {/* Quick Tools */}
           <div className="mt-4 pt-4 border-t border-slate-700/80 space-y-1">
             <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-2 mb-2">⚡ Quick Links</p>
-            <Link to={`/java/mcq/${activeModule}`}
+            <Link to={`/java/mcq/${currentModuleId}`}
               className="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-2 block">
               <Star className="w-3.5 h-3.5 text-yellow-400" /> Practice MCQs for This Topic
             </Link>
@@ -255,11 +318,18 @@ export default function JavaModulePage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6 pb-6 border-b border-slate-800">
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-2">
+                <button
+                  onClick={() => setMobileSidebarOpen(true)}
+                  className="lg:hidden p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:text-white border border-slate-700 mr-1 flex items-center gap-1.5 text-xs font-semibold"
+                >
+                  <Menu className="w-4 h-4 text-emerald-400" />
+                  <span>Modules</span>
+                </button>
                 <span className="text-xs uppercase font-bold text-emerald-400 tracking-wider">Java Full Syllabus Module</span>
               </div>
               <h1 className="text-3xl font-extrabold text-white mb-2">
-                {moduleInfo?.title || activeModule}
+                {moduleInfo?.title || currentModuleId}
               </h1>
               <div className="flex items-center gap-3 text-sm text-slate-400">
                 <span className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
@@ -296,7 +366,7 @@ export default function JavaModulePage() {
 
           {/* Granular Sub-Lessons Banner if Available */}
           {subLessons.length > 0 && (
-            <div className="bg-gradient-to-r from-blue-950/50 via-slate-900 to-indigo-950/40 border border-blue-500/30 rounded-2xl p-5 mb-6 shadow-xl">
+            <div className="bg-gradient-to-r from-blue-950/60 via-slate-900 to-indigo-950/50 border border-blue-500/40 rounded-2xl p-5 mb-6 shadow-xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                 <div>
                   <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider">
@@ -316,7 +386,7 @@ export default function JavaModulePage() {
                 </Link>
               </div>
 
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-2.5">
+              <div className="grid sm:grid-cols-2 gap-2.5">
                 {subLessons.map((sub) => {
                   const isSubDone = completed.includes(sub.id);
                   return (
@@ -335,8 +405,11 @@ export default function JavaModulePage() {
                           <span className="text-[10px] text-slate-500 font-mono">{sub.estimatedMinutes}m</span>
                         )}
                       </div>
-                      <div className="text-xs font-semibold text-slate-200 group-hover:text-blue-300 transition line-clamp-2">
+                      <div className="text-xs font-semibold text-slate-200 group-hover:text-blue-300 transition line-clamp-1">
                         {sub.title}
+                      </div>
+                      <div className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+                        {sub.subtitle}
                       </div>
                     </Link>
                   );

@@ -263,10 +263,10 @@ export default function JavaSubLessonPage() {
           <div className="mb-4 pb-3 border-b border-slate-800 flex items-center justify-between">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Java Basics Sub-Topics
+                Curriculum Sub-Topics
               </h3>
               <p className="text-[11px] text-slate-500">
-                {currentLessonIndex + 1} of {allLessons.length} Lessons
+                {currentLessonIndex + 1} of {allLessons.length} Lessons · Core & OOP
               </p>
             </div>
             <button

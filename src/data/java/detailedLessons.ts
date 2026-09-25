@@ -259,9 +259,51 @@ export function getAllDetailedLessons(): DetailedLesson[] {
 }
 
 export function getLessonsForModule(moduleId: string): DetailedLesson[] {
+  if (!moduleId) return [];
+  const clean = moduleId.trim().toLowerCase().replace(/\/$/, '');
+  const moduleAliases: Record<string, string> = {
+    '1': 'java-fundamentals',
+    'fundamentals': 'java-fundamentals',
+    '2': 'java-data-types',
+    'data-types': 'java-data-types',
+    '3': 'java-operators',
+    'operators': 'java-operators',
+    '4': 'java-control-flow',
+    'control-flow': 'java-control-flow',
+    '5': 'java-loops',
+    'loops': 'java-loops',
+    '6': 'java-strings',
+    'strings': 'java-strings',
+    '7': 'java-arrays',
+    'arrays': 'java-arrays',
+    '8': 'java-methods',
+    'methods': 'java-methods',
+    '9': 'java-oop-basics',
+    'oop': 'java-oop-basics',
+    'oop-basics': 'java-oop-basics',
+    'java-oop': 'java-oop-basics',
+    '10': 'java-encapsulation',
+    'encapsulation': 'java-encapsulation',
+    '11': 'java-inheritance',
+    'inheritance': 'java-inheritance',
+    '12': 'java-polymorphism',
+    'polymorphism': 'java-polymorphism',
+    '13': 'java-abstraction',
+    'abstraction': 'java-abstraction',
+    'interfaces': 'java-abstraction',
+    '14': 'java-object-class',
+    'object-class': 'java-object-class',
+    'object': 'java-object-class',
+  };
+  const targetId = moduleAliases[clean] || clean;
+
   const uniqueLessons = new Map<string, DetailedLesson>();
   for (const lesson of Object.values(DETAILED_LESSONS)) {
-    if (lesson.moduleId === moduleId) {
+    if (
+      lesson.moduleId === targetId ||
+      lesson.moduleId.toLowerCase() === clean ||
+      moduleAliases[lesson.moduleId.toLowerCase()] === clean
+    ) {
       uniqueLessons.set(lesson.id, lesson);
     }
   }
@@ -273,18 +315,13 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
 export function getAdjacentLessons(currentId: string): { prev?: DetailedLesson; next?: DetailedLesson } {
   const current = getDetailedLesson(currentId);
   if (!current) return {};
-  const moduleLessons = getLessonsForModule(current.moduleId);
-  const idx = moduleLessons.findIndex(l => l.id === current.id);
-  if (idx !== -1) {
-    return {
-      prev: idx > 0 ? moduleLessons[idx - 1] : undefined,
-      next: idx < moduleLessons.length - 1 ? moduleLessons[idx + 1] : undefined
-    };
-  }
   const all = getAllDetailedLessons();
   const allIdx = all.findIndex(l => l.id === current.id);
-  return {
-    prev: allIdx > 0 ? all[allIdx - 1] : undefined,
-    next: allIdx < all.length - 1 ? all[allIdx + 1] : undefined
-  };
+  if (allIdx !== -1) {
+    return {
+      prev: allIdx > 0 ? all[allIdx - 1] : undefined,
+      next: allIdx < all.length - 1 ? all[allIdx + 1] : undefined
+    };
+  }
+  return {};
 }
