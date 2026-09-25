@@ -77,6 +77,16 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
           "aspect": "Null Value",
           "optionA": "Primitives: Cannot be assigned null (compile error)",
           "optionB": "References: Can be null (points to no heap address)"
+        },
+        {
+          "aspect": "Heap Memory Object Layout",
+          "optionA": "Mark Word (8B) + Klass Pointer (4B compressed oops)",
+          "optionB": "Instance fields payload + 8-byte boundary alignment padding"
+        },
+        {
+          "aspect": "Bytecode Instantiation Sequence",
+          "optionA": "new opcode: Allocates heap space without initialization",
+          "optionB": "invokespecial <init>: Executes constructor to initialize fields"
         }
       ]
     },
@@ -280,6 +290,36 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
         "hint": "Carefully trace which heap object each reference variable points to after each assignment swap.",
         "solution": "Beta-Alpha-Alpha",
         "explanation": "Initially: t1 -> Alpha, t2 -> Beta. t3 is set to t1 (points to Alpha). t1 is set to t2 (points to Beta). t2 is set to t3 (points to Alpha). At the print statement: t1 -> Beta, t2 -> Alpha, t3 -> Alpha. Output: Beta-Alpha-Alpha."
+      },
+      {
+        "title": "Puzzle 9: Method Modifying Object Field via Passed Reference",
+        "problemStatement": "What is printed by this account credit simulation?",
+        "code": "public class MethodModifyPuzzle {\n    static class Account { int balance = 100; }\n    public static void credit(Account a) {\n        a.balance += 50;\n        a = new Account();\n        a.balance += 200;\n    }\n    public static void main(String[] args) {\n        Account acc = new Account();\n        credit(acc);\n        System.out.println(acc.balance);\n    }\n}",
+        "options": [
+          "150",
+          "350",
+          "100",
+          "300"
+        ],
+        "correctOptionIndex": 0,
+        hint: "a.balance += 50 mutates the shared heap object. Then a = new Account() reassigns only the local parameter.",
+        "solution": "150",
+        "explanation": "credit receives a copy of reference acc. a.balance += 50 directly modifies the shared heap Account (balance becomes 150). Next, a is reassigned to point to a new Account object, which isolates main's acc from subsequent changes. Output is 150."
+      },
+      {
+        "title": "Puzzle 10: Field Default Values in Object Hierarchies",
+        "problemStatement": "What is printed when inspecting default field values of an uninitialized Node?",
+        "code": "public class NestedDefaultPuzzle {\n    static class Node {\n        int val;\n        Node next;\n    }\n    public static void main(String[] args) {\n        Node n = new Node();\n        System.out.println(n.val + \" \" + (n.next == null));\n    }\n}",
+        "options": [
+          "0 true",
+          "0 false",
+          "null true",
+          "Throws NullPointerException"
+        ],
+        "correctOptionIndex": 0,
+        hint: "When 'new Node()' executes, numeric instance fields zero-initialize to 0 and reference fields initialize to null.",
+        "solution": "0 true",
+        "explanation": "The JVM heap zero-initializes all instance fields upon object instantiation: n.val becomes 0 (primitive int default) and n.next becomes null (reference default). n.next == null evaluates to true. Output: '0 true'."
       }
     ],
     "interviewQuestions": [
@@ -612,6 +652,16 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
           "aspect": "Inheritance",
           "optionA": "Constructor: Not inherited by subclasses",
           "optionB": "Method: Inherited based on access modifiers"
+        },
+        {
+          "aspect": "Bytecode Implementation",
+          "optionA": "Constructor: Compiles into instance initialization method <init>",
+          "optionB": "Invocation: Invoked via invokespecial opcode"
+        },
+        {
+          "aspect": "Chaining Stack Overhead",
+          "optionA": "this(...) Delegation: Resolves within same object context",
+          "optionB": "Memory Footprint: O(1) auxiliary stack space"
         }
       ]
     },
@@ -815,6 +865,36 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
         "hint": "Box(4) chains to Box(4, 4, 4).",
         "solution": "64",
         "explanation": "Box(4) calls this(4, 4, 4). The three-argument constructor multiplies 4 * 4 * 4 = 64 and stores it in vol. Output: 64."
+      },
+      {
+        "title": "Puzzle 9: Parameter Shadowing without this Reference",
+        "problemStatement": "What is printed by this program when the constructor omits the 'this' prefix?",
+        "code": "public class ShadowingPuzzle {\n    static class Person {\n        String name;\n        Person(String name) {\n            name = name; // Notice absence of this.name\n        }\n    }\n    public static void main(String[] args) {\n        Person p = new Person(\"Alice\");\n        System.out.println(p.name);\n    }\n}",
+        "options": [
+          "null",
+          "Alice",
+          "Compilation Error",
+          "Throws NullPointerException"
+        ],
+        "correctOptionIndex": 0,
+        hint: "Without 'this.', name = name reassigns the local parameter to itself, leaving the instance field unassigned.",
+        "solution": "null",
+        "explanation": "The parameter name shadows the instance field name. The statement name = name merely assigns the parameter to itself. The instance field this.name is never assigned and remains its zero-initialized default value: null."
+      },
+      {
+        "title": "Puzzle 10: Constructor Chaining Execution Order with Side Effects",
+        "problemStatement": "Trace the printed console output of this constructor chaining sequence:",
+        "code": "public class ChainOrderPuzzle {\n    static class Item {\n        Item() {\n            this(\"DEFAULT\");\n            System.out.print(\"NO-ARG \");\n        }\n        Item(String name) {\n            System.out.print(name + \" \");\n        }\n    }\n    public static void main(String[] args) {\n        Item item = new Item();\n    }\n}",
+        "options": [
+          "DEFAULT NO-ARG ",
+          "NO-ARG DEFAULT ",
+          "DEFAULT ",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 0,
+        hint: "this(\"DEFAULT\") runs first before any remaining statements in the no-arg constructor body execute.",
+        "solution": "DEFAULT NO-ARG ",
+        "explanation": "Calling new Item() enters the no-arg constructor. Its first line this(\"DEFAULT\") executes the parameterized constructor, printing 'DEFAULT '. Control then returns to finish the no-arg body, printing 'NO-ARG '. Final output is 'DEFAULT NO-ARG '."
       }
     ],
     "interviewQuestions": [
@@ -1146,6 +1226,16 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
           "aspect": "Null Reference Call",
           "optionA": "Static Member: Executes safely (no NPE)",
           "optionB": "Instance Member: Throws NullPointerException"
+        },
+        {
+          "aspect": "Bytecode Dispatch Instruction",
+          "optionA": "invokestatic / getstatic / putstatic (resolved at compile time without receiver)",
+          "optionB": "invokevirtual / getfield / putfield (requires valid heap object receiver)"
+        },
+        {
+          "aspect": "Lifecycle & Garbage Collection",
+          "optionA": "Persists in Metaspace/Class mirror until ClassLoader is unloaded",
+          "optionB": "Reclaimed by Garbage Collector as soon as unreachable from GC roots"
         }
       ]
     },
@@ -1349,6 +1439,36 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
         "hint": "Multiple static blocks execute in top-to-bottom textual order upon class loading.",
         "solution": "XYZ",
         "explanation": "When MultiStaticBlockPuzzle is loaded by the JVM to execute main(), static blocks run top-to-bottom: 'X' is printed, then 'Y' is printed. Finally main() executes, printing 'Z'. Total: XYZ."
+      },
+      {
+        "title": "Puzzle 9: Static Field Access via Null Expression",
+        "problemStatement": "What is printed by this program when executed?",
+        "code": "public class NullStaticFieldPuzzle {\n    static class Config {\n        static String env = \"PRODUCTION\";\n    }\n    public static void main(String[] args) {\n        Config c = null;\n        System.out.println(c.env);\n    }\n}",
+        "options": [
+          "PRODUCTION",
+          "Throws NullPointerException at runtime",
+          "Compilation Error",
+          "null"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Similar to static methods, does reading a static field on a null reference dereference the object at runtime?",
+        "solution": "PRODUCTION",
+        "explanation": "Accessing a static field through a null reference variable compiles into a direct getstatic instruction on Config.env. The compiler resolves the target field using the declared reference type 'Config' and completely ignores the runtime reference value. No NPE is thrown! Output: PRODUCTION."
+      },
+      {
+        "title": "Puzzle 10: Static vs Instance Field Modification in Static Method",
+        "problemStatement": "What does the following program print?",
+        "code": "public class MixedScopePuzzle {\n    static int s = 10;\n    int inst = 20;\n\n    static void alter(MixedScopePuzzle obj) {\n        s += 5;\n        obj.inst += 10;\n    }\n\n    public static void main(String[] args) {\n        MixedScopePuzzle m1 = new MixedScopePuzzle();\n        alter(m1);\n        System.out.println(m1.s + \"-\" + m1.inst);\n    }\n}",
+        "options": [
+          "15-30",
+          "10-20",
+          "15-20",
+          "Compilation Error: non-static variable cannot be referenced from static context"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "A static method cannot use 'this', but can it access instance fields through an explicitly passed reference parameter?",
+        "solution": "15-30",
+        "explanation": "A static method cannot reference instance fields implicitly via 'this', but it CAN modify instance fields through an explicit parameter reference ('obj.inst += 10'). 's += 5' increments static field 's' to 15, and 'obj.inst += 10' increments m1's instance field to 30. Output: 15-30."
       }
     ],
     "interviewQuestions": [
@@ -1680,6 +1800,16 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
           "aspect": "Memory Leak Cause",
           "optionA": "Java: Unintentional retained references to unused objects",
           "optionB": "C/C++: Forgetting to call free() on allocated pointers"
+        },
+        {
+          "aspect": "GC Root Categories",
+          "optionA": "Java: Stack frames, static class fields, active threads, JNI handles",
+          "optionB": "C/C++: N/A (no tracing collector; manual pointer lifecycle)"
+        },
+        {
+          "aspect": "Heap Compaction",
+          "optionA": "Java: Automatic compaction relocates objects & updates pointers (eliminates fragmentation)",
+          "optionB": "C/C++: Manual memory pools needed to combat severe heap fragmentation"
         }
       ]
     },
@@ -1883,6 +2013,36 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
         "hint": "Java is pass-by-value. Does setting 'it = null' inside clear() alter the caller's 'item' reference?",
         "solution": "Gadget",
         "explanation": "Java is strictly pass-by-value. Inside clear(), parameter 'it' receives a copy of the pointer. Setting 'it = null' only overwrites the local copy. The caller's 'item' reference on main's stack frame remains intact and points to the Gadget object. Output: Gadget."
+      },
+      {
+        "title": "Puzzle 9: Object Reassignment in Nested Scope",
+        "problemStatement": "How many Box objects are eligible for Garbage Collection at the point marked // CHECKPOINT?",
+        "code": "public class ScopeGCPuzzle {\n    static class Box { int id; Box(int id) { this.id = id; } }\n    public static void main(String[] args) {\n        Box b1 = new Box(1);\n        Box b2 = new Box(2);\n        {\n            Box b3 = new Box(3);\n            b1 = b3;\n            b3 = null;\n        }\n        b2 = b1;\n        // CHECKPOINT: How many Box objects are eligible for GC here?\n        System.out.println(b1.id + \" \" + b2.id);\n    }\n}",
+        "options": [
+          "1 (Box 2 only)",
+          "2 (Box 1 and Box 2)",
+          "0 (all are reachable)",
+          "3 (all were collected)"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Track which references point to Box 1, Box 2, and Box 3 at CHECKPOINT.",
+        "solution": "2 (Box 1 and Box 2)",
+        "explanation": "Trace reference pointers: 1) Box(1) allocated -> b1 points to it. 2) Box(2) allocated -> b2 points to it. 3) Box(3) allocated -> b3 points to it. 4) b1 = b3 -> b1 now points to Box(3). Box(1) has 0 references (eligible for GC!). 5) b3 = null. 6) b2 = b1 -> b2 now points to Box(3). Box(2) has 0 references (eligible for GC!). At CHECKPOINT, b1 and b2 both reference Box(3). Exactly 2 objects (Box 1 and Box 2) are unreachable and eligible for GC."
+      },
+      {
+        "title": "Puzzle 10: Circular Reference with External Root Disconnection",
+        "problemStatement": "How many Link objects become eligible for Garbage Collection after main() executes line 'x = null;'?",
+        "code": "public class CircularIslandPuzzle {\n    static class Link {\n        Link peer;\n        String name;\n        Link(String name) { this.name = name; }\n    }\n    public static void main(String[] args) {\n        Link x = new Link(\"X\");\n        Link y = new Link(\"Y\");\n        x.peer = y;\n        y.peer = x;\n        y = null;\n        x = null; // How many Link objects are eligible for GC now?\n    }\n}",
+        "options": [
+          "Both Link X and Link Y (2 objects)",
+          "Only Link Y (1 object)",
+          "0 objects because peer references keep them alive",
+          "Only Link X (1 object)"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Does an Island of Isolation prevent garbage collection in Java's root-reachability collector?",
+        "solution": "Both Link X and Link Y (2 objects)",
+        "explanation": "When 'y = null' executes, Link Y is still reachable from active stack root x via x.peer. However, when 'x = null' executes, neither Link X nor Link Y is reachable from any active GC Root on the stack. Even though x.peer points to Y and y.peer points to X, the HotSpot root-reachability graph traversal cannot reach the cluster. Both Link objects form an Island of Isolation and are reclaimed together. Total: 2 objects."
       }
     ],
     "interviewQuestions": [
