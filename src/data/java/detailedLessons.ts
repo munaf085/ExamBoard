@@ -1458,15 +1458,44 @@ If null, stops here!  Never executed if null -> NO CRASH!`,
   // 4. CONTROL FLOW & LOOPS — 9 INDIVIDUAL LESSONS
   // ════════════════════════════════════════════════════════════
 
-  'switch-expressions': {
+    'switch-expressions': {
     id: 'switch-expressions',
     moduleId: 'java-control-flow',
     moduleTitle: '4. Control Flow & Loops',
     lessonNumber: 'Lesson 4.3',
     title: 'Modern Switch Expressions (->)',
     subtitle: 'Java 14+ switch expressions vs traditional switch fall-through traps',
-    estimatedMinutes: 12,
+    estimatedMinutes: 8,
     beginnerAnalogy: 'Traditional switch was like a staircase with no doors between floors: if you step onto floor 2 and forget to put up a "break" barricade, you automatically tumble down into floor 3 and floor 4! Modern switch with arrow (->) is like a smart elevator: you press 2, it opens only on floor 2 and never falls through.',
+    interviewTakeaways: [
+      'No Accidental Fall-Through: Arrow syntax "case X ->" executes ONLY that case. No "break;" statement is needed or permitted!',
+      'Returns a Value: Modern switch is an expression, allowing direct assignment: String result = switch(day) { case 1 -> "Mon"; default -> "Other"; };',
+      'The "yield" Keyword: If an arrow case requires a block { ... } with multiple statements, use "yield <value>;" to return the value from that block.',
+      'Exhaustiveness: When used as an expression returning a value, the compiler requires all possible input values to be covered (or a "default" branch must be present).'
+    ],
+    cheatSheet: {
+      summary: 'Introduced in Java 14, Switch Expressions eliminate fall-through, allow multiple comma-separated labels, and return values.',
+      syntaxTemplate: `// As an expression assigning a variable:
+String typeOfDay = switch (day) {
+    case "SATURDAY", "SUNDAY" -> "Weekend"; // Comma-separated labels!
+    case "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY" -> {
+        System.out.println("Processing weekday...");
+        yield "Weekday"; // yield returns value from block!
+    }
+    default -> "Invalid day"; // Exhaustiveness required!
+};`,
+      rules: [
+        { rule: 'No Break Needed', explanation: 'Arrow (->) cases automatically break after executing their target expression.' },
+        { rule: 'yield vs return', explanation: 'yield returns a value from the switch block; return would exit the entire enclosing method!' },
+        { rule: 'Multiple Labels', explanation: 'Multiple case values can be combined with commas: case 1, 2, 3 -> ...' },
+        { rule: 'Exhaustiveness', explanation: 'If used as an expression, all enum values or a default branch MUST be provided.' }
+      ],
+      quickComparison: [
+        { aspect: 'Syntax', optionA: 'Traditional: case 1: ... break;', optionB: 'Modern: case 1 -> "Result";' },
+        { aspect: 'Return Value', optionA: 'Traditional: Statements only (void)', optionB: 'Modern: Can return a typed value directly' },
+        { aspect: 'Fall-Through', optionA: 'Traditional: Yes, if break is omitted', optionB: 'Modern: Never falls through with arrow ->' }
+      ]
+    },
     coreExplanation: [
       'Traditional switch statements (Java 1.0) required an explicit "break" at the end of each case block. Forgetting break caused accidental fall-through to subsequent cases.',
       'Java 14 introduced Switch Expressions using the arrow (->) syntax.',
@@ -1475,67 +1504,114 @@ If null, stops here!  Never executed if null -> NO CRASH!`,
       '2. Can return a value directly (it is an expression, not just a statement).',
       '3. Multiple comma-separated labels per case: "case 1, 2, 3 -> ..."',
       '4. Uses the "yield" keyword if a case block requires multiple lines of computation.',
-      'Supported switch types: byte, short, int, char, String, enum, and pattern types (Java 21+).',
+      'Supported switch types: byte, short, int, char, String, enum, and pattern types (Java 21+).'
     ],
-    diagram: `TRADITIONAL (Accidental Fall-through if break forgotten):
-switch(x) {
-   case 1: doA(); // missing break!
-   case 2: doB(); // runs both A and B!
-}
+    diagram: `Traditional Switch (Colons):
+case 1: doSomething(); break; // Easy to forget break!
 
-MODERN ARROW SYNTAX (Clean & No fall-through):
-String result = switch(x) {
-   case 1 -> "One";
-   case 2 -> "Two";
-   default -> "Other";
-};`,
+Modern Switch Expression (Arrows):
+case 1 -> "Direct Result";   // Clean, safe, returns value!`,
     codeSnippet: {
-      title: 'Comparing Traditional vs Modern Switch Expression',
+      title: 'Modern Switch Expression with Arrow and Yield',
       code: `public class ModernSwitchDemo {
     public static void main(String[] args) {
-        int dayOfWeek = 6; // Saturday
+        int quarter = 2;
 
-        // Modern Switch Expression returning a value
-        String dayType = switch (dayOfWeek) {
-            case 1, 2, 3, 4, 5 -> "Weekday (Work!)";
-            case 6, 7 -> "Weekend (Rest!)";
-            default -> "Invalid Day";
-        };
-
-        System.out.println("Day 6 is: " + dayType);
-
-        // Multi-line case using yield
-        int score = 85;
-        String grade = switch (score / 10) {
-            case 10, 9 -> "A";
-            case 8 -> {
-                System.out.println("Great effort!");
-                yield "B"; // returns "B" from multi-line block
+        // Directly assigned from switch expression:
+        String season = switch (quarter) {
+            case 1 -> "Winter";
+            case 2 -> "Spring";
+            case 3 -> "Summer";
+            case 4 -> {
+                System.out.println("End of year quarter");
+                yield "Autumn"; // yield used inside multi-line blocks
             }
-            default -> "Pass";
+            default -> "Unknown Quarter";
         };
-        System.out.println("Grade: " + grade);
+
+        System.out.println("Quarter " + quarter + " is " + season);
     }
 }`,
       lineByLineExplanation: [
-        { line: 'case 1, 2, 3, 4, 5 ->', explanation: 'Matches any of these values without needing multiple case statements.' },
-        { line: 'yield "B"', explanation: 'When using curly braces in switch expressions, yield produces the return value.' },
+        { line: 'String season = switch (quarter)', explanation: 'The switch itself returns a String assigned directly to variable season.' },
+        { line: 'case 2 -> "Spring";', explanation: 'Evaluates quarter 2, returns "Spring", and exits switch immediately without fall-through.' },
+        { line: 'yield "Autumn";', explanation: 'Produces the resulting value from a multi-line curly brace block.' }
       ],
-      output: `Day 6 is: Weekend (Rest!)
-Great effort!
-Grade: B`
+      output: 'Quarter 2 is Spring'
     },
+    codeExamples: [
+      {
+        title: 'Example 1: Enum Exhaustiveness without Default',
+        description: 'When switching over an enum, covering all constants makes default unnecessary.',
+        code: `enum Level { LOW, MEDIUM, HIGH }
+
+public class EnumSwitch {
+    public static void main(String[] args) {
+        Level lvl = Level.HIGH;
+
+        int score = switch (lvl) {
+            case LOW -> 10;
+            case MEDIUM -> 50;
+            case HIGH -> 100; // All enum values covered, no default required!
+        };
+
+        System.out.println("Score: " + score);
+    }
+}`,
+        output: 'Score: 100'
+      }
+    ],
+    practiceProblems: [
+      {
+        title: 'Interview Tracing Challenge 1: Arrow Syntax Tracing',
+        problemStatement: 'What does this modern switch expression print when code = 2?',
+        code: `int code = 2;
+String label = switch (code) {
+    case 1, 2 -> "Alpha";
+    case 3 -> "Beta";
+    default -> "Gamma";
+};
+System.out.println(label);`,
+        options: ['Alpha', 'AlphaBeta', 'Beta', 'Compilation Error'],
+        correctOptionIndex: 0,
+        hint: 'Modern arrow cases do NOT fall through. Multi-label case 1, 2 matches 2 directly.',
+        solution: 'Alpha',
+        explanation: 'Because code is 2, it matches "case 1, 2" and produces "Alpha". With arrow syntax, there is zero fall-through to case 3, so it prints "Alpha".'
+      },
+      {
+        title: 'Interview Tracing Challenge 2: yield vs return Trap',
+        problemStatement: 'What happens if a developer writes "return \"Value\";" inside a switch block instead of "yield \"Value\";"? (e.g. case 1 -> { return "A"; })',
+        options: [
+          'It returns "A" from the switch expression',
+          'Compilation Error: unexpected return statement in switch block',
+          'It exits the entire enclosing method immediately, returning from the method',
+          'Runtime Exception'
+        ],
+        correctOptionIndex: 2,
+        hint: 'return is bound to the enclosing method; yield is bound to the enclosing switch expression.',
+        solution: 'It exits the entire enclosing method immediately, returning from the method',
+        explanation: 'In Java, "return" exits the containing method altogether. To yield a value specifically from a switch expression block without exiting the method, you MUST use the "yield" keyword!'
+      }
+    ],
     beginnerMistakes: [
       {
-        mistake: 'Mixing old colon : and modern arrow -> syntax in the same switch.',
-        whyItHappens: 'Inconsistency. Compiler will throw: "different case kinds used in the switch".',
-        howToFix: 'Pick one style. Prefer modern arrow (->) syntax everywhere.'
+        mistake: 'Mixing arrow (->) syntax with colon (:) in the same switch.',
+        whyItHappens: 'Trying to use "break;" inside an arrow case or mixing both styles in one switch statement.',
+        howToFix: 'A switch must use either all colons (case 1:) or all arrows (case 1 ->). Never mix them.'
       }
     ],
     interviewQuestions: [
       {
-        question: 'Can you switch on a String or float in Java?',
-        answer: 'You can switch on String (supported since Java 7), along with byte, short, int, char, and enum. You CANNOT switch on float or double because floating-point precision comparisons are inexact.'
+        question: 'What is the purpose of the "yield" keyword in Java?',
+        answer: 'The yield keyword (introduced in Java 13/14) is used to return a value from a code block inside a switch expression. It distinguishes returning a value from the switch expression versus returning from the entire enclosing method.',
+        followUp: 'Can you use yield outside of a switch expression?',
+        keyPhrases: ['Switch expression return', 'Block level value yield', 'Context-sensitive keyword', 'Not usable outside switch']
+      },
+      {
+        question: 'Why does a switch expression require exhaustiveness while a traditional switch statement does not?',
+        answer: 'Because a switch expression is used to produce a value (often assigned to a variable). If an unmatched input occurred without a default case, the variable would remain uninitialized, violating Java type safety. A switch statement only executes actions, so omitting unmatched inputs is safe.',
+        followUp: 'When can a switch expression omit the default branch?',
+        keyPhrases: ['Expression produces a typed value', 'Must handle all possible inputs', 'Enum with all constants covered can omit default']
       }
     ],
     miniQuiz: [
@@ -1844,20 +1920,43 @@ Loop ends! Final output: "2 4 ".`
     ]
   },
 
-  'nested-loops-and-tracing': {
+    'nested-loops-and-tracing': {
     id: 'nested-loops-and-tracing',
     moduleId: 'java-control-flow',
     moduleTitle: '4. Control Flow & Loops',
     lessonNumber: 'Lesson 4.9',
     title: 'Nested Loops & Loop Tracing',
     subtitle: 'Inner vs Outer loops, matrix grid traversal, and star pattern printing',
-    estimatedMinutes: 15,
+    estimatedMinutes: 10,
     beginnerAnalogy: 'Think of the clock on your wall. The minute hand (outer loop) ticks once every 60 seconds. But for every single tick of the minute hand, the second hand (inner loop) must complete a full cycle of 60 seconds from 1 to 60. The inner loop moves fast; the outer loop moves slowly.',
+    interviewTakeaways: [
+      'Multiplicative Iterations: For every 1 run of the outer loop, the inner loop executes completely. Total iterations = Outer iterations * Inner iterations.',
+      'Time Complexity: Two nested loops of size N yield O(N^2) quadratic time complexity.',
+      'Row vs Column Convention: Outer loop traditionally controls the Row (vertical), inner loop controls the Column (horizontal).'
+    ],
+    cheatSheet: {
+      summary: 'A loop inside another loop is a nested loop. Essential for matrices, 2D grids, and pattern printing algorithms.',
+      syntaxTemplate: `for (int row = 1; row <= rows; row++) {      // Outer controls rows
+    for (int col = 1; col <= cols; col++) {  // Inner controls columns
+        System.out.print("* ");
+    }
+    System.out.println(); // Newline after row completes
+}`,
+      rules: [
+        { rule: 'Independent Variable Names', explanation: 'Inner loop must use a DIFFERENT counter variable (e.g. i and j), or variable shadowing error occurs.' },
+        { rule: 'Inner Loop Reset', explanation: 'The inner loop variable resets to its initial value on EVERY outer iteration.' },
+        { rule: 'Print vs Println', explanation: 'Use System.out.print() for same-line items; use println() only after inner loop finishes a row.' }
+      ],
+      quickComparison: [
+        { aspect: 'Outer Loop', optionA: 'Slow mover', optionB: 'Controls rows, y-axis, major passes' },
+        { aspect: 'Inner Loop', optionA: 'Fast mover', optionB: 'Controls columns, x-axis, comparisons per pass' }
+      ]
+    },
     coreExplanation: [
       'A loop inside another loop is called a Nested Loop.',
       'For EVERY single iteration of the outer loop, the inner loop executes completely from start to finish.',
-      'Total iterations = Outer loop iterations $\\times$ Inner loop iterations.',
-      'If outer runs N times and inner runs M times, overall time complexity is O(N $\\times$ M).',
+      'Total iterations = Outer loop iterations * Inner loop iterations.',
+      'If outer runs N times and inner runs M times, overall time complexity is O(N * M).',
       'Common uses: 2D Arrays / Matrices, Grid coordinate systems, Star patterns (triangles, pyramids).',
       'Break in nested loops: A standard "break;" only breaks out of the IMMEDIATE inner loop containing it, NOT the outer loop!',
       'Labeled break: You can label the outer loop to break out of multiple loops at once: "outer: for(...) { break outer; }"',
@@ -1892,6 +1991,77 @@ Loop ends! Final output: "2 4 ".`
 * * * 
 * * * * `
     },
+    codeExamples: [
+      {
+        title: 'Example 1: Multiplication Table Grid',
+        description: 'Generating a 3x3 mathematical product grid using nested loops.',
+        code: `public class MultiTable {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 3; i++) {
+            for (int j = 1; j <= 3; j++) {
+                System.out.printf("%4d", (i * j));
+            }
+            System.out.println();
+        }
+    }
+}`,
+        output: `   1   2   3
+   2   4   6
+   3   6   9`
+      },
+      {
+        title: 'Example 2: Inverted Number Triangle',
+        description: 'Decreasing inner loop upper bound based on outer counter.',
+        code: `public class InvertedTriangle {
+    public static void main(String[] args) {
+        int n = 4;
+        for (int i = n; i >= 1; i--) {
+            for (int j = 1; j <= i; j++) {
+                System.out.print(j + " ");
+            }
+            System.out.println();
+        }
+    }
+}`,
+        output: `1 2 3 4 
+1 2 3 
+1 2 
+1 `
+      }
+    ],
+    practiceProblems: [
+      {
+        title: 'Interview Tracing Challenge 1: Counting Inner Iterations',
+        problemStatement: 'How many total times does count++ execute in this snippet?',
+        code: `int count = 0;
+for (int i = 1; i <= 4; i++) {
+    for (int j = 1; j <= i; j++) {
+        count++;
+    }
+}
+System.out.println(count);`,
+        options: ['16', '10', '8', '12'],
+        correctOptionIndex: 1,
+        hint: 'When i=1: 1 time. When i=2: 2 times. When i=3: 3 times. When i=4: 4 times. Sum: 1 + 2 + 3 + 4!',
+        solution: '10',
+        explanation: 'In each outer pass, the inner loop runs i times. Total iterations = 1 + 2 + 3 + 4 = 10.'
+      },
+      {
+        title: 'Interview Tracing Challenge 2: Break Inside Nested Loop',
+        problemStatement: 'What is the output of this code?',
+        code: `for (int i = 1; i <= 2; i++) {
+    for (int j = 1; j <= 3; j++) {
+        if (j == 2) break;
+        System.out.print(i + "" + j + " ");
+    }
+}`,
+        options: ['11 21 ', '11 12 21 22 ', '11 ', '11 13 21 23 '],
+        correctOptionIndex: 0,
+        hint: 'break without a label exits only the inner loop for j, NOT the outer loop for i!',
+        solution: '11 21 ',
+        explanation: 'When i=1: j=1 prints 11; j=2 triggers break (exits j loop). Next outer iteration i=2: j=1 prints 21; j=2 triggers break (exits j loop). Final output: "11 21 ".'
+      }
+    ],
     beginnerMistakes: [
       {
         mistake: 'Using "System.out.println("* ")" inside the inner loop instead of "print()".',
@@ -1901,8 +2071,16 @@ Loop ends! Final output: "2 4 ".`
     ],
     interviewQuestions: [
       {
+        question: 'What is the time complexity of two nested loops where outer runs N times and inner runs N times?',
+        answer: 'O(N^2) quadratic time complexity. For each of the N iterations of the outer loop, the inner loop performs N iterations, resulting in N * N = N^2 total operations.',
+        followUp: 'What if the inner loop runs i times (from 1 to N)?',
+        keyPhrases: ['O(N^2) quadratic time', 'N * (N + 1) / 2 iterations', 'Still O(N^2) complexity']
+      },
+      {
         question: 'How do you break out of an outer loop from inside a deeply nested inner loop in Java?',
-        answer: 'By using a Labeled Break. You place a label (e.g. outerLoop:) before the outer loop header, and call "break outerLoop;" from inside the inner loop.'
+        answer: 'By using a Labeled Break. You place a label (e.g. outerLoop:) before the outer loop header, and call "break outerLoop;" from inside the inner loop.',
+        followUp: 'What is the disadvantage of excessive nested loops in production code?',
+        keyPhrases: ['Labeled break', 'Labels identify target loop', 'Performance degradation', 'Code readability drops']
       }
     ],
     miniQuiz: [
@@ -1914,952 +2092,8 @@ Loop ends! Final output: "2 4 ".`
       }
     ]
   },
-
-  // ── 3.3 Relational & Equality Operators ──
-  'relational-equality': {
-    id: 'relational-equality',
-    moduleId: 'java-operators',
-    moduleTitle: '3. Operators & Expressions',
-    lessonNumber: 'Lesson 3.3',
-    title: 'Relational & Equality Operators (== vs .equals())',
-    subtitle: 'Comparing values, boolean results, and the famous reference comparison trap',
-    estimatedMinutes: 12,
-    beginnerAnalogy: 'Imagine comparing two identical car keys. If you check if both keys unlock the same door, that is ".equals()" (content check). If you check if they are literally the exact same physical piece of metal in your hand, that is "==" (reference check). Two keys made at the same factory look identical, but are two distinct physical objects!',
-    coreExplanation: [
-      'Relational operators compare two values and ALWAYS return a boolean: true or false.',
-      'Comparison operators: > (greater than), < (less than), >= (greater or equal), <= (less or equal).',
-      'Equality operators: == (equal to), != (not equal to).',
-      'For PRIMITIVES (int, double, char): "==" compares the actual binary values inside the memory cells (5 == 5 is true).',
-      'For OBJECTS (String, Scanner, Person): "==" compares the MEMORY ADDRESS (references). Even if two strings hold the same text, "==" returns false if they live in different memory locations!',
-      'To compare the actual contents/text of two objects, you MUST call .equals() method: str1.equals(str2).'
-    ],
-    diagram: `PRIMITIVE COMPARISON (Values compared directly):
-int a = 10;  [ 10 ]
-int b = 10;  [ 10 ]   ->  a == b is TRUE!
-
-OBJECT COMPARISON (Memory addresses compared by ==):
-String s1 = new String("Java");  [ Address: 0x100 ] -> Heap ("Java")
-String s2 = new String("Java");  [ Address: 0x200 ] -> Heap ("Java")
-
-s1 == s2        -> FALSE (0x100 != 0x200, different memory addresses!)
-s1.equals(s2)   -> TRUE  (Reads internal characters: 'J','a','v','a')`,
-    codeSnippet: {
-      title: 'Equality Comparison in Action',
-      code: `public class EqualityDemo {
-    public static void main(String[] args) {
-        int x = 5, y = 10;
-        System.out.println("x < y: " + (x < y));       // true
-        System.out.println("x == y: " + (x == y));     // false
-
-        String name1 = new String("Munaf");
-        String name2 = new String("Munaf");
-
-        // The Big Beginner Trap:
-        System.out.println("name1 == name2: " + (name1 == name2));         // false!
-        System.out.println("name1.equals(name2): " + name1.equals(name2)); // true!
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'x < y: true', explanation: '5 is strictly less than 10, resulting in boolean true.' },
-        { line: 'name1 == name2: false', explanation: 'Each "new" keyword creates a brand new object at a distinct memory address.' },
-        { line: 'name1.equals(name2): true', explanation: '.equals() compares the character sequence inside the strings.' }
-      ],
-      output: `x < y: true
-x == y: false
-name1 == name2: false
-name1.equals(name2): true`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Using a single "=" for comparison: if (score = 100)',
-        whyItHappens: 'Single = is ASSIGNMENT. Double == is COMPARISON.',
-        howToFix: 'In Java, "if (x = 10)" causes a compilation error because int cannot be converted to boolean.'
-      },
-      {
-        mistake: 'Comparing Strings with "==": if (input == "yes")',
-        whyItHappens: 'In Python or JavaScript, == works on string content. In Java, == checks memory reference!',
-        howToFix: 'Always use "yes".equals(input) or input.equals("yes").'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'What is the exact difference between == and .equals() in Java?',
-        answer: 'The == operator checks reference equality (whether both variables point to the same memory location), whereas .equals() checks logical content equality (defined by the class implementation).'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What is the output of: String a = new String("test"); String b = new String("test"); System.out.println(a == b);',
-        options: ['true', 'false', 'Compilation Error', 'NullPointerException'],
-        correctIndex: 1,
-        explanation: 'Because both strings were created using "new", they reside at different memory addresses, so == returns false.'
-      }
-    ]
-  },
-
-  // ── 3.5 Assignment & Compound Operators ──
-  'assignment-operators': {
-    id: 'assignment-operators',
-    moduleId: 'java-operators',
-    moduleTitle: '3. Operators & Expressions',
-    lessonNumber: 'Lesson 3.5',
-    title: 'Assignment Operators & The Compound Cast Trap',
-    subtitle: 'Simple assignment, compound operators, and hidden implicit casting behavior',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Think of assignment "=" like pouring water into a labeled pitcher. Compound assignment "+=" is pouring additional water into the same pitcher. But Java secretly adds a funnel (implicit cast) when you use "+=" to prevent overflow errors from stopping compilation.',
-    coreExplanation: [
-      'The simple assignment operator "=" copies the value from the right-hand expression into the left-hand variable.',
-      'Compound operators combine an arithmetic operation with assignment: +=, -=, *=, /=, %%=.',
-      'For example, x += 5 is shorthand for x = x + 5.',
-      'THE FAMOUS JAVA INTERVIEW TRAP: Compound operators include an IMPLICIT CAST!',
-      'If s is a short, "s = s + 1" fails compilation because (short + int) promotes to int. But "s += 1" compiles cleanly because it is internally rewritten as "s = (short)(s + 1)".'
-    ],
-    diagram: `Compound Assignment Magic:
-short s = 10;
-
-s = s + 5;    // COMPILER ERROR! (s + 5) promotes to int, cannot assign int to short!
-
-s += 5;       // COMPILES! Java translates this to:
-              // s = (short)(s + 5);`,
-    codeSnippet: {
-      title: 'Compound Assignment & Implicit Narrowing',
-      code: `public class AssignmentDemo {
-    public static void main(String[] args) {
-        int a = 20;
-        a += 10; // a = a + 10 = 30
-        a *= 2;  // a = a * 2 = 60
-        System.out.println("a = " + a);
-
-        short s = 100;
-        // s = s + 5; // Error: Type mismatch: cannot convert from int to short
-        s += 5; // Valid! Java secretly does: s = (short)(s + 5)
-        System.out.println("s = " + s);
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'a += 10;', explanation: 'Adds 10 to a (original 20), resulting in 30.' },
-        { line: 'a *= 2;', explanation: 'Multiplies current 30 by 2, resulting in 60.' },
-        { line: 's += 5;', explanation: 'Implicitly casts the int result back to short.' }
-      ],
-      output: `a = 60
-s = 105`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Confusing "+=" with "=+"',
-        whyItHappens: 'Typing "=+" assigns a positive number instead of adding! "x =+ 5" assigns +5 to x.',
-        howToFix: 'Always write the operator first, then equals: +=, -=, *=.'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'Why does "short s = 1; s += 1;" compile, but "short s = 1; s = s + 1;" does not?',
-        answer: 'Because Java automatically promotes byte and short operands to int during arithmetic operations. In "s = s + 1", the right side is an int and cannot be assigned to short without an explicit cast. The compound operator "s += 1" automatically includes an implicit cast: s = (short)(s + 1).'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'Given "byte b = 10; b += 2;", what happens?',
-        options: ['b becomes 12 without compilation errors', 'Compilation error: cannot convert int to byte', 'Runtime exception', 'b becomes 20'],
-        correctIndex: 0,
-        explanation: 'Compound assignment operators perform an implicit cast: b = (byte)(b + 2), so it compiles cleanly.'
-      }
-    ]
-  },
-
-  // ── 3.6 Ternary Operator ──
-  'ternary-operator': {
-    id: 'ternary-operator',
-    moduleId: 'java-operators',
-    moduleTitle: '3. Operators & Expressions',
-    lessonNumber: 'Lesson 3.6',
-    title: 'The Ternary Operator (? :)',
-    subtitle: 'The inline conditional shorthand for clean, expressive variable assignment',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Think of a bouncer at a club door: "Is age >= 18? If YES give Green Stamp, if NO give Red Stamp". The ternary operator is a one-sentence bouncer: result = (age >= 18) ? "Green" : "Red";',
-    coreExplanation: [
-      'The ternary operator is the only operator in Java that takes THREE operands.',
-      'Syntax: condition ? expressionIfTrue : expressionIfFalse;',
-      'First operand is a boolean condition.',
-      'If true, the second operand is evaluated and returned.',
-      'If false, the third operand is evaluated and returned.',
-      'Both expressions must be compatible types so the compiler can determine the resulting variable type.'
-    ],
-    diagram: `       [ boolean condition ]
-               /      \
-         true /        \ false
-             v          v
-     [ expr1 ]          [ expr2 ]`,
-    codeSnippet: {
-      title: 'Ternary Operator vs If-Else',
-      code: `public class TernaryDemo {
-    public static void main(String[] args) {
-        int marks = 75;
-
-        // Using traditional if-else:
-        String status1;
-        if (marks >= 50) {
-            status1 = "PASSED";
-        } else {
-            status1 = "FAILED";
-        }
-
-        // Using concise ternary operator:
-        String status2 = (marks >= 50) ? "PASSED" : "FAILED";
-
-        System.out.println("Status 1: " + status1);
-        System.out.println("Status 2: " + status2);
-
-        // Finding maximum of two numbers:
-        int a = 42, b = 99;
-        int max = (a > b) ? a : b;
-        System.out.println("Maximum is: " + max);
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'String status2 = (marks >= 50) ? "PASSED" : "FAILED";', explanation: 'If marks >= 50 is true, returns "PASSED"; otherwise returns "FAILED".' },
-        { line: 'int max = (a > b) ? a : b;', explanation: 'Directly initializes max with the greater value in a single readable line.' }
-      ],
-      output: `Status 1: PASSED
-Status 2: PASSED
-Maximum is: 99`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Trying to use statements instead of expressions: (x > 0) ? System.out.println("Yes") : ...',
-        whyItHappens: 'Ternary operator MUST return a value. System.out.println() returns void!',
-        howToFix: 'Use ternary to compute a value: System.out.println((x > 0) ? "Yes" : "No");'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'Can you nest ternary operators in Java?',
-        answer: 'Yes, e.g. "x > 0 ? 1 : x < 0 ? -1 : 0". However, deeply nested ternaries hurt readability and are generally discouraged in enterprise codebases in favor of if-else ladders.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What is the result of: int x = 10; String res = (x > 20) ? "A" : (x > 5) ? "B" : "C";',
-        options: ['A', 'B', 'C', 'Compilation Error'],
-        correctIndex: 1,
-        explanation: 'x > 20 is false, so it falls to the false expression: (10 > 5) ? "B" : "C", which evaluates to "B".'
-      }
-    ]
-  },
-
-  // ── 3.7 Bitwise & Shift Operators ──
-  'bitwise-shift-operators': {
-    id: 'bitwise-shift-operators',
-    moduleId: 'java-operators',
-    moduleTitle: '3. Operators & Expressions',
-    lessonNumber: 'Lesson 3.7',
-    title: 'Bitwise & Shift Operators',
-    subtitle: 'Manipulating individual binary bits (&, |, ^, ~, <<, >>, >>>)',
-    estimatedMinutes: 12,
-    beginnerAnalogy: 'Think of an 8-switch panel on a wall. Instead of dealing with the whole building at once, bitwise operators let you flick individual light switches ON (1) or OFF (0) directly at the circuit level.',
-    coreExplanation: [
-      'Bitwise operators work directly on the binary representations (0s and 1s) of integer types.',
-      '& (Bitwise AND): 1 only if BOTH bits are 1.',
-      '| (Bitwise OR): 1 if AT LEAST ONE bit is 1.',
-      '^ (Bitwise XOR): 1 if bits are DIFFERENT; 0 if bits are identical (a ^ a = 0).',
-      '~ (Bitwise NOT / Inversion): Inverts all bits (0 becomes 1, 1 becomes 0). ~x = -(x + 1).',
-      '<< (Left Shift): Shifts bits left, filling right with 0s. Multiplying by 2^n: x << 1 = x * 2.',
-      '>> (Signed Right Shift): Shifts bits right, preserving the sign bit (copies leftmost bit).',
-      '>>> (Unsigned Right Shift): Shifts bits right, always filling leftmost bits with 0s.'
-    ],
-    diagram: `Bitwise AND (&) on 5 and 3:
-5 in binary:  0 1 0 1
-3 in binary:  0 0 1 1
---------------------
-5 & 3:        0 0 0 1  ->  Decimal 1
-
-Bitwise XOR (^) on 5 and 3:
-5 in binary:  0 1 0 1
-3 in binary:  0 0 1 1
---------------------
-5 ^ 3:        0 1 1 0  ->  Decimal 6`,
-    codeSnippet: {
-      title: 'Bitwise and Bit Shift Examples',
-      code: `public class BitwiseDemo {
-    public static void main(String[] args) {
-        int a = 5; // 0101 in binary
-        int b = 3; // 0011 in binary
-
-        System.out.println("a & b: " + (a & b)); // 0001 -> 1
-        System.out.println("a | b: " + (a | b)); // 0111 -> 7
-        System.out.println("a ^ b: " + (a ^ b)); // 0110 -> 6
-
-        // Fast multiplication and division by 2:
-        int num = 8;
-        System.out.println("8 << 1 (8 * 2): " + (num << 1)); // 16
-        System.out.println("8 >> 1 (8 / 2): " + (num >> 1)); // 4
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'a & b', explanation: 'Bitwise AND: only bit index 0 is 1 in both numbers, yielding binary 0001 = 1.' },
-        { line: 'num << 1', explanation: 'Shifting left by 1 bit effectively doubles the value (8 * 2 = 16).' },
-        { line: 'num >> 1', explanation: 'Shifting right by 1 bit divides the value by 2 (8 / 2 = 4).' }
-      ],
-      output: `a & b: 1
-a | b: 7
-a ^ b: 6
-8 << 1 (8 * 2): 16
-8 >> 1 (8 / 2): 4`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Using & or | when intending boolean && or ||',
-        whyItHappens: 'Single & evaluates both sides without short-circuiting, potentially causing NullPointerException.',
-        howToFix: 'Use && and || for logical conditions. Reserve & and | for bit manipulation.'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'What is the trick to swap two numbers without using a temporary variable using bitwise XOR?',
-        answer: 'a = a ^ b; b = a ^ b; a = a ^ b; Because x ^ x = 0 and x ^ 0 = x, XOR cancels out duplicate values and swaps them in-place with zero extra memory.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What is the value of (4 ^ 4)?',
-        options: ['4', '0', '8', '1'],
-        correctIndex: 1,
-        explanation: 'XOR of any number with itself is always 0 because every bit is identical (1^1=0, 0^0=0).'
-      }
-    ]
-  },
-
-  // ── 3.8 instanceof Operator ──
-  'instanceof-operator': {
-    id: 'instanceof-operator',
-    moduleId: 'java-operators',
-    moduleTitle: '3. Operators & Expressions',
-    lessonNumber: 'Lesson 3.8',
-    title: 'The instanceof Operator & Pattern Matching',
-    subtitle: 'Checking object runtime types safely and Java 14+ pattern matching',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Imagine luggage at an airport. Before you try to unpack delicate glassware, you check the label: "Is this package marked Fragile?". instanceof lets your code inspect an object at runtime before attempting to unpack it, preventing costly crashes.',
-    coreExplanation: [
-      'The "instanceof" operator tests whether an object reference is an instance of a specified class or interface.',
-      'It returns a boolean: true if the object IS-A subtype of the class/interface; false otherwise.',
-      'Crucial safety rule: "null instanceof AnyClass" ALWAYS returns false without throwing NullPointerException!',
-      'Before Java 14, developers had to check with instanceof AND then explicitly cast.',
-      'Java 14+ introduced Pattern Matching for instanceof: "if (obj instanceof String s)" checks the type and binds the variable "s" in one clean step!'
-    ],
-    diagram: `Object obj = "Hello World";
-
-Traditional (Before Java 14):
-if (obj instanceof String) {
-    String s = (String) obj; // Manual boilerplate cast required!
-    System.out.println(s.length());
-}
-
-Modern Pattern Matching (Java 14+):
-if (obj instanceof String s) { // Safe check + binding in 1 step!
-    System.out.println(s.length());
-}`,
-    codeSnippet: {
-      title: 'Modern Pattern Matching with instanceof',
-      code: `public class InstanceOfDemo {
-    public static void main(String[] args) {
-        Object item = "Java Developer";
-
-        // Modern Java 14+ Pattern Matching:
-        if (item instanceof String text) {
-            // 'text' is already typed as String! No manual casting needed!
-            System.out.println("Text length: " + text.length());
-            System.out.println("Upper case: " + text.toUpperCase());
-        }
-
-        Object nullObj = null;
-        System.out.println("null instanceof String: " + (nullObj instanceof String)); // false
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'if (item instanceof String text)', explanation: 'Verifies item is a String and automatically creates variable "text" of type String.' },
-        { line: 'nullObj instanceof String: false', explanation: 'instanceof safely handles null and returns false without exceptions.' }
-      ],
-      output: `Text length: 14
-Upper case: JAVA DEVELOPER
-null instanceof String: false`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Casting an object without checking instanceof first.',
-        whyItHappens: 'If the object happens to be a different type at runtime, JVM throws ClassCastException.',
-        howToFix: 'Always guard downcasting with "if (obj instanceof TargetType target)".'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'What is returned if you evaluate "null instanceof Object"?',
-        answer: 'It returns false. In Java, null is not an instance of any class or interface.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What is the output of "Object o = null; System.out.println(o instanceof String);"?',
-        options: ['false', 'true', 'NullPointerException', 'Compilation Error'],
-        correctIndex: 0,
-        explanation: 'instanceof on a null reference always evaluates to false safely.'
-      }
-    ]
-  },
-
-  // ── 3.9 Operator Precedence ──
-  'operator-precedence': {
-    id: 'operator-precedence',
-    moduleId: 'java-operators',
-    moduleTitle: '3. Operators & Expressions',
-    lessonNumber: 'Lesson 3.9',
-    title: 'Operator Precedence & Associativity',
-    subtitle: 'Which operator runs first? Parentheses as the golden rule for clarity',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Think of PEMDAS (BODMAS) from primary school: multiplication always happens before addition: 2 + 3 * 4 = 14, not 20! Programming operators follow a strict ranking ladder.',
-    coreExplanation: [
-      'Operator Precedence determines the grouping and evaluation order of terms in an expression.',
-      'Highest precedence: Postfix (expr++, expr--), then Prefix (++expr, --expr, +expr, -expr, !).',
-      'Multiplicative (*, /, %) takes precedence over Additive (+, -).',
-      'Relational (<, >, <=, >=) takes precedence over Equality (==, !=).',
-      'Equality takes precedence over Logical AND (&&), which takes precedence over Logical OR (||).',
-      'Lowest precedence: Assignment (=, +=, -= etc.).',
-      'GOLDEN INDUSTRY RULE: When in doubt, ALWAYS use parentheses "()". Parentheses override all precedence and make code readable to humans.'
-    ],
-    diagram: `PRECEDENCE HIERARCHY (Top to Bottom):
-1.  () [] .              (Parentheses & Member access)
-2.  ++ -- + - ! ~        (Unary prefix)
-3.  * / %                (Multiplicative)
-4.  + -                  (Additive)
-5.  << >> >>>            (Bitwise Shifts)
-6.  < > <= >= instanceof (Relational)
-7.  == !=                (Equality)
-8.  &                    (Bitwise AND)
-9.  ^                    (Bitwise XOR)
-10. |                    (Bitwise OR)
-11. &&                   (Logical AND)
-12. ||                   (Logical OR)
-13. ?:                   (Ternary)
-14. = += -= *= /= %=     (Assignment - lowest!)`,
-    codeSnippet: {
-      title: 'Tracing Precedence Pitfalls',
-      code: `public class PrecedenceDemo {
-    public static void main(String[] args) {
-        int result1 = 10 + 20 * 2;
-        System.out.println("10 + 20 * 2 = " + result1); // 50, not 60!
-
-        int result2 = (10 + 20) * 2;
-        System.out.println("(10 + 20) * 2 = " + result2); // 60
-
-        boolean check = 5 > 3 && 10 < 20 || false;
-        // Step 1: 5 > 3 is true, 10 < 20 is true
-        // Step 2: true && true is true
-        // Step 3: true || false is true
-        System.out.println("Boolean check: " + check);
-    }
-}`,
-      lineByLineExplanation: [
-        { line: '10 + 20 * 2', explanation: 'Multiplication * has higher precedence than +, so 20 * 2 = 40 is evaluated first, then 10 + 40 = 50.' },
-        { line: '(10 + 20) * 2', explanation: 'Parentheses force addition first: 30 * 2 = 60.' }
-      ],
-      output: `10 + 20 * 2 = 50
-(10 + 20) * 2 = 60
-Boolean check: true`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Relying on memory for complex operator order instead of using parentheses.',
-        whyItHappens: 'Even senior engineers make mistakes on chained bitwise and logical operations without parentheses.',
-        howToFix: 'Always write explicit parentheses: (a && b) || (c && d).'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'Between && and ||, which operator has higher precedence in Java?',
-        answer: 'Logical AND (&&) has higher precedence than Logical OR (||). In expression "a || b && c", Java evaluates (b && c) first before evaluating the OR.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What is the value of: int x = 2 + 3 * 4 / 2; ?',
-        options: ['10', '8', '14', '7'],
-        correctIndex: 1,
-        explanation: '* and / have equal precedence and are evaluated left-to-right: 3 * 4 = 12; 12 / 2 = 6; then 2 + 6 = 8.'
-      }
-    ]
-  },
-
-  // ── 4.1 If-Else Ladder & Nested Conditions ──
-  'if-else-ladder': {
-    id: 'if-else-ladder',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow & Loops',
-    lessonNumber: 'Lesson 4.1',
-    title: 'If-Else Ladders & Decision Making',
-    subtitle: 'Branching execution paths, strict boolean conditions, and the dangling else trap',
-    estimatedMinutes: 12,
-    beginnerAnalogy: 'Think of a train track switch. When the train approaches a junction, the track can either send the train down Route A or Route B. It can never go down both routes simultaneously. An if-else statement routes the computer down exactly one chosen track.',
-    coreExplanation: [
-      'The "if" statement executes a block of code ONLY if the condition evaluates to true.',
-      'The "else if" ladder allows checking multiple conditions sequentially from top to bottom.',
-      'The moment ONE condition evaluates to true, its block executes and ALL subsequent else-if branches are skipped!',
-      'The final "else" block acts as a fallback default when none of the preceding conditions were true.',
-      'STRICT JAVA RULE: In C/C++, you can write "if (x)" where x is an integer. In Java, conditions MUST be of type boolean! "if (1)" will NOT compile!'
-    ],
-    diagram: `[ Evaluate Condition 1 ] -> true -> [ Execute Block 1 ] -> (Skip Rest)
-          | false
-[ Evaluate Condition 2 ] -> true -> [ Execute Block 2 ] -> (Skip Rest)
-          | false
-[ Execute Fallback 'else' Block ]`,
-    codeSnippet: {
-      title: 'Grading System with If-Else Ladder',
-      code: `public class IfElseDemo {
-    public static void main(String[] args) {
-        int score = 85;
-        char grade;
-
-        if (score >= 90) {
-            grade = 'A';
-        } else if (score >= 80) {
-            grade = 'B'; // 85 lands here!
-        } else if (score >= 70) {
-            grade = 'C';
-        } else {
-            grade = 'F';
-        }
-
-        System.out.println("Score: " + score + " -> Grade: " + grade);
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'if (score >= 90)', explanation: '85 >= 90 is false, so proceeds to next branch.' },
-        { line: 'else if (score >= 80)', explanation: '85 >= 80 is true! grade becomes \'B\'.' },
-        { line: 'else if (score >= 70)...', explanation: 'All subsequent branches are skipped completely.' }
-      ],
-      output: 'Score: 85 -> Grade: B'
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Putting a semicolon immediately after if: if (x > 10); { ... }',
-        whyItHappens: 'Accidental habit. The semicolon creates an empty statement, so the block { ... } always runs!',
-        howToFix: 'Never put a semicolon after the if condition parentheses.'
-      },
-      {
-        mistake: 'Writing "if (count = 5)" instead of "=="',
-        whyItHappens: 'Single = is assignment. In Java, this fails compilation with "Type mismatch: cannot convert from int to boolean".',
-        howToFix: 'Always use double equals "==" when checking equality in conditions: if (count == 5).'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'What is the "Dangling Else" problem in programming?',
-        answer: 'When nested if statements lack curly braces {}, an else clause attaches to the closest preceding unmatched if statement, which can lead to subtle logic bugs. Always using curly braces {} eliminates this ambiguity.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'Will "int x = 1; if (x) { System.out.println(\"OK\"); }" compile in Java?',
-        options: ['No, compilation error: cannot convert int to boolean', 'Yes, prints OK', 'Runtime Exception', 'Prints nothing'],
-        correctIndex: 0,
-        explanation: 'Java requires an explicit boolean expression in if statements. Non-zero integers are not automatically converted to booleans.'
-      }
-    ]
-  },
-
-  // ── 4.2 Traditional Switch Statement ──
-  'switch-statement': {
-    id: 'switch-statement',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow & Loops',
-    lessonNumber: 'Lesson 4.2',
-    title: 'The Traditional Switch Statement & Fall-Through',
-    subtitle: 'Multi-way branching, supported data types, and why "break" is essential',
-    estimatedMinutes: 12,
-    beginnerAnalogy: 'Think of an elevator button panel. You press button 3. The elevator jumps directly to Floor 3 instead of stopping and asking at Floor 1 and Floor 2. But if the doors don\'t have an emergency stop ("break"), the elevator will keep falling down to Floor 4, Floor 5, and the Basement!',
-    coreExplanation: [
-      'A switch statement tests a single variable for equality against a list of constant values called cases.',
-      'Supported types: byte, short, char, int, enums, String (Java 7+), and their wrapper classes.',
-      'NOT supported: float, double, boolean, long, or arbitrary objects.',
-      'The "break" statement is critical: it terminates the switch. If you omit break, execution "falls through" into subsequent cases regardless of their condition!',
-      'The "default" case executes if none of the cases match.'
-    ],
-    diagram: `switch (choice)
-   |
-   +-> case 1: [ Action ] -> break -> [ EXIT ]
-   |
-   +-> case 2: [ Action ] (no break!)
-   |             | (Fall-through!)
-   |             v
-   +-> case 3: [ Action ] -> break -> [ EXIT ]
-   |
-   +-> default: [ Fallback Action ]`,
-    codeSnippet: {
-      title: 'Switch Fall-Through Tracing Trap',
-      code: `public class SwitchDemo {
-    public static void main(String[] args) {
-        int day = 2;
-
-        System.out.println("--- Switch with break ---");
-        switch (day) {
-            case 1: System.out.println("Monday"); break;
-            case 2: System.out.println("Tuesday"); break; // Matches & exits!
-            case 3: System.out.println("Wednesday"); break;
-            default: System.out.println("Other day");
-        }
-
-        System.out.println("--- Fall-through trap (no break) ---");
-        int count = 1;
-        switch (count) {
-            case 1: System.out.print("One "); // No break!
-            case 2: System.out.print("Two "); // Falls through!
-            case 3: System.out.print("Three "); break;
-            default: System.out.print("Default ");
-        }
-        System.out.println();
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'case 2: Tuesday break;', explanation: 'Matches day 2, prints Tuesday, and break stops further execution.' },
-        { line: 'case 1: System.out.print("One ");', explanation: 'Since there is no break, JVM continues running case 2 and case 3!' }
-      ],
-      output: `--- Switch with break ---
-Tuesday
---- Fall-through trap (no break) ---
-One Two Three `
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Trying to switch on a double or float: switch (3.14)',
-        whyItHappens: 'Floating point numbers have precision rounding issues and cannot be compared cleanly for exact discrete cases.',
-        howToFix: 'Use if-else ladders when comparing floating point numbers.'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'Can you use a String in a switch statement? Since which Java version?',
-        answer: 'Yes, Strings have been supported in switch statements since Java 7. Under the hood, the compiler compares the String hashCode() and verifies with .equals().'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'Which of the following data types CANNOT be used in a Java switch statement?',
-        options: ['int', 'String', 'double', 'char'],
-        correctIndex: 2,
-        explanation: 'Floating point types (float and double) and boolean cannot be used in a switch statement.'
-      }
-    ]
-  },
-
-  // ── 4.4 For Loop Deep Dive ──
-  'for-loop-deep-dive': {
-    id: 'for-loop-deep-dive',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow & Loops',
-    lessonNumber: 'Lesson 4.4',
-    title: 'The For Loop Deep Dive',
-    subtitle: 'The 3-part loop header, iteration control, and variable scope',
-    estimatedMinutes: 12,
-    beginnerAnalogy: 'Think of doing 10 pushups for a gym coach: 1) Coach says start at 1 (initialization); 2) Check if you reached 10 yet (condition); 3) Do pushup (body); 4) Count up by 1 (increment). A for loop packages all 4 steps into one tidy line of code.',
-    coreExplanation: [
-      'The standard for loop is ideal when you know IN ADVANCE how many times a block should repeat.',
-      'Header syntax: for (initialization; terminationCondition; updateExpression) { body }',
-      'Step 1 (Initialization): Runs ONCE at the very start. Typically declares loop counter (int i = 0).',
-      'Step 2 (Condition): Evaluated BEFORE each iteration. If true, body runs; if false, loop stops immediately.',
-      'Step 3 (Body): The statements inside the braces execute.',
-      'Step 4 (Update): Runs AFTER each iteration body completes (e.g. i++). Then execution jumps back to Step 2.',
-      'Scope rule: A variable declared in the for header (int i = 0) ONLY exists inside the loop body!'
-    ],
-    diagram: `for ( [Init] ; [Condition] ; [Update] ) { [Body] }
-         |            ^               ^
-         v            |               |
-     (Runs once)      |               |
-                      v true          |
-                   [ Body ] ----------+`,
-    codeSnippet: {
-      title: 'For Loop Forward and Backward Tracing',
-      code: `public class ForLoopDemo {
-    public static void main(String[] args) {
-        System.out.println("Counting up:");
-        for (int i = 1; i <= 4; i++) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-
-        System.out.println("Counting down by 2s:");
-        for (int count = 10; count >= 2; count -= 2) {
-            System.out.print(count + " ");
-        }
-        System.out.println();
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'for (int i = 1; i <= 4; i++)', explanation: 'Starts at 1, checks <= 4, prints 1 2 3 4, stops when i becomes 5.' },
-        { line: 'count -= 2', explanation: 'Decrements count by 2 after each step: 10, 8, 6, 4, 2.' }
-      ],
-      output: `Counting up:
-1 2 3 4 
-Counting down by 2s:
-10 8 6 4 2 `
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Off-by-One Error: Writing "i < array.length" vs "i <= array.length"',
-        whyItHappens: 'Arrays in Java are 0-indexed. An array of length 5 has valid indices 0 to 4.',
-        howToFix: 'Always use "< array.length" to avoid ArrayIndexOutOfBoundsException.'
-      },
-      {
-        mistake: 'Accidentally putting a semicolon after for header: for(int i=0; i<5; i++); { ... }',
-        whyItHappens: 'The semicolon creates an empty body that loops 5 times doing nothing, then the block { ... } runs once.',
-        howToFix: 'Never place a semicolon immediately after the parentheses of a for loop header.'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'What is the effect of: for (;;) { } ?',
-        answer: 'It creates an infinite loop. When the condition in a for loop is omitted, Java defaults it to true.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What is printed by: for (int i = 0; i < 3; i++) { } System.out.println(i);',
-        options: ['3', '2', 'Compilation Error', '0'],
-        correctIndex: 2,
-        explanation: 'Compilation Error: The variable "i" was declared inside the for loop header and is out of scope outside the loop.'
-      }
-    ]
-  },
-
-  // ── 4.5 Enhanced For-Each Loop ──
-  'enhanced-for-each': {
-    id: 'enhanced-for-each',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow & Loops',
-    lessonNumber: 'Lesson 4.5',
-    title: 'The Enhanced For-Each Loop',
-    subtitle: 'Iterating through arrays and collections without counter variables or index bugs',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Think of an automated candy dispenser. Instead of saying "Give me item at index 0, now give me item at index 1", you just put your hand out and say "Give me each candy one by one until the box is empty".',
-    coreExplanation: [
-      'Introduced in Java 5, the enhanced for loop (for-each) provides a clean syntax to traverse arrays and Iterable collections.',
-      'Syntax: for (DataType item : collectionOrArray) { body }',
-      'Eliminates index-related errors (no ArrayIndexOutOfBoundsException possible!).',
-      'Read-Only Limitation: You cannot use for-each to modify array elements in-place because "item" is a temporary copy of each value.',
-      'No Index Access: If you need to know the current index position (e.g. index 0, 1, 2), you must use a standard indexed for loop.'
-    ],
-    diagram: `Array: [ "Apple", "Banana", "Cherry" ]
-                |
-                v
-for (String fruit : fruits)
-  Iteration 1 -> fruit = "Apple"
-  Iteration 2 -> fruit = "Banana"
-  Iteration 3 -> fruit = "Cherry"`,
-    codeSnippet: {
-      title: 'Iterating Arrays with For-Each',
-      code: `public class ForEachDemo {
-    public static void main(String[] args) {
-        String[] languages = {"Java", "Python", "TypeScript", "Kotlin"};
-
-        System.out.println("Programming Languages:");
-        for (String lang : languages) {
-            System.out.println("-> " + lang);
-        }
-
-        int[] numbers = {10, 20, 30, 40};
-        int sum = 0;
-        for (int n : numbers) {
-            sum += n;
-        }
-        System.out.println("Total Sum: " + sum);
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'for (String lang : languages)', explanation: 'In each iteration, assigns the next string element to variable "lang".' },
-        { line: 'sum += n;', explanation: 'Accumulates each integer into the sum variable.' }
-      ],
-      output: `Programming Languages:
--> Java
--> Python
--> TypeScript
--> Kotlin
-Total Sum: 100`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Trying to modify array elements inside for-each: for (int x : arr) { x = 0; }',
-        whyItHappens: 'Variable "x" is only a local copy of the element. Modifying "x" does NOT alter the array!',
-        howToFix: 'Use a standard indexed loop if you need to modify elements: for (int i = 0; i < arr.length; i++) arr[i] = 0;'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'Can you remove elements from an ArrayList inside a for-each loop?',
-        answer: 'No! Calling list.remove() inside a for-each loop throws ConcurrentModificationException because for-each uses an Iterator internally. To remove elements while iterating, you must use Iterator.remove() or list.removeIf().'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'What interface must an object implement to be usable in an enhanced for-each loop?',
-        options: ['java.lang.Iterable', 'java.util.Collection', 'java.io.Serializable', 'java.lang.Cloneable'],
-        correctIndex: 0,
-        explanation: 'Any class that implements java.lang.Iterable (or any Java array) can be used as the target of a for-each loop.'
-      }
-    ]
-  },
-
-  // ── 4.6 While Loop ──
-  'while-loop': {
-    id: 'while-loop',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow & Loops',
-    lessonNumber: 'Lesson 4.6',
-    title: 'The While Loop (Pre-Condition Loop)',
-    subtitle: 'Repeating actions when the exact number of iterations is unknown in advance',
-    estimatedMinutes: 10,
-    beginnerAnalogy: 'Think of stirring sugar into hot coffee: "While sugar is still visible at the bottom of the cup, keep stirring". You do not know beforehand whether it will take 5 stirs or 20 stirs; you stop when the condition becomes false.',
-    coreExplanation: [
-      'A while loop evaluates a boolean condition BEFORE executing the loop body (Pre-test loop).',
-      'If the condition is false on the very first check, the body executes ZERO times.',
-      'The body must contain code that eventually changes the condition to false; otherwise, an INFINITE LOOP occurs.',
-      'Best used when you don\'t know how many times the loop will run (e.g. reading lines from a file until EOF, waiting for user input, game loops).'
-    ],
-    diagram: `[ Check Condition ]
-       |
-       +--- true ---> [ Execute Body ] ---> (Loops back to Check)
-       |
-       +--- false --> [ Exit Loop ]`,
-    codeSnippet: {
-      title: 'While Loop with Digit Summation',
-      code: `public class WhileDemo {
-    public static void main(String[] args) {
-        // Calculate sum of digits of a number: 1234 -> 1+2+3+4 = 10
-        int number = 1234;
-        int sum = 0;
-
-        while (number > 0) {
-            int lastDigit = number % 10; // Extract last digit
-            sum += lastDigit;            // Add to sum
-            number /= 10;                // Remove last digit
-        }
-
-        System.out.println("Sum of digits: " + sum);
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'while (number > 0)', explanation: 'Loops as long as number has remaining positive digits.' },
-        { line: 'number % 10', explanation: 'Modulo 10 gives remainder (1234 % 10 = 4, then 3, 2, 1).' },
-        { line: 'number /= 10', explanation: 'Integer division chops off the last digit (1234 -> 123 -> 12 -> 1 -> 0).' }
-      ],
-      output: 'Sum of digits: 10'
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Forgetting to update the loop condition variable inside the body.',
-        whyItHappens: 'Forgetting "i++" or "number /= 10" causes the condition to remain true forever, locking the CPU in an infinite loop.',
-        howToFix: 'Always write the increment or state update statement before writing the body logic.'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'What is the minimum number of times a while loop can execute?',
-        answer: 'Zero times. Because the condition is evaluated before entering the body, if the condition is false initially, the body will never execute.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'How many times will "int x = 5; while (x < 5) { x++; }" run?',
-        options: ['0 times', '1 time', '5 times', 'Infinite loop'],
-        correctIndex: 0,
-        explanation: '5 < 5 is false on the first check, so the loop body is skipped entirely.'
-      }
-    ]
-  },
-
-  // ── 4.8 Break, Continue & Labeled Statements ──
-  'break-continue-labeled': {
-    id: 'break-continue-labeled',
-    moduleId: 'java-control-flow',
-    moduleTitle: '4. Control Flow & Loops',
-    lessonNumber: 'Lesson 4.8',
-    title: 'Break, Continue & Labeled Statements',
-    subtitle: 'Early loop termination, skipping iterations, and breaking out of nested loops',
-    estimatedMinutes: 12,
-    beginnerAnalogy: 'Think of watching YouTube video chapters: "Continue" is skipping the rest of the current boring chapter and jumping straight to the start of the next chapter. "Break" is turning off your screen and closing YouTube entirely.',
-    coreExplanation: [
-      '"break" terminates the loop immediately and jumps to the code following the loop.',
-      '"continue" stops the CURRENT iteration immediately and jumps straight to the next iteration (evaluating loop update and condition).',
-      'In nested loops, break and continue apply ONLY to the immediate inner loop enclosing them.',
-      'LABELED BREAK & CONTINUE: Java allows labeling an outer loop (e.g. outerLoop:) so an inner loop can break or continue the outer loop directly!'
-    ],
-    diagram: `Loop Iteration:
-[ Start Iteration ]
-       |
-       +--> if (break)    -----> [ EXIT LOOP COMPLETELY ]
-       |
-       +--> if (continue) -----> [ JUMP TO NEXT ITERATION ]
-       |
-[ Normal Body Finish ]`,
-    codeSnippet: {
-      title: 'Break vs Continue vs Labeled Break',
-      code: `public class JumpDemo {
-    public static void main(String[] args) {
-        System.out.println("Using continue to skip even numbers:");
-        for (int i = 1; i <= 6; i++) {
-            if (i % 2 == 0) continue; // skip even
-            System.out.print(i + " ");
-        }
-        System.out.println();
-
-        System.out.println("Labeled Break exiting outer loop:");
-        outer:
-        for (int r = 1; r <= 3; r++) {
-            for (int c = 1; c <= 3; c++) {
-                if (r == 2 && c == 2) {
-                    System.out.println("Breaking outer loop at (" + r + "," + c + ")");
-                    break outer; // Breaks BOTH loops!
-                }
-                System.out.print("(" + r + "," + c + ") ");
-            }
-            System.out.println();
-        }
-    }
-}`,
-      lineByLineExplanation: [
-        { line: 'if (i % 2 == 0) continue;', explanation: 'Skips printing when i is 2, 4, 6, jumping directly to i++.' },
-        { line: 'break outer;', explanation: 'Directly exits the loop labeled "outer:", stopping both inner and outer loops.' }
-      ],
-      output: `Using continue to skip even numbers:
-1 3 5 
-Labeled Break exiting outer loop:
-(1,1) (1,2) (1,3) 
-(2,1) Breaking outer loop at (2,2)`
-    },
-    beginnerMistakes: [
-      {
-        mistake: 'Putting code immediately after break or continue inside the same block.',
-        whyItHappens: 'Any code after a break or continue in the same block is unreachable.',
-        howToFix: 'The Java compiler will flag this as "Unreachable code". Ensure jump statements are inside conditionals.'
-      }
-    ],
-    interviewQuestions: [
-      {
-        question: 'Does Java have a "goto" statement?',
-        answer: 'No. While "goto" is a reserved keyword in Java, it is not implemented and cannot be used. Labeled break and labeled continue provide a safe, structured alternative to goto.'
-      }
-    ],
-    miniQuiz: [
-      {
-        question: 'In a nested loop, what does a standard "break;" without a label do?',
-        options: [
-          'Exits the outermost loop',
-          'Exits only the innermost loop enclosing it',
-          'Exits all running threads',
-          'Causes a compiler error'
-        ],
-        correctIndex: 1,
-        explanation: 'An unlabeled break only exits the innermost switch, for, while, or do-while statement that contains it.'
-      }
-    ]
-  },
 };
+
 // ============================================================
 // HELPER FUNCTIONS FOR SUB-LESSON NAVIGATION
 // ============================================================
