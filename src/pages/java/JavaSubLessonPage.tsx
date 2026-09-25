@@ -560,31 +560,6 @@ export default function JavaSubLessonPage() {
                   </div>
                 </div>
               )}
-
-              {/* Common Interview Traps */}
-              {lesson.beginnerMistakes && lesson.beginnerMistakes.length > 0 && (
-                <div className="bg-rose-950/20 border border-rose-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                  <div className="flex items-center gap-2 text-rose-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
-                    <AlertTriangle className="w-4 h-4" />
-                    <span>🛑 Common Traps & "Oops" Mistakes (With Fixes)</span>
-                  </div>
-                  <div className="space-y-2.5">
-                    {lesson.beginnerMistakes.map((item, idx) => (
-                      <div key={idx} className="bg-slate-900/90 border border-rose-500/20 rounded-xl p-3.5 space-y-1.5 text-xs sm:text-sm">
-                        <div className="font-bold text-rose-300">
-                          🛑 Trap: {item.mistake}
-                        </div>
-                        <div className="text-slate-400">
-                          <strong className="text-slate-300">Why it happens: </strong> {item.whyItHappens}
-                        </div>
-                        <div className="text-emerald-400 font-medium">
-                          <strong className="text-emerald-300">✓ The Fix: </strong> {item.howToFix}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
