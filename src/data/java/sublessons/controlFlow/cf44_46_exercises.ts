@@ -619,38 +619,36 @@ Output: Second largest: 74`,
     },
     {
       id: 'cf45-ex-10',
-      title: 'Array Element Sign Tally',
-      problemStatement: `Write a Java program using an enhanced for-each loop to count the number of positive values, zero values, and negative values in an array.
+      title: 'Check for Duplicate Elements via Visited Tracker',
+      problemStatement: `Write a Java program using an enhanced for-each loop to determine if an integer array contains any duplicate values.
+Use a boolean tracking array to record values encountered so far, terminating early with \`break\` the moment a duplicate is detected.
 
-Input Format: An array \`int[] measurements = { -5, 0, 12, -3, 0, 8, 15, -1 };\`
-Output Format: Print "Positive: [p], Zero: [z], Negative: [n]".
+Input Format: An array \`int[] numbers = { 4, 7, 2, 9, 3, 7, 5 };\` (values between 0 and 10)
+Output Format: Print "Contains duplicate: [true/false]".
 
 Example:
-Input: measurements = { -5, 0, 12, -3, 0, 8, 15, -1 }
-Output: Positive: 3, Zero: 2, Negative: 3`,
-      hint: 'Maintain three counters. In each iteration, use if-else if-else to classify the element based on whether it is greater than, equal to, or less than 0.',
-      solutionCode: `public class SignTally {
+Input: numbers = { 4, 7, 2, 9, 3, 7, 5 }
+Output: Contains duplicate: true`,
+      hint: 'Declare `boolean[] seen = new boolean[11];`. In the for-each loop, check if `seen[num]` is true. If yes, mark found and break; if no, set `seen[num] = true;`.',
+      solutionCode: `public class DuplicateDetector {
     public static void main(String[] args) {
-        int[] measurements = { -5, 0, 12, -3, 0, 8, 15, -1 };
-        int positive = 0;
-        int zero = 0;
-        int negative = 0;
+        int[] numbers = { 4, 7, 2, 9, 3, 7, 5 };
+        boolean[] seen = new boolean[11];
+        boolean hasDuplicate = false;
 
-        for (int val : measurements) {
-            if (val > 0) {
-                positive++;
-            } else if (val == 0) {
-                zero++;
-            } else {
-                negative++;
+        for (int num : numbers) {
+            if (seen[num]) {
+                hasDuplicate = true;
+                break;
             }
+            seen[num] = true;
         }
 
-        System.out.println("Positive: " + positive + ", Zero: " + zero + ", Negative: " + negative);
+        System.out.println("Contains duplicate: " + hasDuplicate);
     }
 }`,
-      output: 'Positive: 3, Zero: 2, Negative: 3',
-      explanation: 'Positive values are 12, 8, 15 (3). Zeroes appear twice (2). Negative values are -5, -3, -1 (3).'
+      output: 'Contains duplicate: true',
+      explanation: 'As the loop inspects each number, it marks seen[4]=true, seen[7]=true, seen[2]=true, seen[9]=true, seen[3]=true. When 7 appears again, seen[7] is already true, so hasDuplicate becomes true and the loop breaks immediately in O(n) time.'
     }
   ],
 

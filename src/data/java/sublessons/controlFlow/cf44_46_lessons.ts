@@ -689,7 +689,9 @@ Short name: Rome`
         { aspect: 'Index Access', optionA: 'for-each: No direct access to element index', optionB: 'standard for: Direct access to index variable i' },
         { aspect: 'Modifying Elements', optionA: 'for-each: Cannot modify array slots through the loop variable', optionB: 'standard for: Direct assignment to array slots via arr[i] = value' },
         { aspect: 'Traversal Direction', optionA: 'for-each: Strictly forward (0 to length - 1)', optionB: 'standard for: Highly flexible (forward, backward, stepping by 2, etc.)' },
-        { aspect: 'Risk of OBOE', optionA: 'for-each: Zero risk of ArrayIndexOutOfBoundsException', optionB: 'standard for: Risk of off-by-one errors with boundary conditions' }
+        { aspect: 'Full Array Traversal', optionA: 'for-each: for (int x : arr)', optionB: 'Time: O(n) | Space: O(1) — Desugars to indexed register loop' },
+        { aspect: 'Early Exit Search', optionA: 'for-each with break', optionB: 'Time: Best O(1), Worst O(n) | Space: O(1)' },
+        { aspect: 'Nested 2D Traversal', optionA: 'for (int[] row : matrix) for (int x : row)', optionB: 'Time: O(R * C) | Space: O(1) — Visits every cell cleanly' }
       ]
     },
     beginnerMistakes: [
@@ -880,6 +882,49 @@ Short name: Rome`
         hint: 'The bitwise expression (val & 1) == 0 checks if a number is even.',
         solution: '3',
         explanation: 'Even numbers in the array are 4, 10, and 16. Total count of even numbers is 3.'
+      },
+      {
+        title: 'Puzzle 9: Boolean Flag Early Break Validation',
+        problemStatement: 'What does this program print?',
+        code: `public class Puzzle9 {
+    public static void main(String[] args) {
+        int[] scores = { 90, 85, 78, 62, 95 };
+        boolean allPassed = true;
+        for (int s : scores) {
+            if (s < 70) {
+                allPassed = false;
+                break;
+            }
+        }
+        System.out.println(allPassed);
+    }
+}`,
+        options: ['true', 'false', 'Compilation error', '62'],
+        correctOptionIndex: 1,
+        hint: 'Inspect each score. When 62 is visited, what happens to allPassed and the loop?',
+        solution: 'false',
+        explanation: '90, 85, and 78 pass. At 62, the condition s < 70 is met, allPassed becomes false, and break terminates the loop immediately.'
+      },
+      {
+        title: 'Puzzle 10: Nested Enhanced For-Each on 2D Matrix',
+        problemStatement: 'What is the printed sum for this 2D array?',
+        code: `public class Puzzle10 {
+    public static void main(String[] args) {
+        int[][] grid = { { 1, 2 }, { 3, 4 } };
+        int sum = 0;
+        for (int[] row : grid) {
+            for (int cell : row) {
+                sum += cell;
+            }
+        }
+        System.out.println(sum);
+    }
+}`,
+        options: ['6', '10', '4', '14'],
+        correctOptionIndex: 1,
+        hint: 'Add every element: 1 + 2 + 3 + 4.',
+        solution: '10',
+        explanation: 'The outer loop extracts each 1D row array, and the inner loop extracts each cell integer: 1 + 2 + 3 + 4 = 10.'
       }
     ],
     interviewQuestions: [
@@ -1205,7 +1250,8 @@ while (booleanCondition) {
         { aspect: 'Condition Evaluation', optionA: 'while: Evaluated BEFORE entering body (Pre-test)', optionB: 'do-while: Evaluated AFTER executing body (Post-test)' },
         { aspect: 'Minimum Executions', optionA: 'while: 0 times (if initial condition is false)', optionB: 'do-while: Guaranteed at least 1 time' },
         { aspect: 'Variable Scope', optionA: 'while: Variables initialized outside and survive loop exit', optionB: 'for: Variables declared in header are scoped strictly to loop' },
-        { aspect: 'Best Suited For', optionA: 'while: Indefinite iterations, digit stripping, mathematical convergence', optionB: 'for: Definite iterations, known bounds, array index traversal' },
+        { aspect: 'Digit Extraction (n /= 10)', optionA: 'while (n > 0) { n /= 10; }', optionB: 'Time: O(log10 n) | Space: O(1) — Strictly logarithmic iterations' },
+        { aspect: 'Binary Halving (n /= 2)', optionA: 'while (n > 1) { n /= 2; }', optionB: 'Time: O(log2 n) | Space: O(1) — Divide-and-conquer stepping' },
         { aspect: 'Trailing Semicolon', optionA: 'while: Semicolon after header is a dangerous bug', optionB: 'do-while: Semicolon after while(condition); is syntactically mandatory' }
       ]
     },
@@ -1385,6 +1431,48 @@ while (booleanCondition) {
         hint: '++k increments k FIRST, then tests whether the new value is < 4.',
         solution: '1 2 3 ',
         explanation: 'Check 1: ++k makes k=1. 1 < 4 is true -> prints "1 ". Check 2: ++k makes k=2. 2 < 4 is true -> prints "2 ". Check 3: ++k makes k=3. 3 < 4 is true -> prints "3 ". Check 4: ++k makes k=4. 4 < 4 is false -> loop terminates. Output is "1 2 3 ".'
+      },
+      {
+        title: 'Puzzle 9: Integer Palindrome Validation with While',
+        problemStatement: 'What does this program print?',
+        code: `public class Puzzle9 {
+    public static void main(String[] args) {
+        int n = 121;
+        int rev = 0;
+        int temp = n;
+        while (temp > 0) {
+            rev = rev * 10 + temp % 10;
+            temp /= 10;
+        }
+        System.out.println(n == rev);
+    }
+}`,
+        options: ['true', 'false', 'Compilation error', '121'],
+        correctOptionIndex: 0,
+        hint: 'Reversing 121 yields 121. Compare original n to rev.',
+        solution: 'true',
+        explanation: 'temp /= 10 extracts 1, then 2, then 1, building rev = 121. n == rev is 121 == 121, which evaluates to true.'
+      },
+      {
+        title: 'Puzzle 10: Continue with Correct Counter Increment',
+        problemStatement: 'What is the value of count printed by this snippet?',
+        code: `public class Puzzle10 {
+    public static void main(String[] args) {
+        int i = 0;
+        int count = 0;
+        while (i < 3) {
+            i++;
+            if (i == 2) continue;
+            count += i;
+        }
+        System.out.println(count);
+    }
+}`,
+        options: ['3', '4', '6', 'Infinite loop'],
+        correctOptionIndex: 1,
+        hint: 'Notice that i++ is placed BEFORE the continue statement.',
+        solution: '4',
+        explanation: 'Pass 1: i=1, count becomes 1. Pass 2: i=2, continue triggers and skips count+=i. Pass 3: i=3, count becomes 1 + 3 = 4. Loop terminates when 3 < 3 is false. Output is 4.'
       }
     ],
     interviewQuestions: [

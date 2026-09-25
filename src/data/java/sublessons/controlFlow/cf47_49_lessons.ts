@@ -42,7 +42,8 @@ do {
         { aspect: 'Minimum Executions', optionA: 'while: 0 times (if initial condition is false)', optionB: 'do-while: 1 time (guaranteed under all circumstances)' },
         { aspect: 'Ending Semicolon', optionA: 'while: Never put semicolon after while(cond)', optionB: 'do-while: Mandatory semicolon after while(cond);' },
         { aspect: 'Loop Variable Scope', optionA: 'while: Declared before loop; accessible throughout', optionB: 'do-while: Must be declared before do-block to be used in condition' },
-        { aspect: 'Primary Real-World Use', optionA: 'while: Unknown iterations based on external sensor/flag', optionB: 'do-while: Menu prompts, PIN entry retry, parsing at least 1 token' }
+        { aspect: 'Validation Loop', optionA: 'do { prompt(); } while (!valid)', optionB: 'Time: O(k attempts) | Space: O(1) — No initial code duplication' },
+        { aspect: 'Digit Extraction (Zero Safe)', optionA: 'do { n /= 10; count++; } while (n > 0)', optionB: 'Time: O(log10 n) | Space: O(1) — Handles input 0 naturally' }
       ]
     },
     coreExplanation: [
@@ -372,6 +373,48 @@ System.out.println(iterations + ":" + count);`,
         hint: '++count increments before comparison with 3.',
         solution: '3:3',
         explanation: 'Iteration 1: iterations = 1. ++count makes count = 1. (1 < 3) is true. Iteration 2: iterations = 2. ++count makes count = 2. (2 < 3) is true. Iteration 3: iterations = 3. ++count makes count = 3. (3 < 3) is false. Loop exits. Output: "3:3".'
+      },
+      {
+        title: 'Puzzle 9: Natural Zero-Handling in Digit Counter',
+        problemStatement: 'What does this do-while loop print for input n = 0?',
+        code: `int n = 0;
+int digits = 0;
+do {
+    digits++;
+    n /= 10;
+} while (n > 0);
+System.out.println("Digits: " + digits);`,
+        options: [
+          'Digits: 0',
+          'Digits: 1',
+          'Compile Error',
+          'Infinite loop'
+        ],
+        correctOptionIndex: 1,
+        hint: 'The loop executes unconditionally on the first pass before evaluating n > 0.',
+        solution: 'Digits: 1',
+        explanation: 'Because do-while is exit-controlled, the body executes once: digits becomes 1, and n remains 0. Then (0 > 0) is false, terminating the loop. Output is "Digits: 1", correctly reflecting that 0 has 1 digit.'
+      },
+      {
+        title: 'Puzzle 10: Compound Condition with Dual Mutation',
+        problemStatement: 'Determine the output of this code snippet:',
+        code: `int x = 2;
+int y = 5;
+do {
+    x++;
+    y--;
+} while (x < 4 && y > 2);
+System.out.println("x=" + x + ", y=" + y);`,
+        options: [
+          'x=3, y=4',
+          'x=4, y=3',
+          'x=5, y=2',
+          'x=4, y=4'
+        ],
+        correctOptionIndex: 1,
+        hint: 'Track (x, y) through each pass: Pass 1 makes (3, 4). Check (3 < 4 && 4 > 2).',
+        solution: 'x=4, y=3',
+        explanation: 'Pass 1: x=3, y=4. Condition (3 < 4 && 4 > 2) is true && true -> true. Pass 2: x=4, y=3. Condition (4 < 4 && 3 > 2) is false && true -> false! Loop terminates. Final values: "x=4, y=3".'
       }
     ],
     interviewQuestions: [
@@ -592,7 +635,9 @@ for (int r = 1; r <= 3; r++) {
         { aspect: 'Subsequent Iterations', optionA: 'break: Completely cancelled (loop terminates)', optionB: 'continue: Proceed normally with next cycle' },
         { aspect: 'Next Step in For Loop', optionA: 'break: Jumps past closing brace of loop', optionB: 'continue: Jumps to update expression (i++)' },
         { aspect: 'Next Step in While Loop', optionA: 'break: Jumps past closing brace of loop', optionB: 'continue: Jumps directly to condition check' },
-        { aspect: 'With Labeled Target', optionA: 'break label: Exits the labeled enclosing block/loop', optionB: 'continue label: Jumps to next cycle of labeled loop' }
+        { aspect: 'With Labeled Target', optionA: 'break label: Exits the labeled enclosing block/loop', optionB: 'continue label: Jumps to next cycle of labeled loop' },
+        { aspect: 'Algorithmic Impact (Early Break)', optionA: 'Reduces search average time from O(n) worst-case to O(k)', optionB: 'Filters out unneeded elements in O(1) jump per item' },
+        { aspect: 'Bytecode & Memory Footprint', optionA: 'Emits goto past loop end; auxiliary space O(1)', optionB: 'Emits goto to update/condition; auxiliary space O(1)' }
       ]
     },
     coreExplanation: [
@@ -945,6 +990,55 @@ System.out.println(executions);`,
         hint: 'For every iteration of i, what values of j execute executions++ before breaking?',
         solution: '4',
         explanation: 'Outer loop runs 4 times (i = 0, 1, 2, 3). For each i, when j = 0: executions is incremented. When j = 1: break triggers, terminating inner loop. Thus executions++ runs exactly once per outer loop: 4 * 1 = 4.'
+      },
+      {
+        title: 'Puzzle 9: Labeled Continue in Nested Iteration',
+        problemStatement: 'What is printed after executing the nested loop with labeled continue?',
+        code: `int total = 0;
+outer:
+for (int i = 1; i <= 3; i++) {
+    for (int j = 1; j <= 3; j++) {
+        if (j == 2) {
+            continue outer;
+        }
+        total += i * 10 + j;
+    }
+}
+System.out.println(total);`,
+        options: [
+          '63',
+          '93',
+          '33',
+          '180'
+        ],
+        correctOptionIndex: 0,
+        hint: 'When j == 2, continue outer immediately aborts inner loop and advances outer loop to the next i.',
+        solution: '63',
+        explanation: 'For each i (1, 2, 3), when j=1: total accumulates (i*10 + 1), which gives 11, then 21, then 31. When j=2, continue outer triggers, so j=3 is never reached. Sum = 11 + 21 + 31 = 63.'
+      },
+      {
+        title: 'Puzzle 10: Continue in Do-While Loop with Counter',
+        problemStatement: 'Trace the output printed to the console:',
+        code: `int count = 0;
+int x = 0;
+do {
+    x++;
+    if (x == 3) {
+        continue;
+    }
+    count++;
+} while (x < 5);
+System.out.println("x=" + x + ", count=" + count);`,
+        options: [
+          'x=5, count=4',
+          'x=5, count=5',
+          'x=4, count=3',
+          'Infinite loop'
+        ],
+        correctOptionIndex: 0,
+        hint: 'x increments on every cycle before continue check. When x==3, count++ is bypassed, but while(x < 5) still evaluates.',
+        solution: 'x=5, count=4',
+        explanation: 'x advances 1, 2, 3, 4, 5. For x=1,2,4,5: count increments (4 times). For x=3: continue skips count++ and jumps to while(3 < 5). Loop exits when x reaches 5. Final output is "x=5, count=4".'
       }
     ],
     interviewQuestions: [
@@ -1168,7 +1262,9 @@ for (int row = 1; row <= totalRows; row++) {
         { aspect: 'Execution Frequency', optionA: 'Outer Loop: Advances once per full inner cycle', optionB: 'Inner Loop: Runs completely to termination for EVERY outer step' },
         { aspect: 'Variable Initialization', optionA: 'Outer Loop: Initialized once when nested construct starts', optionB: 'Inner Loop: Re-initialized from scratch on each outer iteration' },
         { aspect: 'Time Complexity', optionA: 'Independent: O(M * N) - multiplication', optionB: 'Dependent (j <= i): O(N^2) - triangular sum' },
-        { aspect: 'Common Patterns', optionA: 'Independent: Grids, multiplication tables, matrices', optionB: 'Dependent: Pyramids, triangles, pair comparisons' }
+        { aspect: 'Common Patterns', optionA: 'Independent: Grids, multiplication tables, matrices', optionB: 'Dependent: Pyramids, triangles, pair comparisons' },
+        { aspect: 'Auxiliary Space Complexity', optionA: 'Iterative grid traversal: O(1) auxiliary space', optionB: 'Call stack frames: O(1) iterative vs O(N) recursive simulation' },
+        { aspect: 'Bytecode Architecture', optionA: 'Outer loop label & backward goto jump', optionB: 'Inner comparison (if_icmpge) & nested backward goto' }
       ]
     },
     coreExplanation: [
@@ -1490,6 +1586,54 @@ System.out.println(counter);`,
         hint: 'Multiply the iteration count of each independent level: 2 * 3 * 2.',
         solution: '12',
         explanation: 'Independent loops multiply: 2 (outer) * 3 (middle) * 2 (inner) = 12 total iterations. counter is 12.'
+      },
+      {
+        title: 'Puzzle 9: Nested Inverted Triangle Sum Trace',
+        problemStatement: 'What is the final value of total printed by this code?',
+        code: `int total = 0;
+for (int i = 3; i >= 1; i--) {
+    for (int j = 1; j <= i; j++) {
+        total += j;
+    }
+}
+System.out.println(total);`,
+        options: [
+          '10',
+          '14',
+          '6',
+          '12'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Trace the inner loop for each outer iteration: i=3 adds 1+2+3, i=2 adds 1+2, i=1 adds 1.',
+        solution: '10',
+        explanation: 'Outer loop runs i=3, 2, 1. For i=3, j sums 1+2+3=6 (total=6). For i=2, j sums 1+2=3 (total=9). For i=1, j sums 1 (total=10). Final output is 10.'
+      },
+      {
+        title: 'Puzzle 10: Labeled Break in 3-Tier Nested Loop',
+        problemStatement: 'How many times does passes++ execute before the loop is terminated by the labeled break?',
+        code: `int passes = 0;
+stopAll:
+for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+        for (int k = 0; k < 3; k++) {
+            if (i == 1 && j == 1) {
+                break stopAll;
+            }
+            passes++;
+        }
+    }
+}
+System.out.println(passes);`,
+        options: [
+          '12',
+          '13',
+          '9',
+          '27'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Calculate full passes during i=0 (3*3=9), then during i=1 when j=0 (3 passes). When j=1, k=0 immediately breaks all loops.',
+        solution: '12',
+        explanation: 'When i=0: all 3 j-cycles complete all 3 k-cycles, contributing 3 * 3 = 9 passes. When i=1: j=0 completes all 3 k-cycles (+3 passes, total=12). When j=1, at k=0 condition (i==1 && j==1) is true, triggering `break stopAll` and aborting all three loops immediately. Total passes is 12.'
       }
     ],
     interviewQuestions: [
