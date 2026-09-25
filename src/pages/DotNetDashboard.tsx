@@ -14,7 +14,7 @@ export default function DotNetDashboard() {
         {/* Hero */}
         <div className="text-center mb-12">
           <div className="inline-block bg-blue-900/40 border border-blue-500/30 text-blue-300 text-sm font-medium px-4 py-1.5 rounded-full mb-4">
-            Prepare for your Atyati Technologies Interview
+            Prepare for your Tech Interview
           </div>
           <h2 className="text-4xl font-extrabold text-white mb-3">
             4 Rounds. 240 Questions. Full Simulation.
@@ -253,4 +253,5 @@ function TopicCard({ href, label, desc, color }: TopicCardProps) {
     </div>
   );
 }
+
 

@@ -1,5 +1,5 @@
 // ============================================================
-// ATYATI .NET INTERVIEW SIMULATOR — TYPE DEFINITIONS
+// Our Tech .NET INTERVIEW SIMULATOR — TYPE DEFINITIONS
 // ============================================================
 
 export type QuestionType =
@@ -183,3 +183,4 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   Agile:    'Agile / SDLC',
   Aptitude: 'Aptitude',
 };
+

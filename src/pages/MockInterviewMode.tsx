@@ -29,7 +29,7 @@ export default function MockInterviewMode() {
             </div>
             <h2 className="text-3xl font-extrabold text-white mb-3">Full Interview Simulation</h2>
             <p className="text-slate-400 max-w-xl mx-auto">
-              Experience the complete Atyati interview process in sequence. Complete each round one by
+              Experience the complete Our Tech interview process in sequence. Complete each round one by
               one and receive a comprehensive preparation report at the end.
             </p>
           </div>
@@ -161,3 +161,4 @@ export default function MockInterviewMode() {
     </div>
   );
 }
+

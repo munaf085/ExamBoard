@@ -9,7 +9,7 @@ export default function HomePage() {
           <LayoutDashboard className="w-4 h-4 mr-2" /> Select Your Preparation Module
         </div>
         <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
-          Atyati Tech <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Interview Portal</span>
+          Developer <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Interview Portal</span>
         </h1>
         <p className="text-slate-400 text-lg max-w-2xl mx-auto">
           Choose your technology stack below to access the dedicated simulator module containing 
@@ -72,3 +72,5 @@ export default function HomePage() {
     </div>
   );
 }
+
+

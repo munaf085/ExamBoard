@@ -23,7 +23,7 @@ export const hrQuestions: HRQuestion[] = [
   {
     id: 'HR-004',
     category: 'Motivation',
-    question: 'Why do you want to join Atyati?',
+    question: 'Why do you want to join Our Tech?',
     guidance: 'Check if they have researched the company and have valid reasons beyond just getting a job.',
   },
   {
@@ -183,3 +183,4 @@ export const hrQuestions: HRQuestion[] = [
     guidance: 'Ensure clear understanding and agreement on working conditions.',
   }
 ];
+

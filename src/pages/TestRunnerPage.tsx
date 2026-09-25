@@ -230,7 +230,7 @@ export default function TestRunnerPage() {
       <header className="border-b border-slate-700 bg-slate-900 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="text-slate-400 text-sm font-medium hidden sm:block">ATYATI .NET MOCK TEST</span>
+            <span className="text-slate-400 text-sm font-medium hidden sm:block">Our Tech .NET MOCK TEST</span>
             <span className="text-slate-600 hidden sm:block">|</span>
             <span className="text-white font-semibold text-sm">
               Question {currentIdx + 1} / {questions.length}
@@ -521,3 +521,4 @@ function QuestionNavigator({ count, currentIdx, getStatus, onSelect, answeredCou
     </div>
   );
 }
+

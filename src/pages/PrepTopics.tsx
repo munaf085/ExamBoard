@@ -212,7 +212,7 @@ export default function PrepTopics() {
           <Link to="/" className="text-slate-400 hover:text-white"><ArrowLeft className="w-5 h-5" /></Link>
           <div>
             <h1 className="text-lg font-bold text-white">Preparation Topics</h1>
-            <p className="text-xs text-slate-400">Study guide for Atyati .NET Interview</p>
+            <p className="text-xs text-slate-400">Study guide for Our Tech .NET Interview</p>
           </div>
         </div>
       </header>
@@ -257,3 +257,4 @@ export default function PrepTopics() {
     </div>
   );
 }
+
