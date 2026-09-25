@@ -46,6 +46,10 @@ export default function JavaSubLessonPage() {
   // Interviewer Question state: which questions have their answers revealed
   const [revealedQuestions, setRevealedQuestions] = useState<Record<number, boolean>>({});
 
+  // Hands-on programming exercises state
+  const [revealedExercises, setRevealedExercises] = useState<Record<number, boolean>>({});
+  const [showExerciseHints, setShowExerciseHints] = useState<Record<number, boolean>>({});
+
   // Analogy expand toggle (collapsed by default to save space)
   const [analogyOpen, setAnalogyOpen] = useState(false);
 
@@ -74,6 +78,8 @@ export default function JavaSubLessonPage() {
     setPracticeRevealed({});
     setShowHints({});
     setRevealedQuestions({});
+    setRevealedExercises({});
+    setShowExerciseHints({});
     setActiveTab('takeaways');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [lessonId]);
@@ -398,7 +404,7 @@ export default function JavaSubLessonPage() {
               }`}
             >
               <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Examples & Practice ({practiceProblemsList.length + 1})</span>
+              <span>Examples & Practice ({practiceProblemsList.length + (lesson.codeExamples?.length || 0) + (lesson.programmingExercises?.length || 0) + 1})</span>
             </button>
 
             <button
@@ -815,6 +821,85 @@ export default function JavaSubLessonPage() {
                         )}
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Hands-On Programming Exercises */}
+              {lesson.programmingExercises && lesson.programmingExercises.length > 0 && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between border-t border-slate-800/80 pt-4">
+                    <div className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                      <Sparkles className="w-4 h-4 text-amber-400" />
+                      <span>Hands-On Programming Exercises ({lesson.programmingExercises.length} Challenges)</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 font-normal hidden sm:inline">Click to reveal Java code solution</span>
+                  </div>
+
+                  <div className="space-y-4">
+                    {lesson.programmingExercises.map((prog, pIdx) => {
+                      const isRevealed = revealedExercises[pIdx];
+                      const isHint = showExerciseHints[pIdx];
+
+                      return (
+                        <div key={pIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-bold text-amber-300 text-sm flex items-center gap-2">
+                              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-xs">
+                                {pIdx + 1}
+                              </span>
+                              <span>{prog.title}</span>
+                            </h4>
+                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                              Exercise #{pIdx + 1}
+                            </span>
+                          </div>
+
+                          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                            {prog.problemStatement}
+                          </p>
+
+                          <div className="flex items-center gap-2 pt-1">
+                            {prog.hint && (
+                              <button
+                                onClick={() => setShowExerciseHints(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
+                                className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+                              >
+                                {isHint ? 'Hide Hint' : '💡 Need a Hint?'}
+                              </button>
+                            )}
+                            <button
+                              onClick={() => setRevealedExercises(prev => ({ ...prev, [pIdx]: !prev[pIdx] }))}
+                              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 hover:bg-amber-500 text-white transition shadow-sm"
+                            >
+                              {isRevealed ? 'Hide Java Solution' : 'Reveal Java Solution'}
+                            </button>
+                          </div>
+
+                          {isHint && prog.hint && (
+                            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300 leading-relaxed">
+                              <strong>Hint: </strong>{prog.hint}
+                            </div>
+                          )}
+
+                          {isRevealed && (
+                            <div className="space-y-2 pt-2">
+                              <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                                <pre className="font-mono text-xs text-emerald-300 leading-relaxed">
+                                  <code>{prog.solutionCode}</code>
+                                </pre>
+                              </div>
+                              {prog.output && (
+                                <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
+                                  <span className="text-slate-500 text-[10px] uppercase block mb-1">Expected Output:</span>
+                                  {prog.output}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
