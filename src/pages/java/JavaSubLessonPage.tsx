@@ -1069,8 +1069,19 @@ export default function JavaSubLessonPage() {
                           <span>Practice Coding Assignments ({lesson.programmingExercises.length} Challenges)</span>
                         </div>
                         <p className="text-xs text-slate-400 mt-1">
-                          Solve these hands-on coding problems on your own first! Then click reveal to review optimal Java solutions, step-by-step logic, and expected test outputs.
+                          Progressive mastery from Beginner to Expert. Solve hands-on on your own first, then reveal the runnable Java solution!
                         </p>
+                        <div className="flex items-center gap-2 mt-2 text-xs flex-wrap">
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px] font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Challenges 1–3: Easy (Foundations)
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span> Challenges 4–7: Medium (Real-World)
+                          </span>
+                          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[11px] font-semibold">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Challenges 8–10: Hard (Expert Edge-Cases)
+                          </span>
+                        </div>
                       </div>
                       <div className="flex items-center gap-2 self-start sm:self-center">
                         <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -1101,6 +1112,12 @@ export default function JavaSubLessonPage() {
                       const isHint = showExerciseHints[pIdx];
                       const assignmentKey = `${lesson.id}-ex-${pIdx}`;
                       const isSolved = solvedAssignments.includes(assignmentKey);
+                      const difficultyTier = pIdx < 3 ? 'Easy' : pIdx < 7 ? 'Medium' : 'Hard';
+                      const diffColor = difficultyTier === 'Easy'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
+                        : difficultyTier === 'Medium'
+                          ? 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                          : 'bg-rose-500/15 text-rose-400 border-rose-500/30';
 
                       return (
                         <div
@@ -1131,11 +1148,11 @@ export default function JavaSubLessonPage() {
                             </div>
 
                             <div className="flex items-center gap-2 self-start sm:self-center">
-                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                                Assignment
+                              <span className={`text-[10px] uppercase font-bold px-2.5 py-0.5 rounded-full border ${diffColor}`}>
+                                {difficultyTier}
                               </span>
                               <CopyButton
-                                text={`${prog.title}\n\nProblem Statement:\n${prog.problemStatement}${prog.hint ? `\n\nHint: ${prog.hint}` : ''}`}
+                                text={`${prog.title}\n\nDifficulty: ${difficultyTier}\n\nProblem Statement:\n${prog.problemStatement}${prog.hint ? `\n\nHint: ${prog.hint}` : ''}`}
                                 label="Copy Problem"
                               />
                               <button
