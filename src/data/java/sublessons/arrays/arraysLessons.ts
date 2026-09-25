@@ -52,7 +52,10 @@ int size = scores.length; // Note: no parentheses!`,
         { aspect: 'Syntax: int[] arr vs int arr[]', optionA: 'int[] arr: Standard Java convention, groups type with brackets', optionB: 'int arr[]: C/C++ legacy syntax, valid in Java but discouraged' },
         { aspect: 'Initialization: new int[3] vs {1, 2, 3}', optionA: 'new int[3]: Dynamic size, all elements default to 0', optionB: '{1, 2, 3}: Array literal, size inferred from supplied elements' },
         { aspect: 'Size Query: Array vs String', optionA: 'arr.length: Public final field on the array object', optionB: 'str.length(): Method call on the String instance' },
-        { aspect: 'Assignment: b = a', optionA: 'Copies the reference address only (shallow alias)', optionB: 'Does NOT clone or copy the underlying array elements' }
+        { aspect: 'Assignment: b = a', optionA: 'Copies the reference address only (shallow alias)', optionB: 'Does NOT clone or copy the underlying array elements' },
+        { aspect: 'Access Time Complexity', optionA: 'Random access arr[i]: O(1) constant time', optionB: 'Linear search: O(n) worst-case comparison time' },
+        { aspect: 'Heap Memory Header', optionA: 'Mark Word (8B) + Klass pointer (4B compressed oops) + length (4B)', optionB: 'Total 16 bytes overhead + contiguous element payload' },
+        { aspect: 'Physical Address Formula', optionA: 'BaseAddress + (i * elementSizeInBytes)', optionB: 'Direct hardware pointer offset calculation' }
       ]
     },
     coreExplanation: [
@@ -335,6 +338,41 @@ System.out.println(vals[k * 2 + 1]);`,
         hint: 'Evaluate the expression inside the brackets: 1 * 2 + 1 = 3.',
         solution: '40',
         explanation: 'Operator precedence evaluates multiplication first: k * 2 = 2, then 2 + 1 = 3. vals[3] corresponds to the 4th element, which is 40.'
+      },
+      {
+        title: 'Puzzle 9: Default Values in Reference vs Primitive Arrays',
+        problemStatement: 'What does this code snippet print?',
+        code: `String[] names = new String[2];
+int[] counts = new int[2];
+System.out.println(names[0] + " " + counts[0]);`,
+        options: [
+          'null 0',
+          ' 0',
+          'null null',
+          '0 0'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Object reference slots in arrays initialize to null, whereas numeric primitive slots initialize to 0.',
+        solution: 'null 0',
+        explanation: 'In Java, reference arrays initialize their slots to null, while numeric primitive arrays (like int[]) initialize all slots to 0. Thus names[0] is null and counts[0] is 0.'
+      },
+      {
+        title: 'Puzzle 10: Array Reference Aliasing Mutation',
+        problemStatement: 'Trace the output printed to the console:',
+        code: `int[] a = {1, 2, 3};
+int[] b = a;
+b[1] = 99;
+System.out.println(a[1] + " " + (a == b));`,
+        options: [
+          '99 true',
+          '2 false',
+          '99 false',
+          '2 true'
+        ],
+        correctOptionIndex: 0,
+        hint: 'b = a copies the memory address reference, not the array elements. Both point to the same heap object.',
+        solution: '99 true',
+        explanation: 'b = a creates an alias pointing to the identical array object on the heap. Mutating b[1] modifies that shared heap array, so a[1] reflects 99 and (a == b) is true.'
       }
     ],
     interviewQuestions: [
@@ -563,7 +601,9 @@ while (left < right) {
         { aspect: 'Element Mutation', optionA: 'Standard for: Can modify array via "arr[i] = newVal"', optionB: 'Enhanced for-each: Cannot modify array elements' },
         { aspect: 'Traversal Direction', optionA: 'Standard for: Any direction (forward, backward, stride by k)', optionB: 'Enhanced for-each: Strictly forward from 0 to length - 1' },
         { aspect: 'Reversal Strategy', optionA: 'Two-Pointer In-Place: O(N) time, O(1) extra space', optionB: 'New Array Clone: O(N) time, O(N) extra space' },
-        { aspect: 'Search Strategy', optionA: 'Linear Search: Works on unsorted arrays, O(N) time', optionB: 'Binary Search: Requires sorted array, O(log N) time' }
+        { aspect: 'Search Strategy', optionA: 'Linear Search: Works on unsorted arrays, O(N) time', optionB: 'Binary Search: Requires sorted array, O(log N) time' },
+        { aspect: 'Running Statistics Math', optionA: 'Sum / Average / Min / Max: Single-pass O(N) time', optionB: 'Auxiliary Space: Strictly O(1) registers' },
+        { aspect: 'Bytecode Under the Hood', optionA: 'For-Each loop compiles into standard index counter', optionB: 'Emits arraylength, if_icmpge, and iaload opcodes' }
       ]
     },
     coreExplanation: [
@@ -880,6 +920,49 @@ System.out.println(count);`,
         hint: 'Sum is 100. Average is 100 / 4 = 25. How many elements are strictly > 25?',
         solution: '2',
         explanation: 'Sum = 100, avg = 25. The elements strictly greater than 25 are 30 and 40. Count is 2.'
+      },
+      {
+        title: 'Puzzle 9: Two-Pointer In-Place Reversal Trace',
+        problemStatement: 'What does this code snippet print?',
+        code: `int[] nums = {1, 2, 3, 4, 5};
+int l = 0, r = nums.length - 1;
+while (l < r) {
+    int t = nums[l];
+    nums[l] = nums[r];
+    nums[r] = t;
+    l++;
+    r--;
+}
+System.out.println(nums[0] + "" + nums[2] + "" + nums[4]);`,
+        options: [
+          '531',
+          '135',
+          '543',
+          '123'
+        ],
+        correctOptionIndex: 0,
+        hint: 'The two-pointer technique swaps elements from outside inwards. The array becomes [5, 4, 3, 2, 1].',
+        solution: '531',
+        explanation: 'The while loop reverses the array in-place: indices 0 and 4 swap (1 and 5), indices 1 and 3 swap (2 and 4), index 2 remains 3. nums becomes [5, 4, 3, 2, 1]. nums[0] is 5, nums[2] is 3, nums[4] is 1. Output is "531".'
+      },
+      {
+        title: 'Puzzle 10: In-Place Running Prefix Sum Calculation',
+        problemStatement: 'What is printed after executing this cumulative prefix sum loop?',
+        code: `int[] vals = {2, 3, 5, 1};
+for (int i = 1; i < vals.length; i++) {
+    vals[i] += vals[i - 1];
+}
+System.out.println(vals[2] + " " + vals[3]);`,
+        options: [
+          '10 11',
+          '10 6',
+          '8 11',
+          '5 10'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Each position accumulates the sum of all preceding numbers: 2, 2+3=5, 5+5=10, 10+1=11.',
+        solution: '10 11',
+        explanation: 'i=1: vals[1] = 3 + 2 = 5. i=2: vals[2] = 5 + 5 = 10. i=3: vals[3] = 1 + 10 = 11. Array becomes [2, 5, 10, 11]. vals[2] is 10 and vals[3] is 11. Output is "10 11".'
       }
     ],
     interviewQuestions: [
@@ -1108,7 +1191,9 @@ boolean identical = Arrays.equals(arr1, arr2);`,
         { aspect: 'Equality: == vs Arrays.equals()', optionA: '==: Checks reference address identity only', optionB: 'Arrays.equals(): Checks length and element values' },
         { aspect: 'Copying: = vs Arrays.copyOf()', optionA: 'b = a: Alias pointer to identical heap array', optionB: 'Arrays.copyOf(a, n): Allocates brand new array object' },
         { aspect: 'Search: Linear vs Binary', optionA: 'Linear search: Works on unsorted, O(N) time', optionB: 'Arrays.binarySearch(): Requires sorted, O(log N) time' },
-        { aspect: 'Multi-Dimensional Printing', optionA: 'Arrays.toString(matrix): Prints row memory hashes', optionB: 'Arrays.deepToString(matrix): Recursively prints 2D data' }
+        { aspect: 'Multi-Dimensional Printing', optionA: 'Arrays.toString(matrix): Prints row memory hashes', optionB: 'Arrays.deepToString(matrix): Recursively prints 2D data' },
+        { aspect: 'Sorting Complexity (Dual-Pivot)', optionA: 'Primitives: Dual-Pivot Quicksort, O(N log N) time', optionB: 'Auxiliary Space: Strictly O(1) in-place allocation' },
+        { aspect: 'Binary Search Negative Return', optionA: 'Formula: -(insertion_point) - 1', optionB: 'Decode: insertion_point = -(returnValue + 1)' }
       ]
     },
     coreExplanation: [
@@ -1373,6 +1458,41 @@ System.out.println(ext[0] + " " + ext[1] + " " + ext[2]);`,
         hint: 'Index 1 is 8. Beyond length 2, extra requested slots are padded with 0.',
         solution: '8 0 0',
         explanation: 'Arrays.copyOfRange(base, 1, 4) produces an array of length 3 (indices 1, 2, 3). Index 1 of base is 8. Indices 2 and 3 exceed base.length, so they are padded with default 0s. Result: [8, 0, 0].'
+      },
+      {
+        title: 'Puzzle 9: Decoding Binary Search Negative Return',
+        problemStatement: 'What does this binary search snippet print for an unlisted target?',
+        code: `int[] nums = {10, 20, 40, 50};
+int res = Arrays.binarySearch(nums, 30);
+int insertIdx = -(res + 1);
+System.out.println(res + " " + insertIdx);`,
+        options: [
+          '-3 2',
+          '-2 2',
+          '-1 3',
+          '2 -3'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Target 30 belongs between 20 (idx 1) and 40 (idx 2). The insertion point is 2. Return value is -(2) - 1 = -3.',
+        solution: '-3 2',
+        explanation: '30 is not present; its natural sorted position is index 2. Arrays.binarySearch returns -(insertionPoint) - 1 = -2 - 1 = -3. Decoding with -(res + 1) = -(-3 + 1) = 2. Output is "-3 2".'
+      },
+      {
+        title: 'Puzzle 10: In-Place Subarray Sorting with Range Limits',
+        problemStatement: 'What elements are printed after sorting subarray [2, 5)?',
+        code: `int[] arr = {9, 8, 4, 2, 7, 5};
+Arrays.sort(arr, 2, 5);
+System.out.println(arr[2] + " " + arr[3] + " " + arr[4]);`,
+        options: [
+          '2 4 7',
+          '4 2 7',
+          '2 4 5',
+          '2 5 7'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Range [2, 5) targets indices 2, 3, and 4 (values 4, 2, 7). They are sorted in-place to 2, 4, 7.',
+        solution: '2 4 7',
+        explanation: 'Subarray sort from index 2 to 5 (exclusive) sorts elements at indices 2, 3, and 4. The sub-slice {4, 2, 7} sorts to {2, 4, 7}. Elements at arr[2], arr[3], arr[4] are 2, 4, 7. Output is "2 4 7".'
       }
     ],
     interviewQuestions: [
@@ -1606,7 +1726,9 @@ System.out.println(Arrays.deepToString(matrix));`,
         { aspect: 'Array Structure', optionA: 'Rectangular Matrix: All rows have identical length', optionB: 'Jagged Array: Rows have different lengths' },
         { aspect: 'Dimensions Check', optionA: 'matrix.length: Returns total number of rows', optionB: 'matrix[i].length: Returns number of columns in row i' },
         { aspect: 'Printing Method', optionA: 'Arrays.toString(): Prints row object hashes [[I@..., [I@...]', optionB: 'Arrays.deepToString(): Recursively prints elements [[1, 2], [3, 4]]' },
-        { aspect: 'Memory Layout', optionA: 'C/C++: Single contiguous flattened 2D memory block', optionB: 'Java: Scattered independent 1D heap objects' }
+        { aspect: 'Memory Layout', optionA: 'C/C++: Single contiguous flattened 2D memory block', optionB: 'Java: Scattered independent 1D heap objects' },
+        { aspect: 'Time Complexity', optionA: 'Full Grid Traversal: O(M * N) row-major passes', optionB: 'Diagonal Scan: O(N) single-pass traversal' },
+        { aspect: 'Space Complexity', optionA: 'Heap Footprint: 1 Master array + M Row array objects', optionB: 'In-Place Transpose (Square): Strictly O(1) auxiliary space' }
       ]
     },
     coreExplanation: [
@@ -1951,6 +2073,50 @@ System.out.println(total);`,
         hint: 'Sum: 3 + 4 + 5 + 6 = 18.',
         solution: '18',
         explanation: 'The nested loop adds 3 + 4 + 5 + 6 = 18. Output is 18.'
+      },
+      {
+        title: 'Puzzle 9: Shared Row Reference Aliasing',
+        problemStatement: 'What does this aliased matrix code output?',
+        code: `int[] row = {1, 2, 3};
+int[][] matrix = new int[2][];
+matrix[0] = row;
+matrix[1] = row;
+matrix[0][1] = 99;
+System.out.println(matrix[1][1] + " " + (matrix[0] == matrix[1]));`,
+        options: [
+          '99 true',
+          '2 false',
+          '99 false',
+          '2 true'
+        ],
+        correctOptionIndex: 0,
+        hint: 'matrix[0] and matrix[1] both point to the exact same row array on the heap.',
+        solution: '99 true',
+        explanation: 'Because matrix[0] and matrix[1] point to the identical array object, updating matrix[0][1] directly affects matrix[1][1]. Additionally, (matrix[0] == matrix[1]) evaluates to true.'
+      },
+      {
+        title: 'Puzzle 10: Column-Major Sum Accumulation',
+        problemStatement: 'What is the sum of elements in column 0 of this grid?',
+        code: `int[][] grid = {
+    {1, 2},
+    {3, 4},
+    {5, 6}
+};
+int colSum0 = 0;
+for (int r = 0; r < grid.length; r++) {
+    colSum0 += grid[r][0];
+}
+System.out.println(colSum0);`,
+        options: [
+          '9',
+          '12',
+          '3',
+          '6'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Sum elements at (0,0), (1,0), (2,0): 1 + 3 + 5.',
+        solution: '9',
+        explanation: 'The loop fixes column index 0 and iterates through rows r=0, 1, 2. It accumulates grid[0][0] (1) + grid[1][0] (3) + grid[2][0] (5) = 9. Output is 9.'
       }
     ],
     interviewQuestions: [
