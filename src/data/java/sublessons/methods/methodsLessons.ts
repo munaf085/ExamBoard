@@ -76,6 +76,16 @@ export const methodsLessons: Record<string, DetailedLesson> = {
           "aspect": "Execution Exit",
           "optionA": "Normal Completion: Hits closing brace or return statement",
           "optionB": "Abrupt Completion: Throws an unhandled exception"
+        },
+        {
+          "aspect": "Call Stack Frame Lifecycle",
+          "optionA": "Invocation: JVM pushes activation frame (O(1) stack space)",
+          "optionB": "Return: JVM pops frame, freeing local variable array slots"
+        },
+        {
+          "aspect": "Bytecode Instructions",
+          "optionA": "Invocation: invokestatic / invokevirtual bytecode",
+          "optionB": "Return: ireturn (int), dreturn (double), areturn (ref), return (void)"
         }
       ]
     },
@@ -279,6 +289,36 @@ export const methodsLessons: Record<string, DetailedLesson> = {
         "hint": "For member=true, evaluates age >= 18. For member=false, evaluates age >= 21.",
         "solution": "true false",
         "explanation": "When member is true, the ternary selects \"age >= 18\". 19 >= 18 is true. When member is false, the ternary selects \"age >= 21\". 19 >= 21 is false. Output: \"true false\"."
+      },
+      {
+        "title": "Puzzle 9: Method Call as Nested Call Argument",
+        "problemStatement": "What is the output of nested method invocations?",
+        "code": "public class Trace9 {\n    public static int square(int x) { return x * x; }\n    public static int add(int a, int b) { return a + b; }\n    public static void main(String[] args) {\n        System.out.println(add(square(2), square(3)));\n    }\n}",
+        "options": [
+          "13",
+          "25",
+          "10",
+          "12"
+        ],
+        "correctOptionIndex": 0,
+        hint: "Innermost calls execute first: square(2) is 4, square(3) is 9.",
+        "solution": "13",
+        "explanation": "The JVM evaluates the inner argument expressions left-to-right: square(2) pushes a frame, returns 4. square(3) pushes a frame, returns 9. Finally, add(4, 9) returns 13. Output is 13."
+      },
+      {
+        "title": "Puzzle 10: Void Early Return with Guard Clause",
+        "problemStatement": "Trace the printed console output:",
+        "code": "public class Trace10 {\n    public static void check(int n) {\n        if (n < 0) {\n            System.out.print(\"NEG \");\n            return;\n        }\n        System.out.print(\"POS \");\n    }\n    public static void main(String[] args) {\n        check(-5);\n        check(10);\n    }\n}",
+        "options": [
+          "NEG POS ",
+          "NEG ",
+          "POS POS ",
+          "NEG POS POS "
+        ],
+        "correctOptionIndex": 0,
+        hint: "When n is negative, 'return;' exits the method immediately before printing POS.",
+        "solution": "NEG POS ",
+        "explanation": "check(-5): condition (-5 < 0) is true, prints 'NEG ' and hits return;, ending execution for that frame. check(10): condition (10 < 0) is false, prints 'POS '. Final output: 'NEG POS '."
       }
     ],
     "interviewQuestions": [
@@ -597,6 +637,16 @@ export const methodsLessons: Record<string, DetailedLesson> = {
           "aspect": "Comparison with C++",
           "optionA": "Java: Strictly pass-by-value (no reference aliases)",
           "optionB": "C++: Supports explicit pass-by-reference using & syntax"
+        },
+        {
+          "aspect": "Stack Memory Footprint",
+          "optionA": "Primitives: Direct copy of value bytes (4B for int, 8B for double)",
+          "optionB": "References: Copy of 4-byte/8-byte pointer address to heap"
+        },
+        {
+          "aspect": "Immutability Defense (Strings)",
+          "optionA": "Any concatenation creates new heap object",
+          "optionB": "Caller string reference is completely immune to side-effects"
         }
       ]
     },
@@ -800,6 +850,36 @@ export const methodsLessons: Record<string, DetailedLesson> = {
         "hint": "grid is an array of row references. Does mutating grid[0] modify the outer array object on the heap?",
         "solution": "99 99",
         "explanation": "In Java, a 2D array is an array of 1D array references. grid holds a reference to the outer array m. The assignment grid[0] = new int[]{99, 99} modifies an element (index 0) of the outer array object on the heap. Thus, m[0] points to the new row {99, 99}. Output: \"99 99\"."
+      },
+      {
+        "title": "Puzzle 9: Primitive Swap Attempt Isolation",
+        "problemStatement": "What is printed by this attempt to swap two primitives in a helper method?",
+        "code": "public class Trace9 {\n    public static void swap(int a, int b) {\n        int t = a; a = b; b = t;\n    }\n    public static void main(String[] args) {\n        int x = 5, y = 9;\n        swap(x, y);\n        System.out.println(x + \" \" + y);\n    }\n}",
+        "options": [
+          "5 9",
+          "9 5",
+          "0 0",
+          "Compile Error"
+        ],
+        "correctOptionIndex": 0,
+        hint: "Because Java is strictly pass-by-value, does modifying formal parameters a and b affect caller variables x and y?",
+        "solution": "5 9",
+        "explanation": "Primitive arguments x and y are passed by value: their values (5 and 9) are copied into swap's stack frame. swap modifies only its local copies a and b. main's variables x and y remain 5 and 9. Output: '5 9'."
+      },
+      {
+        "title": "Puzzle 10: StringBuilder Mutation vs Reassignment",
+        "problemStatement": "What is printed after calling process on the StringBuilder?",
+        "code": "public class Trace10 {\n    public static void process(StringBuilder sb) {\n        sb.append(\"B\");\n        sb = new StringBuilder(\"C\");\n        sb.append(\"D\");\n    }\n    public static void main(String[] args) {\n        StringBuilder b = new StringBuilder(\"A\");\n        process(b);\n        System.out.println(b);\n    }\n}",
+        "options": [
+          "AB",
+          "ABCD",
+          "CD",
+          "A"
+        ],
+        "correctOptionIndex": 0,
+        hint: "sb.append('B') mutates the shared heap object. Then sb = new ... reassigns only the local parameter.",
+        "solution": "AB",
+        "explanation": "sb.append('B') mutates the object referenced by b from 'A' to 'AB'. Next, sb = new StringBuilder('C') reassigns the local parameter sb to a fresh object. Subsequent operations on sb do not affect b. Final output is 'AB'."
       }
     ],
     "interviewQuestions": [
@@ -1118,6 +1198,16 @@ export const methodsLessons: Record<string, DetailedLesson> = {
           "aspect": "Heap Allocation",
           "optionA": "Fixed-arity calls: Zero heap allocation for arguments",
           "optionB": "Varargs calls: Allocates a new array on the heap for every invocation"
+        },
+        {
+          "aspect": "Compilation Mechanism",
+          "optionA": "Resolved statically at compile time by javac compiler",
+          "optionB": "Emits direct static method descriptor into class bytecode"
+        },
+        {
+          "aspect": "Performance Overhead",
+          "optionA": "Fixed-Arity Overloads: Zero heap allocation (O(1) stack operations)",
+          "optionB": "Varargs Invocations: O(k) heap array allocation per call site"
         }
       ]
     },
@@ -1321,6 +1411,36 @@ export const methodsLessons: Record<string, DetailedLesson> = {
         "hint": "Exact type matches always win over any form of conversion.",
         "solution": "BYTE SHORT INT ",
         "explanation": "(byte) 5 matches test(byte) exactly. (short) 5 matches test(short) exactly. Literal 5 is an int and matches test(int) exactly. Output: \"BYTE SHORT INT \"."
+      },
+      {
+        "title": "Puzzle 9: Widening Beats Autoboxing in Overload Resolution",
+        "problemStatement": "What is printed when an int literal is passed to these overloads?",
+        "code": "public class Trace9 {\n    public static void print(long x) { System.out.print(\"LONG \"); }\n    public static void print(Integer x) { System.out.print(\"INTEGER \"); }\n    public static void main(String[] args) {\n        int n = 10;\n        print(n);\n    }\n}",
+        "options": [
+          "LONG ",
+          "INTEGER ",
+          "Compile Error: Ambiguous",
+          "LONG INTEGER "
+        ],
+        "correctOptionIndex": 0,
+        hint: "Under JLS rules, primitive widening (Phase 1) is always prioritized over autoboxing (Phase 2).",
+        "solution": "LONG ",
+        "explanation": "In Java's overload resolution waterfall, primitive widening (int -> long) occurs in Phase 1 without boxing. Autoboxing (int -> Integer) occurs in Phase 2. Since Phase 1 finds a valid match, print(long) is chosen. Output is 'LONG '."
+      },
+      {
+        "title": "Puzzle 10: Varargs with Leading Fixed Parameters",
+        "problemStatement": "What does this varargs method print for 0 and 2 additional arguments?",
+        "code": "public class Trace10 {\n    public static void display(String tag, int... vals) {\n        System.out.print(tag + \":\" + vals.length + \" \");\n    }\n    public static void main(String[] args) {\n        display(\"A\");\n        display(\"B\", 10, 20);\n    }\n}",
+        "options": [
+          "A:0 B:2 ",
+          "A:null B:2 ",
+          "A:1 B:2 ",
+          "Compile Error"
+        ],
+        "correctOptionIndex": 0,
+        hint: "Calling a varargs method with zero vararg arguments passes an empty array of length 0 (not null).",
+        "solution": "A:0 B:2 ",
+        "explanation": "display('A') supplies only the fixed String argument; the compiler creates and passes an empty int[0] array, so vals.length is 0. display('B', 10, 20) packs 10 and 20 into an array of length 2. Output is 'A:0 B:2 '."
       }
     ],
     "interviewQuestions": [
@@ -1639,6 +1759,16 @@ export const methodsLessons: Record<string, DetailedLesson> = {
           "aspect": "Execution Direction",
           "optionA": "Recursion: Supports dual execution phases (pre-call winding & post-call unwinding)",
           "optionB": "Iteration: Pure forward step-by-step sequential progress"
+        },
+        {
+          "aspect": "Algorithmic Complexity",
+          "optionA": "Linear: O(N) time, O(N) stack space; Tree: O(2^N) time, O(N) depth",
+          "optionB": "Iteration: O(N) time, strictly O(1) auxiliary space"
+        },
+        {
+          "aspect": "Thread Stack Footprint",
+          "optionA": "Controlled by -Xss JVM flag (default 1MB, ~10,000 max frames)",
+          "optionB": "Operates inside single stack frame; immune to stack overflow"
         }
       ]
     },
@@ -1842,6 +1972,36 @@ export const methodsLessons: Record<string, DetailedLesson> = {
         "hint": "Calculate values sequentially: eval(0)=0, eval(1)=2, eval(2)=2+0=2, eval(3)=2+2=4, eval(4)=4+2=6.",
         "solution": "6",
         "explanation": "Base values: eval(0) = 0, eval(1) = 2. Then eval(2) = eval(1) + eval(0) = 2 + 0 = 2. eval(3) = eval(2) + eval(1) = 2 + 2 = 4. eval(4) = eval(3) + eval(2) = 4 + 2 = 6. Output is 6."
+      },
+      {
+        "title": "Puzzle 9: Dual Winding and Unwinding Print Order",
+        "problemStatement": "What is printed by this recursive countdown and return trace?",
+        "code": "public class Trace9 {\n    public static void printBoth(int n) {\n        if (n == 0) return;\n        System.out.print(n);\n        printBoth(n - 1);\n        System.out.print(n);\n    }\n    public static void main(String[] args) {\n        printBoth(2);\n    }\n}",
+        "options": [
+          "2112",
+          "2121",
+          "1221",
+          "21012"
+        ],
+        "correctOptionIndex": 0,
+        hint: "Statements before the recursive call print during winding; statements after print during unwinding in reverse order.",
+        "solution": "2112",
+        "explanation": "printBoth(2) prints 2, calls printBoth(1). printBoth(1) prints 1, calls printBoth(0) (returns). Then unwinding begins: printBoth(1) finishes by printing 1. Then printBoth(2) finishes by printing 2. Total sequence: '2112'."
+      },
+      {
+        "title": "Puzzle 10: Recursive Array Sum Accumulation",
+        "problemStatement": "What does this recursive array summation method return?",
+        "code": "public class Trace10 {\n    public static int sum(int[] arr, int i) {\n        if (i == arr.length) return 0;\n        return arr[i] + sum(arr, i + 1);\n    }\n    public static void main(String[] args) {\n        int[] vals = {5, 10, 15};\n        System.out.println(sum(vals, 0));\n    }\n}",
+        "options": [
+          "30",
+          "15",
+          "20",
+          "0"
+        ],
+        "correctOptionIndex": 0,
+        hint: "The method recurses to the end of the array, then adds elements during the unwinding phase.",
+        "solution": "30",
+        "explanation": "Calls nest until i == 3, returning 0. Unwinding calculates: 15 + 0 = 15; 10 + 15 = 25; 5 + 25 = 30. Result printed is 30."
       }
     ],
     "interviewQuestions": [
