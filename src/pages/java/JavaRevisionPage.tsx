@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Split, AlertTriangle, Code, Calculator } from 'lucide-react';
+import CopyButton from '../../components/CopyButton';
 
 const DIFFERENCES = [
   { title: 'JDK vs JRE vs JVM', col1Name: 'Concept', col1: 'JDK: Dev Kit (JRE + tools). JRE: Runtime (JVM + libs). JVM: Executes bytecode.', col2Name: 'Usage', col2: 'JDK for compiling, JRE for running, JVM for execution.' },
@@ -83,7 +84,10 @@ const JavaRevisionPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {DIFFERENCES.map((diff, i) => (
                 <div key={i} className="bg-slate-800 rounded-xl border border-slate-700 p-5 shadow-lg">
-                  <h3 className="font-bold text-lg mb-4 text-blue-400 text-center border-b border-slate-700 pb-2">{diff.title}</h3>
+                  <div className="flex items-center justify-between border-b border-slate-700 pb-2 mb-4">
+                    <h3 className="font-bold text-lg text-blue-400">{diff.title}</h3>
+                    <CopyButton text={`${diff.title}\n\n${diff.col1Name}:\n${diff.col1}\n\n${diff.col2Name}:\n${diff.col2}`} label="Copy" />
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <h4 className="text-xs text-slate-500 uppercase tracking-wider mb-2">{diff.col1Name}</h4>
@@ -104,9 +108,12 @@ const JavaRevisionPage: React.FC = () => {
               {TRAPS.map((trap, i) => (
                 <div key={i} className="bg-slate-800 rounded-xl border border-orange-900/50 p-5 shadow-lg relative overflow-hidden group">
                   <div className="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
-                  <h3 className="font-bold text-orange-400 mb-2 flex items-center gap-2">
-                    <AlertTriangle className="w-4 h-4" /> {trap.title}
-                  </h3>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-bold text-orange-400 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4" /> {trap.title}
+                    </h3>
+                    <CopyButton text={`${trap.title}\n\n${trap.text}`} label="Copy" />
+                  </div>
                   <p className="text-sm text-slate-300 leading-relaxed">{trap.text}</p>
                 </div>
               ))}
@@ -117,8 +124,9 @@ const JavaRevisionPage: React.FC = () => {
             <div className="columns-1 md:columns-2 gap-6 space-y-6">
               {SYNTAX.map((syn, i) => (
                 <div key={i} className="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden break-inside-avoid shadow-lg">
-                  <div className="bg-slate-800 px-4 py-2 border-b border-slate-700">
+                  <div className="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center justify-between">
                     <h3 className="font-bold text-green-400 text-sm">{syn.title}</h3>
+                    <CopyButton text={syn.code} label="Copy Syntax" />
                   </div>
                   <pre className="p-4 text-sm text-slate-300 overflow-x-auto whitespace-pre-wrap font-mono">
                     <code>{syn.code}</code>

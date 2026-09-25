@@ -24,6 +24,7 @@ import {
   getSolvedAssignments,
   toggleSolvedAssignment
 } from '../../utils/javaStorage';
+import CopyButton from '../../components/CopyButton';
 
 type ActiveTab = 'lesson' | 'cheatsheet' | 'practice' | 'assignments' | 'interview_qa' | 'self_eval' | 'quiz' | 'all';
 
@@ -536,14 +537,17 @@ export default function JavaSubLessonPage() {
               {/* Standard Java Syntax & Anatomy */}
               {lesson.cheatSheet?.syntaxTemplate && (
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2 text-amber-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
                       <Terminal className="w-4 h-4 text-amber-400" />
                       <span>Formal Java Syntax & Structure</span>
                     </div>
-                    <span className="text-[10px] font-mono text-amber-300/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
-                      Standard Grammar
-                    </span>
+                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <span className="text-[10px] font-mono text-amber-300/80 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                        Standard Grammar
+                      </span>
+                      <CopyButton text={lesson.cheatSheet.syntaxTemplate} label="Copy Syntax" />
+                    </div>
                   </div>
 
                   <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 sm:p-4 overflow-x-auto shadow-inner">
@@ -568,9 +572,12 @@ export default function JavaSubLessonPage() {
                       <Code2 className="w-5 h-5 text-emerald-400" />
                       <span>Illustrated Code Example: {lesson.codeSnippet.title}</span>
                     </div>
-                    <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800 self-start sm:self-auto">
-                      Fully Runnable Java
-                    </span>
+                    <div className="flex items-center gap-2 self-start sm:self-auto">
+                      <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
+                        Fully Runnable Java
+                      </span>
+                      <CopyButton text={lesson.codeSnippet.code} label="Copy Java Code" />
+                    </div>
                   </div>
 
                   {/* Code Block */}
@@ -606,8 +613,11 @@ export default function JavaSubLessonPage() {
                   {/* Console Output */}
                   {lesson.codeSnippet.output && (
                     <div className="space-y-1.5 pt-1">
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        Sample Run / Console Output:
+                      <div className="flex items-center justify-between">
+                        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                          Sample Run / Console Output:
+                        </div>
+                        <CopyButton text={lesson.codeSnippet.output} label="Copy Output" />
                       </div>
                       <div className="bg-black/80 border border-slate-800 rounded-xl p-3.5 font-mono text-xs sm:text-sm text-slate-200 whitespace-pre shadow-inner">
                         {lesson.codeSnippet.output}
@@ -620,9 +630,12 @@ export default function JavaSubLessonPage() {
               {/* Visual Mental Model */}
               {lesson.diagram && (
                 <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-2.5">
-                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
-                    <Terminal className="w-4 h-4" />
-                    <span>🗺️ Execution Flow & Visual Mental Model</span>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs sm:text-sm uppercase tracking-wider">
+                      <Terminal className="w-4 h-4" />
+                      <span>🗺️ Execution Flow & Visual Mental Model</span>
+                    </div>
+                    <CopyButton text={lesson.diagram} label="Copy Diagram" />
                   </div>
                   <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
                     <pre className="font-mono text-xs sm:text-sm text-indigo-300 leading-relaxed">
@@ -645,9 +658,12 @@ export default function JavaSubLessonPage() {
                       <div key={exIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                         <div className="flex items-center justify-between">
                           <h4 className="font-bold text-slate-100 text-sm">{ex.title}</h4>
-                          <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
-                            Scenario #{exIdx + 1}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                              Scenario #{exIdx + 1}
+                            </span>
+                            <CopyButton text={ex.code} label="Copy Code" />
+                          </div>
                         </div>
                         <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{ex.description}</p>
 
@@ -722,8 +738,11 @@ export default function JavaSubLessonPage() {
 
                     {lesson.cheatSheet.syntaxTemplate && (
                       <div className="space-y-1.5">
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                          Standard Syntax Template:
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                            Standard Syntax Template:
+                          </div>
+                          <CopyButton text={lesson.cheatSheet.syntaxTemplate} label="Copy Syntax" />
                         </div>
                         <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
                           <pre className="font-mono text-xs sm:text-sm text-amber-300 leading-relaxed">
@@ -819,16 +838,22 @@ export default function JavaSubLessonPage() {
                           key={pIdx}
                           className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4"
                         >
-                          <div className="flex items-center justify-between">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs sm:text-sm">
                               <span className="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-xs">
                                 {pIdx + 1}
                               </span>
                               <span>{prob.title}</span>
                             </div>
-                            <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                              Practice #{pIdx + 1}
-                            </span>
+                            <div className="flex items-center gap-2 self-start sm:self-auto">
+                              <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                Practice #{pIdx + 1}
+                              </span>
+                              <CopyButton
+                                text={`${prob.title}\n\n${prob.problemStatement}${prob.code ? `\n\nCode:\n${prob.code}` : ''}`}
+                                label="Copy Problem"
+                              />
+                            </div>
                           </div>
 
                           <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
@@ -837,6 +862,10 @@ export default function JavaSubLessonPage() {
 
                           {prob.code && (
                             <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/60">
+                                <span className="text-[10px] font-mono text-slate-500">Java Snippet</span>
+                                <CopyButton text={prob.code} label="Copy Code" />
+                              </div>
                               <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
                                 <code>{prob.code}</code>
                               </pre>
@@ -912,8 +941,11 @@ export default function JavaSubLessonPage() {
 
                           {revealed && (
                             <div className="p-4 rounded-xl bg-slate-950 border border-emerald-500/30 space-y-2">
-                              <div className="text-xs font-bold uppercase tracking-wider text-emerald-400">
-                                Exact Solution: {prob.solution}
+                              <div className="flex items-center justify-between">
+                                <div className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                                  Exact Solution: {prob.solution}
+                                </div>
+                                <CopyButton text={`Solution: ${prob.solution}\n\nTracing:\n${prob.explanation}`} label="Copy Tracing" />
                               </div>
                               <pre className="font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed">
                                 {prob.explanation}
@@ -934,7 +966,10 @@ export default function JavaSubLessonPage() {
                     <Code2 className="w-4 h-4" />
                     <span>Primary Example: {lesson.codeSnippet.title}</span>
                   </div>
-                  <span className="text-[10px] font-mono text-slate-500 uppercase">Java 21</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono text-slate-500 uppercase">Java 21</span>
+                    <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
+                  </div>
                 </div>
 
                 <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
@@ -966,8 +1001,11 @@ export default function JavaSubLessonPage() {
                 {/* Output */}
                 {lesson.codeSnippet.output && (
                   <div className="space-y-1">
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                      Console Output:
+                    <div className="flex items-center justify-between">
+                      <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                        Console Output:
+                      </div>
+                      <CopyButton text={lesson.codeSnippet.output} label="Copy Output" />
                     </div>
                     <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
                       {lesson.codeSnippet.output}
@@ -989,7 +1027,10 @@ export default function JavaSubLessonPage() {
                       <div key={exIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
                         <div className="flex items-center justify-between">
                           <h4 className="font-bold text-slate-200 text-sm">{ex.title}</h4>
-                          <span className="text-[10px] font-mono text-slate-500 uppercase">Scenario</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] font-mono text-slate-500 uppercase">Scenario</span>
+                            <CopyButton text={ex.code} label="Copy Code" />
+                          </div>
                         </div>
                         <p className="text-xs text-slate-400 leading-relaxed">{ex.description}</p>
 
@@ -1091,6 +1132,10 @@ export default function JavaSubLessonPage() {
                               <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
                                 Assignment
                               </span>
+                              <CopyButton
+                                text={`${prog.title}\n\nProblem Statement:\n${prog.problemStatement}${prog.hint ? `\n\nHint: ${prog.hint}` : ''}`}
+                                label="Copy Problem"
+                              />
                               <button
                                 onClick={() => handleToggleSolvedAssignment(assignmentKey)}
                                 className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition ${
@@ -1142,7 +1187,10 @@ export default function JavaSubLessonPage() {
                               <div className="space-y-1.5">
                                 <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-emerald-400">
                                   <span>Optimal Java Implementation:</span>
-                                  <span className="text-[10px] text-slate-500 font-mono">Java 8+ / 17 / 21</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-[10px] text-slate-500 font-mono">Java 8+ / 17 / 21</span>
+                                    <CopyButton text={prog.solutionCode} label="Copy Java Code" />
+                                  </div>
                                 </div>
                                 <div className="bg-slate-950 border border-emerald-500/30 rounded-xl p-3.5 overflow-x-auto shadow-inner">
                                   <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
@@ -1153,8 +1201,11 @@ export default function JavaSubLessonPage() {
 
                               {prog.output && (
                                 <div className="space-y-1">
-                                  <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                    Sample Run / Expected Output:
+                                  <div className="flex items-center justify-between">
+                                    <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                      Sample Run / Expected Output:
+                                    </div>
+                                    <CopyButton text={prog.output} label="Copy Output" />
                                   </div>
                                   <div className="bg-black/80 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
                                     {prog.output}
@@ -1204,18 +1255,24 @@ export default function JavaSubLessonPage() {
                           <h4 className="text-sm sm:text-base font-bold text-indigo-200">
                             Q{idx + 1}: {q.question}
                           </h4>
-                          <button
-                            onClick={() =>
-                              setRevealedQuestions(prev => ({
-                                ...prev,
-                                [idx]: !prev[idx]
-                              }))
-                            }
-                            className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1"
-                          >
-                            {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                            <span>{isRevealed ? 'Hide Answer' : 'Reveal Answer'}</span>
-                          </button>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <CopyButton
+                              text={`Question: ${q.question}\n\nModel Answer:\n${q.answer}${q.keyPhrases && q.keyPhrases.length > 0 ? `\n\nKey Concepts: ${q.keyPhrases.join(', ')}` : ''}${q.followUp ? `\n\nFollow-up: ${q.followUp}` : ''}`}
+                              label="Copy Q&A"
+                            />
+                            <button
+                              onClick={() =>
+                                setRevealedQuestions(prev => ({
+                                  ...prev,
+                                  [idx]: !prev[idx]
+                                }))
+                              }
+                              className="shrink-0 text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1"
+                            >
+                              {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                              <span>{isRevealed ? 'Hide' : 'Reveal'}</span>
+                            </button>
+                          </div>
                         </div>
 
                         {!isRevealed ? (
@@ -1310,17 +1367,23 @@ export default function JavaSubLessonPage() {
                             <span className="text-purple-400 mr-1.5">Q{idx + 1}:</span>
                             {q.question}
                           </div>
-                          {qRating && (
-                            <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded self-start sm:self-auto ${
-                              qRating === 'mastered'
-                                ? 'bg-emerald-500/20 text-emerald-300'
-                                : qRating === 'partial'
-                                ? 'bg-amber-500/20 text-amber-300'
-                                : 'bg-rose-500/20 text-rose-300'
-                            }`}>
-                              {qRating}
-                            </span>
-                          )}
+                          <div className="flex items-center gap-2 self-start sm:self-auto">
+                            <CopyButton
+                              text={`Question: ${q.question}\n\nModel Answer: ${q.answer}`}
+                              label="Copy Question"
+                            />
+                            {qRating && (
+                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${
+                                qRating === 'mastered'
+                                  ? 'bg-emerald-500/20 text-emerald-300'
+                                  : qRating === 'partial'
+                                  ? 'bg-amber-500/20 text-amber-300'
+                                  : 'bg-rose-500/20 text-rose-300'
+                              }`}>
+                                {qRating}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/60">
@@ -1428,8 +1491,14 @@ export default function JavaSubLessonPage() {
 
                     return (
                       <div key={qIdx} className="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-3">
-                        <div className="text-xs sm:text-sm font-semibold text-slate-200">
-                          {qIdx + 1}. {quiz.question}
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="text-xs sm:text-sm font-semibold text-slate-200">
+                            {qIdx + 1}. {quiz.question}
+                          </div>
+                          <CopyButton
+                            text={`${quiz.question}\n${quiz.options.map((opt, i) => `${i + 1}. ${opt}`).join('\n')}${revealed ? `\n\nCorrect Answer: ${quiz.options[quiz.correctIndex]}\nExplanation: ${quiz.explanation}` : ''}`}
+                            label="Copy Quiz"
+                          />
                         </div>
 
                         <div className="grid grid-cols-1 gap-2">

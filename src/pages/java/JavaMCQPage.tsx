@@ -7,6 +7,7 @@ import {
 import { JavaMCQ } from '../../types';
 import { recordMcqResult, updateWeakStrong } from '../../utils/javaStorage';
 import { JAVA_MCQ_MAP, ALL_JAVA_MCQS } from '../../data/java/index';
+import CopyButton from '../../components/CopyButton';
 
 // ─────────────────────────────────────────────────────────────
 // MODULE LABEL MAP
@@ -469,11 +470,24 @@ export default function JavaMCQPage() {
 
         {/* Question Card */}
         <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-5">
-          <p className="text-lg font-semibold text-white leading-relaxed whitespace-pre-wrap">{q.question}</p>
+          <div className="flex items-start justify-between gap-4 mb-2">
+            <p className="text-lg font-semibold text-white leading-relaxed whitespace-pre-wrap">{q.question}</p>
+            <CopyButton
+              text={`${q.question}${q.code ? `\n\n${q.code}` : ''}\n\nOptions:\n${q.options.map((opt, i) => `${i + 1}. ${opt}`).join('\n')}${showAnswer ? `\n\nCorrect Answer: ${q.options[q.correctAnswer]}\nExplanation: ${q.explanation}` : ''}`}
+              label="Copy Question"
+              className="shrink-0"
+            />
+          </div>
           {q.code && (
-            <pre className="mt-4 bg-slate-950 text-green-300 text-sm rounded-lg p-4 overflow-x-auto whitespace-pre-wrap border border-slate-700">
-              {q.code}
-            </pre>
+            <div className="mt-4">
+              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700/60">
+                <span className="text-[11px] font-mono text-slate-400">Java Code</span>
+                <CopyButton text={q.code} label="Copy Code" />
+              </div>
+              <pre className="bg-slate-950 text-green-300 text-sm rounded-lg p-4 overflow-x-auto whitespace-pre-wrap border border-slate-700">
+                {q.code}
+              </pre>
+            </div>
           )}
         </div>
 
