@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   ArrowLeft, BookOpen, CheckCircle, Clock, Search, Printer,
   Coffee, Layers, GitBranch, Package, Zap, Database, Leaf, Shield,
-  ChevronDown, ChevronUp, Star, ExternalLink, Award
+  ChevronDown, ChevronUp, Star, ExternalLink, Award, ArrowUp, Filter
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
 import { getLessonsForModule } from '../../data/java/detailedLessons';
@@ -23,6 +23,8 @@ const SECTION_ICONS: Record<string, React.ElementType> = {
 export default function JavaSyllabusPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [completed, setCompleted] = useState<string[]>([]);
+  const [selectedSection, setSelectedSection] = useState<string>('all');
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(
     JAVA_SECTIONS.reduce((acc, s) => ({ ...acc, [s.id]: true }), {})
   );
@@ -30,7 +32,35 @@ export default function JavaSyllabusPage() {
   useEffect(() => {
     const p = getJavaProgress();
     setCompleted(p.lessonsCompleted);
+
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // When searching, automatically expand matching sections
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      const updated: Record<string, boolean> = {};
+      JAVA_SECTIONS.forEach(sec => {
+        const hasMatch = JAVA_MODULES.filter(m => m.section === sec.id).some(m =>
+          m.title.toLowerCase().includes(term) ||
+          m.description.toLowerCase().includes(term) ||
+          m.topics.some(t => t.toLowerCase().includes(term))
+        );
+        if (hasMatch) updated[sec.id] = true;
+      });
+      setExpandedSections(prev => ({ ...prev, ...updated }));
+    }
+  }, [searchTerm]);
 
   const toggleSection = (id: string) => {
     setExpandedSections(prev => ({ ...prev, [id]: !prev[id] }));
@@ -43,52 +73,66 @@ export default function JavaSyllabusPage() {
   };
 
   const handleToggleComplete = (moduleId: string) => {
-    if (completed.includes(moduleId)) {
-      // already completed
-      return;
-    }
+    if (completed.includes(moduleId)) return;
     markLessonComplete(moduleId);
     setCompleted(prev => [...prev, moduleId]);
   };
 
-  // Filter modules based on search term
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Filter modules based on search term and selected section
   const filteredModules = JAVA_MODULES.filter(m => {
-    const term = searchTerm.toLowerCase();
-    return (
-      m.title.toLowerCase().includes(term) ||
-      m.description.toLowerCase().includes(term) ||
-      m.topics.some(t => t.toLowerCase().includes(term))
+    const matchesSearch = !searchTerm.trim() || (
+      m.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      m.topics.some(t => t.toLowerCase().includes(searchTerm.toLowerCase()))
     );
+
+    const matchesSection = selectedSection === 'all' || m.section === selectedSection;
+
+    return matchesSearch && matchesSection;
   });
 
   const totalTime = JAVA_MODULES.reduce((sum, m) => sum + m.estimatedMinutes, 0);
   const totalHours = Math.round(totalTime / 60);
 
-  return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-4 md:p-8 font-sans">
-      <div className="max-w-5xl mx-auto space-y-8">
+  const sectionsToDisplay = selectedSection === 'all'
+    ? JAVA_SECTIONS
+    : JAVA_SECTIONS.filter(s => s.id === selectedSection);
 
-        {/* Top Navigation */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
+  return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 p-4 md:p-8 font-sans relative">
+      <div className="max-w-5xl mx-auto space-y-6">
+
+        {/* Top Navigation Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-800">
           <Link
             to="/java"
             className="inline-flex items-center text-emerald-400 hover:text-emerald-300 text-sm font-semibold transition-colors"
           >
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Java Dashboard
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Link
+              to="/java/mock-interview"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition"
+            >
+              <Award className="w-3.5 h-3.5 text-orange-400" /> Mock Interview
+            </Link>
             <button
               onClick={() => window.print()}
-              className="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg text-sm font-medium border border-slate-700 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-700 transition-colors shadow-sm"
               title="Print syllabus or Save as PDF"
             >
-              <Printer className="w-4 h-4 text-emerald-400" /> Print / Save PDF
+              <Printer className="w-3.5 h-3.5 text-emerald-400" /> Print / PDF
             </button>
             <Link
               to="/java/module/java-fundamentals"
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-md"
+              className="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-colors shadow-md"
             >
-              <BookOpen className="w-4 h-4" /> Start Learning
+              <BookOpen className="w-3.5 h-3.5" /> Start Learning
             </Link>
           </div>
         </div>
@@ -100,18 +144,18 @@ export default function JavaSyllabusPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-3">
                 <Coffee className="w-3.5 h-3.5" /> Full Fresher to Architect Syllabus
               </div>
-              <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-3">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-2">
                 Complete Java Interview Syllabus
               </h1>
-              <p className="text-slate-300 text-sm md:text-base max-w-2xl leading-relaxed">
-                A single-page, zero-gap study roadmap covering Core Java, Object-Oriented Programming, Data Structures & Algorithms, Collections, Advanced Concurrency, SQL/JDBC, Spring Boot Microservices, and Testing.
+              <p className="text-slate-300 text-xs sm:text-sm max-w-2xl leading-relaxed">
+                Zero-gap roadmap covering Core Java, OOP, DSA, Collections, Concurrency, JVM Internals, SQL/JDBC, Spring Boot Microservices, and Testing.
               </p>
             </div>
 
             {/* Overall Progress Widget */}
-            <div className="bg-slate-900/80 border border-slate-700 p-5 rounded-xl flex flex-col items-center justify-center min-w-[200px] shadow-lg">
-              <span className="text-xs uppercase font-bold text-slate-400 mb-1">Your Progress</span>
-              <div className="text-3xl font-extrabold text-emerald-400 mb-1">
+            <div className="bg-slate-900/80 border border-slate-700 p-4 sm:p-5 rounded-xl flex flex-col items-center justify-center min-w-[190px] shadow-lg w-full sm:w-auto">
+              <span className="text-[11px] uppercase font-bold text-slate-400 mb-1">Your Progress</span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 mb-1">
                 {Math.round((completed.length / JAVA_MODULES.length) * 100)}%
               </div>
               <span className="text-xs text-slate-400">
@@ -127,66 +171,143 @@ export default function JavaSyllabusPage() {
           </div>
 
           {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-700/60 text-xs text-slate-300">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5 pt-5 border-t border-slate-700/60 text-xs text-slate-300">
             <div>
-              <span className="text-slate-400 block font-medium">Total Sections</span>
-              <span className="text-lg font-bold text-white">{JAVA_SECTIONS.length} Sections</span>
+              <span className="text-slate-400 block font-medium">Sections</span>
+              <span className="text-base sm:text-lg font-bold text-white">{JAVA_SECTIONS.length} Sections</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Total Modules</span>
-              <span className="text-lg font-bold text-white">{JAVA_MODULES.length} Modules</span>
+              <span className="text-slate-400 block font-medium">Modules</span>
+              <span className="text-base sm:text-lg font-bold text-white">{JAVA_MODULES.length} Modules</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Estimated Time</span>
-              <span className="text-lg font-bold text-white">~{totalHours} Hours</span>
+              <span className="text-slate-400 block font-medium">Est. Prep Time</span>
+              <span className="text-base sm:text-lg font-bold text-white">~{totalHours} Hours</span>
             </div>
             <div>
-              <span className="text-slate-400 block font-medium">Questions & Practice</span>
-              <span className="text-lg font-bold text-white">200+ MCQs & Traps</span>
+              <span className="text-slate-400 block font-medium">Practice Bank</span>
+              <span className="text-base sm:text-lg font-bold text-white">200+ MCQs & Traps</span>
             </div>
           </div>
         </header>
 
-        {/* Filter and Expand Controls */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-slate-800/40 p-4 rounded-xl border border-slate-700/60">
-          <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search any topic (e.g. String pool, Binary Search, Spring Boot, Singleton, HashMap)..."
-              className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-9 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-white"
+        {/* ── STICKY FAST SECTION NAVIGATION BAR ── */}
+        <div className="sticky top-2 z-30 bg-slate-900/95 backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-slate-700/80 shadow-xl space-y-2.5">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-300 uppercase tracking-wider">
+              <Filter className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Section Filter:</span>
+            </div>
+
+            {/* Mobile Dropdown Switcher */}
+            <div className="sm:hidden flex-1 max-w-[200px] relative">
+              <select
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700 text-xs font-semibold text-slate-200 py-1 px-2.5 rounded-lg appearance-none cursor-pointer pr-6"
               >
-                Clear
+                <option value="all">All Sections ({JAVA_MODULES.length})</option>
+                {JAVA_SECTIONS.map((sec, idx) => (
+                  <option key={sec.id} value={sec.id}>
+                    {idx + 1}. {sec.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+
+            <div className="flex items-center gap-1.5 text-xs">
+              <button
+                onClick={() => toggleAll(true)}
+                className="text-[11px] bg-slate-800 hover:bg-slate-750 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition"
+              >
+                Expand All
               </button>
-            )}
+              <button
+                onClick={() => toggleAll(false)}
+                className="text-[11px] bg-slate-800 hover:bg-slate-750 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition"
+              >
+                Collapse All
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
+          {/* Desktop & Tablet Horizontal Chips */}
+          <div className="hidden sm:flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             <button
-              onClick={() => toggleAll(true)}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg border border-slate-700 transition-colors"
+              onClick={() => setSelectedSection('all')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
+                selectedSection === 'all'
+                  ? 'bg-emerald-600 text-white shadow-md'
+                  : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700'
+              }`}
             >
-              Expand All
+              <span>All Sections</span>
+              <span className="text-[10px] opacity-75 font-mono">({JAVA_MODULES.length})</span>
             </button>
-            <button
-              onClick={() => toggleAll(false)}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-2 rounded-lg border border-slate-700 transition-colors"
-            >
-              Collapse All
-            </button>
+
+            {JAVA_SECTIONS.map((sec, idx) => {
+              const secMods = JAVA_MODULES.filter(m => m.section === sec.id);
+              const isSelected = selectedSection === sec.id;
+              const SecIcon = SECTION_ICONS[sec.id] || BookOpen;
+
+              return (
+                <button
+                  key={sec.id}
+                  onClick={() => setSelectedSection(sec.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 ${
+                    isSelected
+                      ? 'bg-emerald-600 text-white shadow-md'
+                      : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-700'
+                  }`}
+                >
+                  <SecIcon className="w-3.5 h-3.5 shrink-0" />
+                  <span>{idx + 1}. {sec.label}</span>
+                  <span className="text-[10px] opacity-75 font-mono">({secMods.length})</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Syllabus Content: 8 Sections */}
+        {/* Search Input Bar */}
+        <div className="relative">
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            placeholder="Search any topic (e.g. String pool, Binary Search, HashMap, PECS, Spring Boot, Lambdas)..."
+            className="w-full bg-slate-800/80 border border-slate-700 rounded-xl pl-10 pr-16 py-2.5 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm('')}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-slate-400 hover:text-white px-2 py-0.5 rounded bg-slate-700"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
+        {/* Search Results Summary (If Active) */}
+        {searchTerm.trim() && (
+          <div className="flex items-center justify-between text-xs text-slate-300 bg-slate-800/60 border border-slate-700 px-4 py-2 rounded-xl">
+            <span>
+              Found <strong className="text-emerald-400 font-bold">{filteredModules.length}</strong> modules matching <strong className="text-white">"{searchTerm}"</strong>
+            </span>
+            <button
+              onClick={() => setSearchTerm('')}
+              className="text-emerald-400 hover:underline"
+            >
+              Reset Search
+            </button>
+          </div>
+        )}
+
+        {/* Syllabus Content: Filtered Sections */}
         <div className="space-y-6">
-          {JAVA_SECTIONS.map((section, secIdx) => {
+          {sectionsToDisplay.map((section, secIdx) => {
             const sectionModules = filteredModules.filter(m => m.section === section.id);
             if (sectionModules.length === 0) return null;
 
@@ -197,15 +318,16 @@ export default function JavaSyllabusPage() {
             return (
               <div
                 key={section.id}
+                id={`section-${section.id}`}
                 className="bg-slate-800/60 border border-slate-700 rounded-2xl overflow-hidden shadow-md"
               >
                 {/* Section Header */}
                 <button
                   onClick={() => toggleSection(section.id)}
-                  className="w-full px-6 py-4 flex items-center justify-between bg-slate-800 hover:bg-slate-750 transition-colors text-left"
+                  className="w-full px-5 py-4 flex items-center justify-between bg-slate-800 hover:bg-slate-750 transition-colors text-left"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shrink-0">
                       <SecIcon className="w-5 h-5" />
                     </div>
                     <div>
@@ -214,13 +336,13 @@ export default function JavaSyllabusPage() {
                         <span className="text-xs text-slate-500">•</span>
                         <span className="text-xs text-slate-400">{sectionModules.length} Modules</span>
                       </div>
-                      <h2 className="text-lg md:text-xl font-bold text-white">
+                      <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">
                         {section.label}
                       </h2>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2.5 py-1 rounded-full border border-slate-700 hidden sm:inline-block">
                       {completedCount}/{sectionModules.length} Done
                     </span>
@@ -265,7 +387,7 @@ export default function JavaSyllabusPage() {
                                   <span>{isModDone ? 'Completed' : 'Mark Learned'}</span>
                                 </button>
 
-                                <h3 className="text-base md:text-lg font-bold text-white">
+                                <h3 className="text-sm sm:text-base md:text-lg font-bold text-white">
                                   {mod.title}
                                 </h3>
 
@@ -287,7 +409,7 @@ export default function JavaSyllabusPage() {
                                 </span>
                               </div>
 
-                               <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
+                              <p className="text-xs md:text-sm text-slate-300 leading-relaxed">
                                 {mod.description}
                               </p>
 
@@ -304,6 +426,7 @@ export default function JavaSyllabusPage() {
                                       <div className="flex flex-wrap gap-1.5">
                                         {subLessons.map(sub => {
                                           const isSubDone = completed.includes(sub.id);
+                                          const cleanNum = sub.lessonNumber.replace(/^Lesson\s+/i, '');
                                           return (
                                             <Link
                                               key={sub.id}
@@ -317,9 +440,9 @@ export default function JavaSyllabusPage() {
                                               {isSubDone ? (
                                                 <CheckCircle className="w-3 h-3 text-emerald-400" />
                                               ) : (
-                                                <span className="text-[10px] text-blue-400 font-mono font-bold">{sub.lessonNumber}</span>
+                                                <span className="text-[10px] text-blue-400 font-mono font-bold">{cleanNum}</span>
                                               )}
-                                              <span>{sub.title}</span>
+                                              <span className="truncate max-w-[200px]">{sub.title}</span>
                                             </Link>
                                           );
                                         })}
@@ -412,6 +535,17 @@ export default function JavaSyllabusPage() {
         </div>
 
       </div>
+
+      {/* Floating Back to Top Button */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 p-3 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-2xl transition-all duration-200 active:scale-95 z-40 border border-emerald-400/30 flex items-center justify-center"
+          title="Back to Top"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 }
