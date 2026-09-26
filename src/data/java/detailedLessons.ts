@@ -92,6 +92,7 @@ import { oopLessons } from './sublessons/oopLessons';
 import { dsaLessons } from './sublessons/dsaLessons';
 import { collectionsLessons } from './sublessons/collectionsLessons';
 import { exceptionsLessons } from './sublessons/exceptionsLessons';
+import { streamsLessons } from './sublessons/streamsLessons';
 
 import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
 import { dataTypesExercises } from './sublessons/dataTypesExercises';
@@ -104,6 +105,7 @@ import { oopExercises } from './sublessons/oopExercises';
 import { dsaExercises } from './sublessons/dsaExercises';
 import { collectionsExercises } from './sublessons/collectionsExercises';
 import { exceptionsExercises } from './sublessons/exceptionsExercises';
+import { streamsExercises } from './sublessons/streamsExercises';
 
 export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...fundamentalsExercises,
@@ -117,6 +119,7 @@ export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...dsaExercises,
   ...collectionsExercises,
   ...exceptionsExercises,
+  ...streamsExercises,
 };
 
 const rawLessons: Record<string, DetailedLesson> = {
@@ -131,6 +134,7 @@ const rawLessons: Record<string, DetailedLesson> = {
   ...dsaLessons,
   ...collectionsLessons,
   ...exceptionsLessons,
+  ...streamsLessons,
 };
 
 // Populate programmingExercises for every sub-lesson so none is empty
@@ -439,6 +443,10 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     'exceptions': 'java-exceptions',
     'exception-handling': 'java-exceptions',
     'java-exceptions': 'java-exceptions',
+    '22': 'java-streams',
+    'streams': 'java-streams',
+    'lambdas': 'java-streams',
+    'java-streams': 'java-streams',
   };
   const targetId = moduleAliases[clean] || clean;
 
