@@ -11,9 +11,9 @@ export const patternsP1_P2_lessons: Record<string, DetailedLesson> = {
   // ─────────────────────────────────────────────────────────────
   'star-patterns-and-pyramids': {
     id: 'star-patterns-and-pyramids',
-    moduleId: 'patterns-star',
-    moduleTitle: 'P1. Star Patterns & Pyramids',
-    lessonNumber: 'Lesson P1.1',
+    moduleId: 'java-patterns',
+    moduleTitle: '6. Pattern Programs & Logic Building',
+    lessonNumber: 'Lesson 6.1',
     title: 'Star Patterns & Symmetrical Pyramids',
     subtitle: 'Nested loop coordinate mapping (row i, column j), spaces vs star mathematical relations, right-angled triangles, inverted pyramids, centered pyramids, diamonds, hollow diamonds, and butterfly patterns',
     estimatedMinutes: 35,
@@ -727,9 +727,9 @@ for (int j = 1; j <= i; j++) System.out.print("*");`,
   // ─────────────────────────────────────────────────────────────
   'number-patterns-and-series': {
     id: 'number-patterns-and-series',
-    moduleId: 'patterns-number',
-    moduleTitle: 'P2. Number Patterns & Series',
-    lessonNumber: 'Lesson P2.1',
+    moduleId: 'java-patterns',
+    moduleTitle: '6. Pattern Programs & Logic Building',
+    lessonNumber: 'Lesson 6.2',
     title: 'Number Patterns, Floyds & Pascal Triangle',
     subtitle: 'Linear incrementing sequences, Floyd triangle, binary 0-1 alternating triangles, Pascal triangle formula nCr, palindromic number pyramids, and number spirals',
     estimatedMinutes: 35,

@@ -4,8 +4,8 @@ export const lesson6_1: Record<string, DetailedLesson> = {
   'string-immutability-and-memory': {
     id: 'string-immutability-and-memory',
     moduleId: 'java-strings',
-    moduleTitle: '8. Strings & String Pool',
-    lessonNumber: 'Lesson 8.1',
+    moduleTitle: '9. Strings & String Pool',
+    lessonNumber: 'Lesson 9.1',
     title: 'String Immutability & Memory Internals',
     subtitle: 'The String Constant Pool (SCP), heap mechanics, value immutability, literal vs new String(), and intern()',
     estimatedMinutes: 16,

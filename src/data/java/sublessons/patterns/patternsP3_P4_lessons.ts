@@ -11,9 +11,9 @@ export const patternsP3_P4_lessons: Record<string, DetailedLesson> = {
   // ─────────────────────────────────────────────────────────────
   'character-alphabet-patterns': {
     id: 'character-alphabet-patterns',
-    moduleId: 'patterns-character',
-    moduleTitle: 'P3. Character & Alphabet Patterns',
-    lessonNumber: 'Lesson P3.1',
+    moduleId: 'java-patterns',
+    moduleTitle: '6. Pattern Programs & Logic Building',
+    lessonNumber: 'Lesson 6.3',
     title: 'Character & Alphabet Pattern Logic',
     subtitle: 'ASCII / Unicode char arithmetic (char c = (char)(\'A\' + j)), contiguous alphabetic triangles, palindromic character pyramids, hollow character diamonds, and cyclical character grids',
     estimatedMinutes: 35,
@@ -661,9 +661,9 @@ System.out.println(ch);`,
   // ─────────────────────────────────────────────────────────────
   'advanced-matrix-spiral-patterns': {
     id: 'advanced-matrix-spiral-patterns',
-    moduleId: 'patterns-matrix',
-    moduleTitle: 'P4. Advanced Matrix & Spiral Patterns',
-    lessonNumber: 'Lesson P4.1',
+    moduleId: 'java-patterns',
+    moduleTitle: '6. Pattern Programs & Logic Building',
+    lessonNumber: 'Lesson 6.4',
     title: 'Advanced Matrix & Inward Spiral Patterns',
     subtitle: '4-boundary shrinking box algorithm (top, bottom, left, right), concentric number square grids, zigzag snake matrix traversal, diagonal printing, and matrix rotation',
     estimatedMinutes: 40,

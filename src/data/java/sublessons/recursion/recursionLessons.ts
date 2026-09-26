@@ -9,8 +9,8 @@ export const recursionLessons: Record<string, DetailedLesson> = {
   "recursion-and-call-stack": {
     "id": "recursion-and-call-stack",
     "moduleId": "java-recursion",
-    "moduleTitle": "9. Recursion & Call Stack",
-    "lessonNumber": "Lesson 9.1",
+    "moduleTitle": "10. Recursion & Call Stack",
+    "lessonNumber": "Lesson 10.1",
     "title": "Recursion Fundamentals & Call Stack Tracing",
     "subtitle": "Recursive problem decomposition, base cases, winding vs unwinding phases, the call stack memory model, and recursion tree analysis",
     "estimatedMinutes": 25,
@@ -569,8 +569,8 @@ export const recursionLessons: Record<string, DetailedLesson> = {
   "recursion-head-tail-tree": {
     "id": "recursion-head-tail-tree",
     "moduleId": "java-recursion",
-    "moduleTitle": "9. Recursion & Call Stack",
-    "lessonNumber": "Lesson 9.2",
+    "moduleTitle": "10. Recursion & Call Stack",
+    "lessonNumber": "Lesson 10.2",
     "title": "Head vs Tail Recursion & Memory Optimization",
     "subtitle": "Head recursion vs tail recursion mechanics, accumulator parameter passing, why JVM HotSpot does not optimize tail calls (TCO), and tree recursion complexity",
     "estimatedMinutes": 25,
@@ -1129,8 +1129,8 @@ export const recursionLessons: Record<string, DetailedLesson> = {
   "recursion-arrays-and-strings": {
     "id": "recursion-arrays-and-strings",
     "moduleId": "java-recursion",
-    "moduleTitle": "9. Recursion & Call Stack",
-    "lessonNumber": "Lesson 9.3",
+    "moduleTitle": "10. Recursion & Call Stack",
+    "lessonNumber": "Lesson 10.3",
     "title": "Recursion on Arrays & Divide-and-Conquer",
     "subtitle": "Array index navigation, binary search recursion, string reversal and palindromes, divide-and-conquer recurrence relations, and call stack bounds",
     "estimatedMinutes": 25,
@@ -1691,8 +1691,8 @@ export const recursionLessons: Record<string, DetailedLesson> = {
   "recursion-backtracking-foundations": {
     "id": "recursion-backtracking-foundations",
     "moduleId": "java-recursion",
-    "moduleTitle": "9. Recursion & Call Stack",
-    "lessonNumber": "Lesson 9.4",
+    "moduleTitle": "10. Recursion & Call Stack",
+    "lessonNumber": "Lesson 10.4",
     "title": "Backtracking Foundations & State Restoration",
     "subtitle": "The Choose-Explore-Unchoose paradigm, state space tree traversal, subset generation, permutations, pruning dead branches, and preventing stack overflow",
     "estimatedMinutes": 30,

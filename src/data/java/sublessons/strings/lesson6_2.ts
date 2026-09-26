@@ -4,8 +4,8 @@ export const lesson6_2: Record<string, DetailedLesson> = {
   'string-equality-and-comparisons': {
     id: 'string-equality-and-comparisons',
     moduleId: 'java-strings',
-    moduleTitle: '8. Strings & String Pool',
-    lessonNumber: 'Lesson 8.2',
+    moduleTitle: '9. Strings & String Pool',
+    lessonNumber: 'Lesson 9.2',
     title: 'String Equality: == vs .equals() & SCP',
     subtitle: 'Reference identity vs value equality, equalsIgnoreCase(), compareTo(), compile-time constants, and the intern() mechanism',
     estimatedMinutes: 15,
