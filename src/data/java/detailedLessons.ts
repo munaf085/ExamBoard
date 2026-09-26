@@ -91,6 +91,7 @@ import { methodsLessons } from './sublessons/methodsLessons';
 import { oopLessons } from './sublessons/oopLessons';
 import { dsaLessons } from './sublessons/dsaLessons';
 import { collectionsLessons } from './sublessons/collectionsLessons';
+import { exceptionsLessons } from './sublessons/exceptionsLessons';
 
 import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
 import { dataTypesExercises } from './sublessons/dataTypesExercises';
@@ -102,6 +103,7 @@ import { methodsExercises } from './sublessons/methodsExercises';
 import { oopExercises } from './sublessons/oopExercises';
 import { dsaExercises } from './sublessons/dsaExercises';
 import { collectionsExercises } from './sublessons/collectionsExercises';
+import { exceptionsExercises } from './sublessons/exceptionsExercises';
 
 export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...fundamentalsExercises,
@@ -114,6 +116,7 @@ export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...oopExercises,
   ...dsaExercises,
   ...collectionsExercises,
+  ...exceptionsExercises,
 };
 
 const rawLessons: Record<string, DetailedLesson> = {
@@ -127,6 +130,7 @@ const rawLessons: Record<string, DetailedLesson> = {
   ...oopLessons,
   ...dsaLessons,
   ...collectionsLessons,
+  ...exceptionsLessons,
 };
 
 // Populate programmingExercises for every sub-lesson so none is empty
@@ -324,6 +328,18 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'generics-limitations': 'generics-limitations-and-heap-pollution',
     'heap-pollution': 'generics-limitations-and-heap-pollution',
     'generic-arrays': 'generics-limitations-and-heap-pollution',
+    'throwable': 'throwable-hierarchy-checked-unchecked',
+    'checked-unchecked': 'throwable-hierarchy-checked-unchecked',
+    'checked-exceptions': 'throwable-hierarchy-checked-unchecked',
+    'try-catch-finally': 'try-catch-finally-execution-order',
+    'try-catch': 'try-catch-finally-execution-order',
+    'finally': 'try-catch-finally-execution-order',
+    'multi-catch': 'try-catch-finally-execution-order',
+    'try-with-resources': 'try-with-resources-autocloseable',
+    'autocloseable': 'try-with-resources-autocloseable',
+    'suppressed-exceptions': 'try-with-resources-autocloseable',
+    'custom-exceptions': 'custom-exceptions-best-practices',
+    'exception-chaining': 'custom-exceptions-best-practices',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -419,6 +435,10 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     '20': 'java-generics',
     'generics': 'java-generics',
     'java-generics': 'java-generics',
+    '21': 'java-exceptions',
+    'exceptions': 'java-exceptions',
+    'exception-handling': 'java-exceptions',
+    'java-exceptions': 'java-exceptions',
   };
   const targetId = moduleAliases[clean] || clean;
 
