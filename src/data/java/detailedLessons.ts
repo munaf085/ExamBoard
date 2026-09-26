@@ -90,6 +90,7 @@ import { arraysLessons } from './sublessons/arraysLessons';
 import { methodsLessons } from './sublessons/methodsLessons';
 import { oopLessons } from './sublessons/oopLessons';
 import { dsaLessons } from './sublessons/dsaLessons';
+import { collectionsLessons } from './sublessons/collectionsLessons';
 
 import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
 import { dataTypesExercises } from './sublessons/dataTypesExercises';
@@ -100,6 +101,7 @@ import { arraysExercises } from './sublessons/arraysExercises';
 import { methodsExercises } from './sublessons/methodsExercises';
 import { oopExercises } from './sublessons/oopExercises';
 import { dsaExercises } from './sublessons/dsaExercises';
+import { collectionsExercises } from './sublessons/collectionsExercises';
 
 export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...fundamentalsExercises,
@@ -111,6 +113,7 @@ export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...methodsExercises,
   ...oopExercises,
   ...dsaExercises,
+  ...collectionsExercises,
 };
 
 const rawLessons: Record<string, DetailedLesson> = {
@@ -123,6 +126,7 @@ const rawLessons: Record<string, DetailedLesson> = {
   ...methodsLessons,
   ...oopLessons,
   ...dsaLessons,
+  ...collectionsLessons,
 };
 
 // Populate programmingExercises for every sub-lesson so none is empty
@@ -247,7 +251,7 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'queue': 'queue-adt-and-ring-buffers',
     'queues': 'queue-adt-and-ring-buffers',
     'ring-buffer': 'queue-adt-and-ring-buffers',
-    'priority-queue': 'queue-adt-and-ring-buffers',
+    'ring-buffers': 'queue-adt-and-ring-buffers',
     'linked-list': 'singly-doubly-linked-lists',
     'linked-lists': 'singly-doubly-linked-lists',
     'doubly-linked-list': 'singly-doubly-linked-lists',
@@ -271,6 +275,28 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'variable-sliding-window': 'dynamic-sliding-window',
     'longest-substring': 'dynamic-sliding-window',
     'min-window-substring': 'dynamic-sliding-window',
+    'collections': 'collections-framework-overview',
+    'collections-overview': 'collections-framework-overview',
+    'collections-framework': 'collections-framework-overview',
+    'iterators': 'collections-framework-overview',
+    'iterator': 'collections-framework-overview',
+    'fail-fast': 'collections-framework-overview',
+    'arraylist': 'arraylist-vs-linkedlist-internals',
+    'linkedlist': 'arraylist-vs-linkedlist-internals',
+    'arraylist-vs-linkedlist': 'arraylist-vs-linkedlist-internals',
+    'arraylist-internals': 'arraylist-vs-linkedlist-internals',
+    'linkedlist-internals': 'arraylist-vs-linkedlist-internals',
+    'set': 'set-hierarchy-and-treeset',
+    'sets': 'set-hierarchy-and-treeset',
+    'hashset': 'set-hierarchy-and-treeset',
+    'linkedhashset': 'set-hierarchy-and-treeset',
+    'treeset': 'set-hierarchy-and-treeset',
+    'set-hierarchy': 'set-hierarchy-and-treeset',
+    'navigableset': 'set-hierarchy-and-treeset',
+    'priorityqueue': 'queue-deque-and-priorityqueue',
+    'priority-queue': 'queue-deque-and-priorityqueue',
+    'deque': 'queue-deque-and-priorityqueue',
+    'arraydeque-queue': 'queue-deque-and-priorityqueue',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -357,6 +383,9 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     'dsa-patterns': 'java-dsa-patterns',
     'two-pointers': 'java-dsa-patterns',
     'sliding-window': 'java-dsa-patterns',
+    '18': 'java-collections',
+    'collections': 'java-collections',
+    'java-collections': 'java-collections',
   };
   const targetId = moduleAliases[clean] || clean;
 

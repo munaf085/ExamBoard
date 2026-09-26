@@ -1600,7 +1600,7 @@ export default function JavaSubLessonPage() {
                 <ArrowLeft className="w-4 h-4" />
                 <div className="text-left">
                   <div className="text-[10px] text-slate-400 uppercase font-mono">Previous Lesson</div>
-                  <div className="truncate max-w-[200px]">{adjacent.prev.lessonNumber}: {adjacent.prev.title}</div>
+                  <div className="truncate max-w-[200px]">{formatLessonNum(adjacent.prev.lessonNumber)} · {adjacent.prev.title}</div>
                 </div>
               </button>
             ) : (
@@ -1614,7 +1614,7 @@ export default function JavaSubLessonPage() {
               >
                 <div className="text-right">
                   <div className="text-[10px] text-blue-200 uppercase font-mono">Next Lesson</div>
-                  <div className="truncate max-w-[200px]">{adjacent.next.lessonNumber}: {adjacent.next.title}</div>
+                  <div className="truncate max-w-[200px]">{formatLessonNum(adjacent.next.lessonNumber)} · {adjacent.next.title}</div>
                 </div>
                 <ArrowRight className="w-4 h-4" />
               </button>
