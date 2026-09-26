@@ -17,7 +17,7 @@ import {
 } from '../../data/java/detailedLessons';
 import {
   getJavaProgress,
-  markLessonComplete,
+  toggleLessonComplete,
   getSelfEvaluations,
   saveSelfEvaluation,
   SelfEvalRating,
@@ -148,7 +148,7 @@ export default function JavaSubLessonPage() {
 
   const handleToggleComplete = () => {
     if (!lesson) return;
-    markLessonComplete(lesson.id);
+    toggleLessonComplete(lesson.id);
     const progress = getJavaProgress();
     setCompletedLessons([...progress.lessonsCompleted]);
   };

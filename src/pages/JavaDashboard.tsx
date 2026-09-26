@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../data/java/curriculum';
 import { getLessonsForModule } from '../data/java/detailedLessons';
-import { getJavaProgress, markLessonComplete } from '../utils/javaStorage';
+import { getJavaProgress, toggleLessonComplete } from '../utils/javaStorage';
 import { JavaProgress, JavaModule } from '../types';
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
@@ -80,7 +80,7 @@ export default function JavaDashboard() {
 
   const handleToggleComplete = (moduleId: string) => {
     if (!progress) return;
-    markLessonComplete(moduleId);
+    toggleLessonComplete(moduleId);
     setProgress(getJavaProgress());
   };
 
@@ -92,7 +92,7 @@ export default function JavaDashboard() {
 
   const completedList = progress.lessonsCompleted || [];
   const totalModulesCount = JAVA_MODULES.length;
-  const completedCount = completedList.length;
+  const completedCount = completedList.filter(id => JAVA_MODULES.some(m => m.id === id)).length;
   const progressPercent = Math.round((completedCount / totalModulesCount) * 100);
 
   // Filter modules

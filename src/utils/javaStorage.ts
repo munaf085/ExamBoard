@@ -29,6 +29,24 @@ export function markLessonComplete(lessonId: string): void {
   saveJavaProgress(p);
 }
 
+export function unmarkLessonComplete(lessonId: string): void {
+  const p = getJavaProgress();
+  p.lessonsCompleted = p.lessonsCompleted.filter(id => id !== lessonId);
+  saveJavaProgress(p);
+}
+
+export function toggleLessonComplete(lessonId: string): boolean {
+  const p = getJavaProgress();
+  const isDone = p.lessonsCompleted.includes(lessonId);
+  if (isDone) {
+    p.lessonsCompleted = p.lessonsCompleted.filter(id => id !== lessonId);
+  } else {
+    p.lessonsCompleted.push(lessonId);
+  }
+  saveJavaProgress(p);
+  return !isDone;
+}
+
 export function recordMcqResult(mcqId: string, correct: boolean): void {
   const p = getJavaProgress();
   const existing = p.mcqResults[mcqId];
