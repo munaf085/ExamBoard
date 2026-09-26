@@ -649,32 +649,71 @@ export default function JavaSubLessonPage() {
           {/* ── TAB 1: LESSON OVERVIEW ── */}
           {(activeTab === 'lesson' || activeTab === 'all') && (
             <div className="space-y-6">
-              {/* Cohesive Lesson Article */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-7 md:p-8 shadow-sm space-y-6">
-                {/* Opening Intuitive Story / Analogy */}
-                {lesson.beginnerAnalogy && (
-                  <div className="p-4 sm:p-5 rounded-xl bg-slate-950/70 border border-emerald-500/20 text-slate-200">
+              {/* Section 1: The Big Picture & Real-World Analogy */}
+              {lesson.beginnerAnalogy && (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+                  <div className="flex items-center gap-3 pb-3 border-b border-slate-800/80">
+                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                      <Lightbulb className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                        The Big Picture: Real-World Analogy
+                      </h2>
+                      <p className="text-xs text-slate-400">Understand the concept intuitively before diving into code</p>
+                    </div>
+                  </div>
+                  <div className="p-4 sm:p-5 rounded-xl bg-slate-950/70 border border-amber-500/20 text-slate-200 text-sm sm:text-base leading-relaxed">
                     {renderFormattedText(lesson.beginnerAnalogy)}
                   </div>
-                )}
+                </div>
+              )}
 
-                {/* Natural Flowing Lesson Points */}
-                <div className="space-y-4 pt-1">
+              {/* Section 2: Core Concepts Explained */}
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                        Core Concepts Explained
+                      </h2>
+                      <p className="text-xs text-slate-400">Step-by-step principles and technical foundations</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
+                    {lesson.estimatedMinutes} min study
+                  </span>
+                </div>
+
+                <div className="space-y-3 pt-1">
                   {lesson.coreExplanation.map((point, idx) => (
-                    <div key={idx} className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    <div
+                      key={idx}
+                      className="p-3.5 sm:p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs sm:text-sm text-slate-200 leading-relaxed"
+                    >
                       {renderFormattedText(point)}
                     </div>
                   ))}
                 </div>
               </div>
 
-              {/* Standard Java Syntax & Anatomy */}
+              {/* Section 3: Syntax Reference & Blueprint */}
               {lesson.cheatSheet?.syntaxTemplate && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-amber-400 font-semibold text-xs sm:text-sm">
-                      <Terminal className="w-4 h-4 text-amber-400" />
-                      <span>Syntax Reference</span>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
+                        <Terminal className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                          Syntax Reference & Blueprint
+                        </h2>
+                        <p className="text-xs text-slate-400">Standard grammar and structure</p>
+                      </div>
                     </div>
                     <CopyButton text={lesson.cheatSheet.syntaxTemplate} label="Copy Syntax" />
                   </div>
@@ -687,22 +726,29 @@ export default function JavaSubLessonPage() {
 
                   {lesson.cheatSheet.summary && (
                     <p className="text-xs text-slate-400 leading-relaxed">
-                      {lesson.cheatSheet.summary}
+                      📌 {lesson.cheatSheet.summary}
                     </p>
                   )}
                 </div>
               )}
 
-              {/* Primary Code Walkthrough in Action */}
+              {/* Section 4: Code Walkthrough in Action */}
               {lesson.codeSnippet && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-sm space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800/80 pb-3">
-                    <div className="flex items-center gap-2 text-emerald-400 font-semibold text-sm sm:text-base">
-                      <Code2 className="w-5 h-5 text-emerald-400" />
-                      <span>{lesson.codeSnippet.title}</span>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800/80">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                        <Code2 className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                          Code Walkthrough: {lesson.codeSnippet.title}
+                        </h2>
+                        <p className="text-xs text-slate-400">Fully runnable Java code with detailed breakdown</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 self-start sm:self-auto">
-                      <CopyButton text={lesson.codeSnippet.code} label="Copy Java Code" />
+                      <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
                     </div>
                   </div>
 
@@ -752,13 +798,20 @@ export default function JavaSubLessonPage() {
                 </div>
               )}
 
-              {/* Visual Mental Model */}
+              {/* Section 5: Memory Model & Behind the Scenes */}
               {lesson.diagram && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-2.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 text-indigo-400 font-semibold text-xs sm:text-sm">
-                      <Terminal className="w-4 h-4" />
-                      <span>Memory Model & Visual Architecture</span>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
+                        <Terminal className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                          Behind the Scenes: Memory Architecture
+                        </h2>
+                        <p className="text-xs text-slate-400">Visual architectural trace of Stack and Heap allocations</p>
+                      </div>
                     </div>
                     <CopyButton text={lesson.diagram} label="Copy Diagram" />
                   </div>
@@ -770,12 +823,19 @@ export default function JavaSubLessonPage() {
                 </div>
               )}
 
-              {/* Additional Practical Real-World Scenarios */}
+              {/* Section 6: Practical Real-World Examples */}
               {lesson.codeExamples && lesson.codeExamples.length > 0 && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-blue-400 font-semibold text-xs sm:text-sm">
-                    <Code2 className="w-4 h-4" />
-                    <span>Practical Examples ({lesson.codeExamples.length})</span>
+                  <div className="flex items-center gap-3 pb-1">
+                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                      <Sparkles className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                        Practical Real-World Examples ({lesson.codeExamples.length})
+                      </h2>
+                      <p className="text-xs text-slate-400">Hands-on scenarios and real implementation patterns</p>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4">
@@ -810,12 +870,19 @@ export default function JavaSubLessonPage() {
                 </div>
               )}
 
-              {/* Key Engineering Rules To Remember */}
+              {/* Section 7: Key Takeaways & Summary */}
               {lesson.interviewTakeaways && lesson.interviewTakeaways.length > 0 && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                  <div className="flex items-center gap-2 text-blue-400 font-semibold text-sm">
-                    <Sparkles className="w-4 h-4 text-blue-400" />
-                    <span>Key Takeaways</span>
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
+                  <div className="flex items-center gap-3 pb-3 border-b border-slate-800/80">
+                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                        Key Takeaways & Summary
+                      </h2>
+                      <p className="text-xs text-slate-400">Important principles to remember for interviews and exams</p>
+                    </div>
                   </div>
 
                   <div className="space-y-2.5">
