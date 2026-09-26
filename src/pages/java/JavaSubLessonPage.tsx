@@ -649,11 +649,11 @@ export default function JavaSubLessonPage() {
           {/* ── TAB 1: LESSON OVERVIEW ── */}
           {(activeTab === 'lesson' || activeTab === 'all') && (
             <article className="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 sm:p-7 md:p-9 space-y-7 text-slate-300 leading-relaxed shadow-sm">
-              {/* 1. Intuitive Analogy */}
+              {/* 1. Concept Overview */}
               {lesson.beginnerAnalogy && (
                 <section className="space-y-3 pb-6 border-b border-slate-800/70">
                   <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                    <span>💡 An Easy Way to Think About It</span>
+                    <span>📌 Concept Overview</span>
                   </h2>
                   <div className="text-slate-300 text-sm sm:text-base leading-relaxed space-y-3 pl-1">
                     {renderFormattedText(lesson.beginnerAnalogy)}
@@ -661,10 +661,10 @@ export default function JavaSubLessonPage() {
                 </section>
               )}
 
-              {/* 2. Core Concepts (Natural Paragraphs, No Grids, No Boxes around every item!) */}
+              {/* 2. In-Depth Concepts */}
               <section className="space-y-4 pb-6 border-b border-slate-800/70">
                 <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <span>📖 How It Works in Java</span>
+                  <span>📖 Key Concepts & Rules</span>
                 </h2>
                 <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed pl-1">
                   {lesson.coreExplanation.map((point, idx) => (
@@ -680,7 +680,7 @@ export default function JavaSubLessonPage() {
                 <section className="space-y-3 pb-6 border-b border-slate-800/70">
                   <div className="flex items-center justify-between">
                     <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                      <span>⚙️ Syntax Structure</span>
+                      <span>⚙️ Syntax & Structure</span>
                     </h2>
                     <CopyButton text={lesson.cheatSheet.syntaxTemplate} label="Copy Syntax" />
                   </div>
@@ -697,12 +697,12 @@ export default function JavaSubLessonPage() {
                 </section>
               )}
 
-              {/* 4. Code in Action */}
+              {/* 4. Code Implementation */}
               {lesson.codeSnippet && (
                 <section className="space-y-4 pb-6 border-b border-slate-800/70">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                      <span>💻 Code in Action: {lesson.codeSnippet.title}</span>
+                      <span>💻 Implementation: {lesson.codeSnippet.title}</span>
                     </h2>
                     <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
                   </div>
