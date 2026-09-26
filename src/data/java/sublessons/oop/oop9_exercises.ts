@@ -376,3 +376,56 @@ export const oop9Exercises: Record<string, ProgrammingExercise[]> = {
     }
   ]
 };
+
+// ------------------------------------------------------------
+// Aliases for the 8 modular sub-lessons (Lessons 9.1 - 9.8)
+// ------------------------------------------------------------
+oop9Exercises["why-oop-fundamentals"] = [
+  oop9Exercises["classes-objects-instantiation"][0],
+  oop9Exercises["classes-objects-instantiation"][1],
+  oop9Exercises["classes-objects-instantiation"][5],
+  oop9Exercises["classes-objects-instantiation"][7],
+  oop9Exercises["classes-objects-instantiation"][9],
+];
+
+oop9Exercises["what-is-a-class"] = [
+  oop9Exercises["classes-objects-instantiation"][2],
+  oop9Exercises["classes-objects-instantiation"][6],
+  oop9Exercises["classes-objects-instantiation"][7],
+  oop9Exercises["classes-objects-instantiation"][0],
+  oop9Exercises["classes-objects-instantiation"][5],
+];
+
+oop9Exercises["creating-objects-with-new"] = [
+  oop9Exercises["classes-objects-instantiation"][0],
+  oop9Exercises["classes-objects-instantiation"][1],
+  oop9Exercises["classes-objects-instantiation"][2],
+  oop9Exercises["classes-objects-instantiation"][8],
+  oop9Exercises["classes-objects-instantiation"][9],
+];
+
+oop9Exercises["references-and-memory"] = [
+  oop9Exercises["classes-objects-instantiation"][3],
+  oop9Exercises["classes-objects-instantiation"][4],
+  oop9Exercises["classes-objects-instantiation"][1],
+  oop9Exercises["classes-objects-instantiation"][6],
+  oop9Exercises["classes-objects-instantiation"][8],
+];
+
+oop9Exercises["constructors-initialization"] = [
+  oop9Exercises["constructors-and-chaining"][0],
+  oop9Exercises["constructors-and-chaining"][1],
+  oop9Exercises["constructors-and-chaining"][2],
+  oop9Exercises["constructors-and-chaining"][3],
+  oop9Exercises["constructors-and-chaining"][4],
+];
+
+oop9Exercises["this-keyword-and-chaining"] = [
+  oop9Exercises["constructors-and-chaining"][5],
+  oop9Exercises["constructors-and-chaining"][6],
+  oop9Exercises["constructors-and-chaining"][7],
+  oop9Exercises["constructors-and-chaining"][8],
+  oop9Exercises["constructors-and-chaining"][9],
+];
+
+oop9Exercises["static-vs-instance"] = oop9Exercises["static-vs-instance-members"];
