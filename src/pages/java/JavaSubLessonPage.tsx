@@ -28,6 +28,11 @@ import CopyButton from '../../components/CopyButton';
 
 type ActiveTab = 'lesson' | 'cheatsheet' | 'practice' | 'assignments' | 'interview_qa' | 'self_eval' | 'quiz' | 'all';
 
+export function formatLessonNum(numStr?: string): string {
+  if (!numStr) return '';
+  return numStr.replace(/^Lesson\s+/i, '').trim();
+}
+
 export default function JavaSubLessonPage() {
   const { lessonId } = useParams<{ lessonId: string }>();
   const navigate = useNavigate();
@@ -39,6 +44,8 @@ export default function JavaSubLessonPage() {
   const [questionRatings, setQuestionRatings] = useState<Record<number, SelfEvalRating>>({});
   const [solvedAssignments, setSolvedAssignments] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<ActiveTab>('lesson');
+  const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>({});
+  const activeLessonRef = React.useRef<HTMLButtonElement | null>(null);
 
   // Interactive Quiz state
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
@@ -61,6 +68,23 @@ export default function JavaSubLessonPage() {
   const allLessons = getAllDetailedLessons();
 
   const currentLessonIndex = allLessons.findIndex(l => l.id === lesson?.id);
+
+  // Auto-expand module containing the active lesson
+  useEffect(() => {
+    if (lesson?.moduleId) {
+      setExpandedModules(prev => ({ ...prev, [lesson.moduleId]: true }));
+    }
+  }, [lesson?.moduleId]);
+
+  // Smoothly scroll active lesson into view when sidebar opens or route changes
+  useEffect(() => {
+    if (activeLessonRef.current) {
+      const timer = setTimeout(() => {
+        activeLessonRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [sidebarOpen, lessonId]);
 
   // Normalize practice problems list
   const practiceProblemsList: PracticeProblem[] = lesson?.practiceProblems
@@ -194,7 +218,7 @@ export default function JavaSubLessonPage() {
 
           <div className="flex items-center gap-1.5 sm:gap-2 truncate">
             <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30 shrink-0">
-              {lesson.lessonNumber}
+              {formatLessonNum(lesson.lessonNumber)}
             </span>
             <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[150px] sm:max-w-xs md:max-w-md">
               {lesson.title}
@@ -255,12 +279,12 @@ export default function JavaSubLessonPage() {
       <div className="flex-1 flex max-w-7xl w-full mx-auto relative">
         {/* ── CURRICULUM DRAWER / SIDEBAR ── */}
         <aside
-          className={`fixed lg:sticky top-[53px] bottom-0 left-0 w-80 max-w-[85vw] bg-slate-900 border-r border-slate-800 p-4 overflow-y-auto z-50 transition-transform duration-200 shadow-2xl lg:shadow-none ${
+          className={`fixed lg:sticky top-[53px] bottom-0 left-0 w-80 max-w-[85vw] bg-slate-900 border-r border-slate-800 p-3 sm:p-4 overflow-y-auto z-50 transition-transform duration-200 shadow-2xl lg:shadow-none ${
             sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
           }`}
           style={{ height: 'calc(100vh - 53px)' }}
         >
-          <div className="mb-4 pb-3 border-b border-slate-800 flex items-center justify-between">
+          <div className="mb-3 pb-3 border-b border-slate-800 flex items-center justify-between">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Curriculum Sub-Topics
@@ -277,59 +301,89 @@ export default function JavaSubLessonPage() {
             </button>
           </div>
 
-          <div className="space-y-5">
-            {Object.entries(modulesGrouped).map(([modId, modData]) => (
-              <div key={modId} className="space-y-1">
-                <div className="text-[11px] font-bold text-slate-400 px-2 py-1 uppercase tracking-wider">
-                  {modData.title}
-                </div>
-                {modData.lessons.map(sub => {
-                  const active = sub.id === lesson.id;
-                  const done = completedLessons.includes(sub.id);
-                  const evalRating = selfEvals[sub.id]?.rating;
-                  return (
-                    <button
-                      key={sub.id}
-                      onClick={() => {
-                        setSidebarOpen(false);
-                        navigate(`/java/lesson/${sub.id}`);
-                      }}
-                      className={`w-full text-left px-3 py-2.5 rounded-xl text-xs flex items-center justify-between transition min-h-[42px] ${
-                        active
-                          ? 'bg-blue-600/25 text-blue-200 font-semibold border border-blue-500/50 shadow-sm'
-                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/70'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 truncate pr-2">
-                        {done ? (
-                          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-                        ) : (
-                          <div className={`w-2 h-2 rounded-full shrink-0 ${active ? 'bg-blue-400' : 'bg-slate-600'}`} />
-                        )}
-                        <span className="truncate">{sub.lessonNumber}: {sub.title}</span>
-                      </div>
-                      {evalRating ? (
-                        <span
-                          className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${
-                            evalRating === 'mastered'
-                              ? 'bg-emerald-500/20 text-emerald-400'
-                              : evalRating === 'partial'
-                              ? 'bg-amber-500/20 text-amber-400'
-                              : 'bg-rose-500/20 text-rose-400'
-                          }`}
-                        >
-                          {evalRating[0]}
-                        </span>
+          <div className="space-y-2">
+            {Object.entries(modulesGrouped).map(([modId, modData]) => {
+              const isModOpen = expandedModules[modId] ?? (modId === lesson.moduleId);
+              const doneCount = modData.lessons.filter(l => completedLessons.includes(l.id)).length;
+              const hasActive = modData.lessons.some(l => l.id === lesson.id);
+
+              return (
+                <div key={modId} className="rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedModules(prev => ({ ...prev, [modId]: !isModOpen }))}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-left transition ${
+                      hasActive ? 'bg-slate-800/80 text-blue-300 font-semibold' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate pr-2">
+                      {isModOpen ? (
+                        <ChevronDown className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                       ) : (
-                        <span className="text-[10px] text-slate-500 shrink-0 font-mono">
-                          {sub.estimatedMinutes}m
-                        </span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-500 shrink-0" />
                       )}
-                    </button>
-                  );
-                })}
-              </div>
-            ))}
+                      <span className="text-xs truncate font-bold">{modData.title}</span>
+                    </div>
+                    <span className="text-[10px] font-mono text-slate-500 shrink-0">
+                      {doneCount}/{modData.lessons.length}
+                    </span>
+                  </button>
+
+                  {isModOpen && (
+                    <div className="p-1 space-y-0.5 border-t border-slate-800/60 bg-slate-950/40">
+                      {modData.lessons.map(sub => {
+                        const active = sub.id === lesson.id;
+                        const done = completedLessons.includes(sub.id);
+                        const evalRating = selfEvals[sub.id]?.rating;
+                        const cleanNum = formatLessonNum(sub.lessonNumber);
+                        return (
+                          <button
+                            key={sub.id}
+                            ref={active ? activeLessonRef : null}
+                            onClick={() => {
+                              setSidebarOpen(false);
+                              navigate(`/java/lesson/${sub.id}`);
+                            }}
+                            className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs flex items-center justify-between transition ${
+                              active
+                                ? 'bg-blue-600/25 text-blue-200 font-semibold border border-blue-500/40 shadow-sm'
+                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 truncate pr-2">
+                              {done ? (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                              ) : (
+                                <span className="font-mono text-[10px] font-semibold text-blue-400/80 shrink-0 min-w-[20px]">
+                                  {cleanNum}
+                                </span>
+                              )}
+                              <span className="truncate">{sub.title}</span>
+                            </div>
+                            {evalRating ? (
+                              <span
+                                className={`text-[9px] font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${
+                                  evalRating === 'mastered'
+                                    ? 'bg-emerald-500/20 text-emerald-400'
+                                    : evalRating === 'partial'
+                                    ? 'bg-amber-500/20 text-amber-400'
+                                    : 'bg-rose-500/20 text-rose-400'
+                                }`}
+                              >
+                                {evalRating[0]}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-slate-500 shrink-0 font-mono">
+                                {sub.estimatedMinutes}m
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </aside>
 
@@ -348,7 +402,7 @@ export default function JavaSubLessonPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
               <div className="flex items-center gap-2 text-xs">
                 <span className="font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px]">
-                  {lesson.lessonNumber}
+                  {formatLessonNum(lesson.lessonNumber)}
                 </span>
                 <span className="text-slate-400 font-medium truncate max-w-[200px] sm:max-w-xs">
                   {lesson.moduleTitle}
@@ -364,31 +418,6 @@ export default function JavaSubLessonPage() {
             <h1 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight">
               {lesson.title}
             </h1>
-            <p className="text-xs text-slate-400 line-clamp-1 mt-0.5">
-              {lesson.subtitle}
-            </p>
-
-            {/* Direct Quick-Jump Callout for Practice Coding Assignments */}
-            {lesson.programmingExercises && lesson.programmingExercises.length > 0 && (
-              <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs text-amber-300">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                  <span className="font-semibold">
-                    📝 {lesson.programmingExercises.length} Practice Coding Assignments
-                  </span>
-                  <span className="text-[11px] text-slate-400 hidden sm:inline">
-                    · {lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length} Solved
-                  </span>
-                </div>
-                <button
-                  onClick={() => setActiveTab('assignments')}
-                  className="text-[11px] px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-semibold border border-amber-500/30 transition flex items-center gap-1"
-                >
-                  <span>Start Solving</span>
-                  <ChevronRight className="w-3 h-3" />
-                </button>
-              </div>
-            )}
           </div>
 
           {/* ── EASY NAVIGATION TABS FOR EACH TOPIC (STICKY & MOBILE-OPTIMIZED) ── */}
@@ -417,10 +446,10 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <FileText className="w-3.5 h-3.5 text-amber-400" />
-                <span>📋 Cheat Sheet</span>
+                <span>Cheat Sheet</span>
               </button>
 
-              {/* 3. 💻 Examples & Tracing */}
+              {/* 3. Examples */}
               <button
                 onClick={() => setActiveTab('practice')}
                 className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
@@ -430,10 +459,10 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>💻 <span className="hidden sm:inline">Examples & </span>Tracing ({practiceProblemsList.length})</span>
+                <span>Examples ({practiceProblemsList.length})</span>
               </button>
 
-              {/* 4. Practice Coding Assignments */}
+              {/* 4. Practice */}
               <button
                 onClick={() => setActiveTab('assignments')}
                 className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
@@ -443,7 +472,7 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>📝 <span className="hidden sm:inline">Coding </span>Practice ({lesson.programmingExercises?.length || 0})</span>
+                <span>Practice ({lesson.programmingExercises?.length || 0})</span>
               </button>
 
               {/* 5. Interview Q&A */}
@@ -456,7 +485,7 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-                <span><span className="hidden sm:inline">Interview </span>Q&A ({lesson.interviewQuestions?.length || 0})</span>
+                <span>Q&A ({lesson.interviewQuestions?.length || 0})</span>
               </button>
 
               {/* 6. Self-Evaluate */}
@@ -469,10 +498,10 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <Award className="w-3.5 h-3.5 text-purple-400" />
-                <span>Self-Eval<span className="hidden sm:inline">uate</span></span>
+                <span>Self-Eval</span>
               </button>
 
-              {/* 7. Mini Quiz */}
+              {/* 7. Quiz */}
               <button
                 onClick={() => setActiveTab('quiz')}
                 className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
@@ -482,10 +511,10 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
-                <span><span className="hidden sm:inline">Mini </span>Quiz ({lesson.miniQuiz?.length || 0})</span>
+                <span>Quiz ({lesson.miniQuiz?.length || 0})</span>
               </button>
 
-              {/* 8. All in */}
+              {/* 8. All */}
               <button
                 onClick={() => setActiveTab('all')}
                 className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
@@ -495,7 +524,7 @@ export default function JavaSubLessonPage() {
                 }`}
               >
                 <ListFilter className="w-3.5 h-3.5" />
-                <span>All<span className="hidden sm:inline">-in-One</span></span>
+                <span>All</span>
               </button>
             </div>
           </div>
@@ -514,12 +543,6 @@ export default function JavaSubLessonPage() {
                     {lesson.estimatedMinutes} min study
                   </span>
                 </div>
-
-                {lesson.subtitle && (
-                  <p className="text-sm sm:text-base text-slate-300 leading-relaxed font-medium">
-                    {lesson.subtitle}
-                  </p>
-                )}
 
                 <div className="space-y-3 pt-1">
                   {lesson.coreExplanation.map((point, idx) => (

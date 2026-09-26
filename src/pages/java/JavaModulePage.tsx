@@ -275,7 +275,7 @@ export default function JavaModulePage() {
                                   onClick={() => setMobileSidebarOpen(false)}
                                   className="block px-2 py-1 rounded text-[11px] text-slate-400 hover:text-emerald-300 hover:bg-slate-800/80 truncate transition"
                                 >
-                                  <span className="font-mono text-emerald-400 font-bold mr-1">{sub.lessonNumber}:</span>
+                                  <span className="font-mono text-emerald-400 font-semibold mr-1.5">{sub.lessonNumber.replace(/^Lesson\s+/i, '')}</span>
                                   <span>{sub.title}</span>
                                 </Link>
                               ))}
@@ -373,7 +373,7 @@ export default function JavaModulePage() {
                 <div>
                   <div className="flex items-center gap-2 text-blue-400 font-bold text-sm uppercase tracking-wider">
                     <BookOpen className="w-4 h-4" />
-                    <span>Granular Topic-by-Topic Sub-Lessons ({subLessons.length})</span>
+                    <span>Sub-Lessons ({subLessons.length})</span>
                   </div>
                   <p className="text-xs text-slate-300 mt-1">
                     Each inner topic has its own dedicated page with analogies, line-by-line tracing, common traps, and mini-quizzes.
@@ -383,7 +383,7 @@ export default function JavaModulePage() {
                   to={`/java/lesson/${subLessons[0].id}`}
                   className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow-md shrink-0"
                 >
-                  <span>Start Lesson 1</span>
+                  <span>Start</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
@@ -399,7 +399,7 @@ export default function JavaModulePage() {
                     >
                       <div className="flex items-start justify-between gap-2 mb-1.5">
                         <span className="text-[10px] font-mono font-bold text-blue-400 px-1.5 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">
-                          {sub.lessonNumber}
+                          {sub.lessonNumber.replace(/^Lesson\s+/i, '')}
                         </span>
                         {isSubDone ? (
                           <CheckCircle className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
@@ -409,9 +409,6 @@ export default function JavaModulePage() {
                       </div>
                       <div className="text-xs font-semibold text-slate-200 group-hover:text-blue-300 transition line-clamp-1">
                         {sub.title}
-                      </div>
-                      <div className="text-[11px] text-slate-400 mt-1 line-clamp-1">
-                        {sub.subtitle}
                       </div>
                     </Link>
                   );
@@ -427,7 +424,7 @@ export default function JavaModulePage() {
                 <div>
                   <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
                     <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>Hands-On Coding Assignments ({allModuleExercises.length} Challenges)</span>
+                    <span>Practice ({allModuleExercises.length})</span>
                   </div>
                   <p className="text-xs text-slate-300 mt-1">
                     Self-evaluation coding problems with clear problem statements, hints, and verified solutions.
@@ -441,7 +438,7 @@ export default function JavaModulePage() {
                     to={`/java/lesson/${allModuleExercises[0].subLessonId}?tab=assignments`}
                     className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs transition shadow-md shrink-0"
                   >
-                    <span>Start Solving</span>
+                    <span>Practice</span>
                     <ChevronRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
@@ -462,7 +459,7 @@ export default function JavaModulePage() {
                     >
                       <div className="flex items-start justify-between gap-2 mb-1.5">
                         <span className="text-[10px] font-mono font-bold text-amber-400 px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20">
-                          {ex.subLessonNum} · #{ex.exerciseIndex + 1}
+                          {ex.subLessonNum.replace(/^Lesson\s+/i, '')} · #{ex.exerciseIndex + 1}
                         </span>
                         {isSolved ? (
                           <span className="text-[10px] font-bold text-emerald-400 flex items-center gap-1">
@@ -507,7 +504,7 @@ export default function JavaModulePage() {
               </Section>
 
               {/* Code Examples */}
-              <Section title="💻 Code Examples & Tracing" icon={Code} defaultOpen={true} accent="green" forceOpen={forceExpandAll}>
+              <Section title="💻 Examples" icon={Code} defaultOpen={true} accent="green" forceOpen={forceExpandAll}>
                 <div className="space-y-5">
                   {lesson.codeExamples.map((ex, i) => (
                     <div key={i} className="rounded-xl overflow-hidden border border-slate-700">
