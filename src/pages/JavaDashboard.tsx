@@ -28,9 +28,17 @@ export default function JavaDashboard() {
   const [selectedSection, setSelectedSection] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'todo' | 'done'>('all');
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(
-    JAVA_SECTIONS.reduce((acc, section) => ({ ...acc, [section.id]: true }), {})
+  // Smart Default: Expand the first section ('fundamentals'), keep others collapsed for a clean roadmap overview
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() =>
+    JAVA_SECTIONS.reduce((acc, section, idx) => ({ ...acc, [section.id]: idx === 0 }), {})
   );
+
+  // When user selects a section pill, auto-expand that section
+  useEffect(() => {
+    if (selectedSection !== 'all') {
+      setExpandedSections(prev => ({ ...prev, [selectedSection]: true }));
+    }
+  }, [selectedSection]);
 
   useEffect(() => {
     setProgress(getJavaProgress());
