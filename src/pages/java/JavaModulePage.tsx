@@ -104,6 +104,7 @@ export default function JavaModulePage() {
     'java-dsa-stacks-queues': true,
     'java-dsa-patterns': true,
     'java-collections': true,
+    'java-hashing': true,
   });
   const [forceExpandAll, setForceExpandAll] = useState<boolean | null>(null);
 

@@ -297,6 +297,20 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'priority-queue': 'queue-deque-and-priorityqueue',
     'deque': 'queue-deque-and-priorityqueue',
     'arraydeque-queue': 'queue-deque-and-priorityqueue',
+    'hashmap': 'hashmap-internal-architecture',
+    'hashmap-internals': 'hashmap-internal-architecture',
+    'hashmap-architecture': 'hashmap-internal-architecture',
+    'hash-spreading': 'hashmap-internal-architecture',
+    'hash-collisions': 'hash-collisions-and-treeification',
+    'treeification': 'hash-collisions-and-treeification',
+    'treenode': 'hash-collisions-and-treeification',
+    'hashmap-treeification': 'hash-collisions-and-treeification',
+    'hashmap-resizing': 'hashmap-resizing-and-rehash',
+    'rehashing': 'hashmap-resizing-and-rehash',
+    'load-factor': 'hashmap-resizing-and-rehash',
+    'concurrenthashmap': 'concurrenthashmap-internals',
+    'concurrent-hashmap': 'concurrenthashmap-internals',
+    'chm': 'concurrenthashmap-internals',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -386,6 +400,9 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     '18': 'java-collections',
     'collections': 'java-collections',
     'java-collections': 'java-collections',
+    '19': 'java-hashing',
+    'hashing': 'java-hashing',
+    'java-hashing': 'java-hashing',
   };
   const targetId = moduleAliases[clean] || clean;
 
