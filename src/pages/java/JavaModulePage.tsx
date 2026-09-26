@@ -116,18 +116,29 @@ export default function JavaModulePage() {
   }, []);
 
   const currentModuleId = moduleId || activeModule;
+  const targetMod = JAVA_MODULES.find(m => m.id === currentModuleId || m.id.toLowerCase() === currentModuleId.toLowerCase());
+  const [selectedSectionFilter, setSelectedSectionFilter] = useState<string>(targetMod?.section || 'fundamentals');
+
+  useEffect(() => {
+    if (targetMod?.section) {
+      setSelectedSectionFilter(targetMod.section);
+    }
+  }, [targetMod?.section]);
 
   useEffect(() => {
     if (currentModuleId) {
       setActiveModule(currentModuleId);
       setExpandedModules(prev => ({ ...prev, [currentModuleId]: true }));
       // Automatically expand section containing active module
-      const targetMod = JAVA_MODULES.find(m => m.id === currentModuleId || m.id.toLowerCase() === currentModuleId.toLowerCase());
       if (targetMod) {
         setExpandedSections(prev => ({ ...prev, [targetMod.section]: true }));
       }
     }
-  }, [currentModuleId]);
+  }, [currentModuleId, targetMod]);
+
+  const sectionsToRender = selectedSectionFilter === 'all'
+    ? JAVA_SECTIONS
+    : JAVA_SECTIONS.filter(s => s.id === selectedSectionFilter);
 
   const lesson = ALL_JAVA_LESSONS[currentModuleId];
   const moduleInfo = JAVA_MODULES.find(m => m.id === currentModuleId || m.id.toLowerCase() === currentModuleId.toLowerCase());
@@ -209,9 +220,34 @@ export default function JavaModulePage() {
           </Link>
         </div>
 
+        {/* Section Filter Dropdown */}
+        <div className="px-3 pt-3 pb-1 border-b border-slate-700/60">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+            Active Section:
+          </label>
+          <div className="relative mb-2">
+            <select
+              value={selectedSectionFilter}
+              onChange={(e) => setSelectedSectionFilter(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-700/80 hover:border-emerald-500/50 rounded-xl px-3 py-2 text-xs font-semibold text-slate-200 focus:outline-none focus:ring-1 focus:ring-emerald-500 appearance-none cursor-pointer pr-8"
+            >
+              <option value="all">All Sections ({JAVA_SECTIONS.length})</option>
+              {JAVA_SECTIONS.map((sec) => {
+                const secMods = JAVA_MODULES.filter(m => m.section === sec.id);
+                return (
+                  <option key={sec.id} value={sec.id} className="bg-slate-900 text-slate-200">
+                    {sec.label} ({secMods.length} Modules)
+                  </option>
+                );
+              })}
+            </select>
+            <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          </div>
+        </div>
+
         {/* Sidebar Topics Menu */}
         <div className="p-3 space-y-2">
-          {JAVA_SECTIONS.map(section => {
+          {sectionsToRender.map(section => {
             const isSecOpen = expandedSections[section.id];
             const sectionModules = JAVA_MODULES.filter(m => m.section === section.id);
             const hasActiveModule = sectionModules.some(m => m.id === currentModuleId);

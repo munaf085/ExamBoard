@@ -24,6 +24,7 @@ import {
   getSolvedAssignments,
   toggleSolvedAssignment
 } from '../../utils/javaStorage';
+import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
 import CopyButton from '../../components/CopyButton';
 
 type ActiveTab = 'lesson' | 'cheatsheet' | 'practice' | 'assignments' | 'interview_qa' | 'quiz' | 'all';
@@ -68,6 +69,19 @@ export default function JavaSubLessonPage() {
   const allLessons = getAllDetailedLessons();
 
   const currentLessonIndex = allLessons.findIndex(l => l.id === lesson?.id);
+
+  const currentModule = JAVA_MODULES.find(
+    m => m.id === lesson?.moduleId || m.id.toLowerCase() === lesson?.moduleId?.toLowerCase()
+  );
+  const currentSectionId = currentModule?.section || 'fundamentals';
+  const [selectedSection, setSelectedSection] = useState<string>(currentSectionId);
+
+  // Sync selectedSection whenever active lesson's section changes
+  useEffect(() => {
+    if (currentModule?.section) {
+      setSelectedSection(currentModule.section);
+    }
+  }, [currentModule?.section]);
 
   // Auto-expand module containing the active lesson
   useEffect(() => {
@@ -154,14 +168,25 @@ export default function JavaSubLessonPage() {
     setQuizRevealed(prev => ({ ...prev, [qIdx]: true }));
   };
 
-  // Group lessons by module
-  const modulesGrouped = allLessons.reduce<Record<string, { title: string; lessons: DetailedLesson[] }>>((acc, l) => {
+  // Get modules belonging to the selected section
+  const sectionModules = JAVA_MODULES.filter(m => m.section === selectedSection);
+  const sectionModuleIds = new Set(sectionModules.map(m => m.id.toLowerCase()));
+
+  // Filter lessons to only those in the selected section
+  const sectionLessons = allLessons.filter(l =>
+    sectionModuleIds.has(l.moduleId.toLowerCase())
+  );
+
+  // Group lessons by module for the selected section
+  const modulesGrouped = sectionLessons.reduce<Record<string, { title: string; lessons: DetailedLesson[] }>>((acc, l) => {
     if (!acc[l.moduleId]) {
       acc[l.moduleId] = { title: l.moduleTitle, lessons: [] };
     }
     acc[l.moduleId].lessons.push(l);
     return acc;
   }, {});
+
+  const currentSectionInfo = JAVA_SECTIONS.find(s => s.id === selectedSection);
 
   if (!lesson) {
     return (
@@ -285,11 +310,11 @@ export default function JavaSubLessonPage() {
         >
           <div className="mb-3 pb-3 border-b border-slate-800 flex items-center justify-between">
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">
                 Curriculum Sub-Topics
               </h3>
-              <p className="text-[11px] text-slate-500">
-                {currentLessonIndex + 1} of {allLessons.length} Lessons · Core & OOP
+              <p className="text-[11px] text-slate-400">
+                {currentSectionInfo?.label || 'Active Section'} · {sectionLessons.length} Lessons
               </p>
             </div>
             <button
@@ -300,8 +325,43 @@ export default function JavaSubLessonPage() {
             </button>
           </div>
 
+          {/* Section Switcher dropdown */}
+          <div className="mb-3">
+            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+              Active Section:
+            </label>
+            <div className="relative">
+              <select
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value)}
+                className="w-full bg-slate-950 border border-slate-700/80 hover:border-blue-500/50 rounded-xl px-3 py-2 text-xs font-semibold text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer pr-8"
+              >
+                {JAVA_SECTIONS.map((sec) => {
+                  const secMods = JAVA_MODULES.filter(m => m.section === sec.id);
+                  return (
+                    <option key={sec.id} value={sec.id} className="bg-slate-900 text-slate-200 py-1">
+                      {sec.label} ({secMods.length} Modules)
+                    </option>
+                  );
+                })}
+              </select>
+              <ChevronDown className="w-4 h-4 text-slate-400 absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
           <div className="space-y-2">
-            {Object.entries(modulesGrouped).map(([modId, modData]) => {
+            {Object.keys(modulesGrouped).length === 0 ? (
+              <div className="p-4 text-center text-slate-400 text-xs bg-slate-950/40 rounded-xl border border-slate-800 space-y-2">
+                <p>No sub-lessons loaded for this section yet.</p>
+                <button
+                  onClick={() => setSelectedSection(currentSectionId)}
+                  className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-semibold transition"
+                >
+                  Return to {currentSectionInfo?.label || 'Current Section'}
+                </button>
+              </div>
+            ) : (
+              Object.entries(modulesGrouped).map(([modId, modData]) => {
               const isModOpen = expandedModules[modId] ?? (modId === lesson.moduleId);
               const doneCount = modData.lessons.filter(l => completedLessons.includes(l.id)).length;
               const hasActive = modData.lessons.some(l => l.id === lesson.id);
@@ -382,7 +442,7 @@ export default function JavaSubLessonPage() {
                   )}
                 </div>
               );
-            })}
+            }))}
           </div>
         </aside>
 
