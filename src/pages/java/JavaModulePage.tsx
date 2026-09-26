@@ -100,6 +100,7 @@ export default function JavaModulePage() {
     'java-polymorphism': true,
     'java-abstraction': true,
     'java-object-class': true,
+    'java-dsa-foundations': true,
   });
   const [forceExpandAll, setForceExpandAll] = useState<boolean | null>(null);
 

@@ -236,10 +236,10 @@ export const JAVA_MODULES: JavaModule[] = [
     icon: 'Calculator',
     topics: ['Big O Analysis', 'Linear Search', 'Binary Search', 'Merge Sort', 'Quick Sort', 'TimSort in Java'],
     prerequisites: ['java-arrays'],
-    lessonCount: 5,
+    lessonCount: 4,
     mcqCount: 20,
-    codingCount: 6,
-    interviewCount: 12,
+    codingCount: 10,
+    interviewCount: 10,
     section: 'dsa',
   },
   {

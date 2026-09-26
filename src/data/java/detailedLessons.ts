@@ -89,6 +89,7 @@ import { stringsLessons } from './sublessons/stringsLessons';
 import { arraysLessons } from './sublessons/arraysLessons';
 import { methodsLessons } from './sublessons/methodsLessons';
 import { oopLessons } from './sublessons/oopLessons';
+import { dsaLessons } from './sublessons/dsaLessons';
 
 import { fundamentalsExercises } from './sublessons/fundamentalsExercises';
 import { dataTypesExercises } from './sublessons/dataTypesExercises';
@@ -98,6 +99,7 @@ import { stringsExercises } from './sublessons/stringsExercises';
 import { arraysExercises } from './sublessons/arraysExercises';
 import { methodsExercises } from './sublessons/methodsExercises';
 import { oopExercises } from './sublessons/oopExercises';
+import { dsaExercises } from './sublessons/dsaExercises';
 
 export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...fundamentalsExercises,
@@ -108,6 +110,7 @@ export const ALL_SUBLESSON_EXERCISES: Record<string, ProgrammingExercise[]> = {
   ...arraysExercises,
   ...methodsExercises,
   ...oopExercises,
+  ...dsaExercises,
 };
 
 const rawLessons: Record<string, DetailedLesson> = {
@@ -119,6 +122,7 @@ const rawLessons: Record<string, DetailedLesson> = {
   ...arraysLessons,
   ...methodsLessons,
   ...oopLessons,
+  ...dsaLessons,
 };
 
 // Populate programmingExercises for every sub-lesson so none is empty
@@ -223,6 +227,19 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'hashcode': 'equals-hashcode-contract',
     'cloning': 'cloning-shallow-deep-copy',
     'clone': 'cloning-shallow-deep-copy',
+    'big-o': 'big-o-asymptotic-analysis',
+    'asymptotic': 'big-o-asymptotic-analysis',
+    'complexity': 'big-o-asymptotic-analysis',
+    'linear-search': 'linear-search-and-sentinels',
+    'sentinel-search': 'linear-search-and-sentinels',
+    'binary-search': 'binary-search-bounds-and-invariants',
+    'binary-search-bounds': 'binary-search-bounds-and-invariants',
+    'lower-bound': 'binary-search-bounds-and-invariants',
+    'upper-bound': 'binary-search-bounds-and-invariants',
+    'merge-sort': 'merge-quick-timsort-internals',
+    'quicksort': 'merge-quick-timsort-internals',
+    'quick-sort': 'merge-quick-timsort-internals',
+    'timsort': 'merge-quick-timsort-internals',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -294,6 +311,11 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     '14': 'java-object-class',
     'object-class': 'java-object-class',
     'object': 'java-object-class',
+    '15': 'java-dsa-foundations',
+    'dsa-foundations': 'java-dsa-foundations',
+    'dsa': 'java-dsa-foundations',
+    'searching': 'java-dsa-foundations',
+    'sorting': 'java-dsa-foundations',
   };
   const targetId = moduleAliases[clean] || clean;
 
