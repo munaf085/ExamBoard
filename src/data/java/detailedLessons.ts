@@ -254,6 +254,23 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'floyd-cycle': 'floyd-cycle-detection-and-pointers',
     'fast-slow-pointers': 'floyd-cycle-detection-and-pointers',
     'cycle-detection': 'floyd-cycle-detection-and-pointers',
+    'two-pointers': 'two-pointers-converging',
+    'two-pointer': 'two-pointers-converging',
+    'converging-pointers': 'two-pointers-converging',
+    'two-sum-sorted': 'two-pointers-converging',
+    'container-water': 'two-pointers-converging',
+    'trapping-water': 'two-pointers-converging',
+    'fast-slow': 'fast-slow-pointer-traversal',
+    'fast-slow-pointer': 'fast-slow-pointer-traversal',
+    'fast-slow-traversal': 'fast-slow-pointer-traversal',
+    'sliding-window': 'fixed-size-sliding-window',
+    'fixed-sliding-window': 'fixed-size-sliding-window',
+    'fixed-window': 'fixed-size-sliding-window',
+    'sliding-window-max': 'fixed-size-sliding-window',
+    'dynamic-window': 'dynamic-sliding-window',
+    'variable-sliding-window': 'dynamic-sliding-window',
+    'longest-substring': 'dynamic-sliding-window',
+    'min-window-substring': 'dynamic-sliding-window',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -336,6 +353,10 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     'stacks': 'java-dsa-stacks-queues',
     'queues': 'java-dsa-stacks-queues',
     'linked-lists': 'java-dsa-stacks-queues',
+    '17': 'java-dsa-patterns',
+    'dsa-patterns': 'java-dsa-patterns',
+    'two-pointers': 'java-dsa-patterns',
+    'sliding-window': 'java-dsa-patterns',
   };
   const targetId = moduleAliases[clean] || clean;
 

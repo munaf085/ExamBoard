@@ -102,6 +102,7 @@ export default function JavaModulePage() {
     'java-object-class': true,
     'java-dsa-foundations': true,
     'java-dsa-stacks-queues': true,
+    'java-dsa-patterns': true,
   });
   const [forceExpandAll, setForceExpandAll] = useState<boolean | null>(null);
 
