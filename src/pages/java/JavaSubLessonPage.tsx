@@ -819,15 +819,12 @@ export default function JavaSubLessonPage() {
           {/* ── TAB: DEDICATED TOPIC CHEAT SHEET ── */}
           {(activeTab === 'cheatsheet' || activeTab === 'all') && (
             <div className="space-y-4">
-              <div className="bg-gradient-to-br from-amber-950/20 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
-                    <FileText className="w-4 h-4 text-amber-400" />
-                    <span>Topic Cheat Sheet & Quick Reference</span>
-                  </div>
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <h2 className="text-base font-bold text-white">Quick Reference & Rules</h2>
                   <Link
                     to="/java/revision"
-                    className="text-xs text-amber-400 hover:underline flex items-center gap-1 font-medium"
+                    className="text-xs text-indigo-400 hover:underline flex items-center gap-1 font-medium"
                   >
                     <span>Full Cheat Sheet</span>
                     <ChevronRight className="w-3.5 h-3.5" />
@@ -927,9 +924,8 @@ export default function JavaSubLessonPage() {
               {/* Practice Challenges Section */}
               {practiceProblemsList.length > 0 && (
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-indigo-400 font-bold text-sm uppercase tracking-wider">
-                    <Code2 className="w-4 h-4" />
-                    <span>Interactive Practice Problems ({practiceProblemsList.length} Puzzles)</span>
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h2 className="text-base font-bold text-white">Practice Problems ({practiceProblemsList.length})</h2>
                   </div>
 
                   <div className="space-y-4">
@@ -941,7 +937,7 @@ export default function JavaSubLessonPage() {
                       return (
                         <div
                           key={pIdx}
-                          className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4"
+                          className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4"
                         >
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <div className="flex items-center gap-2 text-indigo-300 font-bold text-xs sm:text-sm">
@@ -1163,38 +1159,12 @@ export default function JavaSubLessonPage() {
             <div className="space-y-4">
               {lesson.programmingExercises && lesson.programmingExercises.length > 0 ? (
                 <>
-                  {/* Assignment Progress Header */}
-                  <div className="bg-gradient-to-br from-amber-950/30 via-slate-900 to-slate-900 border border-amber-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 text-amber-300 font-bold text-sm uppercase tracking-wider">
-                          <Sparkles className="w-4 h-4 text-amber-400" />
-                          <span>Practice Coding Assignments ({lesson.programmingExercises.length} Challenges)</span>
-                        </div>
-                        <p className="text-xs text-slate-400 mt-1">
-                          Solve hands-on on your own first, then reveal the runnable Java solution!
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 self-start sm:self-center">
-                        <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          {lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length} / {lesson.programmingExercises.length} Solved
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Progress Bar */}
-                    <div className="w-full bg-slate-800/80 rounded-full h-2 overflow-hidden border border-slate-700/60">
-                      <div
-                        className="bg-gradient-to-r from-amber-500 to-emerald-400 h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${Math.round(
-                            (lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length /
-                              lesson.programmingExercises.length) *
-                              100
-                          )}%`
-                        }}
-                      />
-                    </div>
+                  {/* Clean Minimal Header */}
+                  <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <h2 className="text-base font-bold text-white">Coding Problems ({lesson.programmingExercises.length})</h2>
+                    <span className="text-xs text-slate-400 font-mono">
+                      {lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length} / {lesson.programmingExercises.length} Solved
+                    </span>
                   </div>
 
                   {/* Assignment Problem Cards */}
@@ -1225,18 +1195,13 @@ export default function JavaSubLessonPage() {
                               <span className={`w-7 h-7 rounded-full font-bold flex items-center justify-center text-xs shrink-0 ${
                                 isSolved
                                   ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                                  : 'bg-slate-800 text-slate-300 border border-slate-700'
                               }`}>
                                 {pIdx + 1}
                               </span>
-                              <div>
-                                <h4 className="font-bold text-slate-100 text-sm sm:text-base">
-                                  {prog.title.replace(/^\d+[\.\s\-]+/, '')}
-                                </h4>
-                                <span className="text-[10px] text-slate-500 font-mono">
-                                  Challenge #{pIdx + 1} of {lesson.programmingExercises!.length}
-                                </span>
-                              </div>
+                              <h4 className="font-bold text-slate-100 text-sm sm:text-base">
+                                {prog.title.replace(/^\d+[\.\s\-]+/, '')}
+                              </h4>
                             </div>
 
                             <div className="flex items-center gap-2 self-start sm:self-center">
@@ -1342,15 +1307,9 @@ export default function JavaSubLessonPage() {
           {/* ── TAB 5: INTERVIEW Q&A ── */}
           {(activeTab === 'interview_qa' || activeTab === 'all') && (
             <div className="space-y-4">
-              <div className="bg-gradient-to-br from-indigo-950/20 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-indigo-300 font-bold text-sm uppercase tracking-wider">
-                    <HelpCircle className="w-4 h-4 text-indigo-400" />
-                    <span>Interview Questions & Model Answers ({lesson.interviewQuestions.length} Questions)</span>
-                  </div>
-                  <span className="text-xs text-slate-400">
-                    Comprehensive technical responses and keyword highlights
-                  </span>
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <h2 className="text-base font-bold text-white">Interview Questions ({lesson.interviewQuestions.length})</h2>
                 </div>
 
                 <div className="space-y-4">
@@ -1408,11 +1367,8 @@ export default function JavaSubLessonPage() {
                         </div>
 
                         {!isRevealed ? (
-                          <div className="p-3 rounded-lg bg-slate-900/60 border border-dashed border-slate-800 text-xs text-slate-400 flex items-center gap-2 italic">
-                            <Volume2 className="w-4 h-4 text-indigo-400 shrink-0" />
-                            <span>
-                              Think through your technical answer first, then click "Reveal Answer" to check accuracy!
-                            </span>
+                          <div className="text-xs text-slate-500 italic py-1">
+                            Click "Reveal" to view the model answer and technical explanation.
                           </div>
                         ) : (
                           <div className="space-y-3 pt-1">
@@ -1570,9 +1526,8 @@ export default function JavaSubLessonPage() {
           {(activeTab === 'quiz' || activeTab === 'all') && (
             <div className="space-y-4">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                <div className="flex items-center gap-2 text-cyan-400 font-bold text-sm uppercase tracking-wider">
-                  <HelpCircle className="w-4 h-4" />
-                  <span>Sub-Topic Mini Quiz</span>
+                <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                  <h2 className="text-base font-bold text-white">Quiz Questions ({lesson.miniQuiz.length})</h2>
                 </div>
 
                 <div className="space-y-4">
