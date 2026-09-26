@@ -311,6 +311,19 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'concurrenthashmap': 'concurrenthashmap-internals',
     'concurrent-hashmap': 'concurrenthashmap-internals',
     'chm': 'concurrenthashmap-internals',
+    'generics': 'generic-types-and-methods',
+    'generic-types': 'generic-types-and-methods',
+    'generic-methods': 'generic-types-and-methods',
+    'type-erasure': 'type-erasure-and-bridge-methods',
+    'bridge-methods': 'type-erasure-and-bridge-methods',
+    'synthetic-bridge-methods': 'type-erasure-and-bridge-methods',
+    'wildcards': 'wildcards-and-pecs-principle',
+    'pecs': 'wildcards-and-pecs-principle',
+    'pecs-principle': 'wildcards-and-pecs-principle',
+    'producer-extends': 'wildcards-and-pecs-principle',
+    'generics-limitations': 'generics-limitations-and-heap-pollution',
+    'heap-pollution': 'generics-limitations-and-heap-pollution',
+    'generic-arrays': 'generics-limitations-and-heap-pollution',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -403,6 +416,9 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     '19': 'java-hashing',
     'hashing': 'java-hashing',
     'java-hashing': 'java-hashing',
+    '20': 'java-generics',
+    'generics': 'java-generics',
+    'java-generics': 'java-generics',
   };
   const targetId = moduleAliases[clean] || clean;
 

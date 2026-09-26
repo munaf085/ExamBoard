@@ -1,6 +1,7 @@
 import { ProgrammingExercise } from '../detailedLessons';
 import { col18Exercises } from './collections/col18_exercises';
 import { col19Exercises } from './collections/col19_exercises';
+import { col20Exercises } from './collections/col20_exercises';
 
 // ============================================================
 // SECTION 4: COLLECTIONS & GENERICS (MODULES 18 - 20)
@@ -10,4 +11,5 @@ import { col19Exercises } from './collections/col19_exercises';
 export const collectionsExercises: Record<string, ProgrammingExercise[]> = {
   ...col18Exercises,
   ...col19Exercises,
+  ...col20Exercises,
 };
