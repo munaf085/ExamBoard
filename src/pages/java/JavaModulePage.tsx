@@ -13,6 +13,7 @@ import { getJavaProgress, markLessonComplete, getSolvedAssignments } from '../..
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
   fundamentals: Coffee,
+  patterns: Sparkles,
   oop: Layers,
   dsa: GitBranch,
   collections: Package,

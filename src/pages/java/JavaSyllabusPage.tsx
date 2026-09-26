@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   ArrowLeft, BookOpen, CheckCircle, Clock, Search, Printer,
   Coffee, Layers, GitBranch, Package, Zap, Database, Leaf, Shield,
-  ChevronDown, ChevronUp, Star, ArrowUp, CheckCircle2, Circle
+  ChevronDown, ChevronUp, Star, ArrowUp, CheckCircle2, Circle, Sparkles
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../../data/java/curriculum';
 import { getLessonsForModule } from '../../data/java/detailedLessons';
@@ -11,6 +11,7 @@ import { getJavaProgress, markLessonComplete } from '../../utils/javaStorage';
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
   fundamentals: Coffee,
+  patterns: Sparkles,
   oop: Layers,
   dsa: GitBranch,
   collections: Package,

@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import {
   ArrowLeft, BookOpen, Layers, Package, Zap, Leaf, Database,
   Coffee, Calculator, GitBranch, Shield, Search, CheckCircle2, Circle,
-  Clock, ChevronDown, ChevronUp, Star, HelpCircle, BrainCircuit, Target, Award, ArrowUp
+  Clock, ChevronDown, ChevronUp, Star, HelpCircle, BrainCircuit, Target, Award, ArrowUp, Sparkles
 } from 'lucide-react';
 import { JAVA_MODULES, JAVA_SECTIONS } from '../data/java/curriculum';
 import { getLessonsForModule } from '../data/java/detailedLessons';
@@ -12,6 +12,7 @@ import { JavaProgress, JavaModule } from '../types';
 
 const SECTION_ICONS: Record<string, React.ElementType> = {
   fundamentals: Coffee,
+  patterns: Sparkles,
   oop: Layers,
   dsa: GitBranch,
   collections: Package,
