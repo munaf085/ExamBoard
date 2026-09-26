@@ -648,112 +648,67 @@ export default function JavaSubLessonPage() {
 
           {/* ── TAB 1: LESSON OVERVIEW ── */}
           {(activeTab === 'lesson' || activeTab === 'all') && (
-            <div className="space-y-6">
-              {/* Section 1: The Big Picture & Real-World Analogy */}
+            <article className="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 sm:p-7 md:p-9 space-y-7 text-slate-300 leading-relaxed shadow-sm">
+              {/* 1. Intuitive Analogy */}
               {lesson.beginnerAnalogy && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
-                  <div className="flex items-center gap-3 pb-3 border-b border-slate-800/80">
-                    <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                      <Lightbulb className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                        The Big Picture: Real-World Analogy
-                      </h2>
-                      <p className="text-xs text-slate-400">Understand the concept intuitively before diving into code</p>
-                    </div>
-                  </div>
-                  <div className="p-4 sm:p-5 rounded-xl bg-slate-950/70 border border-amber-500/20 text-slate-200 text-sm sm:text-base leading-relaxed">
+                <section className="space-y-3 pb-6 border-b border-slate-800/70">
+                  <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span>💡 An Easy Way to Think About It</span>
+                  </h2>
+                  <div className="text-slate-300 text-sm sm:text-base leading-relaxed space-y-3 pl-1">
                     {renderFormattedText(lesson.beginnerAnalogy)}
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* Section 2: Core Concepts Explained */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                      <BookOpen className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                        Core Concepts Explained
-                      </h2>
-                      <p className="text-xs text-slate-400">Step-by-step principles and technical foundations</p>
-                    </div>
-                  </div>
-                  <span className="text-xs font-mono text-slate-400 bg-slate-950 px-2.5 py-1 rounded-md border border-slate-800">
-                    {lesson.estimatedMinutes} min study
-                  </span>
-                </div>
-
-                <div className="space-y-3 pt-1">
+              {/* 2. Core Concepts (Natural Paragraphs, No Grids, No Boxes around every item!) */}
+              <section className="space-y-4 pb-6 border-b border-slate-800/70">
+                <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                  <span>📖 How It Works in Java</span>
+                </h2>
+                <div className="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed pl-1">
                   {lesson.coreExplanation.map((point, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3.5 sm:p-4 rounded-xl bg-slate-950/70 border border-slate-800/80 text-xs sm:text-sm text-slate-200 leading-relaxed"
-                    >
+                    <div key={idx} className="leading-relaxed">
                       {renderFormattedText(point)}
                     </div>
                   ))}
                 </div>
-              </div>
+              </section>
 
-              {/* Section 3: Syntax Reference & Blueprint */}
+              {/* 3. Syntax Template (if available) */}
               {lesson.cheatSheet?.syntaxTemplate && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-                        <Terminal className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                          Syntax Reference & Blueprint
-                        </h2>
-                        <p className="text-xs text-slate-400">Standard grammar and structure</p>
-                      </div>
-                    </div>
+                <section className="space-y-3 pb-6 border-b border-slate-800/70">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <span>⚙️ Syntax Structure</span>
+                    </h2>
                     <CopyButton text={lesson.cheatSheet.syntaxTemplate} label="Copy Syntax" />
                   </div>
-
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 sm:p-4 overflow-x-auto shadow-inner">
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto">
                     <pre className="font-mono text-xs sm:text-sm text-amber-300 leading-relaxed">
                       <code>{lesson.cheatSheet.syntaxTemplate}</code>
                     </pre>
                   </div>
-
                   {lesson.cheatSheet.summary && (
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <p className="text-xs text-slate-400 leading-relaxed pl-1">
                       📌 {lesson.cheatSheet.summary}
                     </p>
                   )}
-                </div>
+                </section>
               )}
 
-              {/* Section 4: Code Walkthrough in Action */}
+              {/* 4. Code in Action */}
               {lesson.codeSnippet && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800/80">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
-                        <Code2 className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                          Code Walkthrough: {lesson.codeSnippet.title}
-                        </h2>
-                        <p className="text-xs text-slate-400">Fully runnable Java code with detailed breakdown</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 self-start sm:self-auto">
-                      <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
-                    </div>
+                <section className="space-y-4 pb-6 border-b border-slate-800/70">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <span>💻 Code in Action: {lesson.codeSnippet.title}</span>
+                    </h2>
+                    <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
                   </div>
 
                   {/* Code Block */}
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto shadow-inner">
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto">
                     <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
                       <code>{lesson.codeSnippet.code}</code>
                     </pre>
@@ -762,16 +717,14 @@ export default function JavaSubLessonPage() {
                   {/* Line by line explanation */}
                   {lesson.codeSnippet.lineByLineExplanation && lesson.codeSnippet.lineByLineExplanation.length > 0 && (
                     <div className="space-y-2 pt-1">
-                      <div className="text-xs font-semibold text-slate-400">
-                        Code Walkthrough:
-                      </div>
+                      <h3 className="text-xs font-semibold text-slate-400">Step-by-step walkthrough:</h3>
                       <div className="space-y-2">
                         {lesson.codeSnippet.lineByLineExplanation.map((item, idx) => (
                           <div
                             key={idx}
-                            className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800/70 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3"
+                            className="p-2.5 rounded-lg bg-slate-950/50 border border-slate-800/60 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3"
                           >
-                            <code className="font-mono text-emerald-400 font-bold shrink-0 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/20">
+                            <code className="font-mono text-emerald-400 font-bold shrink-0 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/20 text-xs">
                               {item.line}
                             </code>
                             <span className="text-slate-300">{item.explanation}</span>
@@ -781,83 +734,57 @@ export default function JavaSubLessonPage() {
                     </div>
                   )}
 
-                  {/* Console Output */}
+                  {/* Output */}
                   {lesson.codeSnippet.output && (
                     <div className="space-y-1.5 pt-1">
-                      <div className="flex items-center justify-between">
-                        <div className="text-[11px] font-semibold text-slate-400">
-                          Console Output:
-                        </div>
-                        <CopyButton text={lesson.codeSnippet.output} label="Copy Output" />
-                      </div>
-                      <div className="bg-black/80 border border-slate-800 rounded-xl p-3.5 font-mono text-xs sm:text-sm text-slate-200 whitespace-pre shadow-inner">
+                      <div className="text-xs font-semibold text-slate-400">Console Output:</div>
+                      <div className="bg-black/70 border border-slate-800 rounded-xl p-3.5 font-mono text-xs sm:text-sm text-slate-200 whitespace-pre">
                         {lesson.codeSnippet.output}
                       </div>
                     </div>
                   )}
-                </div>
+                </section>
               )}
 
-              {/* Section 5: Memory Model & Behind the Scenes */}
+              {/* 5. Memory Architecture Diagram */}
               {lesson.diagram && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-3">
-                  <div className="flex items-center justify-between pb-3 border-b border-slate-800/80">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 shrink-0">
-                        <Terminal className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                          Behind the Scenes: Memory Architecture
-                        </h2>
-                        <p className="text-xs text-slate-400">Visual architectural trace of Stack and Heap allocations</p>
-                      </div>
-                    </div>
+                <section className="space-y-3 pb-6 border-b border-slate-800/70">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <span>🗺️ Memory Model</span>
+                    </h2>
                     <CopyButton text={lesson.diagram} label="Copy Diagram" />
                   </div>
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto">
                     <pre className="font-mono text-xs sm:text-sm text-indigo-300 leading-relaxed">
                       {lesson.diagram}
                     </pre>
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* Section 6: Practical Real-World Examples */}
+              {/* 6. Practical Real-World Examples */}
               {lesson.codeExamples && lesson.codeExamples.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 pb-1">
-                    <div className="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
-                      <Sparkles className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                        Practical Real-World Examples ({lesson.codeExamples.length})
-                      </h2>
-                      <p className="text-xs text-slate-400">Hands-on scenarios and real implementation patterns</p>
-                    </div>
-                  </div>
+                <section className="space-y-5 pb-6 border-b border-slate-800/70">
+                  <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span>🚀 Practical Examples ({lesson.codeExamples.length})</span>
+                  </h2>
 
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="space-y-5">
                     {lesson.codeExamples.map((ex, exIdx) => (
-                      <div key={exIdx} className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                      <div key={exIdx} className="space-y-2.5">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-bold text-slate-100 text-sm">{ex.title}</h4>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
-                              Example #{exIdx + 1}
-                            </span>
-                            <CopyButton text={ex.code} label="Copy Code" />
-                          </div>
+                          <h3 className="font-semibold text-slate-200 text-sm">
+                            {exIdx + 1}. {ex.title}
+                          </h3>
+                          <CopyButton text={ex.code} label="Copy Code" />
                         </div>
                         <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{ex.description}</p>
-
-                        <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                        <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 overflow-x-auto">
                           <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
                             <code>{ex.code}</code>
                           </pre>
                         </div>
-
                         {ex.output && (
                           <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
                             <span className="text-slate-500 text-[10px] uppercase block mb-1">Expected Output:</span>
@@ -867,40 +794,26 @@ export default function JavaSubLessonPage() {
                       </div>
                     ))}
                   </div>
-                </div>
+                </section>
               )}
 
-              {/* Section 7: Key Takeaways & Summary */}
+              {/* 7. Key Takeaways */}
               {lesson.interviewTakeaways && lesson.interviewTakeaways.length > 0 && (
-                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-sm space-y-4">
-                  <div className="flex items-center gap-3 pb-3 border-b border-slate-800/80">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h2 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                        Key Takeaways & Summary
-                      </h2>
-                      <p className="text-xs text-slate-400">Important principles to remember for interviews and exams</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2.5">
+                <section className="space-y-3">
+                  <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                    <span>⭐ Summary & Key Points</span>
+                  </h2>
+                  <ul className="space-y-2.5 pl-1">
                     {lesson.interviewTakeaways.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-start gap-3 text-xs sm:text-sm text-slate-200 leading-relaxed"
-                      >
-                        <span className="w-5 h-5 rounded-full bg-blue-500/20 text-blue-400 font-bold flex items-center justify-center shrink-0 text-xs mt-0.5">
-                          {idx + 1}
-                        </span>
+                      <li key={idx} className="flex items-start gap-2.5 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-2 shrink-0" />
                         <span>{renderInlineMarkdown(item)}</span>
-                      </div>
+                      </li>
                     ))}
-                  </div>
-                </div>
+                  </ul>
+                </section>
               )}
-            </div>
+            </article>
           )}
 
           {/* ── TAB: DEDICATED TOPIC CHEAT SHEET ── */}
