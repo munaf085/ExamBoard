@@ -26,7 +26,7 @@ import {
 } from '../../utils/javaStorage';
 import CopyButton from '../../components/CopyButton';
 
-type ActiveTab = 'lesson' | 'cheatsheet' | 'practice' | 'assignments' | 'interview_qa' | 'self_eval' | 'quiz' | 'all';
+type ActiveTab = 'lesson' | 'cheatsheet' | 'practice' | 'assignments' | 'interview_qa' | 'quiz' | 'all';
 
 export function formatLessonNum(numStr?: string): string {
   if (!numStr) return '';
@@ -114,9 +114,8 @@ export default function JavaSubLessonPage() {
     const queryTab = searchParams.get('tab');
     if (queryTab) {
       if (queryTab === 'takeaways' || queryTab === 'lesson') setActiveTab('lesson');
-      else if (queryTab === 'interview' || queryTab === 'interview_qa') setActiveTab('interview_qa');
-      else if (queryTab === 'self-eval' || queryTab === 'self_eval') setActiveTab('self_eval');
-      else if (['lesson', 'cheatsheet', 'practice', 'assignments', 'interview_qa', 'self_eval', 'quiz', 'all'].includes(queryTab)) {
+      else if (queryTab === 'interview' || queryTab === 'interview_qa' || queryTab === 'self-eval' || queryTab === 'self_eval') setActiveTab('interview_qa');
+      else if (['lesson', 'cheatsheet', 'practice', 'assignments', 'interview_qa', 'quiz', 'all'].includes(queryTab)) {
         setActiveTab(queryTab as ActiveTab);
       } else {
         setActiveTab('lesson');
@@ -488,20 +487,7 @@ export default function JavaSubLessonPage() {
                 <span>Q&A ({lesson.interviewQuestions?.length || 0})</span>
               </button>
 
-              {/* 6. Self-Evaluate */}
-              <button
-                onClick={() => setActiveTab('self_eval')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'self_eval'
-                    ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <Award className="w-3.5 h-3.5 text-purple-400" />
-                <span>Self-Eval</span>
-              </button>
-
-              {/* 7. Quiz */}
+              {/* 6. Quiz */}
               <button
                 onClick={() => setActiveTab('quiz')}
                 className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
@@ -514,7 +500,7 @@ export default function JavaSubLessonPage() {
                 <span>Quiz ({lesson.miniQuiz?.length || 0})</span>
               </button>
 
-              {/* 8. All */}
+              {/* 7. All */}
               <button
                 onClick={() => setActiveTab('all')}
                 className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
@@ -1276,17 +1262,38 @@ export default function JavaSubLessonPage() {
                 <div className="space-y-4">
                   {lesson.interviewQuestions.map((q, idx) => {
                     const isRevealed = revealedQuestions[idx];
+                    const qRating = questionRatings[idx];
 
                     return (
                       <div
                         key={idx}
-                        className="bg-slate-950/80 border border-slate-800 hover:border-indigo-500/40 rounded-xl p-4 space-y-3 transition"
+                        className={`bg-slate-950/80 border transition rounded-xl p-4 space-y-3 ${
+                          qRating === 'mastered'
+                            ? 'border-emerald-500/40 bg-emerald-950/10'
+                            : qRating === 'partial'
+                            ? 'border-amber-500/40 bg-amber-950/10'
+                            : qRating === 'revise'
+                            ? 'border-rose-500/40 bg-rose-950/10'
+                            : 'border-slate-800 hover:border-indigo-500/40'
+                        }`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <h4 className="text-sm sm:text-base font-bold text-indigo-200">
-                            Q{idx + 1}: {q.question}
+                            <span className="text-indigo-400 mr-1.5 font-mono">Q{idx + 1}:</span>
+                            {q.question}
                           </h4>
                           <div className="flex items-center gap-2 shrink-0">
+                            {qRating && (
+                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${
+                                qRating === 'mastered'
+                                  ? 'bg-emerald-500/20 text-emerald-300'
+                                  : qRating === 'partial'
+                                  ? 'bg-amber-500/20 text-amber-300'
+                                  : 'bg-rose-500/20 text-rose-300'
+                              }`}>
+                                {qRating}
+                              </span>
+                            )}
                             <CopyButton
                               text={`Question: ${q.question}\n\nModel Answer:\n${q.answer}${q.keyPhrases && q.keyPhrases.length > 0 ? `\n\nKey Concepts: ${q.keyPhrases.join(', ')}` : ''}${q.commonMistakeAnswer ? `\n\nCommon Mistake: ${q.commonMistakeAnswer}` : ''}${q.followUp ? `\n\nFollow-up Question: ${q.followUp}` : ''}${q.followUpAnswer ? `\nFollow-up Answer: ${q.followUpAnswer}` : ''}`}
                               label="Copy Q&A"
@@ -1360,115 +1367,68 @@ export default function JavaSubLessonPage() {
                             )}
                           </div>
                         )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
 
-          {/* ── TAB 6: SELF-EVALUATE ── */}
-          {(activeTab === 'self_eval' || activeTab === 'all') && (
-            <div className="space-y-4">
-              <div className="bg-gradient-to-br from-purple-950/30 via-slate-900 to-slate-900 border border-purple-500/30 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 text-purple-300 font-bold text-sm uppercase tracking-wider">
-                    <Award className="w-4 h-4 text-purple-400" />
-                    <span>Interactive Self-Evaluation ({lesson.interviewQuestions.length} Questions)</span>
-                  </div>
-                  <span className="text-xs text-slate-400">
-                    Grade your speaking fluency to track interview readiness
-                  </span>
-                </div>
-
-                {/* Question Speaking Drills */}
-                <div className="space-y-3">
-                  {lesson.interviewQuestions.map((q, idx) => {
-                    const qRating = questionRatings[idx];
-
-                    return (
-                      <div
-                        key={idx}
-                        className={`p-4 rounded-xl border transition space-y-3 ${
-                          qRating === 'mastered'
-                            ? 'bg-emerald-950/20 border-emerald-500/40'
-                            : qRating === 'partial'
-                            ? 'bg-amber-950/20 border-amber-500/40'
-                            : qRating === 'revise'
-                            ? 'bg-rose-950/20 border-rose-500/40'
-                            : 'bg-slate-950/80 border-slate-800'
-                        }`}
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                          <div className="font-bold text-xs sm:text-sm text-slate-200">
-                            <span className="text-purple-400 mr-1.5">Q{idx + 1}:</span>
-                            {q.question}
-                          </div>
-                          <div className="flex items-center gap-2 self-start sm:self-auto">
-                            <CopyButton
-                              text={`Question: ${q.question}\n\nModel Answer: ${q.answer}`}
-                              label="Copy Question"
-                            />
-                            {qRating && (
-                              <span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded ${
+                        {/* Speaking Fluency Self-Rate on the Question */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/60">
+                          <span className="text-[11px] text-slate-400 font-medium">Your Speaking Fluency:</span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'mastered' }))}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
                                 qRating === 'mastered'
-                                  ? 'bg-emerald-500/20 text-emerald-300'
-                                  : qRating === 'partial'
-                                  ? 'bg-amber-500/20 text-amber-300'
-                                  : 'bg-rose-500/20 text-rose-300'
-                              }`}>
-                                {qRating}
-                              </span>
-                            )}
+                                  ? 'bg-emerald-600 text-white shadow-sm'
+                                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                              }`}
+                            >
+                              <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>🟢 Mastered</span>
+                            </button>
+                            <button
+                              onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'partial' }))}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                                qRating === 'partial'
+                                  ? 'bg-amber-600 text-white shadow-sm'
+                                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                              }`}
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                              <span>🟡 Needs Polish</span>
+                            </button>
+                            <button
+                              onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'revise' }))}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
+                                qRating === 'revise'
+                                  ? 'bg-rose-600 text-white shadow-sm'
+                                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                              }`}
+                            >
+                              <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
+                              <span>🔴 Revise</span>
+                            </button>
                           </div>
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-slate-800/60">
-                          <span className="text-[11px] text-slate-400 mr-1">Your Speaking Fluency:</span>
-                          <button
-                            onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'mastered' }))}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
-                              qRating === 'mastered'
-                                ? 'bg-emerald-600 text-white shadow-sm'
-                                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
-                            }`}
-                          >
-                            <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>🟢 Mastered</span>
-                          </button>
-                          <button
-                            onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'partial' }))}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
-                              qRating === 'partial'
-                                ? 'bg-amber-600 text-white shadow-sm'
-                                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
-                            }`}
-                          >
-                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                            <span>🟡 Needs Polish</span>
-                          </button>
-                          <button
-                            onClick={() => setQuestionRatings(prev => ({ ...prev, [idx]: 'revise' }))}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1 ${
-                              qRating === 'revise'
-                                ? 'bg-rose-600 text-white shadow-sm'
-                                : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
-                            }`}
-                          >
-                            <RotateCcw className="w-3.5 h-3.5 text-rose-400" />
-                            <span>🔴 Revise Again</span>
-                          </button>
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
-                {/* Self-Rating Score Buttons */}
-                <div className="pt-3 border-t border-slate-800 space-y-2">
-                  <div className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    Save Overall Sub-Topic Evaluation Rating:
+                {/* Overall Sub-Topic Evaluation Rating */}
+                <div className="pt-4 border-t border-slate-800 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                      Overall Sub-Topic Mastery Rating:
+                    </span>
+                    {currentRating && (
+                      <span className={`text-[11px] uppercase font-bold px-2 py-0.5 rounded ${
+                        currentRating === 'mastered'
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : currentRating === 'partial'
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      }`}>
+                        Current: {currentRating}
+                      </span>
+                    )}
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <button
