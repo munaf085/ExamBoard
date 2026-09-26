@@ -9,8 +9,8 @@ export const methodsLessons: Record<string, DetailedLesson> = {
   "method-anatomy-and-returns": {
     "id": "method-anatomy-and-returns",
     "moduleId": "java-methods",
-    "moduleTitle": "8. Methods & Recursion",
-    "lessonNumber": "Lesson 8.1",
+    "moduleTitle": "6. Methods & Recursion",
+    "lessonNumber": "Lesson 6.1",
     "title": "Method Anatomy, Parameters & Return Types",
     "subtitle": "Deconstructing method declarations, formal parameters vs actual arguments, execution boundaries, and stack frame lifecycle",
     "estimatedMinutes": 16,
@@ -570,8 +570,8 @@ export const methodsLessons: Record<string, DetailedLesson> = {
   "pass-by-value-deep-dive": {
     "id": "pass-by-value-deep-dive",
     "moduleId": "java-methods",
-    "moduleTitle": "8. Methods & Recursion",
-    "lessonNumber": "Lesson 8.2",
+    "moduleTitle": "6. Methods & Recursion",
+    "lessonNumber": "Lesson 6.2",
     "title": "Pass-by-Value Semantics in Java",
     "subtitle": "Stack frame value copying, reference bit-patterns, heap mutation vs reference reassignment, and why Java has no pass-by-reference",
     "estimatedMinutes": 18,
@@ -1131,8 +1131,8 @@ export const methodsLessons: Record<string, DetailedLesson> = {
   "method-overloading-and-varargs": {
     "id": "method-overloading-and-varargs",
     "moduleId": "java-methods",
-    "moduleTitle": "8. Methods & Recursion",
-    "lessonNumber": "Lesson 8.3",
+    "moduleTitle": "6. Methods & Recursion",
+    "lessonNumber": "Lesson 6.3",
     "title": "Method Overloading & Varargs",
     "subtitle": "Static compile-time polymorphism, signature differentiation, the overload resolution waterfall, and variable-length argument mechanics",
     "estimatedMinutes": 17,
@@ -1692,8 +1692,8 @@ export const methodsLessons: Record<string, DetailedLesson> = {
   "recursion-and-call-stack": {
     "id": "recursion-and-call-stack",
     "moduleId": "java-methods",
-    "moduleTitle": "8. Methods & Recursion",
-    "lessonNumber": "Lesson 8.4",
+    "moduleTitle": "6. Methods & Recursion",
+    "lessonNumber": "Lesson 6.4",
     "title": "Recursion Fundamentals & Call Stack Tracing",
     "subtitle": "Recursive problem decomposition, base cases, winding vs unwinding phases, the call stack memory model, and recursion tree analysis",
     "estimatedMinutes": 20,

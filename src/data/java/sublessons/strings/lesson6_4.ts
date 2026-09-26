@@ -4,8 +4,8 @@ export const lesson6_4: Record<string, DetailedLesson> = {
   'stringbuilder-vs-stringbuffer': {
     id: 'stringbuilder-vs-stringbuffer',
     moduleId: 'java-strings',
-    moduleTitle: '6. Strings & String Pool',
-    lessonNumber: 'Lesson 6.4',
+    moduleTitle: '8. Strings & String Pool',
+    lessonNumber: 'Lesson 8.4',
     title: 'StringBuilder vs StringBuffer & Performance',
     subtitle: 'Mutable text buffers, capacity management, method chaining, thread safety, and benchmark mechanics',
     estimatedMinutes: 16,

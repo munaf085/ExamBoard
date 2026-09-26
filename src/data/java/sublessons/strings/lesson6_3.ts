@@ -4,8 +4,8 @@ export const lesson6_3: Record<string, DetailedLesson> = {
   'string-methods-and-manipulation': {
     id: 'string-methods-and-manipulation',
     moduleId: 'java-strings',
-    moduleTitle: '6. Strings & String Pool',
-    lessonNumber: 'Lesson 6.3',
+    moduleTitle: '8. Strings & String Pool',
+    lessonNumber: 'Lesson 8.3',
     title: 'Essential String Methods & Manipulation',
     subtitle: 'Inspection, extraction, searching, transforming, trimming, splitting, and character traversal',
     estimatedMinutes: 18,
