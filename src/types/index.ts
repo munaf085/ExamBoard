@@ -232,7 +232,6 @@ export interface JavaModule {
 
 export type JavaSection =
   | 'fundamentals'
-  | 'patterns'
   | 'oop'
   | 'collections'
   | 'advanced'
