@@ -369,6 +369,16 @@ Devon (E102) Monthly Pay: $6500.00`
           aspect: 'Purpose',
           optionA: 'Abstract Class: Core base identity & partial implementation blueprint',
           optionB: 'Concrete Class: Full implementation ready for object instantiation'
+        },
+        {
+          aspect: 'Bytecode & Dispatch',
+          optionA: 'Abstract Class: invokevirtual uses vtable index (concrete subclass fills slot)',
+          optionB: 'Constructor invokespecial <init> chains superclass state initialization'
+        },
+        {
+          aspect: 'Time & Space Complexity',
+          optionA: 'Time: O(1) vtable dispatch; Space: O(fields) contiguous memory allocated on heap for subclass instance',
+          optionB: 'Zero heap allocation for abstract class itself (cannot be instantiated)'
         }
       ]
     },
@@ -668,6 +678,71 @@ public class Main {
         hint: 'Can an abstract class define static utility methods and have them called directly without any subclass instantiation?',
         solution: '25',
         explanation: 'Static methods belong to the class itself, not to instances. An abstract class can have static methods, and they can be called directly via the class name `MathOp.square(5)` without creating any objects. It prints 25.'
+      },
+      {
+        title: 'Puzzle 9: Partial Implementation in Multi-Level Abstract Chain',
+        problemStatement: 'What is the console output of this 3-tier abstract hierarchy?',
+        code: `abstract class StepA {
+    abstract void process1();
+    abstract void process2();
+}
+abstract class StepB extends StepA {
+    @Override
+    void process1() { System.out.print("B1 "); }
+}
+class ConcreteC extends StepB {
+    @Override
+    void process2() { System.out.print("C2 "); }
+}
+public class Main {
+    public static void main(String[] args) {
+        StepA obj = new ConcreteC();
+        obj.process1();
+        obj.process2();
+    }
+}`,
+        options: [
+          'B1 C2 ',
+          'C2 B1 ',
+          'Compilation Error: StepB must implement process2',
+          'Compilation Error: StepA cannot be reference type'
+        ],
+        correctOptionIndex: 0,
+        hint: 'An abstract class can implement some abstract methods from its parent, leaving the remaining ones for concrete descendants.',
+        solution: 'B1 C2 ',
+        explanation: 'Abstract class StepB partially implements StepA by overriding process1(). Concrete class ConcreteC overrides the remaining abstract method process2(). All methods are implemented, so ConcreteC can be instantiated cleanly, printing "B1 C2 ".'
+      },
+      {
+        title: 'Puzzle 10: Abstract Super Constructor Calling Overridden Method',
+        problemStatement: 'What does this program print during constructor execution?',
+        code: `abstract class BaseComponent {
+    BaseComponent() {
+        init();
+    }
+    abstract void init();
+}
+class UIWidget extends BaseComponent {
+    int size = 100;
+    @Override
+    void init() {
+        System.out.print("Widget:" + size + " ");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        new UIWidget();
+    }
+}`,
+        options: [
+          'Widget:0 ',
+          'Widget:100 ',
+          'Compilation Error: cannot invoke abstract method in constructor',
+          'NullPointerException'
+        ],
+        correctOptionIndex: 0,
+        hint: 'When BaseComponent constructor runs, has UIWidget initialized its instance fields yet?',
+        solution: 'Widget:0 ',
+        explanation: 'During new UIWidget(), BaseComponent constructor runs first. It invokes init(), which dynamically dispatches to UIWidget.init(). But UIWidget field "size" has not yet been initialized to 100; it still holds default 0. Thus it prints "Widget:0 ".'
       }
     ],
     interviewQuestions: [
@@ -1255,6 +1330,16 @@ public class Implementor implements ContractName, AnotherContract {
           aspect: 'Method Access',
           optionA: 'Interface Methods: Implicitly public',
           optionB: 'Abstract Class Methods: Can be public, protected, or package-private'
+        },
+        {
+          aspect: 'Bytecode Instruction',
+          optionA: 'Interface Call: invokeinterface opcode (itable resolution across independent hierarchies)',
+          optionB: 'Class Call: invokevirtual opcode (fixed vtable index resolution)'
+        },
+        {
+          aspect: 'Dispatch Complexity',
+          optionA: 'Interface: O(1) with Inline Cache; fallback to itable scan',
+          optionB: 'Class: O(1) single direct vtable index dereference'
         }
       ]
     },
@@ -1526,6 +1611,69 @@ public class Main {
         hint: 'Tagged is a marker interface. Which object\'s class hierarchy implements it?',
         solution: 'false true',
         explanation: '`SecureAsset` implements `Tagged`, so `a2 instanceof Tagged` evaluates to `true`. `Asset` does not implement `Tagged`, so `a1 instanceof Tagged` evaluates to `false`. Output: "false true".'
+      },
+      {
+        title: 'Puzzle 9: Disambiguating Duplicate Constants in Multiple Interfaces',
+        problemStatement: 'What does this program print?',
+        code: `interface Alpha {
+    int VAL = 10;
+}
+interface Beta {
+    int VAL = 20;
+}
+class Composite implements Alpha, Beta {
+    void print() {
+        System.out.print(Alpha.VAL + " " + Beta.VAL);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        new Composite().print();
+    }
+}`,
+        options: [
+          '10 20',
+          '20 10',
+          'Compilation Error: duplicate field VAL',
+          '30'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Referencing VAL unqualified causes an ambiguity error, but how does qualifying with the interface name behave?',
+        solution: '10 20',
+        explanation: 'Unqualified "VAL" would be ambiguous, but qualifying with Alpha.VAL and Beta.VAL explicitly resolves the constants at compile time, printing "10 20".'
+      },
+      {
+        title: 'Puzzle 10: Interface Subtyping and Covariant Return Types',
+        problemStatement: 'What is printed by this covariant interface hierarchy?',
+        code: `interface Producer {
+    Number produce();
+}
+interface DoubleProducer extends Producer {
+    @Override
+    Double produce();
+}
+class Generator implements DoubleProducer {
+    @Override
+    public Double produce() {
+        return 3.14;
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Producer p = new Generator();
+        System.out.println(p.produce().getClass().getSimpleName());
+    }
+}`,
+        options: [
+          'Double',
+          'Number',
+          'Compilation Error: cannot narrow return type in sub-interface',
+          'ClassCastException'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Covariant return types are permitted in interfaces when narrowing from a supertype to a subtype.',
+        solution: 'Double',
+        explanation: 'DoubleProducer narrows produce() return type from Number to Double, which is legal via covariance. Generator returns 3.14 (a Double object). Dynamic dispatch invokes Generator.produce(), printing "Double".'
       }
     ],
     interviewQuestions: [
@@ -2140,6 +2288,16 @@ public class ConcreteProduct extends AbstractCoreEntity implements Loggable {
           aspect: 'Access Modifiers',
           optionA: 'Abstract Class: Methods can be public, protected, package-private',
           optionB: 'Interface: Abstract methods are strictly public'
+        },
+        {
+          aspect: 'Bytecode Dispatch & itable',
+          optionA: 'Abstract Class: invokevirtual via vtable index (single pointer dereference)',
+          optionB: 'Interface: invokeinterface with itable check / inline cache resolution'
+        },
+        {
+          aspect: 'Complexity & Allocation',
+          optionA: 'O(1) method invocation; instance fields contribute directly to object footprint',
+          optionB: 'O(1) invocation; zero object memory overhead (no instance fields allowed)'
         }
       ]
     },
@@ -2439,6 +2597,74 @@ public class Main {
         hint: 'In Java, double 0.20 prints as 0.2 by default.',
         solution: 'Java Guide disc=0.2',
         explanation: '`item` references a `Book`, which implements `Discountable`. The `instanceof` check succeeds. Casting `item` to `Discountable` succeeds, and `d.getDiscount()` returns 0.2. Output: "Java Guide disc=0.2".'
+      },
+      {
+        title: 'Puzzle 9: Abstract Class Implementing Interface without Defining Method',
+        problemStatement: 'Does this code compile, and what is printed?',
+        code: `interface Worker {
+    void work();
+}
+abstract class AbstractDev implements Worker {
+    // does not implement work()
+}
+class SeniorDev extends AbstractDev {
+    @Override
+    public void work() {
+        System.out.print("Coding ");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Worker w = new SeniorDev();
+        w.work();
+    }
+}`,
+        options: [
+          'Coding ',
+          'Compilation Error: AbstractDev must implement work()',
+          'Compilation Error: Worker cannot be instantiated',
+          'Runtime Error'
+        ],
+        correctOptionIndex: 0,
+        hint: 'An abstract class that implements an interface is NOT required to provide implementation bodies for interface methods.',
+        solution: 'Coding ',
+        explanation: 'Abstract classes can defer implementing interface methods to concrete subclasses. SeniorDev implements work(), allowing clean execution and printing "Coding ".'
+      },
+      {
+        title: 'Puzzle 10: Private Method in Interface Supporting Default Method',
+        problemStatement: 'What is printed by this Java 9+ interface construct?',
+        code: `interface Validator {
+    default void validate() {
+        log("Start");
+        check();
+        log("End");
+    }
+    private void log(String msg) {
+        System.out.print("[" + msg + "] ");
+    }
+    void check();
+}
+class UserValidator implements Validator {
+    @Override
+    public void check() {
+        System.out.print("Valid ");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        new UserValidator().validate();
+    }
+}`,
+        options: [
+          '[Start] Valid [End] ',
+          'Valid ',
+          'Compilation Error: private methods are illegal in interfaces',
+          '[Start] [End] '
+        ],
+        correctOptionIndex: 0,
+        hint: 'Java 9 introduced private methods in interfaces to share logic between default methods without exposing them publicly.',
+        solution: '[Start] Valid [End] ',
+        explanation: 'Java 9+ permits private helper methods inside interfaces. They cannot be inherited or overridden, but default methods within the interface can call them freely. Output is "[Start] Valid [End] ".'
       }
     ],
     interviewQuestions: [
@@ -2965,6 +3191,16 @@ public class Implementor implements InterfaceA, InterfaceB {
           aspect: 'Primary Purpose',
           optionA: 'Default Method: Interface evolution and optional behavior fallback',
           optionB: 'Static Method: Utility helper functions tightly bound to the contract'
+        },
+        {
+          aspect: 'Bytecode Instruction',
+          optionA: 'Default Method: invokespecial for Interface.super.method(); invokeinterface/invokevirtual on instance',
+          optionB: 'Static Method: invokestatic InterfaceName.methodName'
+        },
+        {
+          aspect: 'Time & Space Complexity',
+          optionA: 'Default Method: O(1) invocation; zero state allocation in interface',
+          optionB: 'Static Method: O(1) direct call; inlined by JIT compiler'
         }
       ]
     },
@@ -3263,6 +3499,74 @@ public class Main {
         hint: 'Static methods belong to their respective classes/interfaces and do not participate in dynamic dispatch.',
         solution: 'ClassInfo InterfaceInfo ',
         explanation: 'Static methods in interfaces do not participate in polymorphism. `CustomFormatter.printInfo()` calls its own static method ("ClassInfo "), while `Formatter.printInfo()` calls the interface static method ("InterfaceInfo "). Output: "ClassInfo InterfaceInfo ".'
+      },
+      {
+        title: 'Puzzle 9: Sibling Default Methods Explicit Super Delegation',
+        problemStatement: 'What does this program print?',
+        code: `interface Alpha {
+    default void ping() { System.out.print("Alpha "); }
+}
+interface Beta {
+    default void ping() { System.out.print("Beta "); }
+}
+class Service implements Alpha, Beta {
+    @Override
+    public void ping() {
+        Beta.super.ping();
+        System.out.print("Custom ");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Alpha a = new Service();
+        a.ping();
+    }
+}`,
+        options: [
+          'Beta Custom ',
+          'Alpha Custom ',
+          'Beta ',
+          'Compilation Error: duplicate default method'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Service explicitly resolves the conflict by delegating to Beta.super.ping() and then printing "Custom ".',
+        solution: 'Beta Custom ',
+        explanation: 'Because both Alpha and Beta supply ping(), Service must resolve the conflict. Service invokes Beta.super.ping() (printing "Beta ") and then prints "Custom ". Output: "Beta Custom ".'
+      },
+      {
+        title: 'Puzzle 10: Re-Abstracting a Default Method in Sub-Interface',
+        problemStatement: 'What is printed by this re-abstracted interface hierarchy?',
+        code: `interface Printable {
+    default void print() {
+        System.out.print("DefaultPrint ");
+    }
+}
+interface MandatoryPrintable extends Printable {
+    @Override
+    void print(); // re-abstracted
+}
+class Document implements MandatoryPrintable {
+    @Override
+    public void print() {
+        System.out.print("DocPrint ");
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Printable p = new Document();
+        p.print();
+    }
+}`,
+        options: [
+          'DocPrint ',
+          'DefaultPrint ',
+          'Compilation Error: cannot override default method with abstract',
+          'Runtime Error'
+        ],
+        correctOptionIndex: 0,
+        hint: 'A sub-interface is allowed to re-abstract an inherited default method, forcing implementing classes to provide a new body.',
+        solution: 'DocPrint ',
+        explanation: 'MandatoryPrintable re-abstracts print() by declaring it without a body and without default. Document is therefore forced to provide a concrete implementation, printing "DocPrint ".'
       }
     ],
     interviewQuestions: [
