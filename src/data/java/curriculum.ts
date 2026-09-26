@@ -251,10 +251,10 @@ export const JAVA_MODULES: JavaModule[] = [
     icon: 'Package',
     topics: ['Stack (LIFO)', 'Queue (FIFO)', 'ArrayDeque', 'Linked List Reversal', 'Cycle Detection (Floyd)'],
     prerequisites: ['java-dsa-foundations'],
-    lessonCount: 5,
+    lessonCount: 4,
     mcqCount: 20,
-    codingCount: 6,
-    interviewCount: 15,
+    codingCount: 10,
+    interviewCount: 10,
     section: 'dsa',
   },
   {

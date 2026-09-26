@@ -240,6 +240,20 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'quicksort': 'merge-quick-timsort-internals',
     'quick-sort': 'merge-quick-timsort-internals',
     'timsort': 'merge-quick-timsort-internals',
+    'stack': 'stack-adt-and-arraydeque',
+    'stacks': 'stack-adt-and-arraydeque',
+    'arraydeque': 'stack-adt-and-arraydeque',
+    'monotonic-stack': 'stack-adt-and-arraydeque',
+    'queue': 'queue-adt-and-ring-buffers',
+    'queues': 'queue-adt-and-ring-buffers',
+    'ring-buffer': 'queue-adt-and-ring-buffers',
+    'priority-queue': 'queue-adt-and-ring-buffers',
+    'linked-list': 'singly-doubly-linked-lists',
+    'linked-lists': 'singly-doubly-linked-lists',
+    'doubly-linked-list': 'singly-doubly-linked-lists',
+    'floyd-cycle': 'floyd-cycle-detection-and-pointers',
+    'fast-slow-pointers': 'floyd-cycle-detection-and-pointers',
+    'cycle-detection': 'floyd-cycle-detection-and-pointers',
   };
 
   if (aliases[cleanId] && DETAILED_LESSONS[aliases[cleanId]]) {
@@ -316,6 +330,12 @@ export function getLessonsForModule(moduleId: string): DetailedLesson[] {
     'dsa': 'java-dsa-foundations',
     'searching': 'java-dsa-foundations',
     'sorting': 'java-dsa-foundations',
+    '16': 'java-dsa-stacks-queues',
+    'dsa-stacks-queues': 'java-dsa-stacks-queues',
+    'stacks-queues': 'java-dsa-stacks-queues',
+    'stacks': 'java-dsa-stacks-queues',
+    'queues': 'java-dsa-stacks-queues',
+    'linked-lists': 'java-dsa-stacks-queues',
   };
   const targetId = moduleAliases[clean] || clean;
 

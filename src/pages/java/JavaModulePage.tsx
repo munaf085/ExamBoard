@@ -101,6 +101,7 @@ export default function JavaModulePage() {
     'java-abstraction': true,
     'java-object-class': true,
     'java-dsa-foundations': true,
+    'java-dsa-stacks-queues': true,
   });
   const [forceExpandAll, setForceExpandAll] = useState<boolean | null>(null);
 
