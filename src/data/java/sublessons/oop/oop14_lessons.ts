@@ -258,6 +258,16 @@ public class CustomClass /* extends Object */ {
           aspect: 'Default equals()',
           optionA: 'Object.equals(): Performs pure reference comparison (this == obj)',
           optionB: 'Overridden equals(): Compares logical internal field values'
+        },
+        {
+          aspect: 'Memory Layout & Header',
+          optionA: 'Object Header: Mark Word (8B) + Klass Pointer (4B with CompressedOOPs)',
+          optionB: 'java.lang.Object: Baseline 0 instance fields; subclasses append fields sequentially'
+        },
+        {
+          aspect: 'Dispatch & Complexity',
+          optionA: 'Object Methods: invokevirtual via vtable index (O(1) dispatch)',
+          optionB: 'getClass(): O(1) direct header Klass pointer dereference'
         }
       ]
     },
@@ -486,6 +496,51 @@ public class Main {
         hint: 'Default toString() format is getClass().getName() + \'@\' + Integer.toHexString(hashCode()).',
         solution: 'true',
         explanation: 'The default implementation in `java.lang.Object` returns `getClass().getName() + \'@\' + Integer.toHexString(hashCode())`. Because it contains the "@" delimiter between class name and hash code, `str.contains("@")` prints `true`.'
+      },
+      {
+        title: 'Puzzle 9: Array Object Identity and Superclass Hierarchy',
+        problemStatement: 'What boolean values are printed by this program?',
+        code: `public class Main {
+    public static void main(String[] args) {
+        int[] nums = new int[3];
+        System.out.print((nums instanceof Object) + " ");
+        System.out.print((nums.getClass().getSuperclass() == Object.class) + " ");
+        System.out.print(nums.getClass().isArray());
+    }
+}`,
+        options: [
+          'true true true',
+          'true false true',
+          'false false true',
+          'true true false'
+        ],
+        correctOptionIndex: 0,
+        hint: 'In Java, arrays are full-fledged objects whose immediate superclass is java.lang.Object.',
+        solution: 'true true true',
+        explanation: 'Arrays in Java are genuine objects. Their direct superclass is java.lang.Object, so "nums instanceof Object" is true, getSuperclass() == Object.class is true, and isArray() is true. Output: "true true true".'
+      },
+      {
+        title: 'Puzzle 10: Final getClass() Prevention of Overriding',
+        problemStatement: 'What does this program print?',
+        code: `class CustomEntity {
+    // Cannot override getClass() because it is final in Object
+}
+public class Main {
+    public static void main(String[] args) {
+        Object entity = new CustomEntity();
+        System.out.println(entity.getClass().getSimpleName());
+    }
+}`,
+        options: [
+          'CustomEntity',
+          'Object',
+          'Compilation Error',
+          'Runtime Exception'
+        ],
+        correctOptionIndex: 0,
+        hint: 'getClass() is declared final in java.lang.Object; it returns the exact runtime Class of the instance.',
+        solution: 'CustomEntity',
+        explanation: 'The getClass() method in Object is final and cannot be overridden by any subclass. When invoked on an Object reference pointing to CustomEntity, it returns the runtime Class object for CustomEntity, printing "CustomEntity".'
       }
     ],
     interviewQuestions: [
@@ -998,6 +1053,16 @@ Properly formatted array: [95, 88, 72, 100]`
           aspect: 'Performance Impact',
           optionA: 'String Concatenation (+): Fast for single lines',
           optionB: 'StringBuilder: Recommended when building complex multiline representations'
+        },
+        {
+          aspect: 'Bytecode Dispatch',
+          optionA: 'invokevirtual: toString() resolves dynamically through the receiver\'s vtable',
+          optionB: 'String concatenation: transformed into invokedynamic (Java 9+) or StringBuilder'
+        },
+        {
+          aspect: 'Time & Space Complexity',
+          optionA: 'Time: O(n) where n is total characters in formatted string representation',
+          optionB: 'Space: O(n) heap allocation for the newly instantiated immutable String'
         }
       ]
     },
@@ -1252,6 +1317,65 @@ public class Main {
         hint: 'How does String.valueOf(obj) handle when obj.toString() itself returns null?',
         solution: 'Result: null',
         explanation: '`String.valueOf(obj)` calls `obj.toString()`. If `obj.toString()` returns null, the string concatenation routine replaces the null with the string "null". Output: "Result: null".'
+      },
+      {
+        title: 'Puzzle 9: Mutual Recursion in Circular toString()',
+        problemStatement: 'What exception is thrown when two objects reference each other in toString()?',
+        code: `class Node {
+    int id;
+    Node partner;
+    Node(int id) { this.id = id; }
+    @Override
+    public String toString() {
+        return "Node(" + id + ", " + partner + ")";
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Node a = new Node(1);
+        Node b = new Node(2);
+        a.partner = b;
+        b.partner = a;
+        try {
+            System.out.println(a);
+        } catch (StackOverflowError e) {
+            System.out.println("StackOverflow");
+        }
+    }
+}`,
+        options: [
+          'StackOverflow',
+          'Node(1, Node(2, null))',
+          'NullPointerException',
+          'Compilation Error'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Mutual circular calls in toString() repeatedly push frames onto the JVM call stack until memory is exhausted.',
+        solution: 'StackOverflow',
+        explanation: 'a.toString() calls b.toString(), which calls a.toString(), leading to infinite mutual recursion that exhausts JVM thread stack space and throws java.lang.StackOverflowError.'
+      },
+      {
+        title: 'Puzzle 10: Array toString() Element Representation Trap',
+        problemStatement: 'What boolean values are printed by this array string evaluation?',
+        code: `public class Main {
+    public static void main(String[] args) {
+        int[] nums = {10, 20};
+        String s = "" + nums;
+        boolean has10 = s.contains("10");
+        boolean hasPrefix = s.startsWith("[I@");
+        System.out.println(has10 + " " + hasPrefix);
+    }
+}`,
+        options: [
+          'false true',
+          'true false',
+          'true true',
+          'false false'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Arrays do not override toString(); they print type descriptors and hash codes, not array elements.',
+        solution: 'false true',
+        explanation: 'Java arrays inherit Object.toString() unchanged, producing "[I@" followed by hex hash code. It does not print the array elements, so has10 is false and hasPrefix is true. Output: "false true".'
       }
     ],
     interviewQuestions: [
@@ -1809,6 +1933,16 @@ Polymorphic call: false`
           aspect: 'Default Object Implementation',
           optionA: 'Object.equals(): Evaluates this == obj',
           optionB: 'Object.hashCode(): Derives native identity hash from memory address/header'
+        },
+        {
+          aspect: 'Bytecode Dispatch',
+          optionA: 'equals(Object): invokevirtual dynamic dispatch via vtable index',
+          optionB: 'hashCode(): invokevirtual; default delegates to JVM native identity hash'
+        },
+        {
+          aspect: 'Complexity & Bucket Mapping',
+          optionA: 'equals(): O(k) where k is number of compared fields; O(1) best case with this == obj',
+          optionB: 'hashCode(): O(k) arithmetic operations; enables O(1) average lookup in hash structures'
         }
       ]
     },
@@ -2091,6 +2225,66 @@ public class Main {
         hint: 'The non-nullity contract states that x.equals(null) must return false, never throw NullPointerException.',
         solution: 'false',
         explanation: 'According to the non-nullity axiom of `equals()`, for any non-null reference `x`, `x.equals(null)` must return `false` without throwing an exception. Output: "false".'
+      },
+      {
+        title: 'Puzzle 9: Symmetry Violation with Subclass equals()',
+        problemStatement: 'What boolean values are printed by this Point and ColorPoint comparison?',
+        code: `class Point {
+    int x, y;
+    Point(int x, int y) { this.x = x; this.y = y; }
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof Point)) return false;
+        Point p = (Point) o;
+        return x == p.x && y == p.y;
+    }
+}
+class ColorPoint extends Point {
+    String color;
+    ColorPoint(int x, int y, String c) { super(x, y); this.color = c; }
+    @Override public boolean equals(Object o) {
+        if (!(o instanceof ColorPoint)) return false;
+        ColorPoint cp = (ColorPoint) o;
+        return super.equals(o) && color.equals(cp.color);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Point p = new Point(1, 2);
+        ColorPoint cp = new ColorPoint(1, 2, "RED");
+        System.out.println(p.equals(cp) + " " + cp.equals(p));
+    }
+}`,
+        options: [
+          'true false',
+          'true true',
+          'false false',
+          'false true'
+        ],
+        correctOptionIndex: 0,
+        hint: 'p.equals(cp) uses Point.equals (which checks instanceof Point), but cp.equals(p) uses ColorPoint.equals (checking instanceof ColorPoint).',
+        solution: 'true false',
+        explanation: 'p.equals(cp) executes Point.equals; cp is an instance of Point with matching coordinates, returning true. But cp.equals(p) executes ColorPoint.equals; p is not an instance of ColorPoint, returning false! This violates the Symmetry axiom of equals(). Output: "true false".'
+      },
+      {
+        title: 'Puzzle 10: Deterministic Output of Objects.hash()',
+        problemStatement: 'What does this program print?',
+        code: `public class Main {
+    public static void main(String[] args) {
+        int h1 = java.util.Objects.hash(10, "data");
+        int h2 = java.util.Objects.hash(10, "data");
+        System.out.println(h1 == h2);
+    }
+}`,
+        options: [
+          'true',
+          'false',
+          'Compilation Error',
+          'Runtime Exception'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Objects.hash() computes consistent, reproducible hash codes based on argument sequence and values.',
+        solution: 'true',
+        explanation: 'Objects.hash(...) delegates to Arrays.hashCode(new Object[]{10, "data"}). Because both invocations receive identical values in the same order, they compute identical integer hash codes, printing "true".'
       }
     ],
     interviewQuestions: [
@@ -2653,6 +2847,21 @@ public class Entity {
           aspect: 'Performance / Speed',
           optionA: 'Shallow Copy: Extremely fast $O(1)$ memory block copy',
           optionB: 'Deep Copy: Slower $O(n)$ recursive traversal and heap allocations'
+        },
+        {
+          aspect: 'Bytecode & Memory Allocation',
+          optionA: 'Object.clone(): Native C++ routine performs direct JVM heap bitwise memory block copy',
+          optionB: 'Copy Constructor: Emits new, invokespecial <init>, and executes standard validation logic'
+        },
+        {
+          aspect: 'Final Fields Handling',
+          optionA: 'clone(): Cannot reassign blank final reference fields to deep copies (compiler error)',
+          optionB: 'Copy Constructor: Elegantly assigns final reference fields during object construction'
+        },
+        {
+          aspect: 'Big-O Time & Space Complexity',
+          optionA: 'Shallow: $O(1)$ Time bitwise copy, $O(1)$ Auxiliary Space (single instance on heap)',
+          optionB: 'Deep: $O(N)$ Time to instantiate $N$ reachable nodes, $O(N)$ Auxiliary Space on heap'
         }
       ]
     },
@@ -2946,6 +3155,73 @@ public class Main {
         hint: 'The copy constructor creates a brand new Point instance.',
         solution: 'false p1.x=10 p2.x=99',
         explanation: '`new Point(p1)` invokes the copy constructor, which allocates a brand new `Point` object on the heap (`p1 == p2` is false) and copies `x` and `y`. Modifying `p2.x` does not touch `p1.x`. Output: "false p1.x=10 p2.x=99".'
+      },
+      {
+        title: 'Puzzle 9: Object Array Cloning and Element Mutation Trap',
+        problemStatement: 'What does this program print?',
+        code: `class Item {
+    int price;
+    Item(int p) { this.price = p; }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Item[] original = { new Item(100), new Item(200) };
+        Item[] copy = original.clone();
+
+        copy[0].price = 999;
+        copy[1] = new Item(888);
+
+        System.out.println(original[0].price + " " + original[1].price + " " + (original == copy));
+    }
+}`,
+        options: [
+          '999 200 false',
+          '100 200 false',
+          '999 888 false',
+          '100 200 true'
+        ],
+        correctOptionIndex: 0,
+        hint: 'original.clone() creates a new array reference, but does it copy the Item objects or just their pointers?',
+        solution: '999 200 false',
+        explanation: '`original.clone()` creates a new array object (`original == copy` is false), but it is a shallow copy! `original[0]` and `copy[0]` point to the exact same `Item` instance on the heap; mutating `copy[0].price = 999` directly modifies `original[0].price`. However, `copy[1] = new Item(888)` merely rebinds slot 1 of the new array to a brand new object, leaving `original[1]` pointing to the old item with price 200. Output: "999 200 false".'
+      },
+      {
+        title: 'Puzzle 10: Final Field Deep Copying: Copy Constructor vs Cloneable',
+        problemStatement: 'What is the compilation and execution outcome of this program?',
+        code: `class Engine {
+    int hp;
+    Engine(int hp) { this.hp = hp; }
+    Engine(Engine other) { this.hp = other.hp; }
+}
+
+class Car {
+    final Engine engine;
+    Car(Engine e) { this.engine = e; }
+    Car(Car other) {
+        this.engine = new Engine(other.engine); // Deep copy of final field!
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Car c1 = new Car(new Engine(300));
+        Car c2 = new Car(c1);
+        c2.engine.hp = 450;
+
+        System.out.println(c1.engine.hp + " " + c2.engine.hp + " " + (c1.engine == c2.engine));
+    }
+}`,
+        options: [
+          '300 450 false',
+          '450 450 false',
+          '300 450 true',
+          'Compilation Error: Cannot assign final field engine in Car(Car)'
+        ],
+        correctOptionIndex: 0,
+        hint: 'Can final fields be initialized in a copy constructor? Does this create an independent Engine?',
+        solution: '300 450 false',
+        explanation: 'A copy constructor is a genuine constructor, so it is fully permitted to initialize blank final instance fields (`this.engine = new Engine(...)`). This successfully produces a deep copy of the final reference field. When `c2.engine.hp` is changed to 450, `c1.engine.hp` remains 300, and `c1.engine == c2.engine` is false. This demonstrates why Joshua Bloch recommends copy constructors over `clone()`: `clone()` cannot reassign final fields.'
       }
     ],
     interviewQuestions: [
