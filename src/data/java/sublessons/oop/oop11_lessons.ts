@@ -76,6 +76,16 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
           "aspect": "Code Reuse",
           "optionA": "Reuses state and implementation automatically",
           "optionB": "Reuses functionality via delegation"
+        },
+        {
+          "aspect": "Complexity & Memory Layout",
+          "optionA": "Inheritance: O(1) vtable dispatch; single unified heap allocation (superclass + subclass fields)",
+          "optionB": "Composition: O(1) pointer indirection; separate heap allocations for composed objects"
+        },
+        {
+          "aspect": "Fragile Base Class Risk",
+          "optionA": "Inheritance: High risk (modifying parent internals can inadvertently break child invariants)",
+          "optionB": "Composition: Minimal risk (components are encapsulated behind public interface contracts)"
         }
       ]
     },
@@ -278,6 +288,36 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         "hint": "Static fields are inherited, but there is only ONE static variable shared across the class hierarchy.",
         "solution": "15 15",
         "explanation": "Static members belong to the class where they are declared. CounterChild inherits access to CounterParent.count. Modifying CounterChild.count modifies the single static field in CounterParent. Both print 15."
+      },
+      {
+        "title": "Puzzle 9: Polymorphic Array Assignment and Subtype Storage",
+        "problemStatement": "What is printed by this code?",
+        "code": "class Device {\n    String getCategory() { return \"Device\"; }\n}\nclass Phone extends Device {\n    @Override\n    String getCategory() { return \"Phone\"; }\n}\npublic class DeviceArrayPuzzle {\n    public static void main(String[] args) {\n        Device[] devices = new Device[2];\n        devices[0] = new Device();\n        devices[1] = new Phone();\n        for (Device d : devices) {\n            System.out.print(d.getCategory() + \" \");\n        }\n    }\n}",
+        "options": [
+          "Device Phone ",
+          "Device Device ",
+          "Phone Phone ",
+          "Compilation Error: cannot assign Phone to Device[]"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Phone IS-A Device, so it can be stored in Device[]. Method dispatch is resolved at runtime based on the actual object.",
+        "solution": "Device Phone ",
+        "explanation": "Because Phone IS-A Device, assigning a Phone instance to devices[1] is valid. When iterating through the array, runtime dynamic method dispatch invokes Device.getCategory() for index 0 ('Device ') and Phone.getCategory() for index 1 ('Phone '). Output is 'Device Phone '."
+      },
+      {
+        "title": "Puzzle 10: Field Hiding vs Method Overriding in Hierarchy",
+        "problemStatement": "What does this code output?",
+        "code": "class SuperItem {\n    int price = 10;\n    int getPrice() { return price; }\n}\nclass SubItem extends SuperItem {\n    int price = 20;\n    @Override\n    int getPrice() { return price; }\n}\npublic class FieldHidingPuzzle {\n    public static void main(String[] args) {\n        SuperItem item = new SubItem();\n        System.out.println(item.price + \" \" + item.getPrice());\n    }\n}",
+        "options": [
+          "10 20",
+          "20 20",
+          "10 10",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "In Java, fields are resolved at compile time based on the declared reference type, whereas methods are resolved at runtime dynamically.",
+        "solution": "10 20",
+        "explanation": "Fields are NOT polymorphic in Java; they are resolved at compile time using the declared reference type. Because 'item' is declared as SuperItem, 'item.price' accesses SuperItem.price (10). In contrast, methods ARE polymorphic: 'item.getPrice()' invokes SubItem's overridden method at runtime, which accesses SubItem's price (20). Output: 10 20."
       }
     ],
     "interviewQuestions": [
@@ -601,6 +641,16 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
           "aspect": "Allowed in Methods",
           "optionA": "super() is forbidden in regular methods",
           "optionB": "this() is forbidden in regular methods"
+        },
+        {
+          "aspect": "Bytecode Dispatch Instruction",
+          "optionA": "super(): invokespecial <init> targeting superclass constructor",
+          "optionB": "this(): invokespecial <init> targeting overloaded constructor in current class"
+        },
+        {
+          "aspect": "Complexity & Overhead",
+          "optionA": "super(): O(d) call chain where d is depth; O(1) stack frame per level, single heap allocation",
+          "optionB": "this(): O(k) delegation steps; O(1) stack frame overhead per overloaded hop"
         }
       ]
     },
@@ -803,6 +853,36 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         "hint": "Static blocks execute in hierarchical order upon class loading (First then Second), followed by instance constructors (First then Second).",
         "solution": "S1 S2 I1 I2 ",
         "explanation": "Loading Second requires loading its superclass First first: First static block prints 'S1 ', Second static block prints 'S2 '. Then instantiation runs constructors top-down: First constructor prints 'I1 ', Second prints 'I2 '. Output: 'S1 S2 I1 I2 '."
+      },
+      {
+        "title": "Puzzle 9: Instance Initializer Blocks with Constructor Chaining",
+        "problemStatement": "What is printed by this program?",
+        "code": "class SuperInit {\n    { System.out.print(\"1 \"); }\n    SuperInit() { System.out.print(\"2 \"); }\n}\nclass SubInit extends SuperInit {\n    { System.out.print(\"3 \"); }\n    SubInit() { System.out.print(\"4 \"); }\n}\npublic class InitBlockPuzzle {\n    public static void main(String[] args) {\n        new SubInit();\n    }\n}",
+        "options": [
+          "1 2 3 4 ",
+          "3 1 2 4 ",
+          "2 1 4 3 ",
+          "1 3 2 4 "
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Instance initializer blocks run after the super() constructor call finishes, but before the constructor body executes.",
+        "solution": "1 2 3 4 ",
+        "explanation": "When new SubInit() runs: 1) SubInit constructor invokes super(), jumping to SuperInit. 2) SuperInit's instance block runs ('1 '), then SuperInit's constructor body runs ('2 '). 3) Control returns to SubInit: SubInit's instance block runs ('3 '), then SubInit's constructor body runs ('4 '). Output: '1 2 3 4 '."
+      },
+      {
+        "title": "Puzzle 10: Polymorphic Method Call in Superclass Constructor",
+        "problemStatement": "What will be printed when this code is executed?",
+        "code": "class VehicleBase {\n    VehicleBase() {\n        showSpeed();\n    }\n    void showSpeed() {\n        System.out.print(\"Base: 0 \");\n    }\n}\nclass FastCar extends VehicleBase {\n    int maxSpeed = 200;\n    @Override\n    void showSpeed() {\n        System.out.print(\"FastCar: \" + maxSpeed + \" \");\n    }\n}\npublic class PolyConstructorPuzzle {\n    public static void main(String[] args) {\n        new FastCar();\n    }\n}",
+        "options": [
+          "FastCar: 0 ",
+          "FastCar: 200 ",
+          "Base: 0 ",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "VehicleBase constructor invokes showSpeed(). Because the object is FastCar, dynamic dispatch invokes FastCar.showSpeed() before maxSpeed is initialized!",
+        "solution": "FastCar: 0 ",
+        "explanation": "VehicleBase's constructor calls showSpeed(). Because the runtime object is FastCar, dynamic dispatch invokes FastCar.showSpeed(). However, at this point, FastCar's instance field maxSpeed has NOT been initialized yet (its value is the default 0). Thus, it prints 'FastCar: 0 '. This illustrates the dangerous partially initialized object trap."
       }
     ],
     "interviewQuestions": [
@@ -1120,6 +1200,16 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
           "aspect": "Class Boundary",
           "optionA": "Requires inheritance across parent and child",
           "optionB": "Can occur within the exact same class"
+        },
+        {
+          "aspect": "Bytecode Dispatch Instruction",
+          "optionA": "Overriding: invokevirtual runtime dynamic dispatch via vtable index lookup",
+          "optionB": "Overloading: invokevirtual or invokestatic bound to static signature at compile time"
+        },
+        {
+          "aspect": "Exception Specifications",
+          "optionA": "Overriding: Cannot declare new or broader checked exceptions (LSP compliance)",
+          "optionB": "Overloading: Each overloaded method can declare arbitrary checked exceptions independently"
         }
       ]
     },
@@ -1322,6 +1412,36 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         "hint": "All non-private, non-final, non-static methods in Java are virtual. When ShapeBase calls draw(), dynamic dispatch executes CircleSub's override.",
         "solution": "CircleDraw ",
         "explanation": "Dynamic method dispatch applies even during constructor execution. Because the actual object being created is CircleSub, draw() resolves dynamically to CircleSub's overridden draw(), printing 'CircleDraw '."
+      },
+      {
+        "title": "Puzzle 9: Covariant Return Type Method Invocation",
+        "problemStatement": "What will this code print?",
+        "code": "class Producer {\n    Object produce() { return \"Generic\"; }\n}\nclass StringProducer extends Producer {\n    @Override\n    String produce() { return \"Specialized\"; }\n}\npublic class CovariantTest {\n    public static void main(String[] args) {\n        Producer p = new StringProducer();\n        StringProducer sp = new StringProducer();\n        System.out.println(p.produce() + \" \" + sp.produce().length());\n    }\n}",
+        "options": [
+          "Specialized 11",
+          "Generic 11",
+          "Specialized Specialized",
+          "Compilation Error: Cannot narrow return type to String"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Java 5+ allows covariant return types. sp.produce() returns String directly, so .length() is legal without casting.",
+        "solution": "Specialized 11",
+        "explanation": "Java supports covariant return types: StringProducer overrides produce() by narrowing the return type from Object to String. When calling p.produce(), runtime dynamic dispatch executes StringProducer.produce(), returning 'Specialized'. When calling sp.produce(), the compiler knows the return type is String, allowing .length() without casting (11). Output: 'Specialized 11'."
+      },
+      {
+        "title": "Puzzle 10: Access Modifier Widening Legal vs Illegal Narrowing",
+        "problemStatement": "Which of the following method declarations in a subclass would cause a compilation error if the superclass declared 'protected void process()'?",
+        "code": "class SuperWorker {\n    protected void process() {}\n}\nclass SubWorker1 extends SuperWorker {\n    public void process() {} // Option A\n}\nclass SubWorker2 extends SuperWorker {\n    protected void process() {} // Option B\n}\nclass SubWorker3 extends SuperWorker {\n    private void process() {} // Option C\n}",
+        "options": [
+          "SubWorker3 (private void process())",
+          "SubWorker1 (public void process())",
+          "SubWorker2 (protected void process())",
+          "None of them; all are legal"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Can an overriding method narrow access visibility from protected to private?",
+        "solution": "SubWorker3 (private void process())",
+        "explanation": "An overriding method cannot assign weaker access privileges than the inherited method. Widening access from protected to public (Option A) is completely legal. Retaining protected (Option B) is legal. Narrowing access from protected to private (Option C) causes an immediate compilation error: 'attempting to assign weaker access privileges; was protected'."
       }
     ],
     "interviewQuestions": [
@@ -1644,6 +1764,16 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
           "aspect": "Abstract Conflict",
           "optionA": "final and abstract are mutually exclusive (compile error)",
           "optionB": "abstract requires subclassing; final prohibits it"
+        },
+        {
+          "aspect": "JIT Devirtualization & Inlining",
+          "optionA": "final Method/Class: Direct inlining without polymorphic inline cache or deoptimization guards",
+          "optionB": "Non-final: Requires monomorphic/polymorphic inline cache & speculative optimization"
+        },
+        {
+          "aspect": "Complexity & Verification Overhead",
+          "optionA": "final Field: O(1) definite assignment verification at compile time; zero runtime overhead",
+          "optionB": "Non-final: Mutable field access with potential memory reordering / race conditions"
         }
       ]
     },
@@ -1846,6 +1976,36 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         "hint": "Each iteration of the loop creates a brand new local variable 'token' in its own block scope.",
         "solution": "0 10 20 ",
         "explanation": "In each iteration of the for loop, a new stack variable 'token' is allocated, initialized once, and goes out of scope at the end of the iteration. It is never reassigned, so it compiles cleanly and prints '0 10 20 '."
+      },
+      {
+        "title": "Puzzle 9: Blank Final Definite Assignment in Branch",
+        "problemStatement": "What is the output of the following code?",
+        "code": "public class TraceF9 {\n    final int threshold;\n    public TraceF9(int val) {\n        if (val > 0) {\n            threshold = val;\n        }\n    }\n    public static void main(String[] args) {\n        TraceF9 t = new TraceF9(10);\n        System.out.println(t.threshold);\n    }\n}",
+        "options": [
+          "10",
+          "0",
+          "Compilation Error: variable threshold might not have been initialized",
+          "Runtime Exception: UninitializedFieldError"
+        ],
+        "correctOptionIndex": 2,
+        "hint": "Java requires definite assignment: a blank final field must be assigned along every possible constructor execution path.",
+        "solution": "Compilation Error: variable threshold might not have been initialized",
+        "explanation": "Java compiler enforces definite assignment for blank finals. If 'val <= 0', the if branch does not execute, leaving 'threshold' uninitialized. The compiler flags this as an error even though in main() we pass val = 10."
+      },
+      {
+        "title": "Puzzle 10: Final Parameter Mutation vs Reassignment",
+        "problemStatement": "What is the output of the following program?",
+        "code": "class Container {\n    int count = 5;\n}\npublic class TraceF10 {\n    static void process(final Container c, final int delta) {\n        c.count += delta;\n    }\n    public static void main(String[] args) {\n        final Container c = new Container();\n        process(c, 10);\n        System.out.println(c.count);\n    }\n}",
+        "options": [
+          "5",
+          "15",
+          "Compilation Error: cannot assign a value to final variable c",
+          "Compilation Error: cannot modify field of final parameter"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Does marking an object reference 'final' freeze the object's internal fields, or only the reference variable itself?",
+        "solution": "15",
+        "explanation": "Marking 'final Container c' prohibits rebinding the reference variable (e.g. c = new Container() is illegal). However, modifying the internal mutable state of the referenced heap object (c.count += delta) is completely permitted. Thus c.count becomes 5 + 10 = 15."
       }
     ],
     "interviewQuestions": [
