@@ -144,6 +144,14 @@ export default function JavaModulePage() {
   const moduleInfo = JAVA_MODULES.find(m => m.id === currentModuleId || m.id.toLowerCase() === currentModuleId.toLowerCase());
   const isDone = completed.includes(currentModuleId);
   const subLessons = getLessonsForModule(currentModuleId);
+
+  // Directly navigate to first sub-lesson if available (bypassing redundant middleman page)
+  useEffect(() => {
+    if (subLessons && subLessons.length > 0) {
+      navigate(`/java/lesson/${subLessons[0].id}`, { replace: true });
+    }
+  }, [currentModuleId, subLessons, navigate]);
+
   const allModuleExercises = subLessons.flatMap(sub =>
     (sub.programmingExercises || []).map((ex, idx) => ({
       ...ex,

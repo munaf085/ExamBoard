@@ -36,7 +36,7 @@ function App() {
         <Route path="/java/flashcards" element={<JavaFlashcardsPage />} />
         <Route path="/java/mock-interview" element={<JavaMockInterviewPage />} />
         <Route path="/java/revision" element={<JavaRevisionPage />} />
-        <Route path="/java/syllabus" element={<JavaSyllabusPage />} />
+        <Route path="/java/syllabus" element={<Navigate to="/java" replace />} />
         <Route path="/java/lesson/:lessonId" element={<JavaSubLessonPage />} />
         
         <Route path="/test-selection" element={<TestSelectionPage />} />
