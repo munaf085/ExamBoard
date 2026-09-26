@@ -68,6 +68,21 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "aspect": "Signature Rules",
           "optionA": "Must have different parameter lists",
           "optionB": "Must have exact same parameter signature"
+        },
+        {
+          "aspect": "Bytecode Instructions",
+          "optionA": "invokestatic / invokevirtual with fixed compile-time signature descriptor",
+          "optionB": "invokevirtual with runtime receiver vtable index resolution"
+        },
+        {
+          "aspect": "Time Complexity & Optimization",
+          "optionA": "O(1) direct call; trivial inlining without inline cache checks",
+          "optionB": "O(1) indirect vtable lookup; JIT optimizes via Monomorphic Inline Cache (MIC)"
+        },
+        {
+          "aspect": "Fields & Static Members",
+          "optionA": "Fields and static methods participate in static binding (no polymorphism)",
+          "optionB": "Only non-private, non-static, non-final instance methods participate in dynamic dispatch"
         }
       ]
     },
@@ -228,6 +243,51 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "hint": "Z does not override show(). What is the nearest implementation in the inheritance hierarchy?",
         "solution": "Y",
         "explanation": "Runtime dispatch checks Z for show(); not finding an override, it traverses upward to parent Y, which overrides show() printing 'Y'."
+      },
+      {
+        "title": "Puzzle 8: Overloading with Autoboxing vs Widening",
+        "problemStatement": "What is printed by this program when passing an int argument?",
+        "code": "class Dispatcher {\n    void process(long x) { System.out.print(\"widening \"); }\n    void process(Integer x) { System.out.print(\"autoboxing \"); }\n    public static void main(String[] args) {\n        Dispatcher d = new Dispatcher();\n        int val = 10;\n        d.process(val);\n    }\n}",
+        "options": [
+          "widening ",
+          "autoboxing ",
+          "Compilation Error: reference to process is ambiguous",
+          "Runtime Exception: ClassCastException"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "In Java's overload resolution hierarchy, primitive widening takes precedence over autoboxing.",
+        "solution": "widening ",
+        "explanation": "Java preserves backwards compatibility: primitive widening (int -> long) is preferred over autoboxing (int -> Integer). Thus process(long) is selected at compile time, printing 'widening '."
+      },
+      {
+        "title": "Puzzle 9: Overloading with Null Reference and Most Specific Signature",
+        "problemStatement": "What is the console output when null is passed to overloaded methods?",
+        "code": "class SpecificityTest {\n    void check(Object o) { System.out.print(\"Object \"); }\n    void check(String s) { System.out.print(\"String \"); }\n    public static void main(String[] args) {\n        SpecificityTest t = new SpecificityTest();\n        t.check(null);\n    }\n}",
+        "options": [
+          "Object ",
+          "String ",
+          "Compilation Error: ambiguous method call",
+          "NullPointerException at runtime"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "The Java compiler chooses the most specific method when multiple overloaded methods match.",
+        "solution": "String ",
+        "explanation": "Both Object and String accept null, but String is a subclass of Object (more specific). The compiler binds the call to check(String), printing 'String '."
+      },
+      {
+        "title": "Puzzle 10: Dynamic Self-Call in Polymorphic Hierarchy",
+        "problemStatement": "What is the console output produced by this dynamic self-invocation?",
+        "code": "class BaseCalc {\n    void calculate() {\n        System.out.print(\"Base:\" + getFactor() + \" \");\n    }\n    int getFactor() { return 1; }\n}\nclass AdvancedCalc extends BaseCalc {\n    @Override\n    int getFactor() { return 5; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        BaseCalc calc = new AdvancedCalc();\n        calc.calculate();\n    }\n}",
+        "options": [
+          "Base:1 ",
+          "Base:5 ",
+          "BaseCalc:1 BaseCalc:5 ",
+          "Compilation Error: calculate() not overridden"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Inside calculate(), does 'this.getFactor()' resolve dynamically using the actual runtime heap object?",
+        "solution": "Base:5 ",
+        "explanation": "calc.calculate() executes BaseCalc.calculate(). Inside, the call to getFactor() is a virtual call on 'this' (an instance of AdvancedCalc). Dynamic method dispatch invokes AdvancedCalc.getFactor(), returning 5. Output is 'Base:5 '."
       }
     ],
     "interviewQuestions": [
@@ -241,7 +301,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "Static binding vs dynamic dispatch",
           "Reference type vs heap object",
           "Non-polymorphic fields"
-        ]
+        ],
+        "commonMistakeAnswer": "Thinking fields or static methods participate in runtime polymorphism."
       },
       {
         "question": "Why does Java not support polymorphic instance variables (field overriding)?",
@@ -253,7 +314,112 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "Memory layout",
           "Static resolution",
           "Encapsulation via getters"
-        ]
+        ],
+        "commonMistakeAnswer": "Believing child fields overwrite parent fields in heap memory."
+      },
+      {
+        "question": "How does javac resolve method overloading when widening, autoboxing, and varargs compete?",
+        "answer": "The Java compiler follows a strict 3-phase resolution order defined in JLS §15.12.2: Phase 1: Overload resolution without boxing or varargs (permits only subtyping and primitive widening). Phase 2: Overload resolution with autoboxing/unboxing (permits boxing and widening reference conversions, but no varargs). Phase 3: Overload resolution with variable-arity (varargs). If a match is found in Phase 1 (e.g. int widening to long), Phase 2 is never consulted.",
+        "followUp": "Can widening and boxing occur simultaneously during overload resolution?",
+        "followUpAnswer": "An int can be boxed to Integer and widened to Object (boxing then reference widening), but primitive widening followed by boxing (e.g., int -> long -> Long) is illegal.",
+        "keyPhrases": [
+          "3-phase overload resolution",
+          "Widening beats boxing",
+          "Boxing beats varargs",
+          "JLS 15.12 method invocation conversion"
+        ],
+        "commonMistakeAnswer": "Assuming autoboxing takes priority over primitive widening."
+      },
+      {
+        "question": "What is method hiding for static methods, and how does it differ from method overriding?",
+        "answer": "When a subclass declares a static method with the exact same signature as a static method in its superclass, the subclass method 'hides' the superclass method rather than overriding it. Static methods are bound at compile time based solely on the compile-time type of the reference variable. The bytecode opcode emitted is 'invokestatic', which encodes the exact declaring class into the constant pool. Even if the reference variable points to a subclass instance at runtime, the superclass static method executes.",
+        "followUp": "Can a static method hide an instance method or vice versa?",
+        "followUpAnswer": "No. Attempting to define a static method in a child class that has the same signature as an instance method in the parent class (or vice versa) results in a compile-time error.",
+        "keyPhrases": [
+          "Method hiding",
+          "Static binding (invokestatic)",
+          "Reference type resolution",
+          "No dynamic dispatch"
+        ],
+        "commonMistakeAnswer": "Believing static methods can be dynamically dispatched if invoked through an instance reference."
+      },
+      {
+        "question": "Why can private and final methods not participate in runtime polymorphism?",
+        "answer": "Private methods are not visible to subclasses and are never inherited; therefore, a method with the same signature in a child class is an entirely independent method, not an override. The compiler emits 'invokespecial' for private calls. Final methods, on the other hand, are inherited but explicitly forbid overriding. Because the JVM knows at class-loading time that no override exists or can ever exist, it can bypass dynamic vtable lookup and perform direct static dispatch or JIT inlining.",
+        "followUp": "What bytecode instruction does the compiler emit for final instance methods?",
+        "followUpAnswer": "The compiler still emits 'invokevirtual', but the JVM runtime and JIT compiler recognize the method descriptor as final and devirtualize the call into a direct branch or inline code.",
+        "keyPhrases": [
+          "Private uses invokespecial",
+          "Final prevents overriding",
+          "JIT devirtualization",
+          "Static binding optimization"
+        ],
+        "commonMistakeAnswer": "Assuming final methods use invokestatic in bytecode."
+      },
+      {
+        "question": "What is the architectural purpose of the @Override annotation?",
+        "answer": "The @Override annotation is a compile-time check informing the compiler that the annotated method is intended to override a method declared in a superclass or interface. If the method name is misspelled, parameter types mismatch (accidentally overloading instead of overriding), or the superclass method is removed during refactoring, the compiler issues an immediate error: 'method does not override or implement a method from a supertype'.",
+        "followUp": "Does omitting @Override break runtime polymorphism if the signature matches?",
+        "followUpAnswer": "No, runtime polymorphism still functions without @Override if the signature matches. However, omitting it removes safety guards against silent overloading bugs.",
+        "keyPhrases": [
+          "Compile-time safety guard",
+          "Prevents accidental overloading",
+          "Refactoring resilience",
+          "Compiler verification"
+        ],
+        "commonMistakeAnswer": "Thinking @Override has a runtime performance penalty or is required for dynamic dispatch."
+      },
+      {
+        "question": "How does runtime polymorphism impact execution performance, and what is Monomorphic Inline Caching?",
+        "answer": "A naive virtual call requires dereferencing the object header's klass pointer, indexing into the vtable, loading the function address, and executing an indirect branch. To eliminate this overhead, HotSpot JIT uses Inline Caching. If a callsite consistently encounters instances of only one class (monomorphic callsite, true for ~90% of calls in production), the JIT compiler replaces the vtable lookup with a single direct type check and direct branch or inlines the method body entirely.",
+        "followUp": "What happens if a callsite encounters two or more different receiver types?",
+        "followUpAnswer": "It becomes bimorphic (two classes, checked via a simple if-else branch) or megamorphic (>2 classes, falls back to full vtable index lookup).",
+        "keyPhrases": [
+          "Vtable indirect branch",
+          "Monomorphic Inline Cache (MIC)",
+          "Bimorphic vs megamorphic",
+          "Direct inlining"
+        ],
+        "commonMistakeAnswer": "Assuming dynamic dispatch causes severe runtime slowdown in modern JVMs."
+      },
+      {
+        "question": "How does return type covariance work in method overriding while preserving type safety?",
+        "answer": "Since Java 5, an overriding method is allowed to declare a return type that is a subtype (covariant type) of the return type declared in the superclass method. For example, if Parent declares 'public Animal create()', Child can override it with 'public Dog create()'. This preserves polymorphic type safety because any caller expecting an Animal will receive a Dog, which satisfies the IS-A contract. The compiler synthesizes a synthetic bridge method in the bytecode to maintain binary compatibility.",
+        "followUp": "Can an overriding method declare a more general (supertype) return type?",
+        "followUpAnswer": "No, that would break polymorphic substitution (contravariant return types are forbidden in Java).",
+        "keyPhrases": [
+          "Covariant return types",
+          "Subtype substitution",
+          "Liskov Substitution Principle",
+          "Synthetic bridge methods"
+        ],
+        "commonMistakeAnswer": "Believing overriding methods must have the exact identical return type."
+      },
+      {
+        "question": "What are the strict exception specification rules when overriding a method in Java?",
+        "answer": "When overriding a method that throws checked exceptions: 1) The overriding method cannot throw new or broader checked exceptions than those declared by the superclass method. 2) It can throw fewer checked exceptions, more specific (subclass) checked exceptions, or no checked exceptions at all. 3) Unchecked exceptions (RuntimeException, Error) are unrestricted and can be thrown freely regardless of superclass declarations.",
+        "followUp": "Why does Java enforce that overriding methods cannot throw broader checked exceptions?",
+        "followUpAnswer": "Because a caller holding a superclass reference only writes catch blocks for the superclass exceptions. If the child threw a broader exception, the caller's catch blocks would fail to handle it, violating type safety.",
+        "keyPhrases": [
+          "Narrower or fewer checked exceptions",
+          "Cannot throw broader checked exceptions",
+          "Unchecked exceptions unrestricted",
+          "Polymorphic caller safety"
+        ],
+        "commonMistakeAnswer": "Thinking the overriding method must declare the exact same exceptions as the parent."
+      },
+      {
+        "question": "What is the 'Fragile Base Class' problem, and how does composition mitigate it?",
+        "answer": "The Fragile Base Class problem occurs when modifications to a superclass inadvertently break the behavioral invariants or assumptions of derived subclasses that override its methods. For example, if a base class changes an internal method call from self-invoking one method to another, a subclass overriding that method might end up with double-counting or infinite recursion. Favoring composition over inheritance ('has-a' instead of 'is-a') decouples classes, preventing fragile tight coupling while retaining flexibility.",
+        "followUp": "When is inheritance still preferred over composition?",
+        "followUpAnswer": "When there is a genuine, permanent 'is-a' relationship satisfying Liskov Substitution, and the subclass is truly a specialized variant of the superclass across its entire public API.",
+        "keyPhrases": [
+          "Fragile base class problem",
+          "Tight coupling",
+          "Composition over inheritance",
+          "Liskov Substitution Principle (LSP)"
+        ],
+        "commonMistakeAnswer": "Thinking deep inheritance hierarchies are always superior OOP design."
       }
     ],
     "miniQuiz": [
@@ -430,6 +596,21 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "aspect": "Polymorphic Collection",
           "optionA": "Shape[]: Can hold any subclass instance",
           "optionB": "Loop dispatches without instanceof branching"
+        },
+        {
+          "aspect": "Bytecode Instruction",
+          "optionA": "invokevirtual: Virtual dispatch via receiver object's vtable in Klass",
+          "optionB": "invokespecial: Direct dispatch to private, super, or constructor <init>"
+        },
+        {
+          "aspect": "Memory Layout & Klass Pointer",
+          "optionA": "Heap Object: Mark Word (8B) + Klass Pointer (4B with CompressedOOPs)",
+          "optionB": "Metaspace Klass: Contains fixed-offset vtable array pointing to bytecode"
+        },
+        {
+          "aspect": "Dispatch Complexity & Space",
+          "optionA": "Time: O(1) table indexing; Space: O(m) pointer array per loaded class vtable",
+          "optionB": "JIT Optimization: Monomorphic Inline Cache (MIC) collapses to O(1) direct branch"
         }
       ]
     },
@@ -586,12 +767,57 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "hint": "Level2 and Level3 inherit Level1's vtable entry unchanged.",
         "solution": "L1",
         "explanation": "Since neither Level2 nor Level3 overrides op(), Level3's vtable points directly to Level1's op() bytecode, printing 'L1'."
+      },
+      {
+        "title": "Puzzle 8: Polymorphic Dispatch with super in 3-Tier Hierarchy",
+        "problemStatement": "What is the console output produced by this 3-tier hierarchy with super invocation?",
+        "code": "class A { void process() { System.out.print(\"A \"); } }\nclass B extends A { void process() { System.out.print(\"B \"); } }\nclass C extends B {\n    void process() {\n        super.process();\n        System.out.print(\"C \");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        A ref = new C();\n        ref.process();\n    }\n}",
+        "options": [
+          "A C ",
+          "B C ",
+          "A B C ",
+          "C "
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Dynamic dispatch routes ref.process() to C.process(). What does super.process() inside C invoke?",
+        "solution": "B C ",
+        "explanation": "ref.process() dispatches to C.process(). In C, super.process() executes invokespecial targeting B.process() (immediate superclass), which prints 'B '. Then C prints 'C '. Output is 'B C '."
+      },
+      {
+        "title": "Puzzle 9: Final Method in Base Class Bypassing Dynamic Dispatch",
+        "problemStatement": "What is printed when a final method invokes an overridable helper?",
+        "code": "class BaseService {\n    final void execute() {\n        System.out.print(\"Secured:\" + step() + \" \");\n    }\n    String step() { return \"base\"; }\n}\nclass CustomService extends BaseService {\n    @Override\n    String step() { return \"custom\"; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        BaseService service = new CustomService();\n        service.execute();\n    }\n}",
+        "options": [
+          "Secured:base ",
+          "Secured:custom ",
+          "Compilation Error: cannot override step()",
+          "Runtime Error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "execute() is final, but what does the virtual call to step() inside execute() resolve to?",
+        "solution": "Secured:custom ",
+        "explanation": "service.execute() invokes BaseService.execute(). Inside execute(), the call to step() is a virtual invocation on 'this' (an instance of CustomService). Dynamic dispatch invokes CustomService.step(), returning 'custom'. Output is 'Secured:custom '."
+      },
+      {
+        "title": "Puzzle 10: Null Reference Dispatch Trap",
+        "problemStatement": "What is the exact output of this program?",
+        "code": "class Worker {\n    static void staticTask() { System.out.print(\"Static \"); }\n    void instanceTask() { System.out.print(\"Instance \"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Worker w = null;\n        w.staticTask();\n        try {\n            w.instanceTask();\n        } catch (NullPointerException e) {\n            System.out.print(\"NPE\");\n        }\n    }\n}",
+        "options": [
+          "NPE",
+          "Static Instance ",
+          "Static NPE",
+          "NullPointerException before any output"
+        ],
+        "correctOptionIndex": 2,
+        "hint": "Does staticTask() dereference the null reference pointer?",
+        "solution": "Static NPE",
+        "explanation": "w.staticTask() translates to invokestatic Worker.staticTask; the compiler uses the type of w, never dereferencing it on the heap, so 'Static ' prints. In contrast, w.instanceTask() requires invokevirtual, which attempts to read the object header to find the vtable; since w is null, it throws NullPointerException, printing 'NPE'. Total output: 'Static NPE'."
       }
     ],
     "interviewQuestions": [
       {
         "question": "Explain how Dynamic Method Dispatch works internally in the JVM.",
-        "answer": "When the Java compiler encounters an instance method invocation on a reference variable, it emits the 'invokevirtual' opcode. At runtime, the JVM does not know what concrete class is on the other end of the reference until it executes. Every object header on the heap contains a pointer (the Klass pointer) to its class metadata in Metaspace. This metadata contains a Virtual Method Table (vtable)\u2014an array of direct function pointers to compiled bytecode for all virtual methods. Because the JVM guarantees that a subclass vtable retains the identical method indexing offsets as its parent classes, looking up an overridden method is an instantaneous O(1) array dereference. The JVM fetches the function pointer at that index and jumps to the subclass implementation.",
+        "answer": "When the Java compiler encounters an instance method invocation on a reference variable, it emits the 'invokevirtual' opcode. At runtime, the JVM does not know what concrete class is on the other end of the reference until it executes. Every object header on the heap contains a pointer (the Klass pointer) to its class metadata in Metaspace. This metadata contains a Virtual Method Table (vtable)—an array of direct function pointers to compiled bytecode for all virtual methods. Because the JVM guarantees that a subclass vtable retains the identical method indexing offsets as its parent classes, looking up an overridden method is an instantaneous O(1) array dereference. The JVM fetches the function pointer at that index and jumps to the subclass implementation.",
         "followUp": "How does the HotSpot JIT compiler optimize dynamic dispatch for high performance?",
         "followUpAnswer": "HotSpot monitors execution frequency. If a call site is 'monomorphic' (consistently receiving only one concrete class type), the JIT compiler devirtualizes the call, eliminates the vtable lookup entirely, and inlines the target method body directly into the caller code, achieving near-zero overhead.",
         "keyPhrases": [
@@ -601,7 +827,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "Object header klass pointer",
           "JIT inlining",
           "Monomorphic devirtualization"
-        ]
+        ],
+        "commonMistakeAnswer": "Thinking dynamic dispatch performs an expensive string-based method name lookup at runtime."
       },
       {
         "question": "Why is invoking overridable methods inside a constructor considered a dangerous anti-pattern?",
@@ -613,7 +840,112 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "Premature dynamic dispatch",
           "Anti-pattern",
           "Private or final constructor helpers"
-        ]
+        ],
+        "commonMistakeAnswer": "Assuming superclass constructors run after child fields are initialized."
+      },
+      {
+        "question": "What is the vtable (Virtual Method Table), where is it stored in memory, and how does the JVM construct it?",
+        "answer": "A vtable is an internal JVM data structure consisting of an array of function pointers to compiled method bytecodes. It is stored in Metaspace (native memory) as part of each loaded class's InstanceKlass metadata. When a class is loaded and linked, the JVM copies the superclass's vtable and appends newly declared virtual methods. If the subclass overrides a method, the pointer at that specific inherited slot is overwritten with the child method's address. All classes in a hierarchy share identical slot indices for inherited methods.",
+        "followUp": "Do interfaces use the standard vtable?",
+        "followUpAnswer": "No, because a class can implement multiple independent interfaces in arbitrary order, interface dispatch uses an Interface Method Table (itable) with secondary offset resolution.",
+        "keyPhrases": [
+          "InstanceKlass in Metaspace",
+          "Array of function pointers",
+          "Slot offset inheritance",
+          "O(1) vtable indexing"
+        ],
+        "commonMistakeAnswer": "Thinking each object instance on the heap holds its own copy of the vtable."
+      },
+      {
+        "question": "What is the difference between invokevirtual, invokespecial, invokestatic, and invokeinterface?",
+        "answer": "1) invokevirtual: Used for normal instance methods; resolves dynamically via the object's vtable. 2) invokespecial: Used for private methods, constructors (<init>), and superclass calls (super.method()); resolves statically without dynamic dispatch. 3) invokestatic: Used for static methods; resolves at compile time to a specific class. 4) invokeinterface: Used when calling methods via an interface reference; requires itable resolution because interface method offsets cannot be assigned statically.",
+        "followUp": "Which of these bytecode instructions can never throw a NullPointerException?",
+        "followUpAnswer": "invokestatic never throws NullPointerException because it does not require an object receiver.",
+        "keyPhrases": [
+          "invokevirtual (dynamic vtable)",
+          "invokespecial (private/super/<init>)",
+          "invokestatic (class-level)",
+          "invokeinterface (itable resolution)"
+        ],
+        "commonMistakeAnswer": "Thinking invokespecial is used for all virtual methods."
+      },
+      {
+        "question": "How does the JVM handle invokeinterface differently from invokevirtual?",
+        "answer": "With invokevirtual, single class inheritance allows fixed vtable offsets across all subclasses. However, because Java supports multiple interface implementation, two unrelated classes might implement an interface at different positions in their declaration lists. The JVM cannot assign a globally fixed vtable index for interface methods. Instead, each class metadata includes an itable (interface table). When invokeinterface executes, the JVM searches the itable for the interface's table of method stubs, and caches the resolved offset to optimize subsequent calls.",
+        "followUp": "Is invokeinterface significantly slower than invokevirtual in modern HotSpot?",
+        "followUpAnswer": "In modern HotSpot, Inline Caching (IC) and JIT compilation reduce invokeinterface overhead to nearly the same speed as invokevirtual for monomorphic and bimorphic call sites.",
+        "keyPhrases": [
+          "Multiple interface implementation",
+          "itable vs vtable",
+          "No fixed offset across classes",
+          "Inline caching optimization"
+        ],
+        "commonMistakeAnswer": "Assuming interface calls and class virtual calls use the exact same lookup mechanism."
+      },
+      {
+        "question": "What is Inline Caching, and how does HotSpot handle monomorphic, bimorphic, and megamorphic call sites?",
+        "answer": "Inline Caching optimizes virtual method calls by caching the target method address directly at the callsite. 1) Monomorphic (1 receiver class): The JIT emits a simple Klass pointer comparison; if matched, it jumps directly to the target method or inlines it entirely (~90% of callsites). 2) Bimorphic (2 receiver classes): The JIT generates an if-else check for both classes with direct jumps. 3) Megamorphic (>2 receiver classes): The JIT abandons caching and falls back to a full vtable index lookup.",
+        "followUp": "Why is keeping callsites monomorphic critical for extreme low-latency Java applications?",
+        "followUpAnswer": "Monomorphic callsites can be fully inlined by the JIT, eliminating call overhead, register spills, and enabling compiler optimizations like escape analysis and dead code elimination.",
+        "keyPhrases": [
+          "Monomorphic inline cache",
+          "Bimorphic branch check",
+          "Megamorphic vtable fallback",
+          "Callsite inlining"
+        ],
+        "commonMistakeAnswer": "Thinking the JVM always performs vtable lookup for every single virtual method call."
+      },
+      {
+        "question": "Why does calling a static method on a null reference succeed, while calling an instance method fails with NPE?",
+        "answer": "When invoking 'ref.staticMethod()', the Java compiler ignores the runtime value of 'ref' and uses only its declared compile-time type, emitting 'invokestatic MyClass.staticMethod'. The JVM never attempts to dereference the object pointer on the heap. In contrast, invoking 'ref.instanceMethod()' emits 'invokevirtual', which requires the JVM to dereference 'ref' to read the object header's Klass pointer and access its vtable. Dereferencing a null pointer immediately triggers a hardware page fault converted into a java.lang.NullPointerException.",
+        "followUp": "Is calling static methods via reference variables recommended?",
+        "followUpAnswer": "No, it is a bad practice and produces compiler warnings; static methods should always be called using the ClassName directly (e.g. MyClass.staticMethod()).",
+        "keyPhrases": [
+          "invokestatic vs invokevirtual",
+          "Object header dereference",
+          "Klass pointer lookup",
+          "NullPointerException trigger"
+        ],
+        "commonMistakeAnswer": "Thinking Java checks if the reference is null before calling static methods."
+      },
+      {
+        "question": "What is Class Hierarchy Analysis (CHA) in the HotSpot JIT compiler?",
+        "answer": "Class Hierarchy Analysis (CHA) is an optimization technique where the JIT compiler analyzes all currently loaded classes in the JVM to determine whether a virtual method currently has any overrides. If a method is non-final but no loaded subclass overrides it, CHA treats the callsite as effectively monomorphic and inlines the method body directly without vtable dispatch, adding a speculative dependency guard.",
+        "followUp": "What happens if a new class is dynamically loaded later that overrides this method?",
+        "followUpAnswer": "The JVM invalidates the compiled JIT code at a safepoint (deoptimization), reverts the stack frame to interpreted mode, and recompiles the method using standard virtual dispatch.",
+        "keyPhrases": [
+          "Class Hierarchy Analysis (CHA)",
+          "Speculative inlining",
+          "Deoptimization safepoint",
+          "Uncommon trap"
+        ],
+        "commonMistakeAnswer": "Assuming only methods explicitly marked final can be inlined by the JIT."
+      },
+      {
+        "question": "What is an 'uncommon trap' in JVM dynamic deoptimization?",
+        "answer": "An uncommon trap is a bytecode hook placed by the JIT compiler inside speculatively optimized code. When an assumption made during compilation is violated at runtime (such as loading a new subclass that breaks CHA inlining, or observing a second type at a monomorphic callsite), the JVM executes the uncommon trap. This causes execution to transition out of compiled native code back into the JVM bytecode interpreter at the exact same program state, ensuring complete semantic correctness.",
+        "followUp": "Does deoptimization cause noticeable latency spikes?",
+        "followUpAnswer": "Yes, frequent deoptimizations create JIT compilation churn and transient CPU spikes, which is why megamorphic dispatch patterns should be avoided in performance-critical code.",
+        "keyPhrases": [
+          "Uncommon trap",
+          "Deoptimization to interpreter",
+          "Safepoint on-stack replacement",
+          "Speculation recovery"
+        ],
+        "commonMistakeAnswer": "Believing JIT compiled machine code is permanent and never rolled back."
+      },
+      {
+        "question": "How does the Template Method design pattern leverage dynamic method dispatch, and why should the template method be marked final?",
+        "answer": "The Template Method pattern defines the high-level skeleton of an algorithm in a base class method, delegating specific invariant or configurable steps to protected abstract or hook methods. Dynamic method dispatch ensures that when the template method calls a hook method, the concrete subclass's specialized implementation is invoked. Marking the skeleton template method 'final' is crucial: it prevents subclasses from altering the algorithmic sequence or bypassing security, validation, or auditing steps while still allowing customization of individual hooks.",
+        "followUp": "Can hook methods provide default implementations?",
+        "followUpAnswer": "Yes, concrete base hook methods can provide default behavior that subclasses can optionally override if customization is needed.",
+        "keyPhrases": [
+          "Template Method pattern",
+          "Algorithm skeleton marked final",
+          "Protected hook methods",
+          "Inversion of control (Hollywood Principle)"
+        ],
+        "commonMistakeAnswer": "Leaving the template method open for overriding, allowing subclasses to break the algorithm's lifecycle."
       }
     ],
     "miniQuiz": [
@@ -790,6 +1122,21 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "aspect": "Purpose",
           "optionA": "Generalize behavior (polymorphic arrays)",
           "optionB": "Reclaim access to subclass-specific methods"
+        },
+        {
+          "aspect": "Bytecode Instruction",
+          "optionA": "Upcast: No bytecode emitted (free compile-time widening)",
+          "optionB": "Downcast: checkcast opcode emitted to verify runtime Klass subtyping"
+        },
+        {
+          "aspect": "Runtime Overhead & Complexity",
+          "optionA": "Upcast: O(1) zero cost",
+          "optionB": "Downcast: O(1) primary type cache; up to O(d) hierarchy traversal in secondary itable types"
+        },
+        {
+          "aspect": "Sibling Class Rejection",
+          "optionA": "Allowed if upcasting via common ancestor (Dog to Animal)",
+          "optionB": "Inconvertible types: Dog d = (Dog) catRef rejected at compile time"
         }
       ]
     },
@@ -950,6 +1297,51 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "hint": "Arrays in Java are authentic objects inheriting from Object.",
         "solution": "10",
         "explanation": "int[] is a subtype of java.lang.Object. Downcasting the Object reference back to int[] succeeds and allows indexing, printing 10."
+      },
+      {
+        "title": "Puzzle 8: Sibling Downcasting through Array Reference",
+        "problemStatement": "What is the console output produced by this program?",
+        "code": "class Base {}\nclass SubA extends Base {}\nclass SubB extends Base {}\npublic class Main {\n    public static void main(String[] args) {\n        Base[] array = new SubA[2];\n        array[0] = new SubA();\n        try {\n            SubB b = (SubB) array[0];\n        } catch (ClassCastException e) {\n            System.out.print(\"CCE \");\n        }\n        System.out.print(array.getClass().getSimpleName());\n    }\n}",
+        "options": [
+          "CCE SubA[]",
+          "CCE Base[]",
+          "SubA[]",
+          "Compilation Error: inconvertible types"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "array[0] is of compile-time type Base, allowing the cast to SubB to compile, but failing at runtime.",
+        "solution": "CCE SubA[]",
+        "explanation": "array[0] is statically typed as Base, so '(SubB) array[0]' compiles without error. At runtime, the object is SubA, which cannot be cast to sibling SubB, throwing ClassCastException ('CCE '). array.getClass().getSimpleName() returns 'SubA[]'. Output is 'CCE SubA[]'."
+      },
+      {
+        "title": "Puzzle 9: Multi-Tier Inheritance Downcast Chaining",
+        "problemStatement": "What is printed by this sequential downcasting code?",
+        "code": "class Level1 {}\nclass Level2 extends Level1 { int id = 2; }\nclass Level3 extends Level2 { int id = 3; }\npublic class Main {\n    public static void main(String[] args) {\n        Level1 obj = new Level3();\n        Level2 l2 = (Level2) obj;\n        System.out.print(l2.id + \" \");\n        Level3 l3 = (Level3) l2;\n        System.out.print(l3.id);\n    }\n}",
+        "options": [
+          "2 3",
+          "3 3",
+          "2 2",
+          "ClassCastException on l2 cast"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "The heap object is Level3, which inherits from both Level2 and Level1.",
+        "solution": "2 3",
+        "explanation": "The concrete heap object is Level3. Casting Level1 to Level2 succeeds because Level3 IS-A Level2; l2.id accesses Level2's id (2). Casting Level2 to Level3 succeeds; l3.id accesses Level3's id (3). Output is '2 3'."
+      },
+      {
+        "title": "Puzzle 10: Downcast with Ternary Operator Result",
+        "problemStatement": "What is printed by downcasting the result of this conditional expression?",
+        "code": "class Animal {}\nclass Dog extends Animal { String speak() { return \"Woof\"; } }\nclass Cat extends Animal { String speak() { return \"Meow\"; } }\npublic class Main {\n    public static void main(String[] args) {\n        boolean condition = true;\n        Animal a = condition ? new Dog() : new Cat();\n        Dog d = (Dog) a;\n        System.out.println(d.speak());\n    }\n}",
+        "options": [
+          "Woof",
+          "Meow",
+          "ClassCastException",
+          "Compilation Error: cannot determine ternary common type"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "The ternary operator evaluates to new Dog(); the downcast to Dog is completely safe.",
+        "solution": "Woof",
+        "explanation": "Because condition is true, new Dog() is evaluated and upcast to Animal. Downcasting back to Dog succeeds at runtime, printing 'Woof'."
       }
     ],
     "interviewQuestions": [
@@ -964,7 +1356,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "ClassCastException",
           "Compile-time inconvertible check",
           "Runtime verification"
-        ]
+        ],
+        "commonMistakeAnswer": "Thinking downcasting converts the heap object into a subclass instance."
       },
       {
         "question": "What occurs in JVM memory when you cast a reference variable?",
@@ -976,7 +1369,112 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "Compile-time lens",
           "checkcast opcode",
           "Heap address pointer"
-        ]
+        ],
+        "commonMistakeAnswer": "Believing casting truncates or removes fields from the object on the heap."
+      },
+      {
+        "question": "How does the JVM 'checkcast' bytecode instruction execute at runtime?",
+        "answer": "When javac encounters an explicit cast, it emits the 'checkcast' instruction with a constant pool index for the target type. At runtime, the JVM pops the reference from the operand stack. If the reference is null, checkcast succeeds immediately. If non-null, the JVM reads the object's header to locate its Klass pointer, then checks whether that Klass is equal to or a subtype of the target Klass. If the type check fails, the JVM instantiates and throws a java.lang.ClassCastException.",
+        "followUp": "How does HotSpot optimize the checkcast instruction for primary class hierarchies?",
+        "followUpAnswer": "HotSpot uses a primary type cache (secondary_super_cache) that stores the most recently checked target type, making repeated successful casts a single branch comparison.",
+        "keyPhrases": [
+          "checkcast opcode",
+          "Null reference bypass",
+          "Klass pointer inspection",
+          "secondary_super_cache optimization"
+        ],
+        "commonMistakeAnswer": "Assuming checkcast always performs an exhaustive linear scan of all superclasses."
+      },
+      {
+        "question": "Why is ClassCastException an unchecked (RuntimeException) rather than a checked exception?",
+        "answer": "ClassCastException extends java.lang.RuntimeException because it represents a programming logic bug rather than an unpreventable external environmental failure (like IOException or SQLException). Under Java's design philosophy, bugs resulting from incorrect assumptions in code architecture should be caught and fixed during development via proper typing or instanceof checks, rather than cluttering application code with mandatory try-catch blocks everywhere.",
+        "followUp": "What is the recommended design practice if downcasting is frequently needed in a codebase?",
+        "followUpAnswer": "Frequent downcasting is a code smell indicating that polymorphic methods should be elevated to the superclass interface, or that Java Generics should be used instead.",
+        "keyPhrases": [
+          "Unchecked RuntimeException",
+          "Programming logic defect",
+          "Avoid boilerplate try-catch",
+          "Code smell for missing polymorphism"
+        ],
+        "commonMistakeAnswer": "Thinking developers should wrap every downcast in a try-catch block instead of checking with instanceof."
+      },
+      {
+        "question": "Why does '(Dog) (Animal) new Cat()' compile cleanly, whereas '(Dog) new Cat()' fails at compile time?",
+        "answer": "In '(Dog) new Cat()', the compiler compares Cat directly with Dog. Because they are sibling classes in a single inheritance tree, no Cat can ever be a Dog, so the compiler rejects it immediately with 'inconvertible types'. However, in '(Dog) (Animal) new Cat()', the intermediate upcast to Animal widens the expression type to Animal. When evaluating the outer cast '(Dog) animalRef', the compiler sees Animal as the source type. Because Animal CAN potentially be a Dog at runtime, the compiler must allow it. At runtime, the JVM checkcast discovers the heap object is actually Cat and throws ClassCastException.",
+        "followUp": "Can interfaces create a similar bypass of compile-time inconvertibility?",
+        "followUpAnswer": "Yes. Unless a class is declared final, the compiler always allows casting any non-final class reference to any interface type, because a future subclass might implement that interface.",
+        "keyPhrases": [
+          "Inconvertible types compiler error",
+          "Intermediate upcast bypass",
+          "Deferred runtime check",
+          "Interface casting permissiveness"
+        ],
+        "commonMistakeAnswer": "Believing intermediate casts trick the JVM runtime into accepting the invalid type."
+      },
+      {
+        "question": "What is Java's Array Covariance flaw, and how does it relate to ArrayStoreException vs ClassCastException?",
+        "answer": "In Java, arrays are covariant: if Sub extends Super, then Sub[] is considered a subtype of Super[]. This allows assigning 'Integer[]' to 'Number[]'. However, if a developer writes 'nums[0] = 3.14;' (a Double) into a 'Number[]' reference that actually holds an 'Integer[]' on the heap, the JVM prevents heap corruption by verifying every array store at runtime and throwing java.lang.ArrayStoreException. ArrayStoreException is the array write-time equivalent of ClassCastException at read-time.",
+        "followUp": "Why was array covariance introduced in Java 1.0 despite this flaw?",
+        "followUpAnswer": "Java 1.0 lacked generics. Array covariance was the only way to write generic utility methods like Arrays.sort(Object[]) or System.arraycopy().",
+        "keyPhrases": [
+          "Array covariance flaw",
+          "ArrayStoreException on store",
+          "Sub[] is-a Super[]",
+          "Historical lack of generics"
+        ],
+        "commonMistakeAnswer": "Confusing ArrayStoreException (which occurs during write) with ClassCastException (which occurs during read/cast)."
+      },
+      {
+        "question": "Why does casting null to any reference type never throw a ClassCastException?",
+        "answer": "According to the Java Language Specification (JLS §5.5.1), the null reference has the special 'null type', which is a subtype of every reference type in Java. In the JVM bytecode specification, the 'checkcast' instruction explicitly checks if the top of the stack is null; if so, it leaves null on the stack and succeeds immediately without performing any type comparison.",
+        "followUp": "What happens if you invoke an instance method on a casted null reference, such as '((String) null).length()'?",
+        "followUpAnswer": "The cast '(String) null' succeeds, but attempting to invoke the instance method '.length()' dereferences null and immediately throws NullPointerException.",
+        "keyPhrases": [
+          "Null type is bottom type",
+          "JLS 5.5.1 casting conversion",
+          "checkcast null short-circuit",
+          "NullPointerException on method dereference"
+        ],
+        "commonMistakeAnswer": "Thinking casting null throws NullPointerException during the cast itself."
+      },
+      {
+        "question": "How did Java Generics eliminate the widespread need for explicit downcasting in production code?",
+        "answer": "Prior to Java 5, collections stored raw 'Object' elements (e.g. List list = new ArrayList()), forcing developers to manually downcast every extracted element: 'String s = (String) list.get(0);'. This was error-prone because accidental insertions of wrong types would crash later at runtime. Generics introduced parameterized types (e.g. List<String>), enabling the compiler to enforce type constraints at compile time, guaranteeing that only Strings can be inserted and automatically generating safe, verified bytecode.",
+        "followUp": "Does the JVM actually know about generic types at runtime?",
+        "followUpAnswer": "No, because of Type Erasure, generic type parameters are erased to their bounds (usually Object) in bytecode; the compiler automatically inserts synthetic checkcast instructions for you.",
+        "keyPhrases": [
+          "Pre-Java 5 raw collections",
+          "Compile-time type constraints",
+          "Elimination of manual casts",
+          "Type safety guarantee"
+        ],
+        "commonMistakeAnswer": "Believing generics eliminated the checkcast bytecode instruction entirely."
+      },
+      {
+        "question": "What is Type Erasure, and why does javac still insert synthetic checkcast bytecodes for generic types?",
+        "answer": "To maintain 100% binary compatibility with legacy Java 1.4 code, Java implements Generics via Type Erasure: all generic type arguments (like <T> or <String>) are removed during compilation and replaced with their erasure bound (such as Object). However, to guarantee type safety in caller code expecting a specific type, javac automatically inserts a synthetic 'checkcast' instruction at every site where a value is retrieved from a generic method or collection.",
+        "followUp": "What is a 'Heap Pollution' warning in generic casting?",
+        "followUpAnswer": "Heap pollution occurs when a variable of a parameterized type refers to an object that is not of that parameterized type, usually caused by mixing raw types with generics, leading to unexpected ClassCastExceptions at runtime.",
+        "keyPhrases": [
+          "Type erasure",
+          "Binary backward compatibility",
+          "Synthetic checkcast emission",
+          "Heap pollution"
+        ],
+        "commonMistakeAnswer": "Thinking generic types exist as distinct runtime classes in JVM Metaspace."
+      },
+      {
+        "question": "How does Modern Pattern Matching for instanceof (Java 16+) replace fragile manual casting?",
+        "answer": "Traditional code required a two-step ritual: 1) check type with 'if (obj instanceof String)', and 2) manually downcast with 'String s = (String) obj;'. This was repetitive and error-prone (typos in the cast target). Modern Java introduces Pattern Matching for instanceof: 'if (obj instanceof String s) { ... }'. If the test succeeds, a new scope-bound pattern variable 's' is automatically cast and initialized to the target type without explicit cast syntax, eliminating ClassCastException risk and boilerplate entirely.",
+        "followUp": "Can pattern variables be used with flow scoping in conditional operators?",
+        "followUpAnswer": "Yes, flow scoping allows 'if (obj instanceof String s && s.length() > 5)', but 'if (obj instanceof String s || s.length() > 5)' is rejected because s is only definitely assigned when the pattern matches.",
+        "keyPhrases": [
+          "Pattern matching for instanceof (Java 16+)",
+          "Scope-bound pattern variable",
+          "Elimination of manual checkcast",
+          "Flow scoping"
+        ],
+        "commonMistakeAnswer": "Thinking pattern matching is just syntactic sugar with identical runtime behavior without compiler flow scoping."
       }
     ],
     "miniQuiz": [
@@ -1153,6 +1651,16 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "aspect": "Scope",
           "optionA": "t is scoped to the block",
           "optionB": "t has flow-dependent scope"
+        },
+        {
+          "aspect": "Bytecode Instruction",
+          "optionA": "instanceof opcode emitted, followed by separate checkcast opcode",
+          "optionB": "instanceof opcode emitted; target checkcast is elided or consolidated by javac"
+        },
+        {
+          "aspect": "Runtime Overhead & Complexity",
+          "optionA": "O(1) table/cache lookup, two distinct bytecode operations",
+          "optionB": "O(1) single optimized subtyping test and direct local slot assignment"
         }
       ]
     },
@@ -1309,6 +1817,51 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "hint": "Pattern variables can shadow class-level fields just like local variables.",
         "solution": "LOCAL",
         "explanation": "The pattern variable 'val' shadows the static field 'val' within the 'if' block, successfully printing 'LOCAL'."
+      },
+      {
+        "title": "Puzzle 8: Pattern Matching in Loop Condition",
+        "problemStatement": "What is the console output produced by this while loop traversal?",
+        "code": "class Node {\n    int val;\n    Object next;\n    Node(int v, Object n) { val = v; next = n; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Object curr = new Node(10, new Node(20, null));\n        while (curr instanceof Node n) {\n            System.out.print(n.val + \" \");\n            curr = n.next;\n        }\n    }\n}",
+        "options": [
+          "10 20 ",
+          "10 ",
+          "Compilation Error: n cannot be used in loop body",
+          "NullPointerException"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Flow scoping applies to while loop conditions: 'n' is in scope throughout the while loop body.",
+        "solution": "10 20 ",
+        "explanation": "In each iteration, 'curr instanceof Node n' tests true and binds 'n' for the duration of the loop body. When curr becomes null, the instanceof test evaluates to false without throwing NullPointerException, terminating the loop. Output: '10 20 '."
+      },
+      {
+        "title": "Puzzle 9: instanceof Subtyping vs getClass() Exact Equality",
+        "problemStatement": "What boolean values are printed by this type comparison program?",
+        "code": "class Base {}\nclass Sub extends Base {}\npublic class Main {\n    public static void main(String[] args) {\n        Base b = new Sub();\n        System.out.print((b instanceof Base) + \" \");\n        System.out.print((b instanceof Sub) + \" \");\n        System.out.print((b.getClass() == Base.class) + \" \");\n        System.out.print(b.getClass() == Sub.class);\n    }\n}",
+        "options": [
+          "true true false true",
+          "true false true false",
+          "true true true true",
+          "false true false true"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "instanceof tests the IS-A relationship across the hierarchy; getClass() == checks exact runtime identity.",
+        "solution": "true true false true",
+        "explanation": "b is an instance of Sub. Because Sub IS-A Base, both 'b instanceof Base' and 'b instanceof Sub' evaluate to true. However, b.getClass() returns Sub.class, which does not equal Base.class (false), but equals Sub.class (true). Output is 'true true false true'."
+      },
+      {
+        "title": "Puzzle 10: Multi-Variable Guard Flow Scoping in Helper Method",
+        "problemStatement": "What is printed by calling this guarded helper function?",
+        "code": "public class Main {\n    static String format(Object a, Object b) {\n        if (!(a instanceof String s1) || !(b instanceof Integer n2)) {\n            return \"fallback\";\n        }\n        return s1.toUpperCase() + \":\" + (n2 * 2);\n    }\n    public static void main(String[] args) {\n        System.out.print(format(\"data\", 5) + \" \");\n        System.out.print(format(\"data\", \"text\"));\n    }\n}",
+        "options": [
+          "DATA:10 fallback",
+          "DATA:10 DATA:null",
+          "fallback fallback",
+          "Compilation Error: s1 or n2 out of scope"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "If either check fails, the method returns early; past the if statement, both s1 and n2 are definitely assigned.",
+        "solution": "DATA:10 fallback",
+        "explanation": "Due to flow scoping, the code past the early return only executes when both 'a is String' AND 'b is Integer' were true. Both s1 and n2 remain in scope, producing 'DATA:10'. In the second call, 'b' is a String, triggering the early return 'fallback'. Total output: 'DATA:10 fallback'."
       }
     ],
     "interviewQuestions": [
@@ -1322,19 +1875,125 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
           "Eliminate boilerplate casting",
           "Flow scoping",
           "Safe pattern variable binding"
-        ]
+        ],
+        "commonMistakeAnswer": "Thinking pattern variables are always scoped to the nearest enclosing curly braces."
       },
       {
         "question": "Why does 'null instanceof AnyClass' evaluate to false instead of throwing a NullPointerException?",
-        "answer": "According to the Java Language Specification (JLS \u00a715.20.2), the instanceof operator specifically returns false if the relational expression evaluates to null. This design decision was made deliberately so that developers would not need to write redundant null checks (such as 'if (obj != null && obj instanceof String)') before every type inspection. In Java, 'null' has a special null type that is a subtype of every reference type, but null represents the absence of any concrete object instance on the heap, so it cannot be an instance of any class.",
+        "answer": "According to the Java Language Specification (JLS §15.20.2), the instanceof operator specifically returns false if the relational expression evaluates to null. This design decision was made deliberately so that developers would not need to write redundant null checks (such as 'if (obj != null && obj instanceof String)') before every type inspection. In Java, 'null' has a special null type that is a subtype of every reference type, but null represents the absence of any concrete object instance on the heap, so it cannot be an instance of any class.",
         "followUp": "Can instanceof be used to test primitive types like int or double?",
         "followUpAnswer": "No. The instanceof operator works exclusively with reference types and objects on the heap. Testing a primitive type (e.g. '5 instanceof int') causes a compile-time error.",
         "keyPhrases": [
-          "JLS \u00a715.20.2",
+          "JLS §15.20.2",
           "Built-in null safety",
           "Absence of heap instance",
           "Reference types only"
-        ]
+        ],
+        "commonMistakeAnswer": "Writing redundant 'x != null && x instanceof Type' checks in modern code."
+      },
+      {
+        "question": "How does Flow Scoping differ from traditional lexical block scoping in Java?",
+        "answer": "Traditional lexical scoping binds a variable strictly between the opening '{' and closing '}' braces where it is declared. Flow Scoping (introduced with pattern matching) binds a variable based on the flow-of-control analysis of the code. A pattern variable is only in scope at program points where the compiler can prove that the pattern match succeeded. This allows pattern variables to be in scope on the right-hand side of '&&' operators, or even outside of the 'if' block when an early return or throw statement guarantees that execution only continues if the match succeeded.",
+        "followUp": "Can two separate 'if' blocks at the same method level declare pattern variables with the same name?",
+        "followUpAnswer": "Yes! Because the pattern variable's flow scope terminates when leaving each respective true branch, subsequent non-overlapping if blocks can reuse the same variable name.",
+        "keyPhrases": [
+          "Flow scoping vs lexical scoping",
+          "Definite assignment analysis",
+          "Short-circuit operator propagation",
+          "Early exit scope retention"
+        ],
+        "commonMistakeAnswer": "Assuming pattern variables follow traditional block-bracket scoping rules."
+      },
+      {
+        "question": "What is the fundamental difference between 'obj instanceof TargetClass' and 'obj.getClass() == TargetClass.class'?",
+        "answer": "'obj instanceof TargetClass' evaluates to true if the heap object is an instance of TargetClass OR any of its subclasses (polymorphic subtyping / IS-A check). In contrast, 'obj.getClass() == TargetClass.class' checks for exact type identity; it evaluates to true ONLY if the object's concrete class on the heap is exactly TargetClass, returning false for any subclass. Furthermore, if 'obj' is null, 'instanceof' safely returns false, whereas 'obj.getClass()' throws a NullPointerException.",
+        "followUp": "Which check should be used when implementing the equals() method according to Effective Java?",
+        "followUpAnswer": "If subclasses can add behavior without adding state (or follow Liskov Substitution), use instanceof. If subclasses add value components (new fields) that participate in equality, getClass() is often required to preserve symmetry.",
+        "keyPhrases": [
+          "IS-A hierarchy test vs exact type identity",
+          "Subclass compatibility",
+          "Null safety difference",
+          "equals() contract implications"
+        ],
+        "commonMistakeAnswer": "Thinking instanceof and getClass() == are interchangeable in all scenarios."
+      },
+      {
+        "question": "Why does the Java compiler reject 'if (obj instanceof String s || s.isEmpty())'?",
+        "answer": "Because the logical OR operator ('||') evaluates the right-hand operand only when the left-hand operand is FALSE. If the left-hand operand 'obj instanceof String s' is false, then 'obj' is NOT a String (or is null). Therefore, on the right-hand side, the pattern variable 's' was never initialized and has no valid value or type. Evaluating 's.isEmpty()' would be meaningless and dangerous, so the compiler rejects the expression with a compile-time error: 'cannot find symbol s'.",
+        "followUp": "Does 'if (!(obj instanceof String s))' allow using 's' in the else block?",
+        "followUpAnswer": "Yes! If the negated condition is false, execution enters the else branch where 'obj instanceof String' was true, so 's' is in scope inside the else block.",
+        "keyPhrases": [
+          "Short-circuit evaluation of ||",
+          "Right operand only executes on false",
+          "Definite unassignment",
+          "Compile-time rejection for safety"
+        ],
+        "commonMistakeAnswer": "Believing pattern variables are declared in all parts of the enclosing statement."
+      },
+      {
+        "question": "Can a pattern variable be re-assigned within its scope? Is it implicitly final?",
+        "answer": "A pattern variable is NOT implicitly final; it can technically be reassigned inside its scope (e.g. 's = s.trim();'). However, modifying a pattern variable is strongly discouraged because it muddies the distinction between the extracted matched object and modified state. Many static analysis tools and style guides recommend treating pattern variables as effectively final.",
+        "followUp": "Can a pattern variable explicitly be declared 'final'?",
+        "followUpAnswer": "Yes, you can write 'if (obj instanceof final String s)' to enforce immutability at the compiler level.",
+        "keyPhrases": [
+          "Not implicitly final",
+          "Can be modified (discouraged)",
+          "Optional final keyword allowed",
+          "Effectively final best practice"
+        ],
+        "commonMistakeAnswer": "Assuming pattern variables are strictly read-only constants by language specification."
+      },
+      {
+        "question": "How does the bytecode emitted for pattern matching instanceof compare to traditional test-and-cast?",
+        "answer": "In traditional Java, javac emitted an 'instanceof' instruction followed by a 'checkcast' instruction and an 'astore' instruction into a new local variable slot. With pattern matching for instanceof, javac optimizes the bytecode generation: it emits the 'instanceof' instruction to verify type compatibility, and when the branch succeeds, it directly stores the verified reference into the pattern variable's local slot ('astore') without needing a redundant 'checkcast' instruction at runtime.",
+        "followUp": "Does pattern matching have any runtime performance penalty?",
+        "followUpAnswer": "No, it is either identical in performance or slightly faster due to the elimination of redundant checkcast bytecode instructions.",
+        "keyPhrases": [
+          "Elision of redundant checkcast",
+          "Single instanceof opcode",
+          "Direct astore instruction",
+          "Zero runtime overhead"
+        ],
+        "commonMistakeAnswer": "Assuming pattern matching uses dynamic reflection or incurs performance penalties."
+      },
+      {
+        "question": "Can instanceof be used to test generic type parameters like 'obj instanceof List<String>'?",
+        "answer": "No, you cannot write 'obj instanceof List<String>'. Because of Type Erasure, generic type arguments (such as <String>) are stripped during compilation and do not exist in JVM Metaspace at runtime. The JVM only knows that an object is a 'List', not what type of elements it contains. Therefore, testing parameterized generic types triggers a compile-time error: 'illegal generic type for instanceof'. You can only test against reifiable types or unbounded wildcards, such as 'obj instanceof List<?>'.",
+        "followUp": "What is a 'reifiable type' in Java?",
+        "followUpAnswer": "A reifiable type is a type whose complete type information is available at runtime, including non-generic types, raw types, and unbounded wildcard types like List<?>.",
+        "keyPhrases": [
+          "Type Erasure",
+          "Unreifiable types",
+          "Cannot check type arguments at runtime",
+          "Unbounded wildcard List<?> allowed"
+        ],
+        "commonMistakeAnswer": "Thinking the JVM can inspect element types of a collection via instanceof."
+      },
+      {
+        "question": "How does Pattern Matching for switch (standardized in Java 21) build upon pattern matching for instanceof?",
+        "answer": "Java 21 (JEP 441) extends pattern matching to switch statements and expressions. Instead of writing long chains of 'if (obj instanceof Circle c) ... else if (obj instanceof Rectangle r)...', developers can switch directly on object types: 'return switch(shape) { case Circle c -> c.area(); case Rectangle r -> r.area(); default -> 0.0; };'. Pattern matching for switch also introduces 'when' guard clauses (e.g. 'case Rectangle r when r.width == r.height -> ...') and exhaustive type checking with sealed classes.",
+        "followUp": "How does pattern matching for switch handle null values?",
+        "followUpAnswer": "Unlike traditional switch which unconditionally throws NullPointerException on null, pattern switch allows an explicit 'case null' branch to handle null safely.",
+        "keyPhrases": [
+          "Java 21 JEP 441",
+          "Type patterns in switch cases",
+          "Guarded patterns with 'when'",
+          "Explicit case null support"
+        ],
+        "commonMistakeAnswer": "Believing pattern matching is limited strictly to the instanceof operator."
+      },
+      {
+        "question": "How should equals(Object o) be implemented cleanly using modern pattern matching for instanceof?",
+        "answer": "Pattern matching simplifies the canonical equals() method into an elegant, concise implementation: 'if (!(o instanceof MyClass other)) return false; return this.id == other.id && Objects.equals(this.name, other.name);'. This single statement safely handles: 1) null check (returns false immediately), 2) type check (returns false if not an instance of MyClass), and 3) scoped downcast to 'other', eliminating the clumsy explicit downcast step entirely.",
+        "followUp": "Does this implementation satisfy the reflexive, symmetric, and transitive requirements of equals()?",
+        "followUpAnswer": "Yes, provided the class is final or subclasses do not introduce new state that breaks symmetry.",
+        "keyPhrases": [
+          "Canonical equals() implementation",
+          "Automatic null safety",
+          "Zero boilerplate cast",
+          "Objects.equals helper"
+        ],
+        "commonMistakeAnswer": "Writing manual null checks and explicit (MyClass) casts in modern Java code."
       }
     ],
     "miniQuiz": [
