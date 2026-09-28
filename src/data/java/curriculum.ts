@@ -189,7 +189,7 @@ export const JAVA_MODULES: JavaModule[] = [
     icon: 'Shield',
     topics: ['Data Hiding', 'Getters/Setters', 'Access Modifiers', 'Immutable Classes', 'Defensive Copying'],
     prerequisites: ['java-oop-basics'],
-    lessonCount: 4,
+    lessonCount: 5,
     mcqCount: 20,
     codingCount: 10,
     interviewCount: 10,

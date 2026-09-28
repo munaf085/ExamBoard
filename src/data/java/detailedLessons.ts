@@ -241,6 +241,7 @@ export function getDetailedLesson(id?: string): DetailedLesson | undefined {
     'getters-setters': 'getters-setters-defensive-copying',
     'immutability': 'immutable-class-pattern',
     'immutable': 'immutable-class-pattern',
+    'encapsulation-challenge': 'encapsulation-challenge',
     'inheritance': 'extends-and-is-a',
     'extends': 'extends-and-is-a',
     'super': 'super-constructor-chaining',

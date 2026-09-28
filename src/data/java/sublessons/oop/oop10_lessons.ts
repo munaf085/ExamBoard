@@ -2523,5 +2523,454 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         "explanation": "Immutable classes use functional 'with-er' or transform methods that return a new object with the updated value, leaving the original instance untouched."
       }
     ]
+  },
+  "encapsulation-challenge": {
+    "id": "encapsulation-challenge",
+    "moduleId": "java-encapsulation",
+    "moduleTitle": "12. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 12.5",
+    "title": "Module 12 Challenge & Interview Assessment",
+    "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all encapsulation pillars",
+    "estimatedMinutes": 25,
+    "beginnerAnalogy": "This Capstone Challenge brings together everything you have learned in Module 12. In production Java systems, enterprise software relies on all 4 encapsulation pillars acting together:\n1. Private fields to hide raw internal data from external corruption.\n2. The Principle of Least Privilege with access modifiers to keep public API surfaces small and secure.\n3. Validating getters and setters to protect critical business invariants (e.g. balance >= 0).\n4. Defensive copying to eliminate representation exposure (rep leaks) when handling mutable objects.\n5. The Immutable Class Pattern to build thread-safe, robust value objects.\nUse this challenge to test your interview readiness, solve multi-concept code puzzles, and build confidence before moving to Inheritance!",
+    "coreExplanation": [
+      "Encapsulation is not just adding getters and setters; it is the fundamental practice of bundling data with behavior and guarding business rules (invariants) inside class boundaries.",
+      "Data Hiding is achieved using the 'private' modifier, ensuring external code can never directly read or alter an object's internal memory state.",
+      "The Principle of Least Privilege dictates that members should be as restrictive as possible: private first, package-private for internal helpers, protected for inheritance hooks, and public only for published APIs.",
+      "Representation Exposure (Rep Leak) is a subtle vulnerability where returning or saving mutable objects (like arrays) allows external code to tamper with private data. Defensive copying completely eliminates this threat.",
+      "Immutable Classes guarantee that an object's state can never change after construction. They are inherently thread-safe, have zero side-effects, and form the backbone of modern Java architecture.",
+      "The 'Tell, Don't Ask' principle reminds us to delegate business actions to the object itself rather than pulling raw variables out to compute logic externally."
+    ],
+    "codeSnippet": {
+      "title": "Comprehensive Enterprise Example: Secure Immutable Account Snapshot",
+      "code": "import java.util.Arrays;\n\npublic class EncapsulationMasteryDemo {\n    // 1. Immutable Class: final class prevents subclass tampering\n    public static final class AccountSnapshot {\n        // 2. Private final fields\n        private final String accountId;\n        private final double balance;\n        private final String[] transactionTags;\n\n        public AccountSnapshot(String accountId, double balance, String[] tags) {\n            if (accountId == null || accountId.trim().isEmpty()) {\n                throw new IllegalArgumentException(\"Invalid accountId\");\n            }\n            this.accountId = accountId;\n            this.balance = Math.max(0.0, balance); // Invariant: non-negative\n            // 3. Inbound Defensive Copying: prevents caller tampering\n            this.transactionTags = (tags != null) ? tags.clone() : new String[0];\n        }\n\n        public String getAccountId() { return accountId; }\n        public double getBalance() { return balance; }\n\n        // 4. Outbound Defensive Copying: prevents caller modifying internal array\n        public String[] getTransactionTags() {\n            return transactionTags.clone();\n        }\n\n        // 5. Functional 'with-er' method for state evolution without mutation\n        public AccountSnapshot withDeposit(double amount) {\n            if (amount <= 0) return this;\n            return new AccountSnapshot(this.accountId, this.balance + amount, this.transactionTags);\n        }\n    }\n\n    public static void main(String[] args) {\n        String[] tags = {\"SALARY\", \"ONLINE\"};\n        AccountSnapshot s1 = new AccountSnapshot(\"ACC-101\", 500.0, tags);\n\n        // Attack attempt: mutate external array\n        tags[0] = \"HACKED\";\n\n        // Attack attempt: mutate getter return array\n        s1.getTransactionTags()[1] = \"CORRUPTED\";\n\n        // State evolution via with-er\n        AccountSnapshot s2 = s1.withDeposit(250.0);\n\n        System.out.println(\"s1 Balance: $\" + s1.getBalance() + \" | Tags: \" + Arrays.toString(s1.getTransactionTags()));\n        System.out.println(\"s2 Balance: $\" + s2.getBalance() + \" | Tags: \" + Arrays.toString(s2.getTransactionTags()));\n        System.out.println(\"Complete encapsulation preserved! s1 remained 100% immutable.\");\n    }\n}",
+      "lineByLineExplanation": [
+        {
+          "line": "public static final class AccountSnapshot",
+          "explanation": "Marking the class final ensures no subclass can override methods to introduce mutable state."
+        },
+        {
+          "line": "this.balance = Math.max(0.0, balance);",
+          "explanation": "Validates and preserves the business invariant that an account balance cannot be negative."
+        },
+        {
+          "line": "this.transactionTags = (tags != null) ? tags.clone() : new String[0];",
+          "explanation": "Inbound defensive copy severs the pointer from the caller's array argument."
+        },
+        {
+          "line": "return transactionTags.clone();",
+          "explanation": "Outbound defensive copy ensures callers receive an isolated duplicate, preventing representation leaks."
+        },
+        {
+          "line": "return new AccountSnapshot(this.accountId, this.balance + amount, ...);",
+          "explanation": "The with-er pattern returns a brand-new instance with the new balance, leaving s1 completely untouched."
+        }
+      ],
+      "output": "s1 Balance: $500.0 | Tags: [SALARY, ONLINE]\ns2 Balance: $750.0 | Tags: [SALARY, ONLINE]\nComplete encapsulation preserved! s1 remained 100% immutable."
+    },
+    "codeExamples": [
+      {
+        "title": "Example 1: Public Fields Vulnerability vs Encapsulated Protection",
+        "description": "Demonstrating how public fields allow unauthorized state corruption, while encapsulation enforces business rules.",
+        "code": "class InsecureCart {\n    public int itemCount;\n    public double totalPrice;\n}\n\nclass SecureCart {\n    private int itemCount = 0;\n    private double totalPrice = 0.0;\n\n    public boolean addItem(double itemPrice) {\n        if (itemPrice > 0.0) {\n            itemCount++;\n            totalPrice += itemPrice;\n            return true;\n        }\n        return false;\n    }\n\n    public int getItemCount() { return itemCount; }\n    public double getTotalPrice() { return totalPrice; }\n}\n\npublic class CartDemo {\n    public static void main(String[] args) {\n        InsecureCart bad = new InsecureCart();\n        bad.itemCount = -5; // Corrupted state!\n        bad.totalPrice = -100.0;\n\n        SecureCart good = new SecureCart();\n        good.addItem(29.99);\n        good.addItem(-10.0); // Rejected\n        System.out.printf(\"Secure Cart: %d items, Total: $%.2f%n\", good.getItemCount(), good.getTotalPrice());\n    }\n}",
+        "output": "Secure Cart: 1 items, Total: $29.99"
+      },
+      {
+        "title": "Example 2: The Mutable Object Reference Leak & Defensive Copy Fix",
+        "description": "Contrasting a shallow getter leak with a defensive copy fix.",
+        "code": "class InsecureRegistry {\n    private int[] ids;\n    public InsecureRegistry(int[] ids) { this.ids = ids; }\n    public int[] getIds() { return ids; } // LEAK!\n}\n\nclass SecureRegistry {\n    private int[] ids;\n    public SecureRegistry(int[] ids) {\n        this.ids = (ids != null) ? ids.clone() : new int[0];\n    }\n    public int[] getIds() { return ids.clone(); } // SAFE!\n}\n\npublic class RegistryDemo {\n    public static void main(String[] args) {\n        int[] numbers = {10, 20, 30};\n        InsecureRegistry bad = new InsecureRegistry(numbers);\n        bad.getIds()[0] = 999; // Alters internal array directly\n        System.out.println(\"Insecure registry leaked ID: \" + bad.getIds()[0]);\n\n        SecureRegistry good = new SecureRegistry(numbers);\n        good.getIds()[0] = 999; // Alters only the copy\n        System.out.println(\"Secure registry protected ID: \" + good.getIds()[0]);\n    }\n}",
+        "output": "Insecure registry leaked ID: 999\nSecure registry protected ID: 10"
+      }
+    ],
+    "interviewQuestions": [
+      {
+        "question": "How do you explain Encapsulation to an interviewer in simple terms?",
+        "answer": "Encapsulation is like putting your data and the code that manages it inside a protective capsule (a class). You keep your variables private so outside code can't mess with them directly, and you provide public methods that validate everything before making any changes. This keeps your data safe and clean.",
+        "followUp": "Why is encapsulation better than just using public variables?",
+        "followUpAnswer": "If a variable is public, any code anywhere can set it to an illegal value, like setting an age to -5 or a bank balance to -50000. Encapsulation stops that because you control the only door in and out."
+      },
+      {
+        "question": "What is the difference between Encapsulation and Data Hiding?",
+        "answer": "Encapsulation is the big picture: bundling variables and methods together into one class. Data Hiding is the specific technique you use to protect those variables, usually by marking them 'private' so other classes can't see them.",
+        "followUp": "Can you have encapsulation without data hiding?",
+        "followUpAnswer": "In theory yes, if you group methods and variables together but leave the variables public. But in good Java programming, encapsulation and data hiding always go hand in hand."
+      },
+      {
+        "question": "What are Java's 4 access modifiers, and when should you use each?",
+        "answer": "From most private to most open:\n1. private: accessible only inside this class. Use for almost all fields.\n2. default / package-private (no keyword): accessible to any class in the same package. Great for internal helper classes.\n3. protected: accessible in the same package, plus subclasses in any package. Use when subclasses need direct access.\n4. public: accessible everywhere. Use for your main API methods that callers need to use.",
+        "followUp": "What is the Principle of Least Privilege?",
+        "followUpAnswer": "It means you always give code the minimum visibility it needs to do its job. Start with private, and only widen access if you really have to."
+      },
+      {
+        "question": "Why doesn't package-private have a keyword in Java?",
+        "answer": "In Java's design, when you don't write any access modifier, Java makes it package-private by default. There is no 'default' or 'package' keyword you type before variables to make them package-private; you simply omit the modifier.",
+        "followUp": "Can you use the word 'default' as an access modifier on a class member?",
+        "followUpAnswer": "No! Writing 'default int x;' on a class field causes a compiler error. The 'default' keyword is only used for interface default methods and switch statements."
+      },
+      {
+        "question": "Why can't top-level classes be private or protected?",
+        "answer": "A top-level class is stored in a package file. If a top-level class were private, no other class in the entire package or world could access it, making it completely useless. If it were protected, only subclasses could see it, but you couldn't access it to subclass it in the first place! That's why top-level classes can only be public or package-private.",
+        "followUp": "Can inner or nested classes be private or protected?",
+        "followUpAnswer": "Yes! Because an inner class lives inside another class, it can be private or protected to hide it from outside classes."
+      },
+      {
+        "question": "What is 'representation exposure' (rep leak) and how do you prevent it?",
+        "answer": "A representation leak happens when a class accidentally gives outside code a direct reference to its private internal object, like an array or Date. If a getter returns an internal array directly, the caller can modify the array elements from outside without calling any setter! You prevent it using Defensive Copying: always return a clone of the array so outside code only touches its own copy.",
+        "followUp": "Does returning a primitive (like int or double) cause a representation leak?",
+        "followUpAnswer": "No! Primitives are passed by value. The caller gets a duplicate copy of the number, so changing it can never affect the object's field."
+      },
+      {
+        "question": "Explain shallow copy vs deep copy vs defensive copy with an example.",
+        "answer": "A shallow copy duplicates the container (like the array slots) but copies the reference addresses, so both arrays still point to the same underlying objects. A deep copy recursively duplicates the container AND every object inside it. A defensive copy is the design pattern of making a copy (shallow or deep) before saving data in a constructor or returning data from a getter to protect internal state.",
+        "followUp": "Does array.clone() create a shallow or deep copy?",
+        "followUpAnswer": "It creates a shallow copy. If the array holds primitive numbers, it acts like a full copy. But if it holds objects, only the references are copied."
+      },
+      {
+        "question": "What are the 5 rules to make a class immutable in Java?",
+        "answer": "According to Joshua Bloch in Effective Java:\n1. Make the class 'final' so nobody can subclass it.\n2. Make all fields 'private'.\n3. Make all fields 'final' so they are set only once.\n4. Provide NO setter or mutator methods.\n5. If the class contains mutable objects (like arrays or Date), make defensive copies in both the constructor and getters.",
+        "followUp": "What is a famous immutable class in the Java Standard Library?",
+        "followUpAnswer": "String! Also Integer, Double, and modern date/time classes like LocalDate."
+      },
+      {
+        "question": "Can an immutable object contain a reference to a mutable object like an array?",
+        "answer": "Yes, but ONLY IF the immutable class practices strict defensive copying. The class must clone the array in the constructor before storing it, and clone it again in any getter before returning it. That way, outside code can never access or modify the internal array.",
+        "followUp": "What happens if you forget to clone the array in the getter?",
+        "followUpAnswer": "The caller can modify the array elements directly, and the class is no longer immutable!"
+      },
+      {
+        "question": "Does marking a reference variable 'final' make the referenced object immutable?",
+        "answer": "No! This is one of the most common beginner traps. 'final' on a reference variable only means the variable cannot point to a different object. But the object itself can still be changed! For example, with 'final StringBuilder sb = new StringBuilder(\"A\");', you can't do 'sb = new StringBuilder();', but you CAN do 'sb.append(\"B\");' and mutate it.",
+        "followUp": "How do you make the object itself immutable?",
+        "followUpAnswer": "The class of the object itself must be designed as an immutable class with no mutator methods and private final fields."
+      },
+      {
+        "question": "Why are immutable objects considered thread-safe by default?",
+        "answer": "In multi-threaded programming, bugs and race conditions only happen when multiple threads try to read and write shared data at the same time. Because an immutable object's data can NEVER change after it is built, threads can read it simultaneously without any locks or synchronization. There is zero risk of data corruption.",
+        "followUp": "Are immutable objects good to use as HashMap keys?",
+        "followUpAnswer": "Yes, they make the best HashMap keys! If a key's data changed while in a map, its hashCode would change, and you would lose the ability to find your value in the map."
+      },
+      {
+        "question": "What is the 'Tell, Don't Ask' principle and why does it lead to better encapsulation?",
+        "answer": "'Tell, Don't Ask' means you should tell an object what action to take, rather than asking for its data and doing the work outside. For example, instead of asking for an account balance and subtracting money yourself, you tell the account: 'acc.withdraw(50)'. This keeps all validation rules inside the class where they belong.",
+        "followUp": "What anti-pattern happens when developers ignore this principle?",
+        "followUpAnswer": "The Anemic Domain Model anti-pattern, where classes have no behavior, just raw getters and setters, and business logic is scattered all over external classes."
+      }
+    ],
+    "practiceProblems": [
+      {
+        "title": "Challenge 1: Comprehensive Invariant & Validation Check",
+        "problemStatement": "What is the output of this code?",
+        "code": "public class ChallengePuzzle1 {\n    static class TemperatureControl {\n        private int temp = 20;\n        public boolean setTemp(int t) {\n            if (t >= 15 && t <= 30) {\n                this.temp = t;\n                return true;\n            }\n            return false;\n        }\n        public int getTemp() { return temp; }\n    }\n    public static void main(String[] args) {\n        TemperatureControl tc = new TemperatureControl();\n        boolean b1 = tc.setTemp(25);\n        boolean b2 = tc.setTemp(40);\n        boolean b3 = tc.setTemp(10);\n        System.out.println(b1 + \" \" + b2 + \" \" + b3 + \" \" + tc.getTemp());\n    }\n}",
+        "options": [
+          "true false false 25",
+          "true true false 40",
+          "true false false 20",
+          "false false false 20"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Only values between 15 and 30 are accepted. What was the last valid value set?",
+        "solution": "true false false 25",
+        "explanation": "b1 sets 25 (valid, temp=25). b2 attempts 40 (rejected). b3 attempts 10 (rejected). Final temp remains 25."
+      },
+      {
+        "title": "Challenge 2: Private Access Error Diagnosis",
+        "problemStatement": "What happens when attempting to compile this code?",
+        "code": "public class ChallengePuzzle2 {\n    static class SecurityBadge {\n        private String badgeId = \"SEC-99\";\n    }\n    public static void main(String[] args) {\n        SecurityBadge b = new SecurityBadge();\n        System.out.println(b.badgeId);\n    }\n}",
+        "options": [
+          "Prints SEC-99",
+          "Compile-time error: badgeId has private access in SecurityBadge",
+          "Prints null",
+          "Throws NullPointerException at runtime"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "The field is declared private. Can external code access private fields directly?",
+        "solution": "Compile-time error: badgeId has private access in SecurityBadge",
+        "explanation": "Private fields are invisible to external classes. Accessing 'b.badgeId' causes a compiler error."
+      },
+      {
+        "title": "Challenge 3: Representation Leak Mutation Tracing",
+        "problemStatement": "What does this code print?",
+        "code": "public class ChallengePuzzle3 {\n    static class ScoreKeeper {\n        private int[] scores = {10, 20, 30};\n        public int[] getScores() { return scores; } // Insecure leak!\n    }\n    public static void main(String[] args) {\n        ScoreKeeper sk = new ScoreKeeper();\n        int[] leaked = sk.getScores();\n        leaked[1] = 99;\n        System.out.println(sk.getScores()[1]);\n    }\n}",
+        "options": [
+          "20",
+          "99",
+          "30",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Because getScores() returned the raw array without cloning, modifying leaked[1] mutates the private array directly.",
+        "solution": "99",
+        "explanation": "Returning the private array without defensive copying allows outside callers to mutate the internal array directly to 99."
+      },
+      {
+        "title": "Challenge 4: Defensive Copying Invariant Defense",
+        "problemStatement": "What does this code output?",
+        "code": "public class ChallengePuzzle4 {\n    static class SecureScores {\n        private int[] scores;\n        public SecureScores(int[] input) {\n            this.scores = (input != null) ? input.clone() : new int[0];\n        }\n        public int[] getScores() { return scores.clone(); }\n    }\n    public static void main(String[] args) {\n        int[] arr = {100, 200};\n        SecureScores ss = new SecureScores(arr);\n        arr[0] = 0;\n        ss.getScores()[1] = 0;\n        System.out.println(ss.getScores()[0] + \" \" + ss.getScores()[1]);\n    }\n}",
+        "options": [
+          "0 0",
+          "100 200",
+          "0 200",
+          "100 0"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Both the constructor and getter make defensive copies. Do mutations to arr or getter return affect internal state?",
+        "solution": "100 200",
+        "explanation": "Defensive copying in both constructor and getter shields internal state completely. Internal scores remain [100, 200]."
+      },
+      {
+        "title": "Challenge 5: Final Reference vs Object Mutation",
+        "problemStatement": "What is printed by this program?",
+        "code": "public class ChallengePuzzle5 {\n    public static void main(String[] args) {\n        final StringBuilder sb = new StringBuilder(\"Java\");\n        sb.append(\"8\");\n        System.out.println(sb.toString());\n    }\n}",
+        "options": [
+          "Java",
+          "Java8",
+          "Compilation Error: cannot mutate final variable sb",
+          "Throws UnsupportedOperationException"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "'final' prevents reassigning the variable 'sb', but does NOT prevent mutating the StringBuilder object itself.",
+        "solution": "Java8",
+        "explanation": "A final reference variable cannot be pointed to another object, but the object itself remains mutable. 'Java8' is printed."
+      },
+      {
+        "title": "Challenge 6: Immutable State Evolution with with-er",
+        "problemStatement": "What will be printed?",
+        "code": "public class ChallengePuzzle6 {\n    static final class Point {\n        private final int x, y;\n        public Point(int x, int y) { this.x = x; this.y = y; }\n        public Point moveBy(int dx, int dy) {\n            return new Point(this.x + dx, this.y + dy);\n        }\n        public int getX() { return x; }\n    }\n    public static void main(String[] args) {\n        Point p1 = new Point(5, 5);\n        Point p2 = p1.moveBy(10, 0);\n        System.out.println(p1.getX() + \"-\" + p2.getX());\n    }\n}",
+        "options": [
+          "15-15",
+          "5-15",
+          "5-5",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "moveBy returns a brand-new Point. Does p1 change?",
+        "solution": "5-15",
+        "explanation": "p1 is immutable and remains at x=5. moveBy returns a new Point p2 at x=15. Output: 5-15."
+      },
+      {
+        "title": "Challenge 7: Package-Private Visibility Isolation",
+        "problemStatement": "If class 'OrderHelper' has no access modifier keyword, where can it be instantiated?",
+        "options": [
+          "Anywhere in the entire project",
+          "Only by classes inside the same package",
+          "Only inside the same source file",
+          "Only by its subclasses in other packages"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Omitting an access modifier gives package-private visibility.",
+        "solution": "Only by classes inside the same package",
+        "explanation": "Package-private (default) classes are visible only within their declaring package namespace."
+      },
+      {
+        "title": "Challenge 8: Tell Don't Ask Bank Account Operation",
+        "problemStatement": "What does this code output?",
+        "code": "public class ChallengePuzzle8 {\n    static class Wallet {\n        private int cash = 100;\n        public boolean spend(int amount) {\n            if (amount > 0 && amount <= cash) {\n                cash -= amount;\n                return true;\n            }\n            return false;\n        }\n        public int getCash() { return cash; }\n    }\n    public static void main(String[] args) {\n        Wallet w = new Wallet();\n        w.spend(60);\n        w.spend(60);\n        System.out.println(w.getCash());\n    }\n}",
+        "options": [
+          "-20",
+          "40",
+          "100",
+          "Compilation Error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Initial cash is 100. First spend(60) succeeds (cash=40). Second spend(60) fails validation.",
+        "solution": "40",
+        "explanation": "First spend(60) succeeds: 100 - 60 = 40. Second spend(60) fails 60 <= 40 guard. Remaining cash: 40."
+      },
+      {
+        "title": "Challenge 9: Protected Access Inheritance Verification",
+        "problemStatement": "Which modifier allows member access in the same package AND in subclasses located in different packages?",
+        "options": [
+          "private",
+          "default (package-private)",
+          "protected",
+          "public"
+        ],
+        "correctOptionIndex": 2,
+        "hint": "It creates an inheritance bridge across packages.",
+        "solution": "protected",
+        "explanation": "'protected' grants access to classes in the same package and to subclasses in different packages."
+      },
+      {
+        "title": "Challenge 10: Immutable Class Subclassing Prevention",
+        "problemStatement": "Why must an immutable class be declared 'final'?",
+        "options": [
+          "To make the JVM run faster",
+          "To prevent subclasses from overriding methods and introducing mutable state",
+          "To force all fields to be static",
+          "To allow the class to implement interfaces"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "If a class is not final, a subclass can add mutable variables and override getters.",
+        "solution": "To prevent subclasses from overriding methods and introducing mutable state",
+        "explanation": "Declaring the class final prevents malicious or accidental subclassing that could break immutability guarantees."
+      }
+    ],
+    "miniQuiz": [
+      {
+        "question": "What is the primary motivation for making fields 'private' in Java?",
+        "options": [
+          "To reduce memory usage in Heap memory",
+          "To prevent external code from directly modifying internal state without validation",
+          "To make the class run faster on multi-core CPUs",
+          "To allow the class to be inherited"
+        ],
+        "correctIndex": 1,
+        "explanation": "Data hiding via private fields ensures all state transitions pass through validating methods, protecting class invariants."
+      },
+      {
+        "question": "Which access modifier keyword is written to declare a member package-private?",
+        "options": [
+          "default",
+          "package",
+          "friendly",
+          "No keyword is written; package-private is the default when no modifier is specified"
+        ],
+        "correctIndex": 3,
+        "explanation": "Package-private has no modifier keyword in Java; omitting the access keyword assigns package-private visibility."
+      },
+      {
+        "question": "What is the visibility of a 'protected' member?",
+        "options": [
+          "Visible only within the declaring class",
+          "Visible within the same package and by subclasses across any package",
+          "Visible to all classes in all packages",
+          "Visible only in subclasses, but not in the same package"
+        ],
+        "correctIndex": 1,
+        "explanation": "Protected members are accessible to all classes in the same package plus external subclasses through inheritance."
+      },
+      {
+        "question": "Why can't top-level classes in a '.java' file be marked 'private'?",
+        "options": [
+          "Because a private top-level class would be unreachable by any other class, making it unusable",
+          "Because the JVM compiler does not support the word private",
+          "Because private classes can only hold static methods",
+          "Because top-level classes must implement Serializable"
+        ],
+        "correctIndex": 0,
+        "explanation": "A top-level class with private visibility would be completely inaccessible to any other code, which is a logical contradiction."
+      },
+      {
+        "question": "What is 'representation exposure' (rep leak)?",
+        "options": [
+          "Printing an object's memory address",
+          "When a getter returns a direct reference to an internal mutable object, allowing callers to bypass encapsulation",
+          "Using public methods instead of private methods",
+          "Converting an integer to a float"
+        ],
+        "correctIndex": 1,
+        "explanation": "Representation exposure occurs when internal mutable objects (like arrays) are exposed to callers without defensive copying."
+      },
+      {
+        "question": "How do you prevent representation exposure when returning an internal 'int[] data' array?",
+        "options": [
+          "Declare the array static",
+          "Return a defensive copy: return data.clone();",
+          "Make the return type Object",
+          "Make the getter synchronized"
+        ],
+        "correctIndex": 1,
+        "explanation": "Returning a clone ensures the caller receives an independent copy, protecting internal state from external tampering."
+      },
+      {
+        "question": "Which of the following is NOT required to make a class immutable?",
+        "options": [
+          "Make the class final",
+          "Make all fields private and final",
+          "Implement the java.lang.Cloneable interface",
+          "Provide no setter/mutator methods"
+        ],
+        "correctIndex": 2,
+        "explanation": "Implementing Cloneable is not required; in fact, cloning can sometimes violate immutability if implemented carelessly."
+      },
+      {
+        "question": "Why are immutable objects inherently thread-safe?",
+        "options": [
+          "They use internal locks on every method call",
+          "Because their state never changes after creation, multiple threads can read them simultaneously without race conditions",
+          "They are stored in thread-local memory",
+          "Only one thread is allowed to access them at a time"
+        ],
+        "correctIndex": 1,
+        "explanation": "Without mutable state, race conditions are impossible, making immutable objects safe to share across threads without locks."
+      },
+      {
+        "question": "How does an immutable class 'update' a property (e.g. String.toUpperCase())?",
+        "options": [
+          "It mutates internal private fields directly",
+          "It returns a brand-new instance containing the modified state, leaving the original object unchanged",
+          "It calls System.gc() to reset the field",
+          "It disables the final modifier using reflection"
+        ],
+        "correctIndex": 1,
+        "explanation": "Immutable classes use functional methods that return a new instance with the new value, preserving the original instance."
+      },
+      {
+        "question": "What is the 'Tell, Don't Ask' principle in OOP?",
+        "options": [
+          "Ask an object for all its fields and do calculations outside",
+          "Tell the object to perform operations on its own data rather than querying state and computing externally",
+          "Never write comments in your code",
+          "Always prompt the user for console input"
+        ],
+        "correctIndex": 1,
+        "explanation": "Tell, Don't Ask promotes high cohesion by keeping logic with the data it operates on."
+      },
+      {
+        "question": "Can a local variable inside a method be marked with an access modifier like 'private int count = 0;'?",
+        "options": [
+          "Yes, if it shouldn't be seen by other methods",
+          "No, access modifiers are illegal on local variables and cause a compile error",
+          "Yes, but only in static methods",
+          "Only if the method is public"
+        ],
+        "correctIndex": 1,
+        "explanation": "Access modifiers apply strictly to class members, never to local variables inside methods."
+      },
+      {
+        "question": "According to JavaBeans conventions, what should a boolean getter for 'private boolean active;' be named?",
+        "options": [
+          "getActive() or isActive()",
+          "fetchActive()",
+          "queryActive()",
+          "booleanActive()"
+        ],
+        "correctIndex": 0,
+        "explanation": "JavaBeans specifies isActive() or getActive() for boolean fields."
+      },
+      {
+        "question": "If a reference is declared as 'final int[] numbers = {1, 2, 3};', can you modify 'numbers[0] = 99;'?",
+        "options": [
+          "No, final prevents modifying array elements",
+          "Yes, final only prevents reassigning 'numbers' to another array; the array elements remain mutable",
+          "It throws an ArrayStoreException",
+          "Only if the array is public"
+        ],
+        "correctIndex": 1,
+        "explanation": "Final on an array locks the reference pointer, but the array contents inside Heap memory remain fully mutable."
+      },
+      {
+        "question": "Why are immutable objects ideal for use as HashMap keys?",
+        "options": [
+          "They use less memory in the hash bucket",
+          "Because their state cannot change, their hashCode remains constant throughout their lifetime in the map",
+          "HashMaps only accept immutable keys",
+          "They bypass the equals() method check"
+        ],
+        "correctIndex": 1,
+        "explanation": "If a key's state changed while in a HashMap, its hashCode would change and you could never retrieve the value again."
+      },
+      {
+        "question": "What is the Principle of Least Privilege in the context of Java access modifiers?",
+        "options": [
+          "Make all members public to avoid access errors",
+          "Always declare members with the most restrictive visibility possible (private first) and loosen only when required",
+          "Give all developers root access to the repository",
+          "Never use interfaces"
+        ],
+        "correctIndex": 1,
+        "explanation": "The Principle of Least Privilege minimizes the public API surface area, reducing coupling and bugs."
+      }
+    ]
   }
 };
