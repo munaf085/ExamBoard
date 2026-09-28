@@ -195,11 +195,12 @@ export default function JavaSubLessonPage() {
     setShowExerciseHints({});
     setQuestionRatings({});
 
-    // Read initial tab from URL query param
     const queryTab = searchParams.get('tab');
     if (isChallenge) {
-      if (queryTab && ['assignments', 'quiz', 'interview_qa', 'practice', 'all'].includes(queryTab)) {
+      if (queryTab && ['assignments', 'cheatsheet', 'quiz', 'interview_qa', 'practice', 'all'].includes(queryTab)) {
         setActiveTab(queryTab as ActiveTab);
+      } else if (queryTab === 'cheat' || queryTab === 'cheat-sheet' || queryTab === 'revision') {
+        setActiveTab('cheatsheet');
       } else {
         // In challenge mode, default directly to hands-on coding challenges (or quiz)
         setActiveTab(
@@ -595,6 +596,19 @@ export default function JavaSubLessonPage() {
                     <span>🎯 Coding Challenges ({lesson.programmingExercises?.length || 0})</span>
                   </button>
 
+                  {/* 2. 📋 Revision Cheat Sheet */}
+                  <button
+                    onClick={() => setActiveTab('cheatsheet')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'cheatsheet'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 text-amber-400" />
+                    <span>📋 Revision Cheat Sheet</span>
+                  </button>
+
                   {/* 2. Quiz */}
                   <button
                     onClick={() => setActiveTab('quiz')}
@@ -915,11 +929,16 @@ export default function JavaSubLessonPage() {
           )}
 
           {/* ── TAB: DEDICATED TOPIC CHEAT SHEET ── */}
-          {!isChallenge && (activeTab === 'cheatsheet' || activeTab === 'all') && (
+          {(activeTab === 'cheatsheet' || activeTab === 'all') && (
             <div className="space-y-4">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-5">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <h2 className="text-base font-bold text-white">Quick Reference & Rules</h2>
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-amber-400" />
+                    <h2 className="text-base font-bold text-white">
+                      {isChallenge ? '⚡ Module Interview Revision Cheat Sheet' : 'Quick Reference & Rules'}
+                    </h2>
+                  </div>
                   <Link
                     to="/java/revision"
                     className="text-xs text-indigo-400 hover:underline flex items-center gap-1 font-medium"
@@ -930,12 +949,147 @@ export default function JavaSubLessonPage() {
                 </div>
 
                 {lesson.cheatSheet ? (
-                  <div className="space-y-4">
-                    <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs sm:text-sm text-slate-300 leading-relaxed">
-                      <strong className="text-amber-300">Summary: </strong>
-                      {lesson.cheatSheet.summary}
-                    </div>
+                  <div className="space-y-5">
+                    {/* Summary Callout */}
+                    {lesson.cheatSheet.summary && (
+                      <div className="p-3.5 rounded-xl bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 border border-amber-500/30 text-xs sm:text-sm text-slate-200 leading-relaxed shadow-sm">
+                        <span className="inline-flex items-center gap-1.5 font-bold text-amber-300 uppercase tracking-wider text-[11px] mr-2">
+                          📌 Core Revision Focus:
+                        </span>
+                        {lesson.cheatSheet.summary}
+                      </div>
+                    )}
 
+                    {/* ⚡ 1. Rapid-Fire Definitions & Real-World Examples */}
+                    {lesson.cheatSheet.quickDefinitions && lesson.cheatSheet.quickDefinitions.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-cyan-400" />
+                          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                            ⚡ Rapid-Fire Definitions & Real-World Examples (Memorize for Interview):
+                          </h3>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {lesson.cheatSheet.quickDefinitions.map((item, dIdx) => (
+                            <div key={dIdx} className="bg-slate-950/80 border border-slate-800/90 rounded-xl p-3.5 space-y-2 hover:border-slate-700 transition">
+                              <div className="flex items-center justify-between">
+                                <span className="px-2 py-0.5 rounded-md bg-cyan-950/80 border border-cyan-800/60 text-cyan-300 font-bold text-xs">
+                                  {item.term}
+                                </span>
+                                <span className="text-[10px] text-slate-500 uppercase font-mono">Quick Def</span>
+                              </div>
+                              <p className="text-xs font-medium text-slate-200 leading-snug">
+                                {item.oneLiner}
+                              </p>
+                              {item.interviewExplanation && (
+                                <div className="text-[11px] text-slate-400 bg-slate-900/70 p-2 rounded-lg border border-slate-800/60 leading-relaxed">
+                                  <strong className="text-emerald-400 font-semibold">10-Sec Interview Answer: </strong>
+                                  {item.interviewExplanation}
+                                </div>
+                              )}
+                              {item.realWorldExample && (
+                                <div className="text-[11px] text-amber-300/90 bg-amber-950/20 p-2 rounded-lg border border-amber-900/30 leading-relaxed">
+                                  <strong className="text-amber-400 font-semibold">🌍 Real-World Example: </strong>
+                                  {item.realWorldExample}
+                                </div>
+                              )}
+                              {item.codeExample && (
+                                <pre className="bg-slate-900 p-2 rounded-lg border border-slate-800 text-[11px] font-mono text-emerald-300 overflow-x-auto">
+                                  <code>{item.codeExample}</code>
+                                </pre>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* ⚖️ 2. Crucial Interview Differences (X vs Y) */}
+                    {lesson.cheatSheet.differences && lesson.cheatSheet.differences.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <BookOpen className="w-4 h-4 text-purple-400" />
+                          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                            ⚖️ Crucial Interview Differences (X vs Y):
+                          </h3>
+                        </div>
+                        <div className="space-y-3">
+                          {lesson.cheatSheet.differences.map((diff, diffIdx) => (
+                            <div key={diffIdx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-2.5">
+                              <div className="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+                                <span className="font-bold text-xs sm:text-sm text-purple-300">
+                                  {diff.title}
+                                </span>
+                                <span className="text-[11px] text-slate-400 italic">
+                                  {diff.keyDifference}
+                                </span>
+                              </div>
+                              {diff.comparisonPoints && diff.comparisonPoints.length > 0 && (
+                                <div className="overflow-x-auto rounded-lg border border-slate-800/80">
+                                  <table className="w-full text-xs text-left">
+                                    <thead className="bg-slate-900 text-slate-400 font-semibold uppercase text-[10px]">
+                                      <tr>
+                                        <th className="p-2 border-r border-slate-800">Feature</th>
+                                        <th className="p-2 text-blue-300 border-r border-slate-800">{diff.conceptA}</th>
+                                        <th className="p-2 text-emerald-300">{diff.conceptB}</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-slate-800/70 bg-slate-950/50">
+                                      {diff.comparisonPoints.map((row, rIdx) => (
+                                        <tr key={rIdx} className="hover:bg-slate-900/40">
+                                          <td className="p-2 font-medium text-slate-300 border-r border-slate-800">{row.feature}</td>
+                                          <td className="p-2 text-slate-400 border-r border-slate-800">{row.a}</td>
+                                          <td className="p-2 text-slate-400">{row.b}</td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 🎯 3. Most Asked Interview Questions (15-Sec Rapid Answers) */}
+                    {lesson.cheatSheet.mostAskedQuestions && lesson.cheatSheet.mostAskedQuestions.length > 0 && (
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <HelpCircle className="w-4 h-4 text-emerald-400" />
+                          <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                            🎯 Most Asked Questions to Memorize Before Interview:
+                          </h3>
+                        </div>
+                        <div className="space-y-2.5">
+                          {lesson.cheatSheet.mostAskedQuestions.map((q, qIdx) => (
+                            <div key={qIdx} className="bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 space-y-2">
+                              <div className="font-bold text-xs sm:text-sm text-amber-300 flex items-start gap-2">
+                                <span className="text-slate-500 font-mono text-xs">Q{qIdx + 1}.</span>
+                                <span>{q.question}</span>
+                              </div>
+                              <div className="text-xs text-slate-300 leading-relaxed bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/60">
+                                <strong className="text-emerald-400 font-semibold">Punchy Answer: </strong>
+                                {q.answer}
+                              </div>
+                              {q.codeSnippet && (
+                                <pre className="bg-slate-900 p-2 rounded-lg border border-slate-800 text-[11px] font-mono text-amber-300 overflow-x-auto">
+                                  <code>{q.codeSnippet}</code>
+                                </pre>
+                              )}
+                              {q.trapsToAvoid && (
+                                <div className="text-[11px] text-rose-300/90 bg-rose-950/20 p-2 rounded-lg border border-rose-900/30">
+                                  <strong className="text-rose-400 font-semibold">⚠️ Trap to Avoid: </strong>
+                                  {q.trapsToAvoid}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Syntax Template */}
                     {lesson.cheatSheet.syntaxTemplate && (
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
@@ -952,10 +1106,11 @@ export default function JavaSubLessonPage() {
                       </div>
                     )}
 
+                    {/* Core Rules */}
                     {lesson.cheatSheet.rules && (
                       <div className="space-y-2">
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                          Core Rules:
+                          Core Rules & Principles:
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {lesson.cheatSheet.rules.map((r, rIdx) => (
@@ -968,6 +1123,7 @@ export default function JavaSubLessonPage() {
                       </div>
                     )}
 
+                    {/* Interview Comparison Table */}
                     {lesson.cheatSheet.quickComparison && (
                       <div className="space-y-2">
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
@@ -1003,7 +1159,7 @@ export default function JavaSubLessonPage() {
                       Quick Reference Points for {lesson.title}:
                     </p>
                     <div className="space-y-2">
-                      {lesson.coreExplanation.map((point, pIdx) => (
+                      {lesson.coreExplanation && lesson.coreExplanation.map((point, pIdx) => (
                         <div key={pIdx} className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs text-slate-300 flex items-start gap-2.5">
                           <CheckSquare className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                           <span>{point}</span>

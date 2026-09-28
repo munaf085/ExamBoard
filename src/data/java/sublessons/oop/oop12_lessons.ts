@@ -2665,7 +2665,199 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "The 'instanceof' operator safely tests object types without throwing exceptions ('null instanceof T' is always false).",
         "Java 16+ Pattern Matching combines type-checking and downcasting into a single fluent expression ('if (obj instanceof String s)')."
       ],
-      "codeSnippet": {
+      "cheatSheet": {
+  "summary": "Polymorphism enables a single interface or reference type to represent diverse underlying form implementations, with runtime method selection resolved dynamically via the JVM Virtual Method Table (vtable).",
+  "syntaxTemplate": "public abstract class Shape {\n    public abstract double area();\n}\n\npublic class Circle extends Shape {\n    private final double radius;\n    public Circle(double radius) { this.radius = radius; }\n    @Override\n    public double area() { return Math.PI * radius * radius; }\n}\n\n// Polymorphic usage:\nShape s = new Circle(5.0); // Upcasting: Shape reference to Circle object\nSystem.out.println(s.area()); // Executes Circle.area() via vtable at runtime",
+  "quickDefinitions": [
+    {
+      "term": "Polymorphism",
+      "oneLiner": "The ability of a single reference type to execute different behaviors based on the runtime heap object bound to it.",
+      "interviewExplanation": "Derived from Greek 'many forms'. It enables client code to interact with high-level abstract types while the JVM automatically dispatches calls to concrete subclass implementations at runtime.",
+      "realWorldExample": "Universal USB-C charging cable. One cable format charges a smartphone, laptop, camera, or headphones, each drawing appropriate wattage automatically.",
+      "codeExample": "Animal a = new Dog(); // Polymorphic assignment\na.makeSound(); // Dispatches to Dog's makeSound()"
+    },
+    {
+      "term": "Dynamic Method Dispatch",
+      "oneLiner": "The JVM runtime mechanism resolving which overridden method implementation to execute based on actual object type.",
+      "interviewExplanation": "Bytecode instruction 'invokevirtual' dereferences the object header on the heap, looks up the class's Virtual Method Table (vtable), and calls the concrete function pointer.",
+      "realWorldExample": "A corporate concierge delegating an incoming inquiry to the specific specialist department based on issue category.",
+      "codeExample": "List<String> list = new ArrayList<>(); // Client interacts with List, dispatch runs ArrayList code"
+    },
+    {
+      "term": "Virtual Method Table (vtable)",
+      "oneLiner": "Internal JVM array of function pointers maintained per class to execute fast O(1) dynamic method dispatch.",
+      "interviewExplanation": "During class loading, the JVM builds a vtable containing pointers to executable method bytecodes. Overridden methods replace parent pointers at identical index slots.",
+      "realWorldExample": "A speed-dial directory mapping button numbers to specific department extensions.",
+      "codeExample": "// JVM internal: vtable[3] points to Dog.speak() instead of Animal.speak()"
+    },
+    {
+      "term": "Method Overloading",
+      "oneLiner": "Defining multiple methods in the same class with identical names but differing parameter lists (Compile-time).",
+      "interviewExplanation": "An example of Static (Compile-time) Polymorphism. Javac resolves the exact method signature to call at compile-time based on argument types (invokestatic/invokevirtual).",
+      "realWorldExample": "A kitchen blender with buttons for 1 speed parameter, 2 time parameters, or pulse mode.",
+      "codeExample": "public void log(String msg) { ... }\npublic void log(String msg, int code) { ... }"
+    },
+    {
+      "term": "Upcasting vs Downcasting",
+      "oneLiner": "Upcasting casts child to parent (safe, implicit); Downcasting casts parent to child (explicit, requires check).",
+      "interviewExplanation": "Upcasting broadens type to a superclass and never fails. Downcasting narrows reference to a specific subclass and throws ClassCastException if the heap object is incompatible.",
+      "realWorldExample": "Upcasting: Treating an iPhone as a generic 'Phone'. Downcasting: Verifying a 'Phone' is specifically an iPhone before connecting an Apple Watch.",
+      "codeExample": "Animal a = new Cat(); // Upcasting (implicit)\nif (a instanceof Cat c) c.meow(); // Downcasting (Pattern Matching)"
+    },
+    {
+      "term": "Covariant Return Type",
+      "oneLiner": "An overriding method may return a subtype of the return type declared in the superclass method.",
+      "interviewExplanation": "Permitted since Java 5. Eliminates the need for clients to downcast return values when calling subclass methods directly.",
+      "realWorldExample": "A supplier contract guaranteeing delivery of 'Vehicle', while a luxury dealership specifically delivers a 'MercedesSedan'.",
+      "codeExample": "class Parent { Object get() { return null; } }\nclass Child extends Parent { @Override String get() { return \"hi\"; } }"
+    }
+  ],
+  "differences": [
+    {
+      "title": "Method Overloading vs Method Overriding",
+      "conceptA": "Method Overloading",
+      "conceptB": "Method Overriding",
+      "keyDifference": "Overloading is compile-time signature variation; Overriding is runtime dynamic dispatch replacement.",
+      "comparisonPoints": [
+        {
+          "feature": "Polymorphism Type",
+          "a": "Compile-Time (Static Polymorphism)",
+          "b": "Runtime (Dynamic Polymorphism)"
+        },
+        {
+          "feature": "Method Signature",
+          "a": "Same name, DIFFERENT parameters",
+          "b": "Same name, IDENTICAL parameters"
+        },
+        {
+          "feature": "Scope",
+          "a": "Within same class (or inherited)",
+          "b": "Across superclass and subclass"
+        },
+        {
+          "feature": "Return Type",
+          "a": "Can vary freely",
+          "b": "Must be identical or covariant"
+        },
+        {
+          "feature": "Exceptions",
+          "a": "Can throw any exceptions",
+          "b": "Cannot throw broader checked exceptions"
+        }
+      ]
+    },
+    {
+      "title": "Compile-Time vs Runtime Polymorphism",
+      "conceptA": "Compile-Time Polymorphism",
+      "conceptB": "Runtime Polymorphism",
+      "keyDifference": "Compile-time binding happens during javac compilation; Runtime binding happens in JVM via vtable.",
+      "comparisonPoints": [
+        {
+          "feature": "Resolution Time",
+          "a": "Compile-time by javac",
+          "b": "Runtime by HotSpot JVM"
+        },
+        {
+          "feature": "Execution Overhead",
+          "a": "Zero runtime overhead (direct call)",
+          "b": "Minor vtable lookup overhead"
+        },
+        {
+          "feature": "Implementation",
+          "a": "Method Overloading",
+          "b": "Method Overriding (virtual methods)"
+        }
+      ]
+    },
+    {
+      "title": "Method Overriding vs Field Hiding",
+      "conceptA": "Methods (Polymorphic)",
+      "conceptB": "Fields (Non-Polymorphic)",
+      "keyDifference": "Methods resolve dynamically based on heap object; Fields resolve statically based on reference type.",
+      "comparisonPoints": [
+        {
+          "feature": "Polymorphism",
+          "a": "Fully polymorphic via vtable",
+          "b": "NEVER polymorphic in Java"
+        },
+        {
+          "feature": "Resolution",
+          "a": "Actual runtime object on heap",
+          "b": "Declared compile-time reference type"
+        },
+        {
+          "feature": "Redeclaration Result",
+          "a": "Overriding",
+          "b": "Field Shadowing / Hiding"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "How does the JVM resolve overridden methods at runtime?",
+      "answer": "Via Dynamic Method Dispatch using a Virtual Method Table (vtable). Each class has an internal vtable indexing virtual methods. When invokevirtual executes, the JVM checks the object's actual class in heap memory, retrieves its vtable, and jumps to the concrete method address.",
+      "trapsToAvoid": "Thinking resolution is based on the reference type. Reference type is only used by javac for type safety validation."
+    },
+    {
+      "question": "Are variables/fields polymorphic in Java?",
+      "answer": "No! Variables are never polymorphic in Java. Variable access is resolved at compile time based strictly on the declared reference type. If a subclass declares a variable with the same name as a parent variable, it merely hides the parent variable.",
+      "codeSnippet": "class Parent { int x = 10; }\nclass Child extends Parent { int x = 20; }\nParent p = new Child();\nSystem.out.println(p.x); // Prints 10, NOT 20!",
+      "trapsToAvoid": "Expecting p.x to output 20 when p is a Parent reference pointing to a Child object."
+    },
+    {
+      "question": "What are the access modifier and exception rules for method overriding?",
+      "answer": "1) Access visibility cannot be narrowed (e.g. protected cannot become private; it can remain protected or become public). 2) Overriding methods cannot throw broader or new checked exceptions, though unchecked exceptions can vary freely.",
+      "trapsToAvoid": "Thinking overriding methods can throw Exception if the parent throws IOException."
+    },
+    {
+      "question": "How does Java 16+ Pattern Matching for instanceof simplify downcasting?",
+      "answer": "It combines type verification and casting into a single atomic expression: 'if (obj instanceof String s)' binds the casted variable 's' directly into scope, eliminating dangerous separate casting boilerplate.",
+      "codeSnippet": "// Modern Java 16+:\nif (animal instanceof Dog dog) {\n    dog.bark(); // No explicit (Dog) cast needed!\n}",
+      "trapsToAvoid": "Using legacy manual casting '(Dog) animal' without pre-checking instanceof."
+    },
+    {
+      "question": "What is a covariant return type and why is it useful?",
+      "answer": "An overriding method in a subclass is allowed to return a subtype of the return type defined in the superclass. This allows clients holding subclass references to receive the specialized type without manual downcasting.",
+      "trapsToAvoid": "Believing overriding return types must match identically in all Java versions."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Virtual by Default",
+      "explanation": "All non-static, non-final, non-private methods in Java are virtual and subject to dynamic dispatch."
+    },
+    {
+      "rule": "Fields Are Not Polymorphic",
+      "explanation": "Field access always binds at compile-time to the declared reference type, never through the vtable."
+    },
+    {
+      "rule": "Safe Upcasting Invariant",
+      "explanation": "Upcasting to any superclass or implemented interface is always safe and requires no explicit cast."
+    },
+    {
+      "rule": "Strict Signature Equivalence",
+      "explanation": "Method overriding requires identical parameter types; changing parameter types creates an overload."
+    },
+    {
+      "rule": "Static Methods Cannot Be Overridden",
+      "explanation": "Static methods are bound at compile time; redeclaring them in subclasses results in method hiding."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "Dispatch Method",
+      "optionA": "Overloading: Compile-time static binding",
+      "optionB": "Overriding: Runtime dynamic vtable dispatch"
+    },
+    {
+      "aspect": "Polymorphism Target",
+      "optionA": "Methods: Fully polymorphic",
+      "optionB": "Fields: Non-polymorphic reference binding"
+    }
+  ]
+},
+    "codeSnippet": {
         "title": "Comprehensive Polymorphic Architecture: Extensible Notification Dispatcher",
         "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class PolymorphismMasteryDemo {\n    // Base polymorphic abstraction\n    public static abstract class Notification {\n        protected String recipient;\n        public Notification(String recipient) { this.recipient = recipient; }\n        public abstract boolean dispatch(String message);\n    }\n\n    public static class EmailNotification extends Notification {\n        public EmailNotification(String email) { super(email); }\n        @Override\n        public boolean dispatch(String message) {\n            System.out.printf(\"[EMAIL] Sent to %s: '%s'%n\", recipient, message);\n            return true;\n        }\n    }\n\n    public static class SmsNotification extends Notification {\n        public SmsNotification(String phone) { super(phone); }\n        @Override\n        public boolean dispatch(String message) {\n            System.out.printf(\"[SMS] Sent to %s: '%s'%n\", recipient, message);\n            return true;\n        }\n    }\n\n    public static void broadcast(List<Notification> channels, String alertMessage) {\n        // Polymorphic dispatch: one loop handles all notification types\n        for (Notification channel : channels) {\n            channel.dispatch(alertMessage); // Dynamic method dispatch via vtable!\n        }\n    }\n\n    public static void main(String[] args) {\n        List<Notification> alerts = new ArrayList<>();\n        alerts.add(new EmailNotification(\"admin@company.com\")); // Upcasting\n        alerts.add(new SmsNotification(\"+1-555-0199\"));          // Upcasting\n\n        broadcast(alerts, \"Security Alert: Unauthorized access detected\");\n    }\n}",
         "lineByLineExplanation": [

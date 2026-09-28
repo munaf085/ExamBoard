@@ -3693,7 +3693,228 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
         "Static members belong to the Class itself (stored in Metaspace) and are shared across all instances; instance members belong to individual objects on the Heap.",
         "An object becomes eligible for Garbage Collection as soon as it becomes unreachable from any live GC root (e.g., when all references are set to null or fall out of scope)."
       ],
-      "codeSnippet": {
+      "cheatSheet": {
+  "summary": "Object-Oriented Programming models systems as interacting, stateful entities (objects) instantiated from blueprints (classes), decoupling state allocation on the JVM heap from reference execution on the thread stack.",
+  "syntaxTemplate": "public class Account {\n    private static int totalAccounts = 0; // Metaspace shared state\n    private final String id;               // Heap instance state\n    private double balance;\n\n    public Account(String id, double balance) {\n        this.id = id;\n        this.balance = balance;\n        totalAccounts++;\n    }\n    public Account(String id) {\n        this(id, 0.0); // Constructor chaining\n    }\n}",
+  "quickDefinitions": [
+    {
+      "term": "Class",
+      "oneLiner": "A blueprint or template defining the state fields and behavioral methods for objects.",
+      "interviewExplanation": "In JVM architecture, a class is loaded by a ClassLoader and its bytecode metadata resides in Metaspace. It defines the memory layout and method vtables that instances will follow.",
+      "realWorldExample": "Architectural blueprint of a housing model. The blueprint specifies rooms, wiring, and dimensions, but occupies no land until built.",
+      "codeExample": "public class Car {\n    String model;\n    int speed;\n}"
+    },
+    {
+      "term": "Object",
+      "oneLiner": "A concrete runtime instance of a class allocated dynamically on the JVM Heap.",
+      "interviewExplanation": "When 'new' executes, the JVM allocates contiguous heap bytes for instance fields, initializes default values, runs the constructor, and returns a reference address to the stack.",
+      "realWorldExample": "An actual physical house constructed at 742 Evergreen Terrace following the architectural blueprint.",
+      "codeExample": "Car myCar = new Car(); // 'myCar' is stack reference; heap holds object"
+    },
+    {
+      "term": "Stack vs Heap",
+      "oneLiner": "Stack stores thread-private primitive locals and object references; Heap stores all shared object instances.",
+      "interviewExplanation": "Thread stack frames are allocated and deallocated automatically in LIFO order during method entry/return (-Xss). The Heap (-Xmx) is garbage-collected asynchronously.",
+      "realWorldExample": "Stack is your personal pocket notepad recording home addresses; Heap is the actual town containing the physical houses.",
+      "codeExample": "int age = 30; // Stack primitive\nCar c = new Car(); // 'c' reference on stack, Car data on heap"
+    },
+    {
+      "term": "Constructor",
+      "oneLiner": "A special subroutine having no return type that initializes a newly allocated heap object.",
+      "interviewExplanation": "If no constructor is declared, javac inserts an implicit public default no-arg constructor. Defining any custom constructor suppresses default constructor generation.",
+      "realWorldExample": "A factory pre-delivery inspection that installs seats, fills fluids, and sets initial odometer reading to zero before delivery.",
+      "codeExample": "public Car(String model) {\n    this.model = model;\n}"
+    },
+    {
+      "term": "this Keyword",
+      "oneLiner": "A reference to the current invoking instance, used for field disambiguation and constructor chaining.",
+      "interviewExplanation": "Passed implicitly as the first parameter (aload_0 bytecode) to all non-static methods. 'this()' must strictly be the first line when chaining constructors.",
+      "realWorldExample": "Using the personal pronoun 'I' or pointing to your own company badge when speaking.",
+      "codeExample": "public void setSpeed(int speed) {\n    this.speed = speed; // Disambiguates field from parameter\n}"
+    },
+    {
+      "term": "static Keyword",
+      "oneLiner": "Modifier denoting members that belong to the Class itself rather than any individual instance.",
+      "interviewExplanation": "Static fields exist once per loaded class in Metaspace/heap class mirrors. Static methods cannot access 'this' or 'super' and are resolved at compile-time via static binding.",
+      "realWorldExample": "The communal elevator in an apartment tower. Shared by all residents rather than duplicated inside every private apartment.",
+      "codeExample": "public static int vehicleCount = 0;"
+    },
+    {
+      "term": "Garbage Collection (GC)",
+      "oneLiner": "Automatic JVM background process reclaiming memory occupied by objects unreachable from live GC roots.",
+      "interviewExplanation": "GC roots include thread stack local variables, active JNI references, and loaded static references. Once an object graph is disconnected from all roots, it becomes eligible for reclamation.",
+      "realWorldExample": "Municipal recycling collectors hauling away furniture placed on the curb with no owner or tags.",
+      "codeExample": "Car c = new Car();\nc = null; // Original Car object on heap is now orphaned and GC-eligible"
+    }
+  ],
+  "differences": [
+    {
+      "title": "Class vs Object",
+      "conceptA": "Class",
+      "conceptB": "Object",
+      "keyDifference": "A Class is compile-time type metadata; an Object is dynamic runtime heap memory.",
+      "comparisonPoints": [
+        {
+          "feature": "Memory Location",
+          "a": "Metaspace (class metadata)",
+          "b": "Heap memory (instance fields)"
+        },
+        {
+          "feature": "Instantiation",
+          "a": "Loaded once by ClassLoader",
+          "b": "Instantiated many times via new"
+        },
+        {
+          "feature": "State",
+          "a": "Has no runtime instance state",
+          "b": "Holds distinct mutable/immutable state"
+        },
+        {
+          "feature": "Existence",
+          "a": "Exists in source code & .class file",
+          "b": "Created dynamically during execution"
+        }
+      ]
+    },
+    {
+      "title": "Stack Memory vs Heap Memory",
+      "conceptA": "Stack Memory",
+      "conceptB": "Heap Memory",
+      "keyDifference": "Stack stores thread execution frames and references; Heap stores all instantiated objects.",
+      "comparisonPoints": [
+        {
+          "feature": "Scope & Visibility",
+          "a": "Thread-private, inaccessible across threads",
+          "b": "Shared globally across all application threads"
+        },
+        {
+          "feature": "Allocation Mechanism",
+          "a": "LIFO push/pop frame allocation",
+          "b": "Dynamic allocation via new operator"
+        },
+        {
+          "feature": "Deallocation",
+          "a": "Instant upon method return",
+          "b": "Asynchronous Garbage Collector"
+        },
+        {
+          "feature": "Exhaustion Error",
+          "a": "java.lang.StackOverflowError",
+          "b": "java.lang.OutOfMemoryError"
+        }
+      ]
+    },
+    {
+      "title": "Static Members vs Instance Members",
+      "conceptA": "Static Members",
+      "conceptB": "Instance Members",
+      "keyDifference": "Static belongs to the Class mirror; Instance belongs to discrete heap objects.",
+      "comparisonPoints": [
+        {
+          "feature": "Binding",
+          "a": "Class-level (Invokestatic)",
+          "b": "Instance-level (Invokevirtual)"
+        },
+        {
+          "feature": "Access via this",
+          "a": "Illegal ('this' does not exist)",
+          "b": "Default implicit execution context"
+        },
+        {
+          "feature": "Copies in Memory",
+          "a": "Exactly one copy per ClassLoader",
+          "b": "One copy per new object instance"
+        }
+      ]
+    },
+    {
+      "title": "Constructor vs Method",
+      "conceptA": "Constructor",
+      "conceptB": "Method",
+      "keyDifference": "A constructor establishes initial state for new instances; a method defines reusable behavior.",
+      "comparisonPoints": [
+        {
+          "feature": "Return Type",
+          "a": "Zero return type (not even void)",
+          "b": "Mandatory return type (or void)"
+        },
+        {
+          "feature": "Name",
+          "a": "Must strictly match Class name",
+          "b": "Any valid Java identifier"
+        },
+        {
+          "feature": "Invocation",
+          "a": "Called implicitly during 'new'",
+          "b": "Called explicitly on reference or class"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "What actually happens in JVM memory when you execute 'Car c = new Car(\"Sedan\");'?",
+      "answer": "Three sequential steps occur: 1) The thread stack creates local reference variable 'c'. 2) The JVM allocates bytes on the Heap, zero-initializes fields to defaults, and invokes the Car constructor to populate 'Sedan'. 3) The heap memory address is returned and assigned to stack variable 'c'.",
+      "trapsToAvoid": "Saying 'the object is stored in variable c'. Variables only store 32-bit/64-bit reference addresses pointing to the heap."
+    },
+    {
+      "question": "If you write a class without any constructor, what does the compiler generate?",
+      "answer": "The compiler generates a public zero-argument default constructor with a single call 'super();'. However, if you declare ANY parameterized constructor, the default constructor is NOT generated.",
+      "trapsToAvoid": "Believing Java always provides a default constructor even if a custom constructor exists."
+    },
+    {
+      "question": "Can a constructor be declared static, final, or abstract in Java?",
+      "answer": "No. Constructors cannot be static (they operate on 'this' instance context), cannot be final (constructors are never inherited or overridden), and cannot be abstract (they must execute concrete state initialization).",
+      "trapsToAvoid": "Confusing constructor overloading with method overriding."
+    },
+    {
+      "question": "What is Object Aliasing and why is it dangerous in concurrent systems?",
+      "answer": "Object Aliasing occurs when multiple reference variables point to the exact same heap memory address. Mutating object state through one reference silently changes the observable state for all aliases, causing race conditions in multithreaded systems.",
+      "codeSnippet": "Car a = new Car(\"Tesla\");\nCar b = a; // Aliasing: b points to exact same heap object\nb.setSpeed(100); // a.getSpeed() is now also 100!",
+      "trapsToAvoid": "Assuming assigning 'b = a' duplicates the object."
+    },
+    {
+      "question": "What is the rule for this() call placement in constructor chaining?",
+      "answer": "'this()' must strictly be the first executable statement in the constructor body. This guarantees that prerequisite delegated initialization completes before local field assignment executes.",
+      "trapsToAvoid": "Placing logging or parameter validation before this()\u2014this triggers a compile-time error."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Heap Object Independence",
+      "explanation": "Every 'new' expression allocates distinct memory; modifications to one instance never alter another instance unless sharing static references."
+    },
+    {
+      "rule": "First-Line Chaining Invariant",
+      "explanation": "Calls to this() or super() must occupy the very first line of a constructor body."
+    },
+    {
+      "rule": "Default Constructor Suppression",
+      "explanation": "Declaring any custom constructor permanently suppresses automated compiler default constructor generation."
+    },
+    {
+      "rule": "Static Context Isolation",
+      "explanation": "Static methods cannot access instance variables or call 'this' because no heap instance exists during invocation."
+    },
+    {
+      "rule": "Reachability Determines Lifecycle",
+      "explanation": "An object remains live on the heap as long as a chain of references connects it to an active GC root."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "Memory Allocation",
+      "optionA": "Stack: Primitive values & reference pointers",
+      "optionB": "Heap: Dynamic object state & arrays"
+    },
+    {
+      "aspect": "Lifetime",
+      "optionA": "Stack: Bounded to method scope",
+      "optionB": "Heap: Bounded to Garbage Collection reachability"
+    }
+  ]
+},
+    "codeSnippet": {
         "title": "Comprehensive Enterprise Example: Employee Registry with Chained Constructors & Shared Counters",
         "code": "public class OOPMasteryDemo {\n    public static class Employee {\n        // Static shared counter across all instances\n        private static int employeeCounter = 1000;\n\n        // Instance fields (unique per object on Heap)\n        private final int id;\n        private String name;\n        private String department;\n        private double salary;\n\n        // Primary constructor\n        public Employee(String name, String department, double salary) {\n            this.id = ++employeeCounter; // Shared sequence\n            this.name = (name != null) ? name : \"Unknown\";\n            this.department = (department != null) ? department : \"General\";\n            this.salary = Math.max(0.0, salary);\n        }\n\n        // Chained constructor 1: defaults salary to 50000\n        public Employee(String name, String department) {\n            this(name, department, 50000.0);\n        }\n\n        // Chained constructor 2: defaults department and salary\n        public Employee(String name) {\n            this(name, \"Onboarding\");\n        }\n\n        public static int getTotalEmployeesCreated() {\n            return employeeCounter - 1000;\n        }\n\n        public void display() {\n            System.out.printf(\"ID: %d | Name: %s | Dept: %s | Salary: $%.2f%n\",\n                id, name, department, salary);\n        }\n    }\n\n    public static void main(String[] args) {\n        // Heap allocation and constructor chaining\n        Employee e1 = new Employee(\"Alice\", \"Engineering\", 95000.0);\n        Employee e2 = new Employee(\"Bob\", \"Marketing\");\n        Employee e3 = new Employee(\"Charlie\");\n\n        e1.display();\n        e2.display();\n        e3.display();\n\n        System.out.println(\"Total Created: \" + Employee.getTotalEmployeesCreated());\n\n        // Reference aliasing demonstration\n        Employee alias = e1;\n        System.out.println(\"Same reference check (alias == e1): \" + (alias == e1));\n    }\n}",
         "lineByLineExplanation": [

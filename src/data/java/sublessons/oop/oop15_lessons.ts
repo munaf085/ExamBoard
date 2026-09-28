@@ -1622,6 +1622,197 @@ export const oop15Lessons: Record<string, DetailedLesson> = {
       "Liskov Substitution Principle (LSP): LSP mandates that subtypes must be behavioral substitutes for their supertypes. Subclasses cannot strengthen preconditions, cannot weaken postconditions, and must preserve all superclass invariants. Refusing inherited contracts via UnsupportedOperationException or breaking dimension independence (Square extends Rectangle) violates LSP."
     ],
     "diagram": "```\n                 <<sealed interface>>\n                      AsyncJob\n                (permits Queued, Running, Completed, Failed)\n                         ^\n       +-----------------+-----------------+-----------------+\n       |                 |                 |                 |\n  final record      final record      final record      final record\n    Queued            Running          Completed           Failed\n  (UUID id,         (UUID id,         (UUID id,         (UUID id,\n   Instant ts)       int progress)     String result)    Throwable err)\n\n   // Exhaustive Modern Switch (No 'default' required, compiler verified):\n   String status = switch(job) {\n       case Queued q      -> \"Waiting in queue at \" + q.ts();\n       case Running r     -> \"In progress: \" + r.progress() + \"%\";\n       case Completed c   -> \"Done: \" + c.result();\n       case Failed f      -> \"Failed: \" + f.err().getMessage();\n   };\n```",
+    "cheatSheet": {
+  "summary": "Modern Java (Java 16+) enhances OOP with concise immutable data carriers (record), exhaustively restricted type hierarchies (sealed), and robust nested class encapsulation.",
+  "syntaxTemplate": "public sealed interface Payment permits CardPayment, CryptoPayment {\n    double amount();\n}\n\npublic record CardPayment(double amount, String cardNumber) implements Payment {\n    // Compact constructor for validation\n    public CardPayment {\n        if (amount <= 0) throw new IllegalArgumentException(\"Amount must be positive\");\n    }\n}\n\npublic record CryptoPayment(double amount, String walletAddress) implements Payment {}",
+  "quickDefinitions": [
+    {
+      "term": "Record (Java 16+)",
+      "oneLiner": "A transparent immutable data carrier class that eliminates boilerplate POJO code.",
+      "interviewExplanation": "Javac auto-generates private final fields, canonical constructor, accessors (no 'get' prefix), equals(), hashCode(), and toString(). Extends java.lang.Record and cannot extend other classes.",
+      "realWorldExample": "A sealed physical manifest on an armored shipping truck recording sender, receiver, and cargo weight.",
+      "codeExample": "public record Point(int x, int y) { } // 1 line replaces 50 lines of POJO boilerplate!"
+    },
+    {
+      "term": "Compact Constructor",
+      "oneLiner": "A special record constructor syntax omitting parameter list used purely for validation and normalization.",
+      "interviewExplanation": "Executed before fields are assigned. You validate or normalize inputs directly without writing 'this.field = field;'.",
+      "realWorldExample": "Airport passport scan checkpoint that validates passport expiry before handing the traveler their boarding pass.",
+      "codeExample": "public record User(String email) {\n    public User { email = email.trim().toLowerCase(); } // Compact\n}"
+    },
+    {
+      "term": "Sealed Class (Java 17+)",
+      "oneLiner": "A class or interface that explicitly restricts which subclasses are permitted to extend or implement it.",
+      "interviewExplanation": "Declared using 'sealed' and 'permits'. Gives the author complete control over the class hierarchy, preventing unauthorized third-party subclassing.",
+      "realWorldExample": "National central bank issuing currency: Only authorized state mints have permission to print legal tender.",
+      "codeExample": "public sealed class Shape permits Circle, Square { ... }"
+    },
+    {
+      "term": "Static Nested Class",
+      "oneLiner": "A static class declared inside another class that acts as an independent top-level class with namespace grouping.",
+      "interviewExplanation": "Does NOT hold a hidden reference to the outer class instance. Cannot access outer non-static fields. Consumes less memory than an inner class.",
+      "realWorldExample": "A specialized tool designed to repair a Ferrari, stored in the same Ferrari toolbox without being welded to the car body.",
+      "codeExample": "public class Outer {\n    public static class Nested { void run() { ... } }\n}"
+    },
+    {
+      "term": "Inner Class (Non-static)",
+      "oneLiner": "A class declared inside another class that implicitly holds a hidden reference to the enclosing outer instance.",
+      "interviewExplanation": "Cannot exist without an outer instance (Outer.this). Can cause severe memory leaks if the inner instance outlives the outer instance in long-lived caches.",
+      "realWorldExample": "The beating heart inside a living human body; it cannot exist or function outside the enclosing host body.",
+      "codeExample": "Outer outer = new Outer();\nOuter.Inner inner = outer.new Inner(); // Bound to outer"
+    },
+    {
+      "term": "Exhaustive Pattern Matching",
+      "oneLiner": "Compiler-verified switch expressions across sealed hierarchies that eliminate the need for 'default' branches.",
+      "interviewExplanation": "Because the compiler knows every permitted subtype of a sealed class, switch expressions verify all cases at compile time. Adding a new subtype forces compiler errors everywhere it is handled.",
+      "realWorldExample": "A complete traffic light switch checking Red, Yellow, Green; with no other colors legally possible, no 'default' is needed.",
+      "codeExample": "String desc = switch (shape) {\n    case Circle c -> \"Round\";\n    case Square s -> \"Four-sided\";\n}; // No default branch needed!"
+    }
+  ],
+  "differences": [
+    {
+      "title": "Record vs Standard Class",
+      "conceptA": "Record (Java 16+)",
+      "conceptB": "Standard Class",
+      "keyDifference": "Record is an immutable data carrier with zero boilerplate; Class is a general-purpose stateful object.",
+      "comparisonPoints": [
+        {
+          "feature": "Immutability",
+          "a": "Strictly immutable (all fields final)",
+          "b": "Mutable or immutable"
+        },
+        {
+          "feature": "Inheritance",
+          "a": "Cannot extend other classes (extends Record)",
+          "b": "Can extend any non-final class"
+        },
+        {
+          "feature": "Boilerplate",
+          "a": "Auto-generates equals, hashCode, toString, getters",
+          "b": "Manual or requires Lombok @Data"
+        },
+        {
+          "feature": "Field Mutation",
+          "a": "Impossible (no setters)",
+          "b": "Allowed via mutators"
+        }
+      ]
+    },
+    {
+      "title": "Static Nested Class vs Non-Static Inner Class",
+      "conceptA": "Static Nested Class",
+      "conceptB": "Non-Static Inner Class",
+      "keyDifference": "Static nested has NO outer instance pointer; Inner class holds an implicit hidden outer reference.",
+      "comparisonPoints": [
+        {
+          "feature": "Outer Reference",
+          "a": "No reference to outer instance",
+          "b": "Implicit hidden pointer (Outer.this)"
+        },
+        {
+          "feature": "Instantiation",
+          "a": "new Outer.Nested()",
+          "b": "outerInstance.new Inner()"
+        },
+        {
+          "feature": "Outer Member Access",
+          "a": "Can access ONLY static outer members",
+          "b": "Can access ALL outer members (even private)"
+        },
+        {
+          "feature": "Memory Leak Risk",
+          "a": "Zero risk of leaking outer instance",
+          "b": "High risk if passed to long-lived threads/caches"
+        }
+      ]
+    },
+    {
+      "title": "Sealed Class vs Final Class",
+      "conceptA": "Sealed Class",
+      "conceptB": "Final Class",
+      "keyDifference": "Sealed permits specific known subclasses; Final prohibits all subclassing completely.",
+      "comparisonPoints": [
+        {
+          "feature": "Subclassing",
+          "a": "Permits listed classes only",
+          "b": "Zero subclasses permitted"
+        },
+        {
+          "feature": "Polymorphism",
+          "a": "Enables bounded algebraic polymorphism",
+          "b": "Disables inheritance polymorphism"
+        },
+        {
+          "feature": "Exhaustive Switch",
+          "a": "Enables compiler-checked switch",
+          "b": "Not applicable to hierarchies"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "Why use Java Records instead of Lombok's @Data or traditional POJOs?",
+      "answer": "Records are a first-class language feature offering guaranteed immutable semantics, built-in serialization safety, and native pattern matching support. Unlike Lombok, Records require no external annotation processors, bytecode manipulation, or IDE plugins.",
+      "trapsToAvoid": "Thinking Records are just syntactic sugar; they have special JVM serialization rules that bypass reflection hacks."
+    },
+    {
+      "question": "Why can non-static inner classes cause subtle memory leaks?",
+      "answer": "Every non-static inner class instance holds a hidden synthetic reference to its enclosing outer instance. If the inner instance is stored in a static cache, long-lived listener list, or background thread, the entire outer object cannot be garbage collected.",
+      "codeSnippet": "// Fix: Make nested classes static to detach outer reference\npublic static class CacheEntry { ... }",
+      "trapsToAvoid": "Using non-static anonymous Runnables or Handlers in Android or server request pipelines."
+    },
+    {
+      "question": "How do Sealed Classes enhance modern switch expressions?",
+      "answer": "Because the compiler knows every possible subclass via the 'permits' clause, a switch expression over a sealed hierarchy is exhaustive. The developer does not need a 'default' branch, and adding a new permitted subclass triggers compile-time errors at every unhandled switch.",
+      "trapsToAvoid": "Adding an empty 'default -> {}' branch to a sealed switch, which silently defeats compiler exhaustiveness checks."
+    },
+    {
+      "question": "What is the difference between a canonical constructor and a compact constructor in Records?",
+      "answer": "A canonical constructor explicitly declares the full parameter list matching the record components: 'public Point(int x, int y) { ... }'. A compact constructor omits parameters and assignment: 'public Point { if (x < 0) ... }', running validation before implicit assignment.",
+      "trapsToAvoid": "Writing explicit 'this.x = x;' inside a compact constructor; javac does this automatically."
+    },
+    {
+      "question": "Can a Record implement interfaces or extend other classes?",
+      "answer": "A Record can implement any number of interfaces (e.g. Comparable, Serializable). However, it CANNOT extend any other class because it already implicitly extends java.lang.Record and Java forbids multiple class inheritance.",
+      "trapsToAvoid": "Attempting 'public record User(String id) extends BaseEntity'."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Record Component Immutability",
+      "explanation": "Record fields are always private and final; records cannot declare instance fields outside their component header."
+    },
+    {
+      "rule": "Sealed Subclass Modifier Rule",
+      "explanation": "Every permitted subclass of a sealed class must explicitly be declared final, sealed, or non-sealed."
+    },
+    {
+      "rule": "Prefer Static Nested Classes",
+      "explanation": "Always declare nested classes static unless direct access to outer instance state is strictly required."
+    },
+    {
+      "rule": "Exhaustive Switch Integrity",
+      "explanation": "Do not add redundant 'default' clauses when switching over sealed hierarchies to preserve compile-time exhaustiveness checks."
+    },
+    {
+      "rule": "Record Serialization Safety",
+      "explanation": "Record deserialization uses canonical constructors and cannot be spoofed by reflection or readObject bytecode tampering."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "Data Carriers",
+      "optionA": "Record: Immutable canonical data carrier",
+      "optionB": "Class: General mutable state container"
+    },
+    {
+      "aspect": "Hierarchy Control",
+      "optionA": "Sealed: Bounded known subclasses",
+      "optionB": "Final: Completely closed hierarchy"
+    }
+  ]
+},
     "codeSnippet": {
       "title": "Comprehensive Modern Domain Architecture",
       "code": "public class ModernOopDemo {\n    public sealed interface PaymentMethod permits CreditCard, BankTransfer, Crypto {}\n\n    public record CreditCard(String pan, String cvv, int expYear) implements PaymentMethod {\n        public CreditCard {\n            if (pan == null || pan.length() < 16) throw new IllegalArgumentException(\"Invalid PAN\");\n            if (cvv == null || cvv.length() != 3) throw new IllegalArgumentException(\"Invalid CVV\");\n        }\n    }\n\n    public record BankTransfer(String iban, String swift) implements PaymentMethod {}\n    public record Crypto(String walletAddress, String network) implements PaymentMethod {}\n\n    public static String processPayment(PaymentMethod method, double amount) {\n        return switch (method) {\n            case CreditCard(var pan, var cvv, var exp) -> \"Charging $\" + amount + \" to Card ****\" + pan.substring(12);\n            case BankTransfer(var iban, var swift)     -> \"Transferring $\" + amount + \" to IBAN \" + iban;\n            case Crypto(var wallet, var net)           -> \"Broadcasting transaction of $\" + amount + \" on \" + net;\n        };\n    }\n\n    public static void main(String[] args) {\n        PaymentMethod pm = new CreditCard(\"1234567812345678\", \"999\", 2028);\n        System.out.println(processPayment(pm, 250.0));\n    }\n}",
@@ -1653,27 +1844,6 @@ export const oop15Lessons: Record<string, DetailedLesson> = {
         "code": "import java.lang.ref.WeakReference;\n\npublic class EventBus {\n    private final String busName = \"MainBus\";\n\n    // Static nested class avoids strong reference leak to EventBus\n    public static class SafeHandler {\n        private final WeakReference<EventBus> busRef;\n\n        public SafeHandler(EventBus bus) {\n            this.busRef = new WeakReference<>(bus);\n        }\n\n        public void onEvent(String message) {\n            EventBus bus = busRef.get();\n            if (bus != null) {\n                System.out.println(bus.busName + \" received: \" + message);\n            } else {\n                System.out.println(\"Enclosing bus was garbage collected\");\n            }\n        }\n    }\n}"
       }
     ],
-    "cheatSheet": {
-      "summary": "The **Module 7 Capstone Challenge & Interview Assessment** evaluates your comprehensive command of advanced and modern Object-Oriented Programming features introduced across modern Java LTS releases (Java 16, 17, and 21) alongside foundational architectural principles.",
-      "rules": [
-        {
-          "rule": "Java Records & Immutable State Carriers",
-          "explanation": "Java Records (introduced in Java 16) provide transparent carrier semantics for immutable data. The compiler automatically synthesizes private final fields, canonical constructor, a..."
-        },
-        {
-          "rule": "Sealed Classes & Exhaustive Pattern Matching",
-          "explanation": "Sealed types (Java 17) restrict which classes or interfaces may extend or implement them using the 'permits' clause. Direct subtypes must explicitly declare 'final', 'sealed', or '..."
-        },
-        {
-          "rule": "Nested & Inner Class Encapsulation",
-          "explanation": "Static nested classes are top-level classes packaged inside an outer class namespace without an enclosing instance reference. Non-static inner classes maintain an implicit 'Outer.t..."
-        },
-        {
-          "rule": "Liskov Substitution Principle (LSP)",
-          "explanation": "LSP mandates that subtypes must be behavioral substitutes for their supertypes. Subclasses cannot strengthen preconditions, cannot weaken postconditions, and must preserve all supe..."
-        }
-      ]
-    },
     "beginnerMistakes": [
       {
         "mistake": "Mutating mutable objects passed into Java Record components",

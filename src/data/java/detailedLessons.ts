@@ -86,6 +86,26 @@ export interface DetailedLesson {
     syntaxTemplate?: string;
     rules: { rule: string; explanation: string }[];
     quickComparison?: { aspect: string; optionA: string; optionB: string; optionC?: string }[];
+    quickDefinitions?: {
+      term: string;
+      oneLiner: string;
+      interviewExplanation?: string;
+      realWorldExample?: string;
+      codeExample?: string;
+    }[];
+    differences?: {
+      title: string;
+      conceptA: string;
+      conceptB: string;
+      keyDifference: string;
+      comparisonPoints?: { feature: string; a: string; b: string }[];
+    }[];
+    mostAskedQuestions?: {
+      question: string;
+      answer: string;
+      codeSnippet?: string;
+      trapsToAvoid?: string;
+    }[];
   };
 }
 

@@ -4070,7 +4070,169 @@ public class Main {
     "The 'Classes Win' rule dictates that any concrete method inherited from a superclass always overrides an interface default method.",
     "Marker interfaces (Serializable, Cloneable) convey runtime metadata to the JVM without declaring any methods."
   ],
-  "codeSnippet": {
+  "cheatSheet": {
+  "summary": "Abstraction establishes architectural contracts that decouple essential high-level capability specifications from low-level implementation details, enforced via abstract classes and interfaces.",
+  "syntaxTemplate": "public interface PaymentGateway {\n    void processPayment(double amount); // Abstract contract\n\n    default void logTransaction(String id) { // Java 8+ default method\n        System.out.println(\"Transaction logged: \" + id);\n    }\n    static boolean isValidCurrency(String c) { // Java 8+ static method\n        return c != null && c.length() == 3;\n    }\n}\n\npublic abstract class BaseGateway implements PaymentGateway {\n    protected final String merchantId;\n    public BaseGateway(String merchantId) {\n        this.merchantId = merchantId; // Abstract class can hold state\n    }\n}",
+  "quickDefinitions": [
+    {
+      "term": "Abstraction",
+      "oneLiner": "Hiding internal implementation complexity and exposing only essential functional contracts to consumers.",
+      "interviewExplanation": "Abstraction defines WHAT an entity does rather than HOW it does it. It allows developers to build modular, loosely coupled architectures where implementations can be swapped seamlessly.",
+      "realWorldExample": "Driving an automobile: The driver interacts with pedals and steering wheel (abstract interface) without knowing fuel injector timings or transmission gearing (hidden details).",
+      "codeExample": "public interface List<E> { void add(E e); } // Caller uses List without caring if ArrayList or LinkedList"
+    },
+    {
+      "term": "Abstract Class",
+      "oneLiner": "A class declared 'abstract' that cannot be instantiated directly with 'new' and may contain abstract and concrete methods.",
+      "interviewExplanation": "Used when multiple related classes share common state (instance fields) and reusable concrete method implementations, while leaving specific abstract methods for subclasses to complete.",
+      "realWorldExample": "A standardized vehicle chassis blueprint defining engine mounts and fuel tanks, but leaving specific body paneling to sedan and truck subclasses.",
+      "codeExample": "public abstract class Graphic {\n    protected int x, y;\n    public abstract void render(); // Contract\n    public void moveTo(int x, int y) { this.x = x; this.y = y; } // Concrete\n}"
+    },
+    {
+      "term": "Interface",
+      "oneLiner": "A pure contract specification defining what an implementing class must do using the 'implements' keyword.",
+      "interviewExplanation": "Enables multiple inheritance of type. All fields are implicitly 'public static final' constants. Methods were historically 100% abstract; Java 8 added default and static methods, and Java 9 added private methods.",
+      "realWorldExample": "An electrical wall socket (AC power). Any appliance conforming to the two-prong shape receives power regardless of whether it is a lamp, microwave, or charger.",
+      "codeExample": "public interface Flyable {\n    void fly(); // Implicitly public abstract\n}"
+    },
+    {
+      "term": "Default Method (Java 8)",
+      "oneLiner": "A method in an interface with a 'default' body implementation that provides backward-compatible API evolution.",
+      "interviewExplanation": "Introduced in Java 8 so Oracle could add methods like .forEach() and .stream() to the Collection interface without breaking millions of third-party implementing classes.",
+      "realWorldExample": "A universal television remote control software update that adds a 'Mute' button behavior without requiring replacement of existing TV sets.",
+      "codeExample": "public interface Logger {\n    void log(String msg);\n    default void logError(String msg) { log(\"ERROR: \" + msg); }\n}"
+    },
+    {
+      "term": "Functional Interface",
+      "oneLiner": "An interface containing exactly one Single Abstract Method (SAM), annotated with @FunctionalInterface.",
+      "interviewExplanation": "Serves as the foundation for Java 8 Lambda expressions and method references (e.g. Runnable, Callable, Consumer, Predicate, Function).",
+      "realWorldExample": "An emergency stop button in a subway station with exactly one dedicated action when pressed.",
+      "codeExample": "@FunctionalInterface\npublic interface Transformer<T, R> {\n    R transform(T input);\n}"
+    },
+    {
+      "term": "Marker Interface",
+      "oneLiner": "An empty interface with zero methods and zero fields used to attach runtime metadata to a class.",
+      "interviewExplanation": "Signals capability to the JVM or frameworks (e.g. Serializable, Cloneable, Remote). Modern Java often prefers custom Annotations over marker interfaces.",
+      "realWorldExample": "A TSA PreCheck stamp on a boarding pass that signals security personnel to permit expedited screening.",
+      "codeExample": "public interface Serializable { /* Empty marker */ }"
+    }
+  ],
+  "differences": [
+    {
+      "title": "Abstract Class vs Interface (Modern Java)",
+      "conceptA": "Abstract Class",
+      "conceptB": "Interface",
+      "keyDifference": "Abstract class provides stateful partial implementation; Interface defines stateless behavioral contracts.",
+      "comparisonPoints": [
+        {
+          "feature": "State / Fields",
+          "a": "Can have instance fields (mutable, private)",
+          "b": "Only public static final constants"
+        },
+        {
+          "feature": "Constructors",
+          "a": "Can define constructors (called via super())",
+          "b": "Zero constructors (cannot hold state)"
+        },
+        {
+          "feature": "Inheritance",
+          "a": "Single inheritance ('extends Base')",
+          "b": "Multiple inheritance ('implements A, B')"
+        },
+        {
+          "feature": "Method Types",
+          "a": "Abstract, concrete, private, protected",
+          "b": "Abstract, default, static, private (Java 9+)"
+        },
+        {
+          "feature": "Design Intent",
+          "a": "IS-A taxonomy with shared state/code",
+          "b": "CAN-DO behavioral contract across unrelated types"
+        }
+      ]
+    },
+    {
+      "title": "Multiple Inheritance of Type vs State",
+      "conceptA": "Multiple Inheritance of Type (Allowed)",
+      "conceptB": "Multiple Inheritance of State (Forbidden)",
+      "keyDifference": "Java allows a class to implement multiple interfaces, but permits extending only one class.",
+      "comparisonPoints": [
+        {
+          "feature": "Language Support",
+          "a": "Fully supported via interfaces",
+          "b": "Forbidden for classes"
+        },
+        {
+          "feature": "Diamond Problem",
+          "a": "Resolved by compiler rules (class wins)",
+          "b": "Prevents conflicting instance field layouts"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "What is Abstraction? Explain with a real-world example.",
+      "answer": "Abstraction is the process of hiding implementation details and showing only essential features to the user. For example, when pressing the accelerator pedal in a car, the driver experiences speed increase (the abstract capability) without needing to know fuel rail pressures or spark plug firing sequences (the hidden implementation).",
+      "trapsToAvoid": "Confusing abstraction with encapsulation. Abstraction is 'What to do' (interface design); encapsulation is 'How to secure data' (access restrictions)."
+    },
+    {
+      "question": "When should you use an Abstract Class vs an Interface in system design?",
+      "answer": "Use an Abstract Class when closely related classes share non-static fields, constructors, or protected template method workflows. Use an Interface when defining a polymorphic contract for potentially unrelated classes (e.g. Comparable or AutoCloseable) or when requiring multiple inheritance.",
+      "trapsToAvoid": "Claiming interfaces are always better because of default methods; interfaces still cannot hold mutable instance state or constructors."
+    },
+    {
+      "question": "Can an abstract class have a constructor if it cannot be instantiated with 'new'?",
+      "answer": "Yes! An abstract class can (and often should) define constructors. They are invoked by subclass constructors via 'super(...)' to initialize inherited state fields correctly.",
+      "trapsToAvoid": "Answering 'No' because abstract classes cannot be directly instantiated."
+    },
+    {
+      "question": "How does Java resolve Diamond Problem collisions with interface default methods?",
+      "answer": "Three rules resolve conflicts: 1) Classes win over interfaces (any superclass method beats interface default methods). 2) Sub-interfaces win over super-interfaces. 3) If two unrelated interfaces provide identical default methods, the implementing class MUST override the method and explicitly disambiguate via 'InterfaceName.super.method()'.",
+      "trapsToAvoid": "Thinking Java crashes with a runtime exception; the compiler flags an ambiguity error immediately."
+    },
+    {
+      "question": "Can an interface have private methods in modern Java?",
+      "answer": "Yes. Starting in Java 9, interfaces can declare private and private static helper methods. They are used to encapsulate redundant logic shared across multiple default methods without exposing helper methods to implementing classes.",
+      "trapsToAvoid": "Stating that all interface methods must be public."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Cannot Instantiate Abstract",
+      "explanation": "Attempting 'new AbstractClass()' results in an immediate compile-time error."
+    },
+    {
+      "rule": "Mandatory Concrete Overrides",
+      "explanation": "The first concrete class in an inheritance hierarchy must implement all inherited abstract methods."
+    },
+    {
+      "rule": "Interface Constants Invariant",
+      "explanation": "All variables declared in an interface are implicitly public, static, and final."
+    },
+    {
+      "rule": "Class-Wins Collision Rule",
+      "explanation": "A concrete method in a superclass always takes precedence over any default method in an interface."
+    },
+    {
+      "rule": "Multiple Interface Compliance",
+      "explanation": "A class can implement any number of interfaces simultaneously while extending a single base class."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "State Management",
+      "optionA": "Abstract Class: Mutable instance fields",
+      "optionB": "Interface: Pure constants only"
+    },
+    {
+      "aspect": "Extensibility",
+      "optionA": "Single inheritance per class",
+      "optionB": "Multiple interface implementations"
+    }
+  ]
+},
+    "codeSnippet": {
     "title": "Enterprise Cloud Notification Pipeline with Abstract Template and Interfaces",
     "code": "interface Auditable {\n    void audit(String event);\n}\n\ninterface SecureChannel {\n    default void encrypt() {\n        System.out.println(\"[SECURITY] Payload encrypted with TLS 1.3 AES-GCM.\");\n    }\n}\n\nabstract class NotificationService implements Auditable, SecureChannel {\n    protected String serviceName;\n    public NotificationService(String serviceName) {\n        this.serviceName = serviceName;\n    }\n\n    // Template method defining invariant notification pipeline\n    public final void dispatch(String recipient, String message) {\n        encrypt();\n        audit(\"Dispatch initiated for \" + recipient);\n        sendPayload(recipient, message);\n        audit(\"Dispatch completed.\");\n    }\n\n    protected abstract void sendPayload(String recipient, String message);\n\n    @Override\n    public void audit(String event) {\n        System.out.println(\"[\" + serviceName + \" AUDIT] \" + event);\n    }\n}\n\nclass EmailService extends NotificationService {\n    public EmailService() { super(\"EMAIL-GATEWAY\"); }\n    @Override\n    protected void sendPayload(String recipient, String message) {\n        System.out.println(\"Sending email to \" + recipient + \": \" + message);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        NotificationService service = new EmailService();\n        service.dispatch(\"dev@corp.com\", \"Server Alert: High CPU load\");\n    }\n}",
     "lineByLineExplanation": [

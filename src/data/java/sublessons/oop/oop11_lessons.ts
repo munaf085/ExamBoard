@@ -2499,7 +2499,192 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         "The '@Override' annotation instructs the compiler to verify signature compatibility, catching subtle signature typos at compile time.",
         "The 'final' keyword creates immutability and finality: final classes cannot be extended, final methods cannot be overridden, and final variables cannot be reassigned."
       ],
-      "codeSnippet": {
+      "cheatSheet": {
+  "summary": "Inheritance facilitates hierarchical classification and code reuse by allowing a derived subclass to inherit state and behavior from a base superclass using the extends keyword, governed by Liskov Substitutability.",
+  "syntaxTemplate": "public class Animal {\n    protected String name;\n    public Animal(String name) {\n        this.name = name;\n    }\n    public void speak() {\n        System.out.println(name + \" makes a sound\");\n    }\n}\n\npublic class Dog extends Animal {\n    private final String breed;\n    public Dog(String name, String breed) {\n        super(name); // First line invocation of parent constructor\n        this.breed = breed;\n    }\n    @Override\n    public void speak() {\n        System.out.println(name + \" barks\");\n    }\n}",
+  "quickDefinitions": [
+    {
+      "term": "Inheritance",
+      "oneLiner": "A mechanism where a child class inherits non-private fields and methods from a parent class using 'extends'.",
+      "interviewExplanation": "Models an IS-A relationship. Promotes code reuse and establishes a shared polymorphic supertype hierarchy. Governed by single-class inheritance in Java.",
+      "realWorldExample": "Biological classification: A Dog IS-A Canine, which IS-A Mammal, which IS-A Vertebrate.",
+      "codeExample": "public class SavingsAccount extends BankAccount { ... }"
+    },
+    {
+      "term": "super Keyword",
+      "oneLiner": "Reference to the direct superclass instance, used to invoke parent constructors and parent methods.",
+      "interviewExplanation": "'super()' invokes the parent constructor and must be the first statement in a child constructor. 'super.method()' calls the superclass implementation, bypassing local overriding.",
+      "realWorldExample": "A subsidiary company forwarding tax escalation requests up to the corporate parent headquarters.",
+      "codeExample": "public Dog(String name) {\n    super(name); // Delegates to Animal constructor\n}"
+    },
+    {
+      "term": "Method Overriding",
+      "oneLiner": "Redefining a superclass method in a subclass with the identical signature to provide specialized behavior.",
+      "interviewExplanation": "Enables dynamic runtime polymorphism. Must not narrow access visibility or throw broader checked exceptions. Covariant return types are permitted.",
+      "realWorldExample": "Universal remote control: 'Power' button command overridden to wake a TV differently than an air conditioner.",
+      "codeExample": "@Override\npublic void draw() {\n    System.out.println(\"Drawing Circle\");\n}"
+    },
+    {
+      "term": "IS-A vs HAS-A",
+      "oneLiner": "IS-A denotes inheritance (Dog IS-A Animal); HAS-A denotes composition (Car HAS-A Engine).",
+      "interviewExplanation": "Enterprise design strongly favors Composition (HAS-A) over Inheritance (IS-A) to prevent fragile base class problems and reduce tight architectural coupling.",
+      "realWorldExample": "A Smartphone IS-A ElectronicDevice (Inheritance), but a Smartphone HAS-A Battery (Composition).",
+      "codeExample": "public class Car {\n    private Engine engine; // HAS-A Composition\n}"
+    },
+    {
+      "term": "final Keyword (Inheritance)",
+      "oneLiner": "A final class cannot be extended; a final method cannot be overridden by any subclass.",
+      "interviewExplanation": "Used to guarantee immutability (e.g. java.lang.String is final) and prevent security vulnerabilities where malicious subclasses alter core business logic.",
+      "realWorldExample": "A non-negotiable legal verdict that cannot be appealed or altered by lower courts.",
+      "codeExample": "public final class SecurityToken { ... } // Cannot be subclassed"
+    },
+    {
+      "term": "Constructor Chaining Order",
+      "oneLiner": "Superclass constructors ALWAYS execute completely before subclass constructors begin execution.",
+      "interviewExplanation": "Ensures foundational superclass state is fully initialized and valid before the subclass attempts to access inherited fields or execute local logic.",
+      "realWorldExample": "Pouring concrete foundations and erecting steel pillars before constructing the rooftop penthouse.",
+      "codeExample": "// 1. Object() -> 2. Animal() -> 3. Dog() constructor sequence"
+    }
+  ],
+  "differences": [
+    {
+      "title": "Inheritance (IS-A) vs Composition (HAS-A)",
+      "conceptA": "Inheritance (IS-A)",
+      "conceptB": "Composition (HAS-A)",
+      "keyDifference": "Inheritance couples subclasses tightly to parent implementation; Composition loosely aggregates components via references.",
+      "comparisonPoints": [
+        {
+          "feature": "Coupling",
+          "a": "Tight coupling (fragile base class issue)",
+          "b": "Loose coupling (components easily swapped)"
+        },
+        {
+          "feature": "Code Reuse",
+          "a": "White-box reuse (subclass sees parent internals)",
+          "b": "Black-box reuse (operates only via public API)"
+        },
+        {
+          "feature": "Flexibility",
+          "a": "Static, fixed compile-time hierarchy",
+          "b": "Dynamic, swappable at runtime"
+        },
+        {
+          "feature": "Best Practice",
+          "a": "Use only for true taxonomic hierarchies",
+          "b": "'Favor composition over inheritance' (GoF)"
+        }
+      ]
+    },
+    {
+      "title": "this() vs super()",
+      "conceptA": "this()",
+      "conceptB": "super()",
+      "keyDifference": "this() chains to another constructor in the SAME class; super() delegates to the direct PARENT constructor.",
+      "comparisonPoints": [
+        {
+          "feature": "Target",
+          "a": "Overloaded constructor in current class",
+          "b": "Constructor in immediate superclass"
+        },
+        {
+          "feature": "Placement",
+          "a": "Must strictly be first statement",
+          "b": "Must strictly be first statement"
+        },
+        {
+          "feature": "Coexistence",
+          "a": "Cannot call both this() and super() in same constructor",
+          "b": "Mutually exclusive on line 1"
+        }
+      ]
+    },
+    {
+      "title": "Method Overriding vs Method Hiding",
+      "conceptA": "Method Overriding (Instance)",
+      "conceptB": "Method Hiding (Static)",
+      "keyDifference": "Instance methods resolve at runtime via dynamic dispatch; Static methods resolve at compile-time via reference type.",
+      "comparisonPoints": [
+        {
+          "feature": "Method Type",
+          "a": "Non-static instance methods",
+          "b": "Static class methods"
+        },
+        {
+          "feature": "Resolution Time",
+          "a": "Runtime (based on heap object type)",
+          "b": "Compile-time (based on reference type)"
+        },
+        {
+          "feature": "Polymorphism",
+          "a": "True dynamic polymorphism",
+          "b": "No polymorphism (early static binding)"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "Why does Java not support multiple class inheritance (The Diamond Problem)?",
+      "answer": "If Class A defines method foo(), and both Class B and Class C extend A and override foo(), then if Class D could extend both B and C, calling d.foo() creates ambiguity: which parent implementation should execute? Java eliminates this ambiguity by enforcing single class inheritance.",
+      "trapsToAvoid": "Forgetting that Java DOES allow multiple inheritance of TYPE through interfaces."
+    },
+    {
+      "question": "What is the exact execution order of constructors in an inheritance hierarchy?",
+      "answer": "Top-down starting from java.lang.Object. When a subclass constructor is called, its first statement super() delegates upward until Object() executes, then parent constructors execute in descending order, ending with the child constructor body.",
+      "trapsToAvoid": "Believing child constructors execute before parent constructors."
+    },
+    {
+      "question": "Can you override a private or static method in Java?",
+      "answer": "No. Private methods are not visible to subclasses, so writing a method with the same name in a subclass is merely creating a new independent method. Static methods cannot be overridden because they resolve via static binding at compile time (this is Method Hiding, not overriding).",
+      "trapsToAvoid": "Adding @Override to a static method; the compiler flags this as an error."
+    },
+    {
+      "question": "What happens if a parent class does not have a no-arg constructor?",
+      "answer": "If a parent class only defines parameterized constructors, the compiler does not generate a default no-arg constructor. Subclass constructors will fail to compile unless they explicitly call 'super(args)' with matching parameters on line 1.",
+      "trapsToAvoid": "Assuming subclasses compile automatically without super() calls when parents lack no-arg constructors."
+    },
+    {
+      "question": "What is the Liskov Substitution Principle (LSP) in relation to inheritance?",
+      "answer": "LSP states that objects of a superclass should be replaceable with objects of its subclasses without breaking application correctness. Subclasses must adhere to the superclass contract, never strengthening preconditions or weakening postconditions.",
+      "trapsToAvoid": "The classic violation: making Square extend Rectangle, where setWidth() alters height, breaking client assumptions."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Single Class Inheritance",
+      "explanation": "A Java class can extend at most one direct superclass ('extends Object' if omitted)."
+    },
+    {
+      "rule": "Super Invocation Invariant",
+      "explanation": "If a child constructor does not write this() or super(), javac automatically inserts super() on line 1."
+    },
+    {
+      "rule": "Never Narrow Visibility",
+      "explanation": "An overriding method cannot have a more restrictive access modifier than the superclass method."
+    },
+    {
+      "rule": "Exception Broadening Prohibition",
+      "explanation": "An overriding method cannot declare broader or new checked exceptions than the superclass method."
+    },
+    {
+      "rule": "Constructors Are Not Inherited",
+      "explanation": "Subclasses do not inherit superclass constructors; they must declare their own and delegate via super()."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "Inheritance",
+      "optionA": "Single class extends",
+      "optionB": "Multiple interfaces implements"
+    },
+    {
+      "aspect": "Reuse Strategy",
+      "optionA": "Inheritance: IS-A taxonomic relationship",
+      "optionB": "Composition: HAS-A component aggregation"
+    }
+  ]
+},
+    "codeSnippet": {
         "title": "Comprehensive Inheritance Architecture: Audited Bank Account Hierarchy",
         "code": "public class InheritanceMasteryDemo {\n    public static class Account {\n        private final String accountNumber;\n        protected double balance;\n\n        public Account(String accNo, double initialBalance) {\n            this.accountNumber = accNo;\n            this.balance = Math.max(0.0, initialBalance);\n        }\n\n        public void deposit(double amount) {\n            if (amount > 0) balance += amount;\n        }\n\n        public boolean withdraw(double amount) {\n            if (amount > 0 && amount <= balance) {\n                balance -= amount;\n                return true;\n            }\n            return false;\n        }\n\n        public String getAccountNumber() { return accountNumber; }\n        public double getBalance() { return balance; }\n    }\n\n    public static final class PremiumCheckingAccount extends Account {\n        private final double overdraftLimit;\n\n        public PremiumCheckingAccount(String accNo, double balance, double overdraftLimit) {\n            super(accNo, balance); // Explicit super() chaining\n            this.overdraftLimit = Math.max(0.0, overdraftLimit);\n        }\n\n        @Override\n        public boolean withdraw(double amount) {\n            if (amount > 0 && amount <= (balance + overdraftLimit)) {\n                balance -= amount;\n                return true;\n            }\n            return false;\n        }\n\n        public double getAvailableFunds() {\n            return balance + overdraftLimit;\n        }\n    }\n\n    public static void main(String[] args) {\n        PremiumCheckingAccount acc = new PremiumCheckingAccount(\"PREM-901\", 100.0, 200.0);\n        acc.deposit(50.0); // Inherited from Account\n        boolean w1 = acc.withdraw(250.0); // Overridden in PremiumCheckingAccount\n        System.out.println(\"Withdraw $250 with overdraft: \" + w1);\n        System.out.printf(\"Current Balance: $%.2f | Total Available: $%.2f%n\",\n            acc.getBalance(), acc.getAvailableFunds());\n    }\n}",
         "lineByLineExplanation": [

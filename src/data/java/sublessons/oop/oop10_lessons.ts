@@ -2541,6 +2541,197 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
       "Immutable Classes guarantee that an object's state can never change after construction. They are inherently thread-safe, have zero side-effects, and form the backbone of modern Java architecture.",
       "The 'Tell, Don't Ask' principle reminds us to delegate business actions to the object itself rather than pulling raw variables out to compute logic externally."
     ],
+    "cheatSheet": {
+  "summary": "Encapsulation bundles data (state) and code (methods) into a single cohesive unit while strictly restricting direct external access via access modifiers and defensive copying to protect internal business invariants.",
+  "syntaxTemplate": "public final class ImmutablePerson {\n    private final String name;\n    private final List<String> roles;\n\n    public ImmutablePerson(String name, List<String> roles) {\n        this.name = name;\n        this.roles = (roles != null) ? new ArrayList<>(roles) : List.of(); // Defensive copy in\n    }\n    public String getName() { return name; }\n    public List<String> getRoles() {\n        return new ArrayList<>(roles); // Defensive copy out\n    }\n}",
+  "quickDefinitions": [
+    {
+      "term": "Encapsulation",
+      "oneLiner": "Bundling data fields and operations into a single class while restricting direct external access.",
+      "interviewExplanation": "Encapsulation establishes a secure boundary around an object. It hides internal implementation details (HOW data is stored) and exposes a clean public interface with validation rules.",
+      "realWorldExample": "A medical pill capsule enclosing active drug powder. The patient swallows the capsule without handling or contaminating the raw chemical powder inside.",
+      "codeExample": "public class BankAccount {\n    private double balance;\n    public void deposit(double amount) {\n        if (amount > 0) balance += amount; // Validated invariant\n    }\n}"
+    },
+    {
+      "term": "Data Hiding",
+      "oneLiner": "Declaring fields private to prevent external tampering and enforce access via validated getters/setters.",
+      "interviewExplanation": "Data hiding protects business invariants. If an external client could directly write 'account.balance = -500', the system enters an invalid state.",
+      "realWorldExample": "An Automated Teller Machine (ATM) safe. Customers interact with buttons and a card slot; they cannot reach into the cash vault directly.",
+      "codeExample": "private double balance; // Hidden from direct external writes"
+    },
+    {
+      "term": "Defensive Copying",
+      "oneLiner": "Creating snapshot copies of mutable objects on constructor input and getter return to prevent rep leaks.",
+      "interviewExplanation": "If a constructor saves a caller-provided List or Date reference directly, the caller can mutate that object externally, silently corrupting internal state.",
+      "realWorldExample": "Providing a verified photocopy of your passport to an agency rather than surrendering your original passport booklet.",
+      "codeExample": "public Date getDueDate() {\n    return new Date(this.dueDate.getTime()); // Cloned return\n}"
+    },
+    {
+      "term": "Representation Exposure (Rep Leak)",
+      "oneLiner": "A security vulnerability where internal private mutable state is exposed directly to external callers.",
+      "interviewExplanation": "Occurs when a getter returns a direct reference to a mutable internal field (e.g. array, Date, ArrayList). The caller can modify the internal state without using class methods.",
+      "realWorldExample": "Giving a stranger a duplicate master key to your house when they only asked to borrow a lawnmower.",
+      "codeExample": "public int[] getScores() { return scores; } // BUG: Rep leak! Caller can do getScores()[0] = 999"
+    },
+    {
+      "term": "Immutable Class",
+      "oneLiner": "A class whose observable state cannot be altered in any way after instantiation.",
+      "interviewExplanation": "Created by: 1) Declaring class 'final', 2) Making all fields 'private final', 3) Providing no mutator/setter methods, 4) Defensive copying all mutable inputs and outputs.",
+      "realWorldExample": "A notarized, sealed legal contract. Once signed and stamped, the text can never be edited.",
+      "codeExample": "public final class Point {\n    private final int x, y;\n    public Point(int x, int y) { this.x = x; this.y = y; }\n    public int x() { return x; }\n    public int y() { return y; }\n}"
+    },
+    {
+      "term": "Principle of Least Privilege",
+      "oneLiner": "Granting the most restrictive visibility modifier possible to classes, fields, and methods.",
+      "interviewExplanation": "Start with private fields and methods. Elevate to package-private only if collaborating within package, protected only for subclasses, and public only for stable published APIs.",
+      "realWorldExample": "High-security research laboratory where employees carry badges opening only their designated laboratory room.",
+      "codeExample": "private void validateInput() { ... } // Helper hidden from external consumers"
+    }
+  ],
+  "differences": [
+    {
+      "title": "Encapsulation vs Abstraction",
+      "conceptA": "Encapsulation",
+      "conceptB": "Abstraction",
+      "keyDifference": "Encapsulation is Data Hiding at implementation level; Abstraction is Detail Hiding at interface level.",
+      "comparisonPoints": [
+        {
+          "feature": "Focus",
+          "a": "HOW: Packaging data & securing internal state",
+          "b": "WHAT: Designing contracts & exposing capabilities"
+        },
+        {
+          "feature": "Mechanism",
+          "a": "Private fields, getters/setters, defensive copying",
+          "b": "Abstract classes and Interfaces"
+        },
+        {
+          "feature": "Primary Benefit",
+          "a": "Security, invariant protection, and maintainability",
+          "b": "Decoupling, modularity, and polymorphism"
+        },
+        {
+          "feature": "Real-World Analogy",
+          "a": "Medicine capsule sealing ingredients",
+          "b": "Car steering wheel hiding engine pistons"
+        }
+      ]
+    },
+    {
+      "title": "The 4 Java Access Modifiers",
+      "conceptA": "private / default",
+      "conceptB": "protected / public",
+      "keyDifference": "private & default restrict access to class or package; protected & public expose across packages.",
+      "comparisonPoints": [
+        {
+          "feature": "private",
+          "a": "Visible ONLY inside the declaring class",
+          "b": "Invisible everywhere else"
+        },
+        {
+          "feature": "default (package-private)",
+          "a": "Visible anywhere within the same package",
+          "b": "Invisible outside package (even to subclasses)"
+        },
+        {
+          "feature": "protected",
+          "a": "Visible within package",
+          "b": "Visible to subclasses in DIFFERENT packages"
+        },
+        {
+          "feature": "public",
+          "a": "Visible universally across all packages",
+          "b": "Universal global visibility"
+        }
+      ]
+    },
+    {
+      "title": "Mutable vs Immutable Objects",
+      "conceptA": "Mutable Object",
+      "conceptB": "Immutable Object",
+      "keyDifference": "Mutable objects allow in-place field alteration; Immutable objects produce new instances on mutation.",
+      "comparisonPoints": [
+        {
+          "feature": "Thread Safety",
+          "a": "Requires explicit synchronization (locks)",
+          "b": "Inherently thread-safe with zero locks"
+        },
+        {
+          "feature": "Hash Key Suitability",
+          "a": "Dangerous in HashMaps (hashcode shifts)",
+          "b": "Ideal key in HashMaps & HashSets"
+        },
+        {
+          "feature": "Memory Overhead",
+          "a": "Low (modifies existing heap memory)",
+          "b": "Requires new object allocation on change"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "What is the difference between Abstraction and Encapsulation? (The Classic FAANG Question)",
+      "answer": "Abstraction hides complexity by exposing WHAT an entity does through interfaces without revealing the underlying mechanics. Encapsulation hides internal state and data representation (HOW it works) by wrapping fields in private scope and controlling mutation through validation methods.",
+      "trapsToAvoid": "Saying they are the same thing. Abstraction is about external interface design; Encapsulation is about internal implementation containment."
+    },
+    {
+      "question": "What are the 5 essential steps to create an immutable class in Java?",
+      "answer": "1) Declare class final so it cannot be extended. 2) Make all fields private and final. 3) Do not provide setter methods. 4) Perform defensive copies of mutable arguments in the constructor. 5) Return defensive copies of mutable fields in getters.",
+      "trapsToAvoid": "Forgetting that making fields final is not enough if the field references a mutable object like an ArrayList or Date."
+    },
+    {
+      "question": "What is Representation Exposure (Rep Leak) and how do you prevent it?",
+      "answer": "A rep leak happens when a class returns a direct reference to a private mutable field or stores an external mutable reference directly. Prevent it using defensive copying: clone arrays with .clone() and collections with List.copyOf() or new ArrayList<>(input).",
+      "codeSnippet": "// Fix for rep leak:\npublic int[] getScores() {\n    return scores.clone(); // Returns distinct copy\n}",
+      "trapsToAvoid": "Returning 'Collections.unmodifiableList()' when underlying elements themselves are mutable."
+    },
+    {
+      "question": "Why should fields be private instead of public or protected?",
+      "answer": "Private fields enforce data integrity by funneling all state changes through validating methods. They preserve the freedom to alter internal data structures (e.g. changing an array to a Map) without breaking external client code.",
+      "trapsToAvoid": "Saying 'because Java conventions say so'. The engineering reason is invariant protection and API decoupling."
+    },
+    {
+      "question": "Can an immutable class contain a reference to a mutable object?",
+      "answer": "Yes, provided the immutable class holds the sole reference to that object, defends against incoming reference escapes in the constructor, and returns defensive copies in all accessor methods.",
+      "trapsToAvoid": "Answering 'No'. String, for example, internally holds a mutable byte[] array but is 100% immutable because it never leaks that array reference."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Default to Maximum Restriction",
+      "explanation": "Mark every field private and every class final unless there is an explicit architectural reason to relax visibility."
+    },
+    {
+      "rule": "Defensive Copying on Both Boundaries",
+      "explanation": "Defensively copy mutable objects both when accepting them as constructor arguments and when returning them from getters."
+    },
+    {
+      "rule": "Tell, Don't Ask Principle",
+      "explanation": "Do not pull raw state out of an object with getters to compute business logic elsewhere; tell the object to execute the logic internally."
+    },
+    {
+      "rule": "Immutable State Invariant",
+      "explanation": "Once an immutable object finishes constructor execution, its observable fields can never change value throughout JVM execution."
+    },
+    {
+      "rule": "No Public Mutable Fields",
+      "explanation": "Public mutable fields break encapsulation completely and create critical concurrency vulnerabilities."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "Access Level",
+      "optionA": "Private: Class-internal only",
+      "optionB": "Public: Universal export"
+    },
+    {
+      "aspect": "Mutability",
+      "optionA": "Mutable: In-place state shifts",
+      "optionB": "Immutable: Thread-safe constant state"
+    }
+  ]
+},
     "codeSnippet": {
       "title": "Comprehensive Enterprise Example: Secure Immutable Account Snapshot",
       "code": "import java.util.Arrays;\n\npublic class EncapsulationMasteryDemo {\n    // 1. Immutable Class: final class prevents subclass tampering\n    public static final class AccountSnapshot {\n        // 2. Private final fields\n        private final String accountId;\n        private final double balance;\n        private final String[] transactionTags;\n\n        public AccountSnapshot(String accountId, double balance, String[] tags) {\n            if (accountId == null || accountId.trim().isEmpty()) {\n                throw new IllegalArgumentException(\"Invalid accountId\");\n            }\n            this.accountId = accountId;\n            this.balance = Math.max(0.0, balance); // Invariant: non-negative\n            // 3. Inbound Defensive Copying: prevents caller tampering\n            this.transactionTags = (tags != null) ? tags.clone() : new String[0];\n        }\n\n        public String getAccountId() { return accountId; }\n        public double getBalance() { return balance; }\n\n        // 4. Outbound Defensive Copying: prevents caller modifying internal array\n        public String[] getTransactionTags() {\n            return transactionTags.clone();\n        }\n\n        // 5. Functional 'with-er' method for state evolution without mutation\n        public AccountSnapshot withDeposit(double amount) {\n            if (amount <= 0) return this;\n            return new AccountSnapshot(this.accountId, this.balance + amount, this.transactionTags);\n        }\n    }\n\n    public static void main(String[] args) {\n        String[] tags = {\"SALARY\", \"ONLINE\"};\n        AccountSnapshot s1 = new AccountSnapshot(\"ACC-101\", 500.0, tags);\n\n        // Attack attempt: mutate external array\n        tags[0] = \"HACKED\";\n\n        // Attack attempt: mutate getter return array\n        s1.getTransactionTags()[1] = \"CORRUPTED\";\n\n        // State evolution via with-er\n        AccountSnapshot s2 = s1.withDeposit(250.0);\n\n        System.out.println(\"s1 Balance: $\" + s1.getBalance() + \" | Tags: \" + Arrays.toString(s1.getTransactionTags()));\n        System.out.println(\"s2 Balance: $\" + s2.getBalance() + \" | Tags: \" + Arrays.toString(s2.getTransactionTags()));\n        System.out.println(\"Complete encapsulation preserved! s1 remained 100% immutable.\");\n    }\n}",

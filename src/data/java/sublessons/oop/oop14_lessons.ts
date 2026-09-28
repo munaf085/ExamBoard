@@ -3725,7 +3725,165 @@ public class Main {
     "Deep copying recursively duplicates both the root object and all nested child objects, guaranteeing complete state isolation.",
     "Copy constructors and static factory methods are preferred over the legacy Cloneable interface due to superior type safety and final field support."
   ],
-  "codeSnippet": {
+  "cheatSheet": {
+  "summary": "java.lang.Object sits at the root of the Java class hierarchy, establishing fundamental memory and identity contracts\u2014most critically the equals() and hashCode() contract required for hash-based collections.",
+  "syntaxTemplate": "public class Person {\n    private final String ssn;\n    private final String name;\n\n    public Person(String ssn, String name) {\n        this.ssn = ssn;\n        this.name = name;\n    }\n    @Override\n    public boolean equals(Object o) {\n        if (this == o) return true; // 1. Reflexive reference check\n        if (o == null || getClass() != o.getClass()) return false; // 2. Exact class check\n        Person person = (Person) o;\n        return Objects.equals(ssn, person.ssn); // 3. Logical key equivalence\n    }\n    @Override\n    public int hashCode() {\n        return Objects.hash(ssn); // 4. Consistent with equals\n    }\n}",
+  "quickDefinitions": [
+    {
+      "term": "java.lang.Object",
+      "oneLiner": "The ultimate root superclass of every class in Java; every object inherits its 11 foundational methods.",
+      "interviewExplanation": "Every class implicitly extends Object unless specified otherwise. It defines core lifecycle operations: equals(), hashCode(), toString(), getClass(), clone(), finalize(), and wait()/notify().",
+      "realWorldExample": "Universal DNA shared by all living organisms on Earth providing basic cellular respiration.",
+      "codeExample": "Object obj = new String(\"Universal supertype\");"
+    },
+    {
+      "term": "equals(Object o)",
+      "oneLiner": "Method defining logical equivalence (value equality) as opposed to reference equality (==).",
+      "interviewExplanation": "Default Object implementation checks 'this == o' (memory identity). Classes override it to check logical state equivalence. Must be Reflexive, Symmetric, Transitive, and Consistent.",
+      "realWorldExample": "Two distinct physical $100 bills. They have different serial numbers (== is false), but identical purchasing power (equals() is true).",
+      "codeExample": "str1.equals(str2); // Compares string characters, not memory address"
+    },
+    {
+      "term": "hashCode()",
+      "oneLiner": "Returns an integer hash value representing an object's state for bucket distribution in hash-based collections.",
+      "interviewExplanation": "Used by HashMap, HashSet, and Hashtable to determine bucket index: hash & (table.length - 1). Objects that are equal MUST produce the exact same hashCode.",
+      "realWorldExample": "Postal ZIP codes. Envelopes are sorted into regional bins by ZIP code so delivery drivers do not search every house nationwide.",
+      "codeExample": "@Override public int hashCode() { return Objects.hash(id, email); }"
+    },
+    {
+      "term": "equals() & hashCode() Contract",
+      "oneLiner": "If a.equals(b) is true, then a.hashCode() MUST equal b.hashCode().",
+      "interviewExplanation": "Violating this contract breaks HashMap and HashSet: equal objects will map to different buckets, causing .get() to return null even when the key exists in the map!",
+      "realWorldExample": "If two records represent the exact same citizen, their government social security number must match.",
+      "codeExample": "// If a.equals(b) is true, then a.hashCode() == b.hashCode() is non-negotiable!"
+    },
+    {
+      "term": "toString()",
+      "oneLiner": "Returns a human-readable diagnostic text representation of the object (default: ClassName@HexHash).",
+      "interviewExplanation": "Invoked automatically during string concatenation (+). Overriding toString() is a software engineering best practice for clean logging and debugging.",
+      "realWorldExample": "An asset barcode label printed on a warehouse box showing SKU, Item Name, and Weight.",
+      "codeExample": "@Override public String toString() { return \"User[id=\" + id + \"]\"; }"
+    },
+    {
+      "term": "Shallow Copy vs Deep Copy",
+      "oneLiner": "Shallow copy duplicates primitives and copies references; Deep copy recursively duplicates all child objects.",
+      "interviewExplanation": "Shallow copy leaves nested objects shared between copies; mutating a nested object through one copy mutates both. Deep copy guarantees complete isolation.",
+      "realWorldExample": "Shallow copy: Two people bookmarking the same web link. Deep copy: Printing a paper document for each person to write on independently.",
+      "codeExample": "// Deep copy constructor:\npublic Person(Person other) {\n    this.name = other.name;\n    this.address = new Address(other.address); // Nested copy\n}"
+    }
+  ],
+  "differences": [
+    {
+      "title": "== Operator vs .equals() Method",
+      "conceptA": "== Operator",
+      "conceptB": ".equals() Method",
+      "keyDifference": "== compares primitive values or reference memory addresses; .equals() compares logical object content.",
+      "comparisonPoints": [
+        {
+          "feature": "Target",
+          "a": "Primitive values or memory addresses",
+          "b": "Object content on heap"
+        },
+        {
+          "feature": "Customizable",
+          "a": "No (hardware/JVM pointer comparison)",
+          "b": "Yes (can be overridden)"
+        },
+        {
+          "feature": "Null Handling",
+          "a": "Safe ('null == null' is true)",
+          "b": "Throws NullPointerException if called on null"
+        }
+      ]
+    },
+    {
+      "title": "Shallow Copy vs Deep Copy",
+      "conceptA": "Shallow Copy",
+      "conceptB": "Deep Copy",
+      "keyDifference": "Shallow copy shares child object references; Deep copy recursively clones the entire object graph.",
+      "comparisonPoints": [
+        {
+          "feature": "Field Duplication",
+          "a": "Primitives duplicated, references shared",
+          "b": "Primitives and nested objects duplicated"
+        },
+        {
+          "feature": "Mutation Safety",
+          "a": "Mutating child state affects other copy",
+          "b": "100% independent and isolated"
+        },
+        {
+          "feature": "Performance",
+          "a": "Fast O(1) bitwise copy",
+          "b": "Slower O(N) object graph traversal"
+        }
+      ]
+    }
+  ],
+  "mostAskedQuestions": [
+    {
+      "question": "What is the contract between equals() and hashCode()?",
+      "answer": "1) If a.equals(b) is true, then a.hashCode() MUST equal b.hashCode(). 2) If a.equals(b) is false, hashCodes do NOT need to differ (though different hashes improve HashMap performance). 3) Multiple calls on the same object must return consistent hashes.",
+      "trapsToAvoid": "Believing different objects must have different hashCodes (hash collisions are normal and handled via bucket chaining)."
+    },
+    {
+      "question": "What happens in a HashMap if you override equals() but forget to override hashCode()?",
+      "answer": "The HashMap uses Object's default memory address hashCode. When you insert a key and later query map.get(sameKey), the query object generates a different hash code, searching the wrong bucket and returning null, causing silent data loss.",
+      "trapsToAvoid": "Thinking the map will throw an Exception; it fails silently by returning null."
+    },
+    {
+      "question": "Why should mutable objects NEVER be used as keys in a HashMap?",
+      "answer": "If a mutable key's fields change while stored in a HashMap, its hashCode shifts. When you later call map.get(key), the map calculates the new hash, searches a different bucket, and fails to find the entry, creating a memory leak.",
+      "trapsToAvoid": "Using mutable domain objects (like User with mutable email) as Map keys instead of immutable String or UUID."
+    },
+    {
+      "question": "Why is the Cloneable interface and clone() method considered flawed in Java?",
+      "answer": "1) Cloneable does not declare clone()\u2014it is a broken marker interface. 2) Object.clone() bypasses constructors, breaking invariant initialization. 3) It produces shallow copies by default. Industry standard recommends Copy Constructors or Factory Methods instead.",
+      "trapsToAvoid": "Recommending clone() for production copying; suggest copy constructors: 'new Person(otherPerson)'."
+    },
+    {
+      "question": "Why does equals() take Object as an argument rather than the specific Class type?",
+      "answer": "To override Object.equals(Object o) via dynamic polymorphism! If you write 'public boolean equals(Person p)', you have OVERLOADED equals(), not overridden it. Collections like ArrayList and HashMap call equals(Object), so your method will never be invoked.",
+      "codeSnippet": "// WRONG: Overload (Collections ignore this!)\npublic boolean equals(Person p) { ... }\n\n// CORRECT: Overrides Object.equals\n@Override\npublic boolean equals(Object o) { ... }",
+      "trapsToAvoid": "Writing equals(Person p) without the @Override annotation."
+    }
+  ],
+  "rules": [
+    {
+      "rule": "Always Pair Equals and HashCode",
+      "explanation": "Whenever you override equals(), you MUST override hashCode() using the exact same fields."
+    },
+    {
+      "rule": "Reflexive Equals Check First",
+      "explanation": "Begin equals() with 'if (this == o) return true;' to short-circuit self-comparisons instantly."
+    },
+    {
+      "rule": "Null Safety in Equals",
+      "explanation": "equals(null) must always return false, never throw NullPointerException."
+    },
+    {
+      "rule": "Immutable HashMap Keys",
+      "explanation": "Always use immutable types (String, Integer, Record) as keys in HashMaps to prevent bucket corruption."
+    },
+    {
+      "rule": "Favor Copy Constructors Over Clone",
+      "explanation": "Avoid implementing Cloneable; provide explicit copy constructors for deep duplication."
+    }
+  ],
+  "quickComparison": [
+    {
+      "aspect": "Equality Check",
+      "optionA": "== : Reference pointer address check",
+      "optionB": ".equals() : Logical value content comparison"
+    },
+    {
+      "aspect": "Duplication",
+      "optionA": "Shallow Copy: Shared nested references",
+      "optionB": "Deep Copy: Independent recursive duplicate"
+    }
+  ]
+},
+    "codeSnippet": {
     "title": "Comprehensive Domain Entity with Robust Object Contract and Deep Copy",
     "code": "import java.util.Objects;\n\nclass Address {\n    String city;\n    public Address(String city) { this.city = city; }\n    public Address(Address other) { this.city = other.city; } // Copy constructor\n    @Override public String toString() { return city; }\n}\n\nclass Employee {\n    private final int id;\n    private final String name;\n    private final Address address;\n\n    public Employee(int id, String name, Address address) {\n        this.id = id;\n        this.name = name;\n        this.address = new Address(address); // Defensive copy\n    }\n\n    // Deep copy constructor\n    public Employee(Employee other) {\n        this(other.id, other.name, other.address);\n    }\n\n    public Address getAddress() { return new Address(address); } // Defensive getter\n\n    @Override\n    public boolean equals(Object obj) {\n        if (this == obj) return true;\n        if (obj == null || getClass() != obj.getClass()) return false;\n        Employee other = (Employee) obj;\n        return id == other.id && Objects.equals(name, other.name);\n    }\n\n    @Override\n    public int hashCode() {\n        return Objects.hash(id, name);\n    }\n\n    @Override\n    public String toString() {\n        return String.format(\"Employee[id=%d, name='%s', city='%s']\", id, name, address.city);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Address addr = new Address(\"Seattle\");\n        Employee e1 = new Employee(101, \"Alice\", addr);\n        Employee e2 = new Employee(101, \"Alice\", new Address(\"Boston\"));\n\n        System.out.println(e1); // Uses overridden toString()\n        System.out.println(\"e1.equals(e2): \" + e1.equals(e2)); // true (same id & name)\n        System.out.println(\"e1.hashCode() == e2.hashCode(): \" + (e1.hashCode() == e2.hashCode())); // true\n    }\n}",
     "lineByLineExplanation": [
