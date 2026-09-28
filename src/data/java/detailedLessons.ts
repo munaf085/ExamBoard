@@ -50,7 +50,7 @@ export interface DetailedLesson {
     lineByLineExplanation: { line: string; explanation: string }[];
     output: string;
   };
-  beginnerMistakes: {
+  beginnerMistakes?: {
     mistake: string;
     whyItHappens: string;
     howToFix: string;
@@ -62,6 +62,7 @@ export interface DetailedLesson {
     followUpAnswer?: string;
     keyPhrases?: string[];
     commonMistakeAnswer?: string;
+    focus?: string;
   }[];
   miniQuiz: MiniQuizQuestion[];
   practiceProblem?: PracticeProblem;
