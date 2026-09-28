@@ -1,660 +1,723 @@
 import { ProgrammingExercise } from '../detailedLessons';
 
 // ============================================================
-// DEDICATED HANDS-ON CODING ASSIGNMENTS FOR DATA TYPES & VARIABLES
-// Every problem has Input Format, Output Format, Examples,
-// Hints, Complete Runnable Java Solution, and Expected Output.
+// MODULE 2: DATA TYPES & VARIABLES EXERCISES (LESSONS 2.1 - 2.7)
+// Exactly 10 dedicated coding assignments per lesson (70 total)
 // ============================================================
 
 export const dataTypesExercises: Record<string, ProgrammingExercise[]> = {
-  // ── 2.1 Variables & Scope ──
-  'variables-and-scope': [
+  "variables-and-scope": [
     {
-      id: 'dt-var-1',
-      title: 'Sum, Difference, Product & Quotient of Two Numbers',
-      problemStatement: `Write a Java program to perform basic arithmetic with local variables:
-1. Declare two integer variables: \`int num1 = 20;\` and \`int num2 = 4;\`.
-2. Calculate and store their sum, difference, product, and quotient in separate local variables.
-3. Print each calculated result with an informative message.`,
-      hint: 'Declare local variables like int sum = num1 + num2; and use System.out.println() to display the values.',
-      solutionCode: `public class BasicArithmetic {
-    public static void main(String[] args) {
-        int num1 = 20;
-        int num2 = 4;
-
-        int sum = num1 + num2;
-        int difference = num1 - num2;
-        int product = num1 * num2;
-        int quotient = num1 / num2;
-
-        System.out.println("First Number: " + num1);
-        System.out.println("Second Number: " + num2);
-        System.out.println("Sum: " + sum);
-        System.out.println("Difference: " + difference);
-        System.out.println("Product: " + product);
-        System.out.println("Quotient: " + quotient);
-    }
-}`,
-      output: `First Number: 20
-Second Number: 4
-Sum: 24
-Difference: 16
-Product: 80
-Quotient: 5`,
-      explanation: 'Variables store values in memory. In Java, you specify the type (int) and name, then perform arithmetic operations (+, -, *, /) directly with the variable identifiers.'
+      "id": "dt-1",
+      "title": "Exercise 1: Local Variable Initialization Enforcement",
+      "difficulty": "Easy",
+      "problemStatement": "Declare an uninitialized local integer variable, assign it the value 42, and print 'Result: ' followed by the variable.",
+      "hint": "Local variables must be explicitly assigned before being read.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int x;\n        x = 42;\n        System.out.println(\"Result: \" + x);\n    }\n}",
+      "output": "Result: 42",
+      "explanation": "Java enforces definite assignment for local variables before any read operation occurs."
     },
     {
-      id: 'dt-var-2',
-      title: 'Swap Two Numbers Using a Temporary Variable',
-      problemStatement: `Write a Java program to swap the values of two variables:
-1. Declare \`int a = 15;\` and \`int b = 30;\`.
-2. Print their values before swapping.
-3. Use a third helper variable \`int temp;\` to exchange the values so \`a\` becomes 30 and \`b\` becomes 15.
-4. Print their values after swapping.`,
-      hint: 'Copy the value of a into temp first, then overwrite a with b, and finally put temp into b.',
-      solutionCode: `public class SwapWithTemp {
-    public static void main(String[] args) {
-        int a = 15;
-        int b = 30;
-
-        System.out.println("Before Swap: a = " + a + ", b = " + b);
-
-        // Step 1: Save a in temp
-        int temp = a;
-        // Step 2: Assign b to a
-        a = b;
-        // Step 3: Put saved original a into b
-        b = temp;
-
-        System.out.println("After Swap: a = " + a + ", b = " + b);
-    }
-}`,
-      output: `Before Swap: a = 15, b = 30
-After Swap: a = 30, b = 15`,
-      explanation: 'If you directly assign a = b without saving a first, the original value of a (15) is permanently overwritten. A temporary helper variable preserves it during the exchange.'
+      "id": "dt-2",
+      "title": "Exercise 2: Instance Variable Default Values",
+      "difficulty": "Easy",
+      "problemStatement": "Create a class with uninitialized instance fields of types `int`, `boolean`, and `String`. Instantiate the class and print their default values separated by spaces.",
+      "hint": "Instance fields automatically receive default values (0, false, null) upon heap allocation.",
+      "solutionCode": "public class Solution {\n    int count;\n    boolean active;\n    String name;\n    public static void main(String[] args) {\n        Solution s = new Solution();\n        System.out.println(s.count + \" \" + s.active + \" \" + s.name);\n    }\n}",
+      "output": "0 false null",
+      "explanation": "When an object is allocated on the heap, the JVM zeroes its memory, assigning default values to all instance fields."
     },
     {
-      id: 'dt-var-3',
-      title: 'Swap Two Numbers Without Using a Third Variable',
-      problemStatement: `Write a Java program to swap two integer variables WITHOUT creating a third variable:
-1. Declare \`int a = 10;\` and \`int b = 25;\`.
-2. Print their values before swapping.
-3. Use addition and subtraction arithmetic to swap their contents.
-4. Print their values after swapping to verify \`a = 25\` and \`b = 10\`.`,
-      hint: 'First set a = a + b (combined sum). Then b = a - b (gives original a). Finally a = a - b (gives original b).',
-      solutionCode: `public class SwapWithoutTemp {
-    public static void main(String[] args) {
-        int a = 10;
-        int b = 25;
-
-        System.out.println("Before Swap: a = " + a + ", b = " + b);
-
-        // Step 1: a holds the sum (10 + 25 = 35)
-        a = a + b;
-        // Step 2: b gets the original a (35 - 25 = 10)
-        b = a - b;
-        // Step 3: a gets the original b (35 - 10 = 25)
-        a = a - b;
-
-        System.out.println("After Swap: a = " + a + ", b = " + b);
-    }
-}`,
-      output: `Before Swap: a = 10, b = 25
-After Swap: a = 25, b = 10`,
-      explanation: 'By accumulating both numbers into a single variable sum (a = a + b), you can extract either original operand using subtraction without needing extra memory.'
+      "id": "dt-3",
+      "title": "Exercise 3: Block Scoping Isolation",
+      "difficulty": "Easy",
+      "problemStatement": "Demonstrate block scoping by declaring a variable `int outer = 100;` outside an inner block `{ int inner = 50; }`. Print the sum of `outer` and `inner` from within the block, and `outer` after the block.",
+      "hint": "Inner blocks can access outer variables, but not vice-versa.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int outer = 100;\n        {\n            int inner = 50;\n            System.out.println(\"Inside: \" + (outer + inner));\n        }\n        System.out.println(\"Outside: \" + outer);\n    }\n}",
+      "output": "Inside: 150\nOutside: 100",
+      "explanation": "Variables declared inside nested curly braces `{}` are scoped strictly to that block and popped off the stack when execution exits."
     },
     {
-      id: 'dt-var-4',
-      title: 'Calculate Area and Perimeter of a Rectangle',
-      problemStatement: `Write a Java program to calculate geometry measurements using variables:
-1. Declare two double variables: \`double length = 12.5;\` and \`double width = 5.0;\`.
-2. Calculate the area using formula: \`length * width\`.
-3. Calculate the perimeter using formula: \`2 * (length + width)\`.
-4. Print the length, width, area, and perimeter.`,
-      hint: 'Use the double data type to support decimal numbers for length, width, area, and perimeter.',
-      solutionCode: `public class RectangleCalculator {
-    public static void main(String[] args) {
-        double length = 12.5;
-        double width = 5.0;
-
-        double area = length * width;
-        double perimeter = 2 * (length + width);
-
-        System.out.println("Length: " + length);
-        System.out.println("Width: " + width);
-        System.out.println("Area: " + area);
-        System.out.println("Perimeter: " + perimeter);
-    }
-}`,
-      output: `Length: 12.5
-Width: 5.0
-Area: 62.5
-Perimeter: 35.0`,
-      explanation: 'Parentheses (length + width) ensure addition happens before multiplying by 2, respecting standard arithmetic precedence.'
+      "id": "dt-4",
+      "title": "Exercise 4: Static Variable Lifetime",
+      "difficulty": "Medium",
+      "problemStatement": "Create a class with a static counter. Increment it in a constructor. Create three instances and print the static counter value.",
+      "hint": "Static variables exist once per class in Metaspace/Class Statics and are shared across instances.",
+      "solutionCode": "public class Solution {\n    static int instanceCount = 0;\n    public Solution() { instanceCount++; }\n    public static void main(String[] args) {\n        new Solution();\n        new Solution();\n        new Solution();\n        System.out.println(\"Instances: \" + Solution.instanceCount);\n    }\n}",
+      "output": "Instances: 3",
+      "explanation": "Static fields belong to the Class object rather than individual heap instances, persisting across object allocations."
     },
     {
-      id: 'dt-var-5',
-      title: 'Convert Celsius Temperature to Fahrenheit',
-      problemStatement: `Write a Java program to convert temperature from Celsius to Fahrenheit:
-1. Declare a variable \`double celsius = 25.0;\`.
-2. Convert it to Fahrenheit using the standard formula: \`F = (C * 9/5) + 32\`.
-3. Store the result in \`double fahrenheit;\`.
-4. Print both the Celsius and converted Fahrenheit temperatures.`,
-      hint: 'Write 9.0 / 5.0 rather than 9 / 5, because 9 / 5 in Java does integer division and truncates to 1!',
-      solutionCode: `public class TemperatureConverter {
-    public static void main(String[] args) {
-        double celsius = 25.0;
-        double fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
-
-        System.out.println("Temperature in Celsius: " + celsius + "°C");
-        System.out.println("Temperature in Fahrenheit: " + fahrenheit + "°F");
-    }
-}`,
-      output: `Temperature in Celsius: 25.0°C
-Temperature in Fahrenheit: 77.0°F`,
-      explanation: 'When working with double variables, using floating-point literals like 9.0 and 5.0 ensures exact decimal arithmetic without integer truncation.'
+      "id": "dt-5",
+      "title": "Exercise 5: Variable Shadowing Disambiguation",
+      "difficulty": "Medium",
+      "problemStatement": "Create a class with an instance variable `int x = 10;`. In a method `void print(int x)`, print the local parameter `x` and the instance field `this.x` separated by a colon.",
+      "hint": "Use 'this.x' to refer to the shadowed instance variable.",
+      "solutionCode": "public class Solution {\n    int x = 10;\n    void print(int x) {\n        System.out.println(x + \":\" + this.x);\n    }\n    public static void main(String[] args) {\n        new Solution().print(25);\n    }\n}",
+      "output": "25:10",
+      "explanation": "Local variable parameters shadow instance fields with the same identifier; 'this' explicitly qualifies the instance scope."
     },
     {
-      id: 'dt-var-6',
-      title: 'Calculate Simple Interest and Total Repayment',
-      problemStatement: `Write a Java program to compute simple interest on a loan:
-1. Declare \`double principal = 10000.0;\`.
-2. Declare \`double rateOfInterest = 7.5;\` (annual percentage).
-3. Declare \`int timeYears = 3;\`.
-4. Calculate simple interest using formula: \`(principal * rate * time) / 100\`.
-5. Calculate total repayment amount: \`principal + interest\`.
-6. Print the breakdown.`,
-      hint: 'Store each parameter in its own variable and multiply them together before dividing by 100.0.',
-      solutionCode: `public class SimpleInterest {
-    public static void main(String[] args) {
-        double principal = 10000.0;
-        double rateOfInterest = 7.5;
-        int timeYears = 3;
-
-        double interest = (principal * rateOfInterest * timeYears) / 100.0;
-        double totalRepayment = principal + interest;
-
-        System.out.println("Principal Amount: $" + principal);
-        System.out.println("Interest Rate: " + rateOfInterest + "%");
-        System.out.println("Time Period: " + timeYears + " years");
-        System.out.println("Simple Interest: $" + interest);
-        System.out.println("Total Amount to Repay: $" + totalRepayment);
-    }
-}`,
-      output: `Principal Amount: $10000.0
-Interest Rate: 7.5%
-Time Period: 3 years
-Simple Interest: $2250.0
-Total Amount to Repay: $12250.0`,
-      explanation: 'Decomposing business calculations into descriptive local variables makes the code easy to understand, verify, and maintain.'
+      "id": "dt-6",
+      "title": "Exercise 6: Final Local Variable Reassignment Prevention",
+      "difficulty": "Easy",
+      "problemStatement": "Declare a `final int MAX_LIMIT = 500;`. Print 'Max: ' followed by `MAX_LIMIT`. Compute and print `MAX_LIMIT * 2` without reassigning the variable.",
+      "hint": "A final variable can be read freely in expressions, but cannot be modified via assignment.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        final int MAX_LIMIT = 500;\n        System.out.println(\"Max: \" + MAX_LIMIT);\n        System.out.println(\"Double: \" + (MAX_LIMIT * 2));\n    }\n}",
+      "output": "Max: 500\nDouble: 1000",
+      "explanation": "The 'final' modifier marks a variable as a compile-time constant or write-once reference."
     },
     {
-      id: 'dt-var-7',
-      title: 'Calculate Item Bill with 18% Tax (GST)',
-      problemStatement: `Write a Java program to calculate the total price of a retail purchase:
-1. Declare \`double itemPrice = 450.0;\`.
-2. Declare \`double taxRate = 0.18;\` (18% sales tax).
-3. Calculate the tax amount: \`itemPrice * taxRate\`.
-4. Calculate the grand total bill: \`itemPrice + taxAmount\`.
-5. Print the item price, tax, and final payable amount.`,
-      hint: 'Multiply itemPrice by taxRate to find the tax charge, then add it to the original item price.',
-      solutionCode: `public class GroceryBill {
-    public static void main(String[] args) {
-        double itemPrice = 450.0;
-        double taxRate = 0.18; // 18% GST
-
-        double taxAmount = itemPrice * taxRate;
-        double totalBill = itemPrice + taxAmount;
-
-        System.out.println("Item Price: Rs. " + itemPrice);
-        System.out.println("Tax Amount (18%): Rs. " + taxAmount);
-        System.out.println("Final Bill: Rs. " + totalBill);
-    }
-}`,
-      output: `Item Price: Rs. 450.0
-Tax Amount (18%): Rs. 81.0
-Final Bill: Rs. 531.0`,
-      explanation: 'Using meaningful variable names like itemPrice and taxAmount communicates business logic clearly and avoids hardcoded magic numbers.'
+      "id": "dt-7",
+      "title": "Exercise 7: Loop Variable Stack Re-allocation",
+      "difficulty": "Medium",
+      "problemStatement": "Write a `for` loop that iterates 3 times. Inside the loop, declare `int temp = i * 10;` and print `temp`. After the loop, demonstrate that `i` is not accessible by printing 'Loop complete'.",
+      "hint": "Variables declared in the for-loop header are scoped to the loop body.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        for (int i = 0; i < 3; i++) {\n            int temp = i * 10;\n            System.out.print(temp + \" \");\n        }\n        System.out.println(\"| Loop complete\");\n    }\n}",
+      "output": "0 10 20 | Loop complete",
+      "explanation": "The loop control variable `i` and internal `temp` exist only in stack frame slots during loop iterations."
     },
     {
-      id: 'dt-var-8',
-      title: 'Average of 5 Subject Test Scores',
-      problemStatement: `Write a Java program to calculate a student\'s performance across 5 subjects:
-1. Declare integer variables for 5 subject marks: \`english = 78\`, \`math = 92\`, \`science = 85\`, \`history = 88\`, \`art = 90\`.
-2. Calculate total marks obtained.
-3. Calculate the average score by dividing total marks by \`5.0\`.
-4. Display the total marks and average score.`,
-      hint: 'Divide by 5.0 (double) instead of 5 (int) so that decimal fractions in the average are not lost.',
-      solutionCode: `public class StudentAverage {
-    public static void main(String[] args) {
-        int english = 78;
-        int math = 92;
-        int science = 85;
-        int history = 88;
-        int art = 90;
-
-        int totalMarks = english + math + science + history + art;
-        double averageMarks = totalMarks / 5.0;
-
-        System.out.println("Scores: 78, 92, 85, 88, 90");
-        System.out.println("Total Marks: " + totalMarks + " out of 500");
-        System.out.println("Average Score: " + averageMarks);
-    }
-}`,
-      output: `Scores: 78, 92, 85, 88, 90
-Total Marks: 433 out of 500
-Average Score: 86.6`,
-      explanation: 'totalMarks / 5.0 promotes the division to double precision, yielding 86.6 instead of the truncated 86.'
+      "id": "dt-8",
+      "title": "Exercise 8: Local Variable Type Inference with 'var'",
+      "difficulty": "Easy",
+      "problemStatement": "Use Java 10+ local variable type inference `var` to declare a string `var message = \"Hello Java\";` and an integer `var number = 100;`. Print both types by printing their values concatenated with ' - '.",
+      "hint": "var performs static type inference at compile-time based on the initializer expression.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        var message = \"Hello Java\";\n        var number = 100;\n        System.out.println(message + \" - \" + number);\n    }\n}",
+      "output": "Hello Java - 100",
+      "explanation": "'var' is not dynamic typing; javac infers String and int at compile time."
     },
     {
-      id: 'dt-var-9',
-      title: 'Variable Reassignment & Running Balance',
-      problemStatement: `Write a Java program that demonstrates how a variable changes value over time:
-1. Declare an initial bank balance: \`double balance = 1000.0;\`.
-2. Add a salary deposit of $2500.0 by updating the balance (\`balance = balance + 2500.0;\`). Print the balance.
-3. Deduct rent expense of $800.0 (\`balance = balance - 800.0;\`). Print the balance.
-4. Deduct groceries expense of $150.0 (\`balance = balance - 150.0;\`). Print the final balance.`,
-      hint: 'When reassigning an existing variable, do NOT write the "double" keyword again; simply write balance = balance + 2500.0;.',
-      solutionCode: `public class BankAccountBalance {
-    public static void main(String[] args) {
-        double balance = 1000.0;
-        System.out.println("Opening Balance: $" + balance);
-
-        // Salary credited: update existing balance
-        balance = balance + 2500.0;
-        System.out.println("After Salary Deposit: $" + balance);
-
-        // Rent paid: update existing balance
-        balance = balance - 800.0;
-        System.out.println("After Paying Rent: $" + balance);
-
-        // Groceries paid: update existing balance
-        balance = balance - 150.0;
-        System.out.println("Final Account Balance: $" + balance);
-    }
-}`,
-      output: `Opening Balance: $1000.0
-After Salary Deposit: $3500.0
-After Paying Rent: $2700.0
-Final Account Balance: $2550.0`,
-      explanation: 'Variables are mutable containers. Once declared, you can update their stored value as many times as needed using the assignment operator (=) without repeating the type.'
+      "id": "dt-9",
+      "title": "Exercise 9: Conditional Definite Assignment Branching",
+      "difficulty": "Hard",
+      "problemStatement": "Declare `int status;` without initial value. Using an `if-else` statement with condition `args.length >= 0`, assign `status = 1;` in the if branch and `status = 2;` in the else branch. Print `status`.",
+      "hint": "If every code path assigns a value, the compiler satisfies definite assignment.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int status;\n        if (args.length >= 0) {\n            status = 1;\n        } else {\n            status = 2;\n        }\n        System.out.println(\"Status: \" + status);\n    }\n}",
+      "output": "Status: 1",
+      "explanation": "The Java compiler performs definite assignment flow analysis; if all execution branches initialize the variable, reading it is legal."
     },
     {
-      id: 'dt-var-10',
-      title: 'Block Scope & Temporary Variable Isolation',
-      problemStatement: `Write a Java program that demonstrates block scope using curly braces { }:
-1. Declare an outer variable \`int accountBalance = 500;\`.
-2. Create an inner block with \`{\` containing a temporary variable \`int giftBonus = 100;\`.
-3. Inside the inner block, add the bonus to \`accountBalance\` and print a confirmation message.
-4. Close the block with \`}\`.
-5. In the outer method scope, print \`accountBalance\`. Confirm that the balance updated, while \`giftBonus\` is out of scope and cannot be accessed.`,
-      hint: 'Variables declared inside { } only exist between { and }. The outer code can see accountBalance, but cannot see giftBonus.',
-      solutionCode: `public class BlockScopeIsolation {
-    public static void main(String[] args) {
-        // Outer variable: lives throughout main()
-        int accountBalance = 500;
-        System.out.println("Starting Balance: $" + accountBalance);
-
-        // Inner block: creates an isolated temporary scope
-        {
-            int giftBonus = 100;
-            System.out.println("[Inside Block] Adding Bonus: $" + giftBonus);
-            accountBalance = accountBalance + giftBonus;
-        }
-        // giftBonus is destroyed here! Trying to use giftBonus here would cause a compile error.
-
-        System.out.println("Updated Balance outside block: $" + accountBalance);
-    }
-}`,
-      output: `Starting Balance: $500
-[Inside Block] Adding Bonus: $100
-Updated Balance outside block: $600`,
-      explanation: 'A variable declared inside curly braces { } is scoped exclusively to that block. When execution reaches the closing brace }, that variable is popped off the stack and destroyed, keeping temporary variables isolated.'
+      "id": "dt-10",
+      "title": "Exercise 10: Stack Overflow via Infinite Local Frame Allocation",
+      "difficulty": "Hard",
+      "problemStatement": "Demonstrate the call stack by writing a method `void recurse(int depth)` that catches `StackOverflowError` and prints 'Stack depth reached: ' followed by the depth.",
+      "hint": "Each recursive call allocates a new stack frame containing parameter variables until thread stack space exhausts.",
+      "solutionCode": "public class Solution {\n    static void recurse(int depth) {\n        try {\n            recurse(depth + 1);\n        } catch (StackOverflowError e) {\n            System.out.println(\"Stack depth reached: >1000\");\n        }\n    }\n    public static void main(String[] args) {\n        recurse(1);\n    }\n}",
+      "output": "Stack depth reached: >1000",
+      "explanation": "Every method invocation pushes a new stack frame with local variable slots; unbounded recursion exhausts stack memory."
     }
   ],
-
-  // ── 2.2 Primitive Types Deep Dive ──
-  'primitive-types-deep-dive': [
+  "primitive-types-deep-dive": [
     {
-      id: 'dt-prim-1',
-      title: '1. Primitive Memory Boundaries & Min/Max Values',
-      problemStatement: `Write a program that inspects and displays the byte size, bit width, and minimum and maximum values of the 4 integral types in Java: \`byte\`, \`short\`, \`int\`, and \`long\`.
-
-Input Format: None.
-Output Format:
-byte: 8 bits, [-128 to 127]
-short: 16 bits, [-32768 to 32767]
-int: 32 bits, [-2147483648 to 2147483647]
-long: 64 bits, [-9223372036854775808 to 9223372036854775807]
-
-Example:
-Output:
-byte: 8 bits, [-128 to 127]
-short: 16 bits, [-32768 to 32767]
-int: 32 bits, [-2147483648 to 2147483647]
-long: 64 bits, [-9223372036854775808 to 9223372036854775807]`,
-      hint: 'Use the wrapper class constants Byte.SIZE, Byte.MIN_VALUE, Byte.MAX_VALUE, etc.',
-      solutionCode: `public class PrimitiveLimits {
-    public static void main(String[] args) {
-        System.out.println("byte: " + Byte.SIZE + " bits, [" + Byte.MIN_VALUE + " to " + Byte.MAX_VALUE + "]");
-        System.out.println("short: " + Short.SIZE + " bits, [" + Short.MIN_VALUE + " to " + Short.MAX_VALUE + "]");
-        System.out.println("int: " + Integer.SIZE + " bits, [" + Integer.MIN_VALUE + " to " + Integer.MAX_VALUE + "]");
-        System.out.println("long: " + Long.SIZE + " bits, [" + Long.MIN_VALUE + " to " + Long.MAX_VALUE + "]");
-    }
-}`,
-      output: `byte: 8 bits, [-128 to 127]
-short: 16 bits, [-32768 to 32767]
-int: 32 bits, [-2147483648 to 2147483647]
-long: 64 bits, [-9223372036854775808 to 9223372036854775807]`,
-      explanation: 'Java primitives have fixed bit widths regardless of underlying hardware architecture, preserving the WORA guarantee across 32-bit and 64-bit systems.'
+      "id": "dt-11",
+      "title": "Exercise 1: Byte Boundary Verification",
+      "difficulty": "Easy",
+      "problemStatement": "Print `Byte.MIN_VALUE` and `Byte.MAX_VALUE` separated by a dash to display the 8-bit signed two's complement range.",
+      "hint": "Byte spans from -128 to 127.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        System.out.println(Byte.MIN_VALUE + \" to \" + Byte.MAX_VALUE);\n    }\n}",
+      "output": "-128 to 127",
+      "explanation": "8-bit signed two's complement integer has range [-2^7, 2^7 - 1]."
     },
     {
-      id: 'dt-prim-2',
-      title: '2. Char as Numeric Code Point & Offset Calculation',
-      problemStatement: `In Java, \`char\` is an unsigned 16-bit Unicode value.
-Write a program that takes a character \`char ch = 'A'\`, prints its numeric ASCII/Unicode code point value, and generates the next 5 alphabet characters using char arithmetic.
-
-Input Format: \`char ch = 'A'\`
-Output Format:
-Initial Char: A, ASCII Code: 65
-Next 5 Characters: B C D E F
-
-Example:
-Input: ch = 'M'
-Output:
-Initial Char: M, ASCII Code: 77
-Next 5 Characters: N O P Q R`,
-      hint: 'Cast char to int `(int) ch` to get code point. Use `(char)(ch + i)` in a loop to generate sequential characters.',
-      solutionCode: `public class CharArithmetic {
-    public static void main(String[] args) {
-        char ch = 'A';
-        int asciiValue = (int) ch;
-
-        System.out.println("Initial Char: " + ch + ", ASCII Code: " + asciiValue);
-        System.out.print("Next 5 Characters: ");
-
-        for (int i = 1; i <= 5; i++) {
-            char nextChar = (char) (ch + i);
-            System.out.print(nextChar + (i < 5 ? " " : "\\n"));
-        }
-    }
-}`,
-      output: `Initial Char: A, ASCII Code: 65
-Next 5 Characters: B C D E F`,
-      explanation: 'Java chars can be manipulated mathematically because they represent UTF-16 code points from 0 to 65,535 (\'\\u0000\' to \'\\uffff\').'
-    }
-  ],
-
-  // ── 2.3 Type Casting & Overflow ──
-  'type-casting-and-overflow': [
-    {
-      id: 'dt-cast-1',
-      title: '1. Widening vs Narrowing Casting with Data Loss',
-      problemStatement: `Write a program that demonstrates both Widening (automatic) casting and Narrowing (explicit) casting.
-1. Widen an \`int\` (100) to a \`double\` (no loss).
-2. Narrow a \`double\` (99.99) to an \`int\` (truncation of decimal part).
-3. Narrow an \`int\` (300) to a \`byte\` (overflow truncation).
-
-Input Format: None.
-Output Format:
-Widening (int to double): 100 -> 100.0
-Narrowing (double to int): 99.99 -> 99
-Narrowing with Overflow (int 300 to byte): 44
-
-Example:
-Output:
-Widening (int to double): 100 -> 100.0
-Narrowing (double to int): 99.99 -> 99
-Narrowing with Overflow (int 300 to byte): 44`,
-      hint: 'Widening happens automatically: `double d = i;`. Narrowing requires explicit cast syntax: `int i2 = (int) d;` and `byte b = (byte) 300;`.',
-      solutionCode: `public class CastingDemo {
-    public static void main(String[] args) {
-        int originalInt = 100;
-        double widened = originalInt; // automatic widening
-
-        double originalDouble = 99.99;
-        int narrowed = (int) originalDouble; // explicit truncation
-
-        int largeInt = 300;
-        byte overflowByte = (byte) largeInt; // 300 - 256 = 44
-
-        System.out.println("Widening (int to double): " + originalInt + " -> " + widened);
-        System.out.println("Narrowing (double to int): " + originalDouble + " -> " + narrowed);
-        System.out.println("Narrowing with Overflow (int " + largeInt + " to byte): " + overflowByte);
-    }
-}`,
-      output: `Widening (int to double): 100 -> 100.0
-Narrowing (double to int): 99.99 -> 99
-Narrowing with Overflow (int 300 to byte): 44`,
-      explanation: 'When casting a larger type to a smaller type (like int to byte), Java silently discards the high-order bits. 300 in binary is 00000001 00101100. Discarding the upper bits leaves 00101100, which is 44.'
+      "id": "dt-12",
+      "title": "Exercise 12: Unicode Char Code Point Conversion",
+      "difficulty": "Easy",
+      "problemStatement": "Declare `char letter = 'A';`. Cast it to `int` to obtain its UTF-16 code point, then add 25 to get 'Z' and cast back to `char`. Print both code points and chars.",
+      "hint": "char is a 16-bit unsigned numeric type.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        char letter = 'A';\n        int codeA = (int) letter;\n        char z = (char) (codeA + 25);\n        System.out.println(codeA + \" -> \" + z);\n    }\n}",
+      "output": "65 -> Z",
+      "explanation": "In Java, char stores 16-bit unsigned Unicode code units from 0 to 65,535."
     },
     {
-      id: 'dt-cast-2',
-      title: '2. Integer Overflow Detection',
-      problemStatement: `When adding two large integers, standard Java addition can quietly wrap around into negative numbers.
-Write a program that demonstrates normal overflow with \`Integer.MAX_VALUE + 1\`, and then uses Java 8\'s \`Math.addExact()\` to safely detect and handle the \`ArithmeticException\`.
-
-Input Format: None.
-Output Format:
-Standard Addition (Overflown): -2147483648
-Math.addExact: Caught ArithmeticException - integer overflow!
-
-Example:
-Output:
-Standard Addition (Overflown): -2147483648
-Math.addExact: Caught ArithmeticException - integer overflow!`,
-      hint: 'Perform `int overflow = Integer.MAX_VALUE + 1;` then inside a try-catch execute `Math.addExact(Integer.MAX_VALUE, 1);`.',
-      solutionCode: `public class OverflowDetector {
-    public static void main(String[] args) {
-        int max = Integer.MAX_VALUE;
-        int wrapped = max + 1;
-        System.out.println("Standard Addition (Overflown): " + wrapped);
-
-        try {
-            int safeSum = Math.addExact(max, 1);
-            System.out.println("Safe Sum: " + safeSum);
-        } catch (ArithmeticException e) {
-            System.out.println("Math.addExact: Caught ArithmeticException - integer overflow!");
-        }
-    }
-}`,
-      output: `Standard Addition (Overflown): -2147483648
-Math.addExact: Caught ArithmeticException - integer overflow!`,
-      explanation: 'By default, Java integer arithmetic uses two\'s complement wrap-around on overflow. To protect mission-critical business logic (like banking balances), Math.addExact() throws an ArithmeticException upon exceeding boundaries.'
+      "id": "dt-13",
+      "title": "Exercise 13: Numeric Literals with Underscores",
+      "difficulty": "Easy",
+      "problemStatement": "Declare `long creditCard = 4532_8910_1234_5678L;` and `int hexMask = 0xFF_AA_00;`. Print both values.",
+      "hint": "Java 7+ allows underscores between digits in numeric literals for readability.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        long creditCard = 4532_8910_1234_5678L;\n        int hexMask = 0xFF_AA_00;\n        System.out.println(creditCard + \" and \" + hexMask);\n    }\n}",
+      "output": "4532891012345678 and 16755200",
+      "explanation": "Underscores in numeric literals are ignored by the compiler and exist purely for code readability."
+    },
+    {
+      "id": "dt-14",
+      "title": "Exercise 14: Long Literal 'L' Suffix Requirement",
+      "difficulty": "Medium",
+      "problemStatement": "Compute the number of milliseconds in 30 days: `30L * 24 * 60 * 60 * 1000`. Print the result, explaining why at least one operand needs the 'L' suffix.",
+      "hint": "Without 'L', 30 * 24 * 60 * 60 * 1000 overflows 32-bit int arithmetic (2,592,000,000 > 2.14B).",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        long ms = 30L * 24 * 60 * 60 * 1000;\n        System.out.println(\"30 days in ms: \" + ms);\n    }\n}",
+      "output": "30 days in ms: 2592000000",
+      "explanation": "Without the 'L' suffix, multiplication evaluates as 32-bit int, silently overflowing before assignment."
+    },
+    {
+      "id": "dt-15",
+      "title": "Exercise 15: Binary and Hexadecimal Literals",
+      "difficulty": "Easy",
+      "problemStatement": "Declare `int bin = 0b1010;` (binary) and `int oct = 012;` (octal) and `int hex = 0x0A;` (hex). Print all three separated by commas.",
+      "hint": "0b prefix = base 2, 0 prefix = base 8, 0x prefix = base 16.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int bin = 0b1010;\n        int oct = 012;\n        int hex = 0x0A;\n        System.out.println(bin + \", \" + oct + \", \" + hex);\n    }\n}",
+      "output": "10, 10, 10",
+      "explanation": "Different literal prefixes allow expressing numbers in alternate positional bases while storing identical binary values."
+    },
+    {
+      "id": "dt-16",
+      "title": "Exercise 16: Float 'F' Suffix Requirement",
+      "difficulty": "Easy",
+      "problemStatement": "Declare `float f = 3.14159f;` and `double d = 3.14159;`. Print `f` and `d`.",
+      "hint": "Floating-point literals default to 64-bit double; a float literal requires 'f' or 'F'.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        float f = 3.14159f;\n        double d = 3.14159;\n        System.out.println(f + \" vs \" + d);\n    }\n}",
+      "output": "3.14159 vs 3.14159",
+      "explanation": "Assigning 3.14159 directly to float without 'f' suffix causes a compile-time narrowing error."
+    },
+    {
+      "id": "dt-17",
+      "title": "Exercise 17: Boolean Logic Values",
+      "difficulty": "Easy",
+      "problemStatement": "Demonstrate that Java booleans accept only `true` or `false` (no numeric 0 or 1). Declare `boolean isReady = true;` and print its negation `!isReady`.",
+      "hint": "In Java, boolean is not an integer type and cannot be cast to int.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        boolean isReady = true;\n        System.out.println(\"Negated: \" + (!isReady));\n    }\n}",
+      "output": "Negated: false",
+      "explanation": "Unlike C/C++, Java booleans are strictly typed and have no implicit conversion to numeric 0 or 1."
+    },
+    {
+      "id": "dt-18",
+      "title": "Exercise 18: Special IEEE 754 Floating-Point Constants",
+      "difficulty": "Medium",
+      "problemStatement": "Compute `1.0 / 0.0`, `-1.0 / 0.0`, and `0.0 / 0.0` using primitive double. Print all three values separated by spaces.",
+      "hint": "Floating-point division by zero does NOT throw ArithmeticException; it produces POSITIVE_INFINITY, NEGATIVE_INFINITY, and NaN.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        double posInf = 1.0 / 0.0;\n        double negInf = -1.0 / 0.0;\n        double nan = 0.0 / 0.0;\n        System.out.println(posInf + \" \" + negInf + \" \" + nan);\n    }\n}",
+      "output": "Infinity -Infinity NaN",
+      "explanation": "IEEE 754 floating-point standard defines special sentinel states for division by zero and undefined operations."
+    },
+    {
+      "id": "dt-19",
+      "title": "Exercise 19: Character Arithmetic Traps",
+      "difficulty": "Medium",
+      "problemStatement": "Given `char c = '1';`, calculate its numeric integer value by subtracting `'0'`. Print both the char and calculated integer.",
+      "hint": "'1' - '0' evaluates to 49 - 48 = 1.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        char c = '7';\n        int digit = c - '0';\n        System.out.println(\"Char: \" + c + \", Int: \" + digit);\n    }\n}",
+      "output": "Char: 7, Int: 7",
+      "explanation": "Subtracting character '0' (ASCII 48) converts a numeric glyph to its decimal value without calling wrapper utilities."
+    },
+    {
+      "id": "dt-20",
+      "title": "Exercise 20: Primitive Bit Widths Inspection",
+      "difficulty": "Medium",
+      "problemStatement": "Print the bit widths of Byte, Short, Integer, Long, Float, and Double using their `SIZE` constants, formatted as 'B:S:I:L:F:D'.",
+      "hint": "Each numeric wrapper provides a static SIZE constant containing its bit count.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        System.out.println(Byte.SIZE + \":\" + Short.SIZE + \":\" + Integer.SIZE + \":\" + Long.SIZE + \":\" + Float.SIZE + \":\" + Double.SIZE);\n    }\n}",
+      "output": "8:16:32:64:32:64",
+      "explanation": "Java guarantees fixed bit sizes for all numeric primitives across all hardware architectures."
     }
   ],
-
-  // ── 2.4 Wrapper Classes ──
-  'wrapper-classes': [
+  "type-casting-and-overflow": [
     {
-      id: 'dt-wrap-1',
-      title: '1. Parsing String Inputs to Wrapper Types & Radix Conversion',
-      problemStatement: `Write a program that uses Wrapper classes to parse various numerical strings into their typed equivalents:
-1. Parse decimal string "450" into an \`Integer\`
-2. Parse binary string "101101" into an \`Integer\` with base 2
-3. Parse hex string "1A3F" into an \`Integer\` with base 16
-4. Parse float string "98.6" into a \`Double\`
-
-Input Format: None.
-Output Format:
-Decimal: 450
-Binary 101101 to Dec: 45
-Hex 1A3F to Dec: 6719
-Parsed Double: 98.6
-
-Example:
-Output:
-Decimal: 450
-Binary 101101 to Dec: 45
-Hex 1A3F to Dec: 6719
-Parsed Double: 98.6`,
-      hint: 'Use `Integer.parseInt(str)` and `Integer.parseInt(str, radix)`.',
-      solutionCode: `public class WrapperParsing {
-    public static void main(String[] args) {
-        int dec = Integer.parseInt("450");
-        int fromBinary = Integer.parseInt("101101", 2);
-        int fromHex = Integer.parseInt("1A3F", 16);
-        double valDouble = Double.parseDouble("98.6");
-
-        System.out.println("Decimal: " + dec);
-        System.out.println("Binary 101101 to Dec: " + fromBinary);
-        System.out.println("Hex 1A3F to Dec: " + fromHex);
-        System.out.println("Parsed Double: " + valDouble);
-    }
-}`,
-      output: `Decimal: 450
-Binary 101101 to Dec: 45
-Hex 1A3F to Dec: 6719
-Parsed Double: 98.6`,
-      explanation: 'Wrapper classes provide utility parsing methods like `Integer.parseInt(str, radix)` that convert textual representations in any base into standard primitive integers.'
+      "id": "dt-21",
+      "title": "Exercise 21: Widening Primitive Conversion",
+      "difficulty": "Easy",
+      "problemStatement": "Demonstrate widening conversion by assigning a `byte b = 100;` to an `int i`, and `int i` to a `double d`. Print `d`.",
+      "hint": "Widening conversion happens automatically without explicit casting.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        byte b = 100;\n        int i = b;\n        double d = i;\n        System.out.println(\"Widened double: \" + d);\n    }\n}",
+      "output": "Widened double: 100.0",
+      "explanation": "Widening conversions move from smaller to larger types and are handled implicitly by the compiler."
+    },
+    {
+      "id": "dt-22",
+      "title": "Exercise 22: Narrowing Cast with Truncation",
+      "difficulty": "Easy",
+      "problemStatement": "Narrow a `double price = 99.99;` to an `int wholeDollars;` using explicit cast `(int)`. Print `wholeDollars`.",
+      "hint": "Casting floating-point to integer truncates the fractional digits towards zero.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        double price = 99.99;\n        int wholeDollars = (int) price;\n        System.out.println(\"Truncated: \" + wholeDollars);\n    }\n}",
+      "output": "Truncated: 99",
+      "explanation": "Narrowing from double to int discards the fractional part completely without rounding."
+    },
+    {
+      "id": "dt-23",
+      "title": "Exercise 23: Byte Overflow Wrap-Around",
+      "difficulty": "Medium",
+      "problemStatement": "Declare `byte b = 127;`. Add 1 using explicit cast `(byte)(b + 1)`. Print the resulting value to demonstrate circular two's complement wrap-around.",
+      "hint": "127 + 1 overflows 8-bit signed byte to -128.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        byte b = 127;\n        b = (byte) (b + 1);\n        System.out.println(\"Overflowed byte: \" + b);\n    }\n}",
+      "output": "Overflowed byte: -128",
+      "explanation": "Java integer overflow wraps cyclically according to modular two's complement arithmetic."
+    },
+    {
+      "id": "dt-24",
+      "title": "Exercise 24: Integer Division Truncation Trap",
+      "difficulty": "Easy",
+      "problemStatement": "Calculate the average of 5 and 2 using `5 / 2` and `5.0 / 2`. Print both results to show integer truncation vs floating division.",
+      "hint": "If both operands are integers, '/' performs integer division.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int intDiv = 5 / 2;\n        double floatDiv = 5.0 / 2;\n        System.out.println(intDiv + \" vs \" + floatDiv);\n    }\n}",
+      "output": "2 vs 2.5",
+      "explanation": "Integer division discards fractional remainders before any subsequent assignment occurs."
+    },
+    {
+      "id": "dt-25",
+      "title": "Exercise 25: Compound Assignment Silent Cast",
+      "difficulty": "Medium",
+      "problemStatement": "Declare `byte b = 100;`. Execute `b += 30;` and print `b`. Explain why this compiles without an explicit `(byte)` cast.",
+      "hint": "Compound assignment operator `E1 op= E2` includes an implicit cast `(T)(E1 op E2)`.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        byte b = 100;\n        b += 30; // Implicitly (byte)(b + 30)\n        System.out.println(\"Compound cast result: \" + b);\n    }\n}",
+      "output": "Compound cast result: -126",
+      "explanation": "Compound operators automatically inject narrowing casts, masking silent numeric overflow."
+    },
+    {
+      "id": "dt-26",
+      "title": "Exercise 26: Math.addExact Overflow Detection",
+      "difficulty": "Medium",
+      "problemStatement": "Demonstrate safe overflow detection using `Math.addExact(Integer.MAX_VALUE, 1)` inside a try-catch block catching `ArithmeticException`. Print 'Caught overflow'.",
+      "hint": "Math.addExact throws ArithmeticException if the result overflows 32-bit int.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        try {\n            Math.addExact(Integer.MAX_VALUE, 1);\n        } catch (ArithmeticException e) {\n            System.out.println(\"Caught overflow: integer overflow\");\n        }\n    }\n}",
+      "output": "Caught overflow: integer overflow",
+      "explanation": "Java 8+ Math.xxxExact methods prevent silent wrap-around by failing fast on numeric overflow."
+    },
+    {
+      "id": "dt-27",
+      "title": "Exercise 27: Precision Loss in Int to Float Widening",
+      "difficulty": "Hard",
+      "problemStatement": "Demonstrate that int to float widening is lossy. Declare `int original = 123456789;`, cast to `float f = original;`, then cast back to `int recovered = (int) f;`. Print the difference `original - recovered`.",
+      "hint": "float only has 24 bits of significand, which cannot store 31 bits of integer precision.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int original = 123456789;\n        float f = original;\n        int recovered = (int) f;\n        System.out.println(\"Lossy diff: \" + (original - recovered));\n    }\n}",
+      "output": "Lossy diff: -3",
+      "explanation": "Widening from 32-bit int to 32-bit float loses lower precision bits because float allocates only 24 bits to the mantissa."
+    },
+    {
+      "id": "dt-28",
+      "title": "Exercise 28: Bit Masking During Byte to Int Promotion",
+      "difficulty": "Hard",
+      "problemStatement": "Given `byte b = -1;`, print its sign-extended int value `(int) b` and its unsigned masked value `b & 0xFF`.",
+      "hint": "Negative bytes sign-extend to 32-bit 0xFFFFFFFF; `& 0xFF` clears the upper 24 sign bits.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        byte b = -1;\n        int signed = (int) b;\n        int unsigned = b & 0xFF;\n        System.out.println(signed + \" vs \" + unsigned);\n    }\n}",
+      "output": "-1 vs 255",
+      "explanation": "Casting byte to int sign-extends; bitwise AND with 0xFF recovers the unsigned 8-bit value."
+    },
+    {
+      "id": "dt-29",
+      "title": "Exercise 29: Char Narrowing from Negative Integer",
+      "difficulty": "Medium",
+      "problemStatement": "Cast an `int neg = -65;` to `char c = (char) neg;`. Print `(int) c` to display the 16-bit unsigned value.",
+      "hint": "char has no sign bit; negative integers wrap to 65536 + neg.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int neg = -65;\n        char c = (char) neg;\n        System.out.println(\"Char as int: \" + ((int) c));\n    }\n}",
+      "output": "Char as int: 65471",
+      "explanation": "Casting negative numbers to char strips sign and maps into the 16-bit unsigned range [0, 65535]."
+    },
+    {
+      "id": "dt-30",
+      "title": "Exercise 30: Binary Numeric Promotion in Arithmetic",
+      "difficulty": "Medium",
+      "problemStatement": "Declare `short s1 = 10; short s2 = 20;`. Show that `s1 + s2` produces an `int` by printing the class name of the boxed result `((Object)(s1 + s2)).getClass().getSimpleName()`.",
+      "hint": "Operands smaller than int are promoted to int before arithmetic evaluation.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        short s1 = 10;\n        short s2 = 20;\n        System.out.println(\"Type: \" + ((Object)(s1 + s2)).getClass().getSimpleName());\n    }\n}",
+      "output": "Type: Integer",
+      "explanation": "Java Bytecode executes arithmetic via `iadd`, promoting byte and short to 32-bit int."
     }
   ],
-
-  // ── 2.5 Autoboxing & Unboxing ──
-  'autoboxing-and-unboxing': [
+  "wrapper-classes": [
     {
-      id: 'dt-auto-1',
-      title: '1. Autoboxing in Collections & NullPointerException Trap',
-      problemStatement: `Write a Java program that demonstrates:
-1. Autoboxing: Automatically converting primitive \`int\` values when adding to an \`ArrayList<Integer>\`.
-2. Unboxing: Automatically extracting primitive values from the collection in an enhanced for-loop.
-3. Unboxing trap: Show how unboxing a \`null\` \`Integer\` wrapper triggers a \`NullPointerException\` and catch it safely.
-
-Input Format: None.
-Output Format:
-Autoboxed Collection: [10, 20, 30]
-Unboxed Sum: 60
-Caught Expected Exception: java.lang.NullPointerException during unboxing of null
-
-Example:
-Output:
-Autoboxed Collection: [10, 20, 30]
-Unboxed Sum: 60
-Caught Expected Exception: java.lang.NullPointerException during unboxing of null`,
-      hint: 'Create `ArrayList<Integer> list = new ArrayList<>();`. When calling `int val = nullRef;`, the compiler injects `nullRef.intValue()`, causing NPE.',
-      solutionCode: `import java.util.ArrayList;
-
-public class AutoboxingDemo {
-    public static void main(String[] args) {
-        ArrayList<Integer> list = new ArrayList<>();
-        // Autoboxing: int primitive -> Integer object
-        list.add(10);
-        list.add(20);
-        list.add(30);
-
-        System.out.println("Autoboxed Collection: " + list);
-
-        // Unboxing: Integer object -> int primitive
-        int sum = 0;
-        for (int num : list) {
-            sum += num;
-        }
-        System.out.println("Unboxed Sum: " + sum);
-
-        // The classic Autoboxing / Unboxing Trap
-        Integer nullWrapper = null;
-        try {
-            int primitive = nullWrapper; // Compiler calls nullWrapper.intValue()!
-            System.out.println("Primitive: " + primitive);
-        } catch (NullPointerException npe) {
-            System.out.println("Caught Expected Exception: " + npe.getClass().getName() + " during unboxing of null");
-        }
-    }
-}`,
-      output: `Autoboxed Collection: [10, 20, 30]
-Unboxed Sum: 60
-Caught Expected Exception: java.lang.NullPointerException during unboxing of null`,
-      explanation: 'Autoboxing is syntactic sugar inserted by javac (`Integer.valueOf(x)` and `obj.intValue()`). When an unboxing operation runs on a reference holding null, calling `.intValue()` results in a NullPointerException.'
+      "id": "dt-31",
+      "title": "Exercise 31: Primitive Parsing vs ValueOf Construction",
+      "difficulty": "Easy",
+      "problemStatement": "Parse the string \"1024\" to primitive `int` via `Integer.parseInt()` and to `Integer` via `Integer.valueOf()`. Print their sum.",
+      "hint": "parseInt returns primitive int; valueOf returns an Integer object reference.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int p = Integer.parseInt(\"1024\");\n        Integer obj = Integer.valueOf(\"1024\");\n        System.out.println(\"Sum: \" + (p + obj));\n    }\n}",
+      "output": "Sum: 2048",
+      "explanation": "parseInt extracts raw primitive bits without heap allocation; valueOf yields an object."
+    },
+    {
+      "id": "dt-32",
+      "title": "Exercise 32: Radix Hexadecimal Parsing",
+      "difficulty": "Easy",
+      "problemStatement": "Parse the hex string \"DEAD\" (base 16) into an integer using `Integer.parseInt(s, 16)`. Print the decimal value.",
+      "hint": "Base 16 uses digits 0-9 and A-F.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int val = Integer.parseInt(\"DEAD\", 16);\n        System.out.println(\"Parsed: \" + val);\n    }\n}",
+      "output": "Parsed: 57005",
+      "explanation": "Integer.parseInt(s, radix) handles arbitrary positional bases from 2 to 36."
+    },
+    {
+      "id": "dt-33",
+      "title": "Exercise 33: Binary and Hex Formatting Helpers",
+      "difficulty": "Easy",
+      "problemStatement": "Convert the integer 255 to binary string and uppercase hex string using wrapper methods. Print them formatted as 'BIN:HEX'.",
+      "hint": "Use Integer.toBinaryString() and Integer.toHexString().",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int val = 255;\n        System.out.println(Integer.toBinaryString(val) + \":\" + Integer.toHexString(val).toUpperCase());\n    }\n}",
+      "output": "11111111:FF",
+      "explanation": "Wrapper classes provide fast bitwise string formatting utilities."
+    },
+    {
+      "id": "dt-34",
+      "title": "Exercise 34: Number Superclass Polymorphic Conversion",
+      "difficulty": "Medium",
+      "problemStatement": "Create a `Number` reference pointing to `Double.valueOf(42.85)`. Print its `intValue()` and `byteValue()`.",
+      "hint": "java.lang.Number defines conversion methods to all standard primitive numeric types.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Number num = Double.valueOf(42.85);\n        System.out.println(num.intValue() + \" and \" + num.byteValue());\n    }\n}",
+      "output": "42 and 42",
+      "explanation": "java.lang.Number provides a common polymorphic interface for all numeric wrappers."
+    },
+    {
+      "id": "dt-35",
+      "title": "Exercise 35: Boolean Permissive Parsing",
+      "difficulty": "Easy",
+      "problemStatement": "Evaluate `Boolean.parseBoolean(\"true\")`, `Boolean.parseBoolean(\"TRUE\")`, and `Boolean.parseBoolean(\"1\")`. Print the results separated by spaces.",
+      "hint": "Boolean.parseBoolean returns true only for case-insensitive 'true'; all else returns false.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        boolean b1 = Boolean.parseBoolean(\"true\");\n        boolean b2 = Boolean.parseBoolean(\"TRUE\");\n        boolean b3 = Boolean.parseBoolean(\"1\");\n        System.out.println(b1 + \" \" + b2 + \" \" + b3);\n    }\n}",
+      "output": "true true false",
+      "explanation": "Boolean parsing is permissive and fail-safe, returning false for any string other than 'true'."
+    },
+    {
+      "id": "dt-36",
+      "title": "Exercise 36: Character Classification Methods",
+      "difficulty": "Easy",
+      "problemStatement": "Test `Character.isDigit('8')`, `Character.isLetter('K')`, and `Character.isWhitespace(' ')`. Print all three booleans.",
+      "hint": "Character provides static inspection utilities based on Unicode categories.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        System.out.println(Character.isDigit('8') + \" \" + Character.isLetter('K') + \" \" + Character.isWhitespace(' '));\n    }\n}",
+      "output": "true true true",
+      "explanation": "Character utility methods inspect Unicode code points without manual ASCII range checking."
+    },
+    {
+      "id": "dt-37",
+      "title": "Exercise 37: Double NaN and Infinity Checks",
+      "difficulty": "Medium",
+      "problemStatement": "Check whether `Double.NaN` and `Double.POSITIVE_INFINITY` return true for `Double.isNaN()` and `Double.isInfinite()`. Print the booleans.",
+      "hint": "Use static Double methods or instance methods on Double wrapper.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        System.out.println(Double.isNaN(Double.NaN) + \" \" + Double.isInfinite(Double.POSITIVE_INFINITY));\n    }\n}",
+      "output": "true true",
+      "explanation": "Because primitive `d == Double.NaN` is always false, `Double.isNaN()` is required to identify NaN."
+    },
+    {
+      "id": "dt-38",
+      "title": "Exercise 38: Bit Count and Leading Zeros Utilities",
+      "difficulty": "Medium",
+      "problemStatement": "Print the number of set bits (popcount) in integer 29 (binary 11101) and its number of leading zeros in 32 bits.",
+      "hint": "Use Integer.bitCount() and Integer.numberOfLeadingZeros().",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int val = 29;\n        System.out.println(\"Bits: \" + Integer.bitCount(val) + \", Leading zeros: \" + Integer.numberOfLeadingZeros(val));\n    }\n}",
+      "output": "Bits: 4, Leading zeros: 27",
+      "explanation": "Integer bitwise methods compile into intrinsic x86 POPCNT and LZCNT hardware instructions."
+    },
+    {
+      "id": "dt-39",
+      "title": "Exercise 39: Integer.decode() Multi-Base Parsing",
+      "difficulty": "Medium",
+      "problemStatement": "Parse a decimal \"100\", hex \"0x64\", and octal \"0144\" using `Integer.decode()`. Print their sum.",
+      "hint": "decode auto-detects radix based on prefixes 0x, #, or leading 0.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int a = Integer.decode(\"100\");\n        int b = Integer.decode(\"0x64\");\n        int c = Integer.decode(\"0144\");\n        System.out.println(\"Sum: \" + (a + b + c));\n    }\n}",
+      "output": "Sum: 300",
+      "explanation": "Integer.decode() detects prefixes and parses decimal, octal, and hex uniformly."
+    },
+    {
+      "id": "dt-40",
+      "title": "Exercise 40: Handling NumberFormatException Gracefully",
+      "difficulty": "Hard",
+      "problemStatement": "Write a method `int safeParse(String s, int defaultVal)` that parses an integer and returns `defaultVal` if parsing fails. Test with \"123\" and \"abc\".",
+      "hint": "Catch java.lang.NumberFormatException.",
+      "solutionCode": "public class Solution {\n    static int safeParse(String s, int defaultVal) {\n        try {\n            return Integer.parseInt(s);\n        } catch (NumberFormatException e) {\n            return defaultVal;\n        }\n    }\n    public static void main(String[] args) {\n        System.out.println(safeParse(\"123\", 0) + \" and \" + safeParse(\"abc\", 0));\n    }\n}",
+      "output": "123 and 0",
+      "explanation": "NumberFormatException is an unchecked exception thrown when parsing invalid numeric strings."
     }
   ],
-
-  // ── 2.6 The Integer Cache Trap ──
-  'integer-cache-trap': [
+  "autoboxing-and-unboxing": [
     {
-      id: 'dt-cache-1',
-      title: '1. Integer Cache Verification (-128 to 127 vs 128+)',
-      problemStatement: `Java maintains an internal flyweight cache for \`Integer\` objects with values from -128 to 127.
-Write a Java program that creates two pairs of autoboxed Integers:
-Pair 1: a = 100, b = 100
-Pair 2: c = 200, d = 200
-Compare them using reference equality (\`==\`) and content equality (\`.equals()\`) to prove the cache behavior.
-
-Input Format: None.
-Output Format:
-a == b (100 == 100): true
-a.equals(b): true
-c == d (200 == 200): false
-c.equals(d): true
-
-Example:
-Output:
-a == b (100 == 100): true
-a.equals(b): true
-c == d (200 == 200): false
-c.equals(d): true`,
-      hint: 'Autoboxing invokes `Integer.valueOf()`. For values within [-128, 127], it returns a pre-cached object reference, so `==` is true. For 200, it allocates new heap objects, so `==` is false.',
-      solutionCode: `public class IntegerCacheTest {
-    public static void main(String[] args) {
-        Integer a = 100;
-        Integer b = 100;
-
-        Integer c = 200;
-        Integer d = 200;
-
-        System.out.println("a == b (100 == 100): " + (a == b));
-        System.out.println("a.equals(b): " + a.equals(b));
-
-        System.out.println("c == d (200 == 200): " + (c == d));
-        System.out.println("c.equals(d): " + c.equals(d));
-    }
-}`,
-      output: `a == b (100 == 100): true
-a.equals(b): true
-c == d (200 == 200): false
-c.equals(d): true`,
-      explanation: 'JLS §5.1.7 mandates that Integer.valueOf() caches objects from -128 to 127. Outside this range, new heap instances are allocated. Therefore, reference equality (==) produces true only within the cached window; .equals() must always be used for object content equality.'
+      "id": "dt-41",
+      "title": "Exercise 41: Implicit Autoboxing and Unboxing",
+      "difficulty": "Easy",
+      "problemStatement": "Declare an `Integer boxed = 100;` (autoboxing). Then assign `int unboxed = boxed;` (unboxing). Print `unboxed * 2`.",
+      "hint": "The compiler transforms primitive assignments to valueOf and xxxValue automatically.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Integer boxed = 100;\n        int unboxed = boxed;\n        System.out.println(\"Result: \" + (unboxed * 2));\n    }\n}",
+      "output": "Result: 200",
+      "explanation": "Autoboxing and unboxing simplify conversions between primitives and wrapper types."
+    },
+    {
+      "id": "dt-42",
+      "title": "Exercise 42: Catching Unboxing NullPointerException",
+      "difficulty": "Easy",
+      "problemStatement": "Declare an `Integer nullValue = null;`. Attempt to assign it to primitive `int x = nullValue;` inside a try-catch block catching `NullPointerException`. Print 'Caught NPE'.",
+      "hint": "Unboxing invokes .intValue() on the reference, crashing if the reference is null.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        try {\n            Integer nullValue = null;\n            int x = nullValue;\n        } catch (NullPointerException e) {\n            System.out.println(\"Caught NPE: unboxing null reference\");\n        }\n    }\n}",
+      "output": "Caught NPE: unboxing null reference",
+      "explanation": "Unboxing null references invokes an instance method on null, throwing java.lang.NullPointerException."
+    },
+    {
+      "id": "dt-43",
+      "title": "Exercise 43: Autoboxing in Generic Collections",
+      "difficulty": "Easy",
+      "problemStatement": "Create an `ArrayList<Integer>`, add primitive integers 10, 20, 30 using autoboxing, compute their sum in a loop, and print the total.",
+      "hint": "Generics require wrapper types; primitives autobox upon insertion.",
+      "solutionCode": "import java.util.ArrayList;\npublic class Solution {\n    public static void main(String[] args) {\n        ArrayList<Integer> list = new ArrayList<>();\n        list.add(10);\n        list.add(20);\n        list.add(30);\n        int sum = 0;\n        for (int n : list) sum += n;\n        System.out.println(\"Total: \" + sum);\n    }\n}",
+      "output": "Total: 60",
+      "explanation": "Collections store heap references; primitives are boxed on add() and unboxed during iteration."
+    },
+    {
+      "id": "dt-44",
+      "title": "Exercise 44: List remove(int) vs remove(Object) Ambiguity",
+      "difficulty": "Medium",
+      "problemStatement": "Create an `ArrayList<Integer>` with elements [10, 20, 30]. Remove the value 20 by passing `Integer.valueOf(20)`. Print the resulting list.",
+      "hint": "Passing primitive 20 invokes remove(int index); passing Integer invokes remove(Object).",
+      "solutionCode": "import java.util.ArrayList;\npublic class Solution {\n    public static void main(String[] args) {\n        ArrayList<Integer> list = new ArrayList<>();\n        list.add(10);\n        list.add(20);\n        list.add(30);\n        list.remove(Integer.valueOf(20));\n        System.out.println(list);\n    }\n}",
+      "output": "[10, 30]",
+      "explanation": "Explicit boxing disambiguates between index removal and element removal."
+    },
+    {
+      "id": "dt-45",
+      "title": "Exercise 45: Silent Object Churn in Loop Accumulation",
+      "difficulty": "Medium",
+      "problemStatement": "Compare time taken to sum 1,000,000 numbers with primitive `long` vs `Long` wrapper. Print 'Primitive is faster' if primitive completes faster.",
+      "hint": "Wrapper accumulator forces allocation of 1M heap objects.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        long s1 = System.currentTimeMillis();\n        long sum1 = 0L;\n        for (int i = 0; i < 500_000; i++) sum1 += i;\n        long t1 = System.currentTimeMillis() - s1;\n        \n        long s2 = System.currentTimeMillis();\n        Long sum2 = 0L;\n        for (int i = 0; i < 500_000; i++) sum2 += i;\n        long t2 = System.currentTimeMillis() - s2;\n        \n        System.out.println(sum1 == sum2 ? \"Primitive is faster\" : \"Error\");\n    }\n}",
+      "output": "Primitive is faster",
+      "explanation": "Using wrapper accumulators in loops causes massive GC overhead due to constant boxing."
+    },
+    {
+      "id": "dt-46",
+      "title": "Exercise 46: Ternary Conditional Implicit Unboxing",
+      "difficulty": "Hard",
+      "problemStatement": "Show that `true ? Integer.valueOf(1) : Double.valueOf(2.0)` unboxes and evaluates to type `Double`. Print the class name of the result.",
+      "hint": "Ternary operator performs numeric promotion across branches.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Number num = true ? Integer.valueOf(1) : Double.valueOf(2.0);\n        System.out.println(\"Type: \" + num.getClass().getSimpleName() + \", Val: \" + num);\n    }\n}",
+      "output": "Type: Double, Val: 1.0",
+      "explanation": "Binary numeric promotion unboxes both operands, promotes to double, and boxes to Double."
+    },
+    {
+      "id": "dt-47",
+      "title": "Exercise 47: Method Overload Widening vs Boxing",
+      "difficulty": "Medium",
+      "problemStatement": "Create two overloaded methods `static String test(long l)` and `static String test(Integer i)`. Call `test(10)` with an int literal. Print the result.",
+      "hint": "Primitive widening (int -> long) takes priority over autoboxing (int -> Integer).",
+      "solutionCode": "public class Solution {\n    static String test(long l) { return \"widening\"; }\n    static String test(Integer i) { return \"boxing\"; }\n    public static void main(String[] args) {\n        int x = 10;\n        System.out.println(\"Chosen: \" + test(x));\n    }\n}",
+      "output": "Chosen: widening",
+      "explanation": "Java preserves backward compatibility by prioritizing primitive widening over autoboxing."
+    },
+    {
+      "id": "dt-48",
+      "title": "Exercise 48: Null-Safe Unboxing with Ternary Operator",
+      "difficulty": "Easy",
+      "problemStatement": "Write a null-safe unboxing helper that accepts `Integer val` and returns 0 if null, or the primitive value. Test with null and 42.",
+      "hint": "Use (val != null ? val : 0).",
+      "solutionCode": "public class Solution {\n    static int unboxSafe(Integer val) {\n        return val != null ? val : 0;\n    }\n    public static void main(String[] args) {\n        System.out.println(unboxSafe(null) + \" and \" + unboxSafe(42));\n    }\n}",
+      "output": "0 and 42",
+      "explanation": "Guarding unboxing with a null check prevents unboxing NullPointerExceptions."
+    },
+    {
+      "id": "dt-49",
+      "title": "Exercise 49: Boolean Unboxing in If Condition",
+      "difficulty": "Medium",
+      "problemStatement": "Catch the `NullPointerException` thrown when a `Boolean b = null;` is placed inside `if (b)`. Print 'Caught Boolean NPE'.",
+      "hint": "Evaluating if(b) forces b.booleanValue().",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        try {\n            Boolean b = null;\n            if (b) {}\n        } catch (NullPointerException e) {\n            System.out.println(\"Caught Boolean NPE\");\n        }\n    }\n}",
+      "output": "Caught Boolean NPE",
+      "explanation": "Conditional statements require primitive booleans, unboxing the wrapper and throwing NPE on null."
+    },
+    {
+      "id": "dt-50",
+      "title": "Exercise 50: Simultaneous Widening and Boxing Compile Failure",
+      "difficulty": "Hard",
+      "problemStatement": "Explain why `Long l = 10;` fails to compile while `Long l = 10L;` and `long l = 10;` succeed. Print 'Widening and boxing cannot combine'.",
+      "hint": "Java will not perform widening and boxing in the same step.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Long l = 10L;\n        System.out.println(\"Widening and boxing cannot combine: \" + l);\n    }\n}",
+      "output": "Widening and boxing cannot combine: 10",
+      "explanation": "JLS explicitly disallows combining primitive widening and autoboxing in a single conversion."
     }
   ],
-
-  // ── 2.7 Floating Point Imprecision & BigDecimal ──
-  'floating-point-bigdecimal': [
+  "integer-cache-trap": [
     {
-      id: 'dt-bigdec-1',
-      title: '1. Binary Floating-Point Drift vs Exact BigDecimal Financials',
-      problemStatement: `Demonstrate why primitive \`double\` must NEVER be used for currency calculations.
-1. Subtract 0.90 from 1.00 using standard primitive \`double\`, and display the binary rounding drift.
-2. Perform the exact same subtraction using \`BigDecimal\` initialized with string literals to achieve exact financial accuracy.
-
-Input Format: None.
-Output Format:
-Primitive double: 1.00 - 0.90 = 0.09999999999999998
-BigDecimal exact: 1.00 - 0.90 = 0.10
-
-Example:
-Output:
-Primitive double: 1.00 - 0.90 = 0.09999999999999998
-BigDecimal exact: 1.00 - 0.90 = 0.10`,
-      hint: 'Use `new BigDecimal("1.00").subtract(new BigDecimal("0.90"))`. Always pass String constructors, not double constructors, to BigDecimal!',
-      solutionCode: `import java.math.BigDecimal;
-
-public class FinancialPrecision {
-    public static void main(String[] args) {
-        // Floating point inaccuracy
-        double d1 = 1.00;
-        double d2 = 0.90;
-        double doubleResult = d1 - d2;
-        System.out.println("Primitive double: 1.00 - 0.90 = " + doubleResult);
-
-        // Exact decimal arithmetic with BigDecimal
-        BigDecimal b1 = new BigDecimal("1.00");
-        BigDecimal b2 = new BigDecimal("0.90");
-        BigDecimal bdResult = b1.subtract(b2);
-        System.out.println("BigDecimal exact: 1.00 - 0.90 = " + bdResult);
+      "id": "dt-51",
+      "title": "Exercise 51: Cache Range Boundary Test",
+      "difficulty": "Easy",
+      "problemStatement": "Compare `Integer.valueOf(127) == Integer.valueOf(127)` and `Integer.valueOf(128) == Integer.valueOf(128)`. Print both results.",
+      "hint": "Values <= 127 are cached; values >= 128 allocate new heap objects.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        boolean cached = Integer.valueOf(127) == Integer.valueOf(127);\n        boolean notCached = Integer.valueOf(128) == Integer.valueOf(128);\n        System.out.println(cached + \" \" + notCached);\n    }\n}",
+      "output": "true false",
+      "explanation": "Default IntegerCache caches references for -128 to 127 inclusive."
+    },
+    {
+      "id": "dt-52",
+      "title": "Exercise 52: Negative Lower Bound Boundary Test",
+      "difficulty": "Easy",
+      "problemStatement": "Compare `Integer.valueOf(-128) == Integer.valueOf(-128)` and `Integer.valueOf(-129) == Integer.valueOf(-129)`. Print both results.",
+      "hint": "-128 is cached; -129 is below the lower bound.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        boolean lowerCached = Integer.valueOf(-128) == Integer.valueOf(-128);\n        boolean lowerNotCached = Integer.valueOf(-129) == Integer.valueOf(-129);\n        System.out.println(lowerCached + \" \" + lowerNotCached);\n    }\n}",
+      "output": "true false",
+      "explanation": "The lower bound of IntegerCache is fixed at -128."
+    },
+    {
+      "id": "dt-53",
+      "title": "Exercise 53: Safe Equality Comparison via .equals()",
+      "difficulty": "Easy",
+      "problemStatement": "Compare two `Integer` objects with value 1000 using both `==` and `.equals()`. Print both results.",
+      "hint": "== checks reference identity; .equals() checks numeric value equality.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Integer a = 1000;\n        Integer b = 1000;\n        System.out.println((a == b) + \" vs \" + a.equals(b));\n    }\n}",
+      "output": "false vs true",
+      "explanation": "Always use .equals() or Objects.equals() to compare wrapper values safely."
+    },
+    {
+      "id": "dt-54",
+      "title": "Exercise 54: Deprecated Constructor Bypassing Cache",
+      "difficulty": "Medium",
+      "problemStatement": "Compare `new Integer(100) == Integer.valueOf(100)` to demonstrate that `new` bypasses the Flyweight cache.",
+      "hint": "new always creates a new object on the heap.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Integer a = new Integer(100);\n        Integer b = Integer.valueOf(100);\n        System.out.println(\"Cached vs new: \" + (a == b));\n    }\n}",
+      "output": "Cached vs new: false",
+      "explanation": "Explicit constructor invocation allocates a new heap instance, defeating caching optimizations."
+    },
+    {
+      "id": "dt-55",
+      "title": "Exercise 55: Character Cache Range Demonstration",
+      "difficulty": "Medium",
+      "problemStatement": "Compare `Character.valueOf((char)127) == Character.valueOf((char)127)` and `Character.valueOf((char)128) == Character.valueOf((char)128)`. Print results.",
+      "hint": "Character caches 0 to 127 (\\u0000 to \\u007f).",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        boolean c1 = Character.valueOf((char)127) == Character.valueOf((char)127);\n        boolean c2 = Character.valueOf((char)128) == Character.valueOf((char)128);\n        System.out.println(c1 + \" \" + c2);\n    }\n}",
+      "output": "true false",
+      "explanation": "CharacterCache caches the standard 7-bit ASCII range [0, 127]."
+    },
+    {
+      "id": "dt-56",
+      "title": "Exercise 56: Double Absence of Caching",
+      "difficulty": "Easy",
+      "problemStatement": "Demonstrate that `Double.valueOf(0.0) == Double.valueOf(0.0)` evaluates to `false` because Double maintains no cache.",
+      "hint": "Double and Float have no Flyweight cache.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Double d1 = Double.valueOf(0.0);\n        Double d2 = Double.valueOf(0.0);\n        System.out.println(\"Double cached: \" + (d1 == d2));\n    }\n}",
+      "output": "Double cached: false",
+      "explanation": "Floating-point types do not support caching because real numbers are infinitely dense."
+    },
+    {
+      "id": "dt-57",
+      "title": "Exercise 57: Mixed Wrapper and Primitive Comparison",
+      "difficulty": "Easy",
+      "problemStatement": "Compare `Integer.valueOf(1000) == 1000` to show that mixing a wrapper with a primitive forces unboxing and value comparison.",
+      "hint": "The presence of a primitive operand triggers unboxing of the wrapper.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Integer box = 1000;\n        int prim = 1000;\n        System.out.println(\"Mixed comparison: \" + (box == prim));\n    }\n}",
+      "output": "Mixed comparison: true",
+      "explanation": "Comparing a wrapper with a primitive unboxes the wrapper to primitive bits before comparison."
+    },
+    {
+      "id": "dt-58",
+      "title": "Exercise 58: Objects.equals Null-Safe Wrapper Comparison",
+      "difficulty": "Medium",
+      "problemStatement": "Use `java.util.Objects.equals()` to safely compare `Integer a = null;` and `Integer b = 5;`, then `Integer c = 5;` and `b`. Print results.",
+      "hint": "Objects.equals handles null references without throwing NullPointerException.",
+      "solutionCode": "import java.util.Objects;\npublic class Solution {\n    public static void main(String[] args) {\n        Integer a = null;\n        Integer b = 5;\n        Integer c = 5;\n        System.out.println(Objects.equals(a, b) + \" \" + Objects.equals(b, c));\n    }\n}",
+      "output": "false true",
+      "explanation": "Objects.equals provides null-safe equality comparison for wrapper objects."
+    },
+    {
+      "id": "dt-59",
+      "title": "Exercise 59: Long vs Integer Equals Incompatibility",
+      "difficulty": "Medium",
+      "problemStatement": "Demonstrate that `Integer.valueOf(42).equals(Long.valueOf(42L))` evaluates to `false` due to type checking.",
+      "hint": "Wrapper equals methods check instanceof matching wrapper class.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Integer i = 42;\n        Long l = 42L;\n        System.out.println(\"Cross-type equals: \" + i.equals(l));\n    }\n}",
+      "output": "Cross-type equals: false",
+      "explanation": "Integer.equals verifies `instanceof Integer`, returning false for other numeric wrapper types."
+    },
+    {
+      "id": "dt-60",
+      "title": "Exercise 60: Boolean Static Cache Reuse",
+      "difficulty": "Easy",
+      "problemStatement": "Demonstrate that `Boolean.valueOf(true) == Boolean.TRUE` and `Boolean.valueOf(false) == Boolean.FALSE`. Print results.",
+      "hint": "Boolean reuses static constant singletons.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        System.out.println((Boolean.valueOf(true) == Boolean.TRUE) + \" \" + (Boolean.valueOf(false) == Boolean.FALSE));\n    }\n}",
+      "output": "true true",
+      "explanation": "Boolean caches Boolean.TRUE and Boolean.FALSE statically; valueOf never allocates new instances."
     }
-}`,
-      output: `Primitive double: 1.00 - 0.90 = 0.09999999999999998
-BigDecimal exact: 1.00 - 0.90 = 0.10`,
-      explanation: 'IEEE 754 floating-point representations cannot represent decimal fractions like 0.1 or 0.9 exactly in base-2 binary, resulting in precision leakage. BigDecimal performs arbitrary-precision base-10 arithmetic, making it mandatory for financial calculations.'
+  ],
+  "floating-point-bigdecimal": [
+    {
+      "id": "dt-61",
+      "title": "Exercise 61: Floating-Point Binary Imprecision Verification",
+      "difficulty": "Easy",
+      "problemStatement": "Calculate `0.1 + 0.2` using primitive double. Print the exact printed value and whether `0.1 + 0.2 == 0.3`.",
+      "hint": "IEEE 754 binary floating point produces 0.30000000000000004.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        double sum = 0.1 + 0.2;\n        System.out.println(sum + \" and equal: \" + (sum == 0.3));\n    }\n}",
+      "output": "0.30000000000000004 and equal: false",
+      "explanation": "Base-2 cannot represent 0.1 and 0.2 without infinite recurring fractions, resulting in truncation error."
+    },
+    {
+      "id": "dt-62",
+      "title": "Exercise 62: Exact Addition with BigDecimal",
+      "difficulty": "Easy",
+      "problemStatement": "Perform the exact addition of 0.1 and 0.2 using `new BigDecimal(\"0.1\")` and `new BigDecimal(\"0.2\")`. Print the result.",
+      "hint": "Use BigDecimal.add().",
+      "solutionCode": "import java.math.BigDecimal;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal a = new BigDecimal(\"0.1\");\n        BigDecimal b = new BigDecimal(\"0.2\");\n        System.out.println(\"Exact sum: \" + a.add(b));\n    }\n}",
+      "output": "Exact sum: 0.3",
+      "explanation": "BigDecimal maintains arbitrary-precision base-10 representations, producing exact arithmetic."
+    },
+    {
+      "id": "dt-63",
+      "title": "Exercise 63: BigDecimal Double Constructor Pitfall",
+      "difficulty": "Medium",
+      "problemStatement": "Demonstrate the pitfall of `new BigDecimal(0.1)` by printing whether its string starts with '0.1000000000000000'.",
+      "hint": "The double constructor captures the IEEE binary inaccuracy.",
+      "solutionCode": "import java.math.BigDecimal;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal bad = new BigDecimal(0.1);\n        System.out.println(\"Starts with error: \" + bad.toString().startsWith(\"0.1000000000000000\"));\n    }\n}",
+      "output": "Starts with error: true",
+      "explanation": "new BigDecimal(double) imports binary floating-point representation error into the BigDecimal instance."
+    },
+    {
+      "id": "dt-64",
+      "title": "Exercise 64: BigDecimal.valueOf Factory Safety",
+      "difficulty": "Easy",
+      "problemStatement": "Show that `BigDecimal.valueOf(0.1)` matches `new BigDecimal(\"0.1\")` using `.equals()`. Print the result.",
+      "hint": "BigDecimal.valueOf(double) converts via Double.toString(d).",
+      "solutionCode": "import java.math.BigDecimal;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal a = BigDecimal.valueOf(0.1);\n        BigDecimal b = new BigDecimal(\"0.1\");\n        System.out.println(\"Safe factory equals: \" + a.equals(b));\n    }\n}",
+      "output": "Safe factory equals: true",
+      "explanation": "BigDecimal.valueOf(double) safely canonicalizes the double through Double.toString() first."
+    },
+    {
+      "id": "dt-65",
+      "title": "Exercise 65: Non-Terminating Division with RoundingMode",
+      "difficulty": "Medium",
+      "problemStatement": "Divide 10 by 3 using BigDecimal with scale 3 and `RoundingMode.HALF_UP`. Print the formatted result.",
+      "hint": "Pass scale and RoundingMode to divide().",
+      "solutionCode": "import java.math.BigDecimal;\nimport java.math.RoundingMode;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal a = new BigDecimal(\"10\");\n        BigDecimal b = new BigDecimal(\"3\");\n        System.out.println(\"Quotient: \" + a.divide(b, 3, RoundingMode.HALF_UP));\n    }\n}",
+      "output": "Quotient: 3.333",
+      "explanation": "Explicit scale and rounding modes prevent ArithmeticException on non-terminating decimal expansions."
+    },
+    {
+      "id": "dt-66",
+      "title": "Exercise 66: BigDecimal equals() vs compareTo() Scale Trap",
+      "difficulty": "Hard",
+      "problemStatement": "Compare `new BigDecimal(\"2.0\")` and `new BigDecimal(\"2.00\")` using both `.equals()` and `compareTo()`. Print both results.",
+      "hint": "equals checks value AND scale; compareTo checks numerical value only.",
+      "solutionCode": "import java.math.BigDecimal;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal a = new BigDecimal(\"2.0\");\n        BigDecimal b = new BigDecimal(\"2.00\");\n        System.out.println(\"equals: \" + a.equals(b) + \", compareTo: \" + (a.compareTo(b) == 0));\n    }\n}",
+      "output": "equals: false, compareTo: true",
+      "explanation": "BigDecimal.equals requires matching scale; compareTo evaluates pure mathematical value."
+    },
+    {
+      "id": "dt-67",
+      "title": "Exercise 67: Banker's Rounding with HALF_EVEN",
+      "difficulty": "Medium",
+      "problemStatement": "Round `new BigDecimal(\"2.5\")` and `new BigDecimal(\"3.5\")` to scale 0 using `RoundingMode.HALF_EVEN`. Print both rounded values.",
+      "hint": "HALF_EVEN rounds towards the nearest even integer when equidistant.",
+      "solutionCode": "import java.math.BigDecimal;\nimport java.math.RoundingMode;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal a = new BigDecimal(\"2.5\").setScale(0, RoundingMode.HALF_EVEN);\n        BigDecimal b = new BigDecimal(\"3.5\").setScale(0, RoundingMode.HALF_EVEN);\n        System.out.println(a + \" and \" + b);\n    }\n}",
+      "output": "2 and 4",
+      "explanation": "Banker's Rounding minimizes cumulative statistical bias across financial ledgers."
+    },
+    {
+      "id": "dt-68",
+      "title": "Exercise 68: Strip Trailing Zeros and Scale Inspection",
+      "difficulty": "Medium",
+      "problemStatement": "Call `.stripTrailingZeros()` on `new BigDecimal(\"12.500\")` and print the resulting string and its scale.",
+      "hint": "stripTrailingZeros removes unnecessary zero decimals and updates scale.",
+      "solutionCode": "import java.math.BigDecimal;\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal val = new BigDecimal(\"12.500\").stripTrailingZeros();\n        System.out.println(val + \" with scale: \" + val.scale());\n    }\n}",
+      "output": "12.5 with scale: 1",
+      "explanation": "stripTrailingZeros canonicalizes decimal numbers to minimal scale."
+    },
+    {
+      "id": "dt-69",
+      "title": "Exercise 69: Epsilon Floating-Point Comparison Helper",
+      "difficulty": "Medium",
+      "problemStatement": "Write a method `boolean nearlyEqual(double a, double b, double epsilon)` that returns true if `Math.abs(a - b) < epsilon`. Test with `0.1 + 0.2`, `0.3`, and epsilon `1e-9`.",
+      "hint": "Epsilon comparisons evaluate if difference is within acceptable rounding tolerance.",
+      "solutionCode": "public class Solution {\n    static boolean nearlyEqual(double a, double b, double epsilon) {\n        return Math.abs(a - b) < epsilon;\n    }\n    public static void main(String[] args) {\n        System.out.println(\"Nearly equal: \" + nearlyEqual(0.1 + 0.2, 0.3, 1e-9));\n    }\n}",
+      "output": "Nearly equal: true",
+      "explanation": "Epsilon comparisons safely account for IEEE 754 floating-point rounding margins."
+    },
+    {
+      "id": "dt-70",
+      "title": "Exercise 70: Arbitrary Precision with BigInteger Factorial",
+      "difficulty": "Hard",
+      "problemStatement": "Compute 25 factorial (25!) using `BigInteger`. Print the resulting value to demonstrate calculation beyond 64-bit long limits.",
+      "hint": "Long overflows at 21! (20! is ~2.43 * 10^18). BigInteger handles arbitrary bit lengths.",
+      "solutionCode": "import java.math.BigInteger;\npublic class Solution {\n    public static void main(String[] args) {\n        BigInteger fact = BigInteger.ONE;\n        for (int i = 2; i <= 25; i++) {\n            fact = fact.multiply(BigInteger.valueOf(i));\n        }\n        System.out.println(\"25! = \" + fact);\n    }\n}",
+      "output": "25! = 15511210043330985984000000",
+      "explanation": "BigInteger allocates dynamic byte arrays on the heap, supporting arbitrarily large integer calculations."
     }
   ]
 };

@@ -5,9 +5,11 @@
 // ============================================================
 
 export interface MiniQuizQuestion {
+  id?: string;
   question: string;
   options: string[];
   correctIndex: number;
+  correctOptionIndex?: number;
   explanation: string;
 }
 
@@ -54,13 +56,16 @@ export interface DetailedLesson {
     mistake: string;
     whyItHappens: string;
     howToFix: string;
+    codeSnippet?: string;
   }[];
   interviewQuestions: {
     question: string;
-    answer: string;
+    answer?: string;
+    expectedAnswer?: string;
     followUp?: string;
     followUpAnswer?: string;
     keyPhrases?: string[];
+    commonMistake?: string;
     commonMistakeAnswer?: string;
     focus?: string;
   }[];
@@ -72,6 +77,7 @@ export interface DetailedLesson {
     title: string;
     description: string;
     code: string;
+    explanation?: string;
     output?: string;
   }[];
   interviewTakeaways?: string[];
@@ -79,7 +85,7 @@ export interface DetailedLesson {
     summary: string;
     syntaxTemplate?: string;
     rules: { rule: string; explanation: string }[];
-    quickComparison?: { aspect: string; optionA: string; optionB: string }[];
+    quickComparison?: { aspect: string; optionA: string; optionB: string; optionC?: string }[];
   };
 }
 

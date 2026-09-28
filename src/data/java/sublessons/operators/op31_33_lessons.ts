@@ -12,7 +12,7 @@ export const op31_33_lessons: Record<string, DetailedLesson> = {
     title: 'Arithmetic Operators & Modulo (%)',
     subtitle: 'Integer division, floating-point math, operator precedence, and the power of the remainder operator',
     estimatedMinutes: 15,
-    beginnerAnalogy: 'Think of 14 eggs packed into standard cartons holding 6 eggs each. If you divide 14 by 6 (14 / 6), you get 2 complete cartons—that is integer division, which ignores anything that does not fill a full carton. The 2 loose eggs sitting on the counter that could not make a full carton are the remainder (14 % 6 = 2)—that is the modulo operator!',
+    beginnerAnalogy: "In Java, arithmetic operators (+, -, *, /, %) are binary operators defined by the Java Language Specification (JLS \u00a715.17, \u00a715.18) to perform mathematical operations on primitive numeric types. At the JVM bytecode level, integer division (`idiv`, `ldiv`) truncates towards zero, discarding any fractional remainder completely. The remainder operator (`irem`, `lrem`) computes `(a - (a / b) * b)`, meaning the sign of the result is determined strictly by the sign of the dividend (the left operand), regardless of the divisor's sign. Furthermore, dividing by zero with integer types triggers a runtime `java.lang.ArithmeticException: / by zero`, whereas floating-point division (`fdiv`, `ddiv`) follows IEEE 754 to produce `Infinity` or `NaN` without throwing an exception.\n\nArchitecturally, integer truncation and remainder semantics form the computational foundation for hash ring distribution, cyclic buffer indexing, pagination calculations, and clock arithmetic. Misunderstanding the sign rule for negative operands in modulo calculations is a leading cause of negative array indexing bugs in production partition algorithms.",
     coreExplanation: [
       'The Five Core Arithmetic Operators: Java provides five fundamental binary arithmetic operators: addition (+), subtraction (-), multiplication (*), division (/), and modulo (%). Each operates on two numeric operands and evaluates to a single numeric result.',
       'The Integer Division Truncation Trap: When both operands of the division operator (/) are integers (byte, short, int, long), Java performs integer division. The fractional part is completely discarded (truncated toward zero)—never rounded up! For example, 7 / 2 evaluates to 3, and 1 / 2 evaluates to 0.',
@@ -316,6 +316,25 @@ System.out.println(res);`,
         solution: 'NaN',
         explanation: 'In floating-point math, 0.0 / 0.0 is mathematically undefined and produces Double.NaN (Not a Number).'
       }
+    ,
+      {
+        title: "Floating-Point Modulo Evaluation",
+        problemStatement: "What is the output of the following floating-point modulo expression in Java?\n```java\ndouble res = 5.5 % 2.0;\nSystem.out.println(res);\n```",
+        options: ["1.5", "1.0", "0.5", "Throws ArithmeticException"],
+        correctOptionIndex: 0,
+        hint: "In Java, unlike C/C++, the % operator is defined for floating-point types: 5.5 - (2.0 * 2) = 1.5.",
+        solution: "1.5",
+        explanation: "Java defines % for floating-point operands. 2.0 goes into 5.5 twice (4.0), leaving a remainder of 1.5."
+      },
+      {
+        title: "Integer Division in Literal Product",
+        problemStatement: "What is printed by:\n```java\nint val = 1 / 2 * 100;\nSystem.out.println(val);\n```",
+        options: ["50", "0", "100", "Compilation error"],
+        correctOptionIndex: 1,
+        hint: "Multiplicative operators evaluate left-to-right. What is 1 / 2 in integer division?",
+        solution: "0",
+        explanation: "Because / and * have identical precedence and left-to-right associativity, 1 / 2 evaluates first as integer division, producing 0. Then 0 * 100 yields 0."
+      }
     ],
     interviewQuestions: [
       {
@@ -460,6 +479,37 @@ System.out.println(res);`,
         correctIndex: 1,
         explanation: '842 / 100 performs integer division, discarding 42 and leaving 8, the hundreds digit.'
       }
+    ,
+      {
+        question: "What is the result of dividing a positive double by 0.0 in Java (`5.0 / 0.0`)?",
+        options: ["Throws ArithmeticException", "Double.POSITIVE_INFINITY", "Double.NaN", "0.0"],
+        correctIndex: 1,
+        explanation: "Floating-point division by zero follows IEEE 754 standard and evaluates to POSITIVE_INFINITY instead of throwing an ArithmeticException."
+      },
+      {
+        question: "What does `-2147483648 / -1` evaluate to in 32-bit signed integer arithmetic?",
+        options: ["2147483648", "-2147483648", "0", "Throws ArithmeticException"],
+        correctIndex: 1,
+        explanation: "Integer.MIN_VALUE (-2^31) divided by -1 overflows the positive range of 32-bit signed int (max is 2^31 - 1), wrapping silently back to -2147483648."
+      },
+      {
+        question: "What is the result of `0.0 / 0.0` in Java?",
+        options: ["0.0", "Double.NaN", "Double.POSITIVE_INFINITY", "Throws ArithmeticException"],
+        correctIndex: 1,
+        explanation: "0.0 divided by 0.0 is mathematically indeterminate, evaluating to Double.NaN (Not-a-Number) in IEEE 754."
+      },
+      {
+        question: "Which statement about the remainder operator `%` is TRUE in Java?",
+        options: ["The result of `a % b` is always positive", "The sign of `a % b` is always the sign of `a`", "The sign of `a % b` is always the sign of `b`", "% can only be used with integer types"],
+        correctIndex: 1,
+        explanation: "In Java, the sign of the remainder strictly matches the sign of the dividend (the left operand `a`)."
+      },
+      {
+        question: "What is the return type of `byte b1 = 5; byte b2 = 10; Object o = b1 * b2;`?",
+        options: ["Byte", "Short", "Integer", "Long"],
+        correctIndex: 2,
+        explanation: "Binary numeric promotion widens byte and short operands to int before executing arithmetic, so the result boxes into java.lang.Integer."
+      }
     ]
   },
 
@@ -474,7 +524,7 @@ System.out.println(res);`,
     title: 'Pre vs Post Increment (++i vs i++)',
     subtitle: 'Prefix vs postfix evaluation order, expression values, and memory mutation mechanics',
     estimatedMinutes: 15,
-    beginnerAnalogy: 'Think of purchasing a prepaid mobile plan vs a postpaid plan. With prepaid (pre-increment ++i), you pay the bill BEFORE using the phone—the balance increases first, and then you use it. With postpaid (post-increment i++), you use the mobile service NOW, and the bill arrives AFTERWARDS—the current value is used in your expression immediately, and the variable increments only after that value has been consumed!',
+    beginnerAnalogy: "In the Java virtual machine, increment and decrement operators (++ and --) are unary operators that modify an integral variable by 1. At the bytecode level, when an integer local variable is modified, the JVM executes the `iinc <varIndex> <const>` instruction, which directly increments the variable in the local variable array without pushing or popping from the operand stack. However, when used inside expressions, pre-increment (`++i`) updates the local variable before pushing the new value onto the operand stack (`iinc` followed by `iload`), whereas post-increment (`i++`) pushes the original value onto the operand stack before executing `iinc` (`iload` followed by `iinc`).\n\nArchitecturally, this sequencing distinction dictates expression evaluation order. In complex expressions or loop conditions, failing to recognize that post-increment evaluates to the stale value before modifying the storage location causes off-by-one errors, infinite loops, and corrupt pointer advances in high-frequency low-latency data structures.",
     coreExplanation: [
       'The Unary Increment (++) and Decrement (--) Operators: Java provides increment (++) and decrement (--) unary operators that increase or decrease an integer or floating-point variable by 1 (equivalent to var = var + 1 or var = var - 1).',
       'The Prefix Form (++var, --var): In prefix notation, the operator is placed BEFORE the variable. The variable is updated in memory FIRST, and then the newly updated value is returned as the result of the expression.',
@@ -763,6 +813,25 @@ System.out.println(check + " " + a);`,
         solution: 'true 6',
         explanation: 'Pre-increment ++a increments a from 5 to 6 first, and returns 6. Then 6 == 6 evaluates to true. Final value of a is 6. Output: "true 6".'
       }
+    ,
+      {
+        title: "Complex Multiple Post-Increment Expression",
+        problemStatement: "What is printed by:\n```java\nint a = 1;\nint b = a++ + a++ * a++;\nSystem.out.println(a + \",\" + b);\n```",
+        options: ["4,7", "4,8", "3,7", "4,9"],
+        correctOptionIndex: 0,
+        hint: "Java evaluates operands strictly left-to-right. Track the value of 'a' at each operand: first a++ evaluates to 1 (a becomes 2), second a++ evaluates to 2 (a becomes 3), third a++ evaluates to 3 (a becomes 4). Multiplication takes precedence.",
+        solution: "4,7",
+        explanation: "Operand 1: a++ yields 1, a becomes 2. Operand 2: a++ yields 2, a becomes 3. Operand 3: a++ yields 3, a becomes 4. Multiplication 2 * 3 = 6. Addition 1 + 6 = 7. Final a is 4, b is 7."
+      },
+      {
+        title: "Compound Assignment with Post-Decrement",
+        problemStatement: "What is the output of:\n```java\nint x = 10;\nx -= x--;\nSystem.out.println(x);\n```",
+        options: ["0", "1", "-1", "9"],
+        correctOptionIndex: 0,
+        hint: "In compound assignment `x -= x--`, the left side `x` is evaluated first (holding 10), then `x--` evaluates to 10 (and decrements x to 9). Then 10 - 10 is stored back into x.",
+        solution: "0",
+        explanation: "Java JLS specifies the left-hand operand is evaluated first (value 10). Then the right-hand operand x-- evaluates to 10 (and decrements x to 9). The subtraction 10 - 10 = 0 is then assigned to x, overwriting the decremented 9 with 0."
+      }
     ],
     interviewQuestions: [
       {
@@ -907,6 +976,37 @@ System.out.println(check + " " + a);`,
         correctIndex: 2,
         explanation: 'As isolated standalone statements, both increment the variable by 1 with identical compiled bytecode and performance.'
       }
+    ,
+      {
+        question: "What bytecode instruction does the JVM use to increment a local integer variable without stack operations?",
+        options: ["iadd", "iinc", "iconst_1", "iload_1"],
+        correctIndex: 1,
+        explanation: "The JVM provides the specialized `iinc` instruction which directly updates a local variable array slot without pushing operands onto the evaluation stack."
+      },
+      {
+        question: "What is the value of `x` after executing `int x = 5; x = x++;`?",
+        options: ["6", "5", "7", "0"],
+        correctIndex: 1,
+        explanation: "x++ places the original value (5) onto the operand stack, increments x to 6, and then the assignment pops 5 from the stack and overwrites x back to 5."
+      },
+      {
+        question: "What does `int i = 0; while (i++ < 2) {} System.out.println(i);` print?",
+        options: ["2", "3", "4", "1"],
+        correctIndex: 1,
+        explanation: "Iteration 1: i is 0 (< 2 true), i becomes 1. Iteration 2: i is 1 (< 2 true), i becomes 2. Iteration 3: i is 2 (< 2 false), i becomes 3. Loop exits; prints 3."
+      },
+      {
+        question: "Which of the following expressions is syntactically INVALID in Java?",
+        options: ["++i", "i++", "++(i++)", "i--"],
+        correctIndex: 2,
+        explanation: "Increment operators require a variable (l-value) as operand. `i++` evaluates to a value, so `++(value)` is a syntax error."
+      },
+      {
+        question: "What is the output of `int a = 1; int res = ++a + ++a;`?",
+        options: ["4", "5", "3", "6"],
+        correctIndex: 1,
+        explanation: "First ++a increments a to 2 and yields 2. Second ++a increments a to 3 and yields 3. 2 + 3 = 5."
+      }
     ]
   },
 
@@ -921,7 +1021,7 @@ System.out.println(check + " " + a);`,
     title: 'Relational & Equality Operators (== vs .equals())',
     subtitle: 'Comparing primitives, boolean evaluation, and the essential difference between == and .equals()',
     estimatedMinutes: 15,
-    beginnerAnalogy: 'Imagine comparing two identification cards. If you ask "Are these two cards the exact same physical piece of plastic?", you are using "==" (reference/identity check). If you ask "Do both cards have the exact same name written on them?", you are using ".equals()" (content check). Two cards can have identical names printed on them, but they are still two distinct physical pieces of plastic!',
+    beginnerAnalogy: "Java enforces a strict architectural boundary between reference identity comparison and value equality comparison. The relational equality operator `==` compares the raw binary bits stored in the operand variables. For primitive data types (int, double, char), it evaluates whether the two operands contain the same numeric value. For reference types, it evaluates whether both pointer variables store the identical 64-bit (or compressed 32-bit) heap memory address, compiling down to the `if_acmpeq` bytecode instruction. In contrast, the `.equals()` method is a virtual method invocation (`invokevirtual`) dispatched dynamically to compare the structural, semantic contents of objects on the heap.\n\nArchitecturally, confounding `==` with `.equals()` creates critical security vulnerabilities and data bugs. Dynamic Strings, parsed JSON tokens, database records, and deserialized objects reside in distinct heap memory allocations. Comparing them with `==` checks pointer identity rather than textual content, evaluating to `false` and causing authorization bypasses, cache misses, and silent workflow rejections.",
     coreExplanation: [
       'The Six Relational Operators: Java provides six relational operators to compare values: greater than (>), less than (<), greater than or equal to (>=), less than or equal to (<=), equal to (==), and not equal to (!=). Every relational expression always evaluates strictly to a boolean value: either true or false.',
       'Comparing Primitive Values with ==: For primitive types (int, double, char, boolean), the == operator compares the raw binary values stored directly inside the variables memory cell. For example, 5 == 5 evaluates to true, and 10 > 20 evaluates to false.',
@@ -1221,6 +1321,25 @@ System.out.println(c1 != c2);`,
         solution: 'true',
         explanation: '\'a\' (ASCII 97) is not equal to \'A\' (ASCII 65). The != operator evaluates to true.'
       }
+    ,
+      {
+        title: "String Substring Literal Pool Reference Equality",
+        problemStatement: "What is the output of:\n```java\nString s1 = \"Java\";\nString s2 = \"JavaPlatform\".substring(0, 4);\nSystem.out.println((s1 == s2) + \" \" + s1.equals(s2));\n```",
+        options: ["true true", "false true", "false false", "true false"],
+        correctOptionIndex: 1,
+        hint: "substring() dynamically constructs a new String on the heap at runtime.",
+        solution: "false true",
+        explanation: "s1 points to the interned literal in the String constant pool. substring() creates a new String object on the heap at runtime, so s1 == s2 compares different addresses (false). s1.equals(s2) compares characters ('Java' equals 'Java'), returning true."
+      },
+      {
+        title: "Boolean Wrapper vs Primitive Equality",
+        problemStatement: "What is printed by:\n```java\nBoolean b1 = new Boolean(true);\nBoolean b2 = true;\nboolean b3 = true;\nSystem.out.println((b1 == b2) + \" \" + (b1 == b3));\n```",
+        options: ["true true", "false true", "false false", "true false"],
+        correctOptionIndex: 1,
+        hint: "b1 is created via 'new' (heap object). b2 is cached Boolean.TRUE. b3 is primitive boolean. When comparing with primitive b3, unboxing occurs.",
+        solution: "false true",
+        explanation: "b1 == b2 compares two distinct wrapper objects on the heap, returning false. b1 == b3 compares a wrapper with a primitive, unboxing b1 to boolean true; true == true evaluates to true."
+      }
     ],
     interviewQuestions: [
       {
@@ -1364,6 +1483,37 @@ System.out.println(c1 != c2);`,
         options: ['5', '20', '10', 'Compilation Error'],
         correctIndex: 1,
         explanation: 'The semicolon after "if (x > 10);" terminates the if statement as an empty statement. The block "{ x = 20; }" runs unconditionally, setting x to 20.'
+      }
+    ,
+      {
+        question: "What does the JVM bytecode instruction `if_acmpeq` do?",
+        options: ["Compares two integer values for equality", "Compares two object references for identical heap memory addresses", "Calls the .equals() method dynamically", "Checks if an object is null"],
+        correctIndex: 1,
+        explanation: "`if_acmpeq` compares two reference addresses on top of the operand stack and branches if they point to the identical heap address."
+      },
+      {
+        question: "What does `\"hello\".equals(null)` return in Java?",
+        options: ["Throws NullPointerException", "false", "true", "Compilation error"],
+        correctIndex: 1,
+        explanation: "The contract of equals() specifies that for any non-null reference value x, x.equals(null) must return false without throwing an exception."
+      },
+      {
+        question: "What is the output of `Double.NaN == Double.NaN` in Java?",
+        options: ["true", "false", "Compilation error", "Throws ArithmeticException"],
+        correctIndex: 1,
+        explanation: "According to IEEE 754 and the JLS, NaN is not equal to any value, including itself. `NaN == NaN` is always false."
+      },
+      {
+        question: "What does `System.out.println(true == true == true);` evaluate to?",
+        options: ["true", "false", "Compilation error", "Throws ClassCastException"],
+        correctIndex: 0,
+        explanation: "Equality operators associate left-to-right: `(true == true)` evaluates to `true`, then `true == true` evaluates to `true`."
+      },
+      {
+        question: "Why does `new String(\"a\") == new String(\"a\")` evaluate to false?",
+        options: ["String contents are compared and fail", "The two strings are allocated in separate heap memory locations", "Strings are immutable", "String pool rejects duplicate objects"],
+        correctIndex: 1,
+        explanation: "The `new` keyword forces allocation of a new object on the heap, producing two distinct heap addresses. `==` checks address identity."
       }
     ]
   }

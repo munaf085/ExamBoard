@@ -12,7 +12,7 @@ export const op37_39_lessons: Record<string, DetailedLesson> = {
     title: 'Bitwise & Shift Operators',
     subtitle: 'Manipulating individual binary bits (&, |, ^, ~, <<, >>, >>>)',
     estimatedMinutes: 14,
-    beginnerAnalogy: 'Imagine an 8-switch bank controlling security lights, air vents, alarms, and cameras in a high-tech facility. Rather than rewiring the entire building for every change, bitwise operators let you flick individual switches ON or OFF directly at the circuit board level. You can check if the alarm switch is ON (&), activate the ventilation switch (|), toggle the lights (^), invert every switch simultaneously (~), or slide the entire bank of settings along the control rack (<<, >>, >>>).',
+    beginnerAnalogy: "In Java, bitwise operators (`&`, `|`, `^`, `~`) and bit-shift operators (`<<`, `>>`, `>>>`) operate directly on the two's complement binary representations of integral primitive types (JLS \u00a715.19, \u00a715.22). At the JVM bytecode level, operands smaller than 32 bits (byte and short) are automatically promoted to 32-bit `int` prior to bitwise manipulation. The JVM executes dedicated ALU instructions: `iand`, `ior`, `ixor`, `ishl` (shift left), `ishr` (arithmetic signed shift right, copying the sign bit), and `iushr` (logical unsigned shift right, zero-extending from the left). Crucially, the JVM masks the shift distance operand: for 32-bit ints, only the lower 5 bits of the shift count are read (`distance & 0x1F`, i.e., modulo 32), meaning `x << 32` produces `x`, not 0.\n\nArchitecturally, bitwise manipulation provides zero-allocation high-throughput primitives for systems programming. It underpins memory-efficient state flags (bitmasks), RGB color channel packing/unpacking, cryptographic ciphers, network packet serialization, and fast power-of-two table indexing in the Java Collections Framework (such as `(n - 1) & hash` in `HashMap`).",
     coreExplanation: [
       'Binary Representation & Bits: Every integer in Java (byte, short, int, long) is stored internally in binary as a series of 0s and 1s using two\'s complement representation. Bitwise operators inspect and manipulate these individual bit positions.',
       'Bitwise AND (&): Compares each bit position of two operands. The result bit is 1 ONLY if both corresponding bits are 1; otherwise, it is 0 (1 & 1 = 1; 1 & 0 = 0). Used for masking bits and testing specific flags.',
@@ -479,6 +479,37 @@ System.out.println(val << 32);`,
         correctIndex: 1,
         explanation: 'For int, Java masks the shift distance to the lowest 5 bits (0x1F), effectively performing distance % 32.'
       }
+    ,
+      {
+        question: "What is the difference between `>>` and `>>>` in Java?",
+        options: ["`>>` is arithmetic right shift (preserves sign bit), while `>>>` is logical right shift (fills left with zeros)", "`>>>` preserves the sign bit, while `>>` fills with zeros", "`>>>` is only for floating-point numbers", "There is no difference for negative numbers"],
+        correctIndex: 0,
+        explanation: "`>>` performs signed shift right, copying the sign bit; `>>>` performs unsigned shift right, inserting 0s regardless of sign."
+      },
+      {
+        question: "What does `1 << 32` evaluate to for a 32-bit integer in Java?",
+        options: ["0", "1", "4294967296", "Throws ArithmeticException"],
+        correctIndex: 1,
+        explanation: "In Java, shift distances for 32-bit ints are masked to the lower 5 bits (32 & 0x1F = 0), so `1 << 32` is identical to `1 << 0`, producing 1."
+      },
+      {
+        question: "What does `~0` (bitwise NOT of 0) evaluate to in 32-bit signed int?",
+        options: ["0", "1", "-1", "2147483647"],
+        correctIndex: 2,
+        explanation: "0 is 32 zero bits. Inverting all bits yields 32 one bits (0xFFFFFFFF), which represents -1 in two's complement."
+      },
+      {
+        question: "How does `HashMap` compute bucket index from hash `h` for a table of length `n` (where `n` is a power of 2)?",
+        options: ["h % n", "(n - 1) & h", "h / n", "(n + 1) ^ h"],
+        correctIndex: 1,
+        explanation: "When n is a power of 2, `(n - 1) & h` is a bitwise optimization mathematically identical to `h % n`, executing in 1 CPU cycle."
+      },
+      {
+        question: "What is the result of `5 ^ 5` (bitwise XOR of a number with itself)?",
+        options: ["5", "10", "0", "1"],
+        correctIndex: 2,
+        explanation: "Any number XORed with itself produces 0 because identical bits cancel out (1^1=0, 0^0=0)."
+      }
     ]
   },
 
@@ -493,7 +524,7 @@ System.out.println(val << 32);`,
     title: 'The instanceof Operator & Pattern Matching',
     subtitle: 'Checking object runtime types safely and Java 14+ pattern matching',
     estimatedMinutes: 12,
-    beginnerAnalogy: 'Imagine an automated conveyor belt scanner at a sorting depot. Before routing a mystery package into the fragile glassware chute, a scanner inspects the label: "Is this package glassware?". If true, it automatically attaches a handle and safely unboxes it in one seamless motion (Pattern Matching). If the box is empty or missing (null), the scanner safely reports false rather than crashing the conveyor line.',
+    beginnerAnalogy: "The relational type-comparison operator `instanceof` (JLS \u00a715.20.2) determines whether an object reference runtime instance is assignment-compatible with a target type, class, or interface. At the bytecode level, the JVM emits the `instanceof` instruction. The virtual machine resolves the reference's Klass pointer from its object header on the heap and traverses the class hierarchy and interface tables in Metaspace. If the reference operand is `null`, the `instanceof` bytecode immediately evaluates to `false` without throwing a `NullPointerException`. Starting in Java 16 (JEP 394), modern Pattern Matching for `instanceof` (`obj instanceof String s`) combines runtime type testing with automatic downcasting into a scoped pattern variable governed by flow typing.\n\nArchitecturally, `instanceof` provides the runtime foundation for safe polymorphic dispatch across heterogeneous collections, message bus event routing, and robust implementations of the `equals()` contract. Pattern matching eliminates redundant boilerplate casts, preventing `ClassCastException` and making domain modeling resilient and concise.",
     coreExplanation: [
       'What is instanceof? A binary relational operator used to test whether a reference variable holds an object that is an instance of a specified class, subclass, or interface at runtime.',
       'Boolean Result: It evaluates to true if the object can be safely cast to the target type without throwing a ClassCastException; otherwise, it returns false.',
@@ -1002,6 +1033,37 @@ System.out.println(result);`,
         correctIndex: 1,
         explanation: 'Pattern matching combines the type check and variable assignment into one step, eliminating verbose manual casting and potential bugs.'
       }
+    ,
+      {
+        question: "What does `null instanceof String` evaluate to in Java?",
+        options: ["true", "false", "Throws NullPointerException", "Compilation error"],
+        correctIndex: 1,
+        explanation: "The JLS explicitly defines that if the left operand of instanceof is null, the expression evaluates to false without throwing NPE."
+      },
+      {
+        question: "What feature was introduced in Java 16 (JEP 394) to simplify instanceof checks?",
+        options: ["Type Erasure", "Pattern Matching for instanceof", "Dynamic Typing", "Safe Cast Operator"],
+        correctIndex: 1,
+        explanation: "Pattern Matching for instanceof allows writing `if (obj instanceof String s)` to test and cast in a single step with flow scoping."
+      },
+      {
+        question: "Can `instanceof` be used to test primitive types (e.g. `10 instanceof int`)?",
+        options: ["Yes", "No, instanceof requires reference types as operands", "Only if compiled with Java 21", "Yes, for numbers"],
+        correctIndex: 1,
+        explanation: "instanceof requires a reference type on the left and a reference type or interface on the right. Primitives cause compile errors."
+      },
+      {
+        question: "What is the scope of pattern variable `s` in `if (obj instanceof String s && s.length() > 0)`?",
+        options: ["It is in scope only inside the if body", "It is in scope in the right side of `&&` and inside the if body (flow scoping)", "It is in scope throughout the entire method", "Compile error: s cannot be accessed on the same line"],
+        correctIndex: 1,
+        explanation: "Java flow scoping makes pattern variable `s` available to the right operand of `&&` because that operand only executes if instanceof succeeds."
+      },
+      {
+        question: "What does `\"hello\" instanceof Object` evaluate to?",
+        options: ["true", "false", "Compile error", "Throws ClassCastException"],
+        correctIndex: 0,
+        explanation: "Every reference type in Java inherits from java.lang.Object, so any non-null object reference is an instanceof Object."
+      }
     ]
   },
 
@@ -1016,7 +1078,7 @@ System.out.println(result);`,
     title: 'Operator Precedence & Associativity',
     subtitle: 'Which operator runs first? Parentheses as the golden rule for clarity',
     estimatedMinutes: 14,
-    beginnerAnalogy: 'Think of a busy emergency traffic intersection with ambulances, public buses, and regular commuters. An ambulance with sirens blaring (Parentheses ()) has supreme priority and clears the intersection first regardless of other rules. Traffic signals (Multiplicative *, /, %) take precedence over standard yield signs (Additive +, -). Meanwhile, the loading dock workers unloading freight into a warehouse (Assignment =, +=) only begin their job after all traffic on the street has completely cleared.',
+    beginnerAnalogy: "In Java, operator precedence and associativity (JLS \u00a715.7) govern the parse-tree binding of operators and operands within complex expressions. At the bytecode compilation level, operator precedence determines the structure of the Abstract Syntax Tree (AST), which in turn determines the sequence of push and pop operations on the JVM operand stack. Multiplicative operators (*, /, %) bind more tightly than additive operators (+, -), which bind more tightly than shift operators, relational tests, equality tests, bitwise logic, and finally assignment operators (=, +=). However, Java strictly guarantees that operand expressions are evaluated from left to right, even when operators bind according to right-to-left associativity.\n\nArchitecturally, relying on implicit operator precedence in complex production logic introduces severe cognitive debt and subtle maintenance defects\u2014especially with bitwise expressions (such as `a & mask == 0`, which binds as `a & (mask == 0)`). Production coding standards mandate using explicit parentheses `()` to enforce unambiguous intent, self-documenting code, and predictable operand evaluation.",
     coreExplanation: [
       'Precedence vs Associativity: Precedence dictates which operators bind to operands first when multiple distinct operators compete in an expression (e.g. * before +). Associativity dictates whether operators of equal precedence evaluate from Left-to-Right or Right-to-Left.',
       'The Precedence Hierarchy: (1) Parentheses () and postfix ++/--; (2) Unary prefix (++expr, --expr, +, -, !, ~); (3) Multiplicative (*, /, %); (4) Additive (+, -); (5) Shift (<<, >>, >>>); (6) Relational (<, >, <=, >=, instanceof); (7) Equality (==, !=); (8) Bitwise AND (&); (9) Bitwise XOR (^); (10) Bitwise OR (|); (11) Logical AND (&&); (12) Logical OR (||); (13) Ternary (?:); (14) Assignment (=, +=, -=...).',
@@ -1476,6 +1538,37 @@ System.out.println(outcome);`,
         ],
         correctIndex: 1,
         explanation: 'Using explicit parentheses eliminates ambiguity, prevents maintenance bugs, and maximizes code readability.'
+      }
+    ,
+      {
+        question: "Why is `int val = a & mask == 0;` a common compilation bug?",
+        options: ["`&` cannot operate on mask", "`==` has higher precedence than `&`, so it parses as `a & (mask == 0)` which attempts to bitwise-AND an int with a boolean", "`&` requires parentheses", "`mask` must be final"],
+        correctIndex: 1,
+        explanation: "Equality operators (==) have higher precedence than bitwise AND (&). The expression parses as `a & (mask == 0)`, causing a compile error."
+      },
+      {
+        question: "In what order are the operands of an operator evaluated in Java?",
+        options: ["Left-to-right always", "Right-to-left always", "Undefined / depends on compiler", "Highest precedence operands first"],
+        correctIndex: 0,
+        explanation: "JLS \u00a715.7 strictly guarantees that operands of an operator are always evaluated from left to right."
+      },
+      {
+        question: "Which operators associate from right to left in Java?",
+        options: ["Multiplicative (*, /, %)", "Relational (<, >, <=, >=)", "Assignment (=, +=, etc.), Unary (!, ++, --, ~), and Ternary (? :)", "Shift operators (<<, >>, >>>)"],
+        correctIndex: 2,
+        explanation: "Unary operators, assignment operators, and the conditional ternary operator associate from right to left."
+      },
+      {
+        question: "What does `System.out.println(1 + 2 + \"3\");` print?",
+        options: ["123", "33", "6", "Compilation error"],
+        correctIndex: 1,
+        explanation: "Addition associates left to right: 1 + 2 evaluates to numeric 3. Then 3 + \"3\" performs string concatenation, yielding \"33\"."
+      },
+      {
+        question: "What does `System.out.println(\"3\" + 1 + 2);` print?",
+        options: ["33", "312", "6", "Compilation error"],
+        correctIndex: 1,
+        explanation: "\"3\" + 1 evaluates to String \"31\". Then \"31\" + 2 evaluates to String \"312\"."
       }
     ]
   }

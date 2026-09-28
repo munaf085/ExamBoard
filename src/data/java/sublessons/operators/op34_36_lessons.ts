@@ -12,35 +12,7 @@ export const op34_36_lessons: Record<string, DetailedLesson> = {
     title: 'Logical Operators & Short-Circuiting',
     subtitle: 'Short-circuit evaluation (&&, ||), logical NOT (!), side-effect traps, and guarding against runtime errors',
     estimatedMinutes: 14,
-    beginnerAnalogy: 'Imagine a bouncer at a club door checking two requirements: "Has valid ID AND is wearing formal shoes". If the guest has NO ID, the bouncer immediately turns them away without ever glancing down at their shoes. Why waste time checking shoes when entry is already impossible? Conversely, at a VIP lounge with "Has VIP Pass OR on Guest List", showing a VIP pass grants immediate entry without the host searching the guest list. In Java, this intelligent early exit is called short-circuit evaluation.',
-    interviewTakeaways: [
-      'Short-circuit AND (&&) halts and returns false immediately if the left operand is false; the right operand is never evaluated.',
-      'Short-circuit OR (||) halts and returns true immediately if the left operand is true; the right operand is never evaluated.',
-      'Non-short-circuit operators (& and |) evaluate BOTH operands unconditionally, even on boolean expressions.',
-      'The Guard Pattern: Always place safety checks (such as divisor != 0) on the left of && to protect right-side expressions from crashing.',
-      'Side-Effect Trap: Never place increments (++x) or assignments in the right operand of && or ||, as they may be skipped silently.'
-    ],
-    cheatSheet: {
-      summary: 'Short-circuit logical operators (&&, ||) optimize runtime evaluation by skipping the right-hand operand whenever the left operand suffices to determine the boolean outcome.',
-      syntaxTemplate: `boolean resultAnd = (leftCondition && rightCondition); // Skips right if left is false
-boolean resultOr  = (leftCondition || rightCondition); // Skips right if left is true
-boolean resultNot = !condition;                        // Inverts boolean state`,
-      rules: [
-        { rule: 'Strict Boolean Operands', explanation: 'Logical operators &&, ||, and ! strictly require boolean operands. Passing numbers or integers causes a compile-time error.' },
-        { rule: '&& Short-Circuit Rule', explanation: 'If left operand evaluates to false, result is guaranteed false. Right operand is skipped entirely.' },
-        { rule: '|| Short-Circuit Rule', explanation: 'If left operand evaluates to true, result is guaranteed true. Right operand is skipped entirely.' },
-        { rule: 'Precedence Hierarchy', explanation: 'Logical NOT (!) has highest unary precedence, followed by Logical AND (&&), followed by Logical OR (||).' },
-        { rule: 'Left-to-Right Associativity', explanation: 'Expressions involving multiple logical operators evaluate strictly from left to right.' },
-        { rule: 'Bitwise / Boolean Non-Short-Circuit', explanation: '& and | evaluate both sides regardless of outcome, which can lead to unexpected runtime exceptions if used as guards.' }
-      ],
-      quickComparison: [
-        { aspect: 'Operator', optionA: '&& (Conditional AND)', optionB: '& (Logical / Bitwise AND)' },
-        { aspect: 'Short-Circuiting', optionA: 'Yes: Skips RHS if LHS is false', optionB: 'No: Always evaluates both LHS and RHS' },
-        { aspect: 'Safe Guard Usage', optionA: 'Safe: (b != 0 && a / b > 1) prevents / by zero', optionB: 'Hazardous: Evaluates a / 0 and throws ArithmeticException' },
-        { aspect: 'Side-Effect Execution', optionA: 'Conditional: RHS side-effects run ONLY if LHS is true', optionB: 'Guaranteed: RHS side-effects ALWAYS execute' },
-        { aspect: 'Primary Use Case', optionA: 'Boolean control logic and conditional branch guards', optionB: 'Bitwise masking or mandatory dual evaluation' }
-      ]
-    },
+    beginnerAnalogy: "In Java, the logical conditional operators `&&` (conditional-AND) and `||` (conditional-OR) adhere strictly to short-circuit evaluation semantics defined in JLS \u00a715.23 and \u00a715.24. At the JVM bytecode level, the compiler generates conditional branching instructions: `ifeq` (jump if zero/false) for `&&` and `ifne` (jump if non-zero/true) for `||`. If the left-hand operand of `&&` evaluates to `false`, the overall expression can never be `true`; the JVM executes a direct branch jump over the right-hand operand, completely skipping its bytecode instructions. Conversely, if the left-hand operand of `||` evaluates to `true`, the right-hand operand is completely bypassed. In contrast, the boolean logical operators `&` and `|` always unconditionally evaluate both operands.\n\nArchitecturally, short-circuit evaluation is fundamental to safe defensive programming. It enables defensive null guards (`user != null && user.isActive()`) and array boundary guards (`index >= 0 && index < array.length && array[index] == target`) without throwing `NullPointerException` or `ArrayIndexOutOfBoundsException`. Placing methods with side effects on the right-hand side of short-circuit operators is a dangerous anti-pattern because those side effects execute unpredictably based on runtime data.",
     coreExplanation: [
       'Java provides three primary logical operators: Logical NOT (!), Logical AND (&&), and Logical OR (||). These operators strictly require boolean operands and produce boolean results.',
       'Logical NOT (!) is a unary operator with high precedence that inverts boolean state: !true becomes false, and !false becomes true. Double negation (!!flag) restores the original boolean value.',
@@ -324,6 +296,25 @@ System.out.println("m=" + m + ", test=" + test);`,
         solution: 'm=2, test=false',
         explanation: 'In the left operand (m++ > 1), post-increment provides the current value of m (which is 1) for the comparison: (1 > 1) is false. Immediately after providing its value, m increments to 2. Because the left operand of && evaluated to false, short-circuiting occurs! The right operand (++m > 2) is completely skipped. Therefore, m remains 2 and test is false.'
       }
+    ,
+      {
+        title: "Chained Short-Circuit with Method Side-Effects",
+        problemStatement: "Given the helper method:\n```java\nstatic boolean log(String msg, boolean val) {\n    System.out.print(msg + \" \");\n    return val;\n}\n```\nWhat is printed when executing:\n```java\nboolean res = log(\"A\", false) && log(\"B\", true) || log(\"C\", true);\nSystem.out.println(res);\n```",
+        options: ["A B C true", "A C true", "A false", "A C false"],
+        correctOptionIndex: 1,
+        hint: "&& has higher precedence than ||. A evaluates to false, short-circuiting B. Then the result (false) is OR-ed with C.",
+        solution: "A C true",
+        explanation: "Because && binds tighter than ||, the sub-expression is `(log(\"A\", false) && log(\"B\", true))`. log(\"A\", false) prints 'A ' and returns false. Because it is false, log(\"B\") is short-circuited and never called. The expression becomes `false || log(\"C\", true)`. Because left side of || is false, log(\"C\", true) MUST execute, printing 'C ' and returning true. Final output: 'A C true'."
+      },
+      {
+        title: "Null-Safe Guard Ordering in String Inspection",
+        problemStatement: "What is the result of executing the following snippet?\n```java\nString s = null;\nif (s != null & s.length() > 0) {\n    System.out.println(\"Valid\");\n} else {\n    System.out.println(\"Invalid\");\n}\n```",
+        options: ["Prints 'Invalid'", "Prints 'Valid'", "Throws NullPointerException at runtime", "Compilation error"],
+        correctOptionIndex: 2,
+        hint: "Notice the operator is single '&' (bitwise/logical AND), NOT double '&&'!",
+        solution: "Throws NullPointerException at runtime",
+        explanation: "The single '&' operator is a non-short-circuiting logical AND. It forces evaluation of BOTH operands. Even though `s != null` evaluates to false, `s.length()` is still executed, throwing java.lang.NullPointerException."
+      }
     ],
     interviewQuestions: [
       {
@@ -478,6 +469,37 @@ System.out.println("m=" + m + ", test=" + test);`,
         correctIndex: 2,
         explanation: 'In Java, 1 and 0 are integer primitives, not boolean values. The && operator strictly requires boolean operands, so this fails compilation.'
       }
+    ,
+      {
+        question: "What is the key difference between `&&` and `&` when applied to boolean operands?",
+        options: ["`&&` short-circuits evaluation while `&` always evaluates both operands", "`&` short-circuits evaluation while `&&` evaluates both operands", "`&&` works only on integers", "There is no difference"],
+        correctIndex: 0,
+        explanation: "`&&` stops evaluation immediately if the first operand is false; `&` is a non-short-circuit logical operator evaluating both sides unconditionally."
+      },
+      {
+        question: "In the expression `false && (x++ > 0)`, what happens to `x`?",
+        options: ["`x` is incremented by 1", "`x` is not modified because the right operand is skipped", "Compilation error", "`x` is reset to 0"],
+        correctIndex: 1,
+        explanation: "Because the left operand is false, the `&&` operator short-circuits and never executes the right operand `(x++ > 0)`."
+      },
+      {
+        question: "In the expression `true || (y++ > 0)`, what happens to `y`?",
+        options: ["`y` is incremented by 1", "`y` is not modified because the right operand is skipped", "`y` is evaluated twice", "Throws ArithmeticException"],
+        correctIndex: 1,
+        explanation: "Because the left operand of `||` is true, the overall expression is already true, so the right-hand operand is short-circuited and skipped."
+      },
+      {
+        question: "Which bytecode instruction is generated by javac to implement the short-circuiting jump for `&&`?",
+        options: ["ifeq", "goto", "iadd", "invokevirtual"],
+        correctIndex: 0,
+        explanation: "`ifeq` tests if the integer on top of the stack is 0 (false), branching over the right-hand expression if so."
+      },
+      {
+        question: "What is De Morgan's Law for `!(A && B)`?",
+        options: ["!A && !B", "!A || !B", "A || B", "!A || B"],
+        correctIndex: 1,
+        explanation: "De Morgan's first law states that the negation of a conjunction is the disjunction of the negations: !(A && B) == (!A || !B)."
+      }
     ]
   },
 
@@ -492,35 +514,7 @@ System.out.println("m=" + m + ", test=" + test);`,
     title: 'Assignment Operators & The Compound Cast Trap',
     subtitle: 'Simple assignment, compound assignment operators, evaluation order, and hidden implicit casting',
     estimatedMinutes: 14,
-    beginnerAnalogy: 'Imagine packing clothes into a compact suitcase with a strict 10-kg limit. If you manually pack 12 kg of clothes (explicit addition: s = s + 1), the airline agent stops you and raises an error: "Exceeds capacity!" But if you use the airline\'s "Express Auto-Packer" (compound operator: s += 1), the machine silently chops off the excess 2 kg of your clothes and zips the suitcase shut without warning you. Compound assignment operators in Java automatically and invisibly cast the result back into the target variable\'s type!',
-    interviewTakeaways: [
-      'JLS §15.26.2 Rule: A compound assignment E1 op= E2 is formally defined as E1 = (T)((E1) op (E2)), where T is the type of E1.',
-      'Hidden Narrowing Cast: s += 1 compiles on byte/short/char, while s = s + 1 fails compilation due to automatic integer promotion.',
-      'Silent Overflow Danger: Because compound operators inject an implicit narrowing cast, integer overflow occurs silently without errors or exceptions.',
-      'Right-to-Left Associativity: Assignment operators chain from right to left: a = b = c = 10 sets c first, then b, then a.',
-      'Target Address Evaluation: In E1 op= E2, the variable expression E1 is evaluated only once to determine its destination before E2 is evaluated.'
-    ],
-    cheatSheet: {
-      summary: 'Assignment operators copy values into variable storage. Compound assignment operators combine an operation with assignment while injecting an implicit narrowing cast to the target type.',
-      syntaxTemplate: `variable = expression;        // Simple assignment
-variable += expression;       // Equivalent to: variable = (TargetType)(variable + expression)
-a = b = c = 100;              // Chained assignment (right-to-left)`,
-      rules: [
-        { rule: 'Right-to-Left Associativity', explanation: 'Chained assignments evaluate right to left. The rightmost expression evaluates first and cascades leftward.' },
-        { rule: 'Implicit Compound Cast', explanation: 'x op= y is strictly expanded to x = (Type of x)(x op y). The narrowing cast is completely hidden.' },
-        { rule: 'Binary Numeric Promotion', explanation: 'Arithmetic operations on byte, short, and char automatically promote operands to int before computation.' },
-        { rule: 'Silent Overflow', explanation: 'Due to the hidden cast, exceeding primitive bounds (e.g. byte b = 127; b += 1) wraps around silently without warning.' },
-        { rule: 'Single Evaluation of LHS', explanation: 'The left-hand target expression in compound assignment is evaluated exactly once to determine destination storage.' },
-        { rule: 'Assignment Returns Value', explanation: 'An assignment expression evaluates to the assigned value, allowing it to be embedded inside expressions.' }
-      ],
-      quickComparison: [
-        { aspect: 'Syntax', optionA: 'b = b + 1', optionB: 'b += 1' },
-        { aspect: 'Compilation (byte/short)', optionA: 'Fails: int cannot be converted to byte', optionB: 'Compiles: hidden (byte) cast added' },
-        { aspect: 'Underlying JLS Expansion', optionA: 'Direct assignment of evaluated int', optionB: 'b = (byte)(b + 1)' },
-        { aspect: 'Overflow Handling', optionA: 'Compiler blocks assignment if types mismatch', optionB: 'Silently wraps around at boundary' },
-        { aspect: 'Readability & Conciseness', optionA: 'Repetitive variable name', optionB: 'Clean, idiomatic Java standard' }
-      ]
-    },
+    beginnerAnalogy: "Java defines the simple assignment operator `=` (JLS \u00a715.26.1) and eleven compound assignment operators (+=, -=, *=, /=, %=, &=, ^=, |=, <<=, >>=, >>>=) (JLS \u00a715.26.2). At the bytecode level, compound assignment operators implement a hidden architectural mechanism: an expression `E1 op= E2` is equivalent to `E1 = (T)((E1) op (E2))`, where `T` is the compile-time type of `E1`, except that the variable `E1` is evaluated only once. Consequently, the compiler automatically injects an explicit narrowing type cast. For instance, `short s = 10; s += 100000;` compiles cleanly and executes silently, casting the 32-bit int result of the addition down to a 16-bit short, discarding the upper 16 bits and causing silent modular overflow.\n\nArchitecturally, this hidden cast eliminates syntactic clutter when operating on byte, short, and char primitives, but introduces silent data corruption in accounting, telemetry, and cryptographic algorithms. Furthermore, the left-hand variable expression is evaluated strictly prior to the right-hand expression, ensuring deterministic evaluation order in complex array index assignments.",
     coreExplanation: [
       'The simple assignment operator (=) evaluates its right-hand expression and stores that value into the left-hand variable storage location.',
       'Assignment operators associate from right to left. An expression like a = b = c = 40; evaluates c = 40, assigns 40 to b, and finally assigns 40 to a.',
@@ -799,6 +793,25 @@ System.out.println("sum=" + sum + ", b=" + b + ", c=" + c);`,
         solution: 'sum=17, b=15, c=5',
         explanation: 'Right-to-left evaluation: 1. c += 1 -> c becomes 5. Expression returns 5. 2. b *= 5 -> b becomes 3 * 5 = 15. Expression returns 15. 3. a += 15 -> a becomes 2 + 15 = 17. Expression returns 17. 4. sum = 17. Output: sum=17, b=15, c=5.'
       }
+    ,
+      {
+        title: "Array Index Evaluation Order in Compound Assignment",
+        problemStatement: "What does the following snippet print?\n```java\nint[] arr = {10, 20, 30};\nint i = 0;\narr[i++] += 5;\nSystem.out.println(arr[0] + \",\" + arr[1] + \", index:\" + i);\n```",
+        options: ["15,20, index:1", "10,25, index:1", "15,25, index:2", "15,20, index:0"],
+        correctOptionIndex: 0,
+        hint: "In `arr[i++] += 5`, JLS specifies the variable expression `arr[i++]` is evaluated once to determine the target slot (index 0, i becomes 1).",
+        solution: "15,20, index:1",
+        explanation: "The target array slot `arr[i++]` is determined first: i starts at 0, so target is arr[0], and i increments to 1. The operation arr[0] += 5 modifies arr[0] to 15. arr[1] is untouched (20), and i is 1."
+      },
+      {
+        title: "Compound Assignment with Character Stepping",
+        problemStatement: "What is the output of:\n```java\nchar ch = 'A';\nch += 32;\nSystem.out.println(ch);\n```",
+        options: ["97", "a", "A", "Compilation error: cannot add int to char"],
+        correctOptionIndex: 1,
+        hint: "'A' has ASCII value 65. 65 + 32 = 97. What character has ASCII 97?",
+        solution: "a",
+        explanation: "Compound assignment `ch += 32` compiles to `ch = (char)(ch + 32)`. 'A' (65) + 32 = 97, which cast back to char produces lowercase 'a'."
+      }
     ],
     interviewQuestions: [
       {
@@ -953,6 +966,37 @@ System.out.println("sum=" + sum + ", b=" + b + ", c=" + c);`,
         correctIndex: 1,
         explanation: 'Under JLS §15.26.2, the left-hand operand expression E1 is evaluated exactly once.'
       }
+    ,
+      {
+        question: "What is the equivalent expansion of `short s = 5; s += 10;` according to JLS \u00a715.26.2?",
+        options: ["s = s + 10;", "s = (short)(s + 10);", "s = (int)s + 10;", "s = s + (short)10;"],
+        correctIndex: 1,
+        explanation: "Compound assignment `E1 op= E2` includes an implicit narrowing cast: `E1 = (T)((E1) op (E2))` where T is the type of E1."
+      },
+      {
+        question: "Why does `short s = 5; s = s + 10;` cause a compile-time error while `s += 10;` succeeds?",
+        options: ["Binary addition promotes operands to int, requiring an explicit cast to short; `+=` injects the cast automatically", "`s + 10` is an illegal syntax in Java", "Compound assignment is faster", "`s + 10` causes a memory leak"],
+        correctIndex: 0,
+        explanation: "Binary addition on short promotes operands to 32-bit int. Assigning int to short requires an explicit cast `(short)(s + 10)`. The compound operator `+=` injects this cast implicitly."
+      },
+      {
+        question: "What is the result of `int a, b, c; a = b = c = 50;`?",
+        options: ["Syntax error: chained assignment is not allowed in Java", "All three variables receive the value 50", "Only c receives 50", "Throws NullPointerException"],
+        correctIndex: 1,
+        explanation: "Assignment operators associate right-to-left: `c = 50` evaluates to 50, which is assigned to `b`, which evaluates to 50, assigned to `a`."
+      },
+      {
+        question: "What does `byte b = 120; b += 10;` result in?",
+        options: ["130", "-126", "127", "Throws ArithmeticException"],
+        correctIndex: 1,
+        explanation: "120 + 10 = 130. 130 cast to signed 8-bit byte wraps around: 130 - 256 = -126."
+      },
+      {
+        question: "In `arr[index()] += 5;`, how many times is `index()` called?",
+        options: ["Once", "Twice", "Zero times", "Depends on JVM JIT"],
+        correctIndex: 0,
+        explanation: "JLS \u00a715.26.2 mandates that the left-hand operand expression is evaluated exactly once."
+      }
     ]
   },
 
@@ -967,35 +1011,7 @@ System.out.println("sum=" + sum + ", b=" + b + ", c=" + c);`,
     title: 'The Ternary Operator (? :)',
     subtitle: 'Inline conditional expressions, type unification, auto-unboxing NPEs, and evaluation short-circuiting',
     estimatedMinutes: 14,
-    beginnerAnalogy: 'Think of a highway fork with a toll-booth sign: if you have an electronic pass (condition is true), you take Lane A ($2); otherwise, you take Lane B ($5). Unlike a large detour building (a full multi-line if-else block), the toll gate is an in-line chute that immediately hands you a single ticket amount to keep driving. Crucially, the ticket machine must print both amounts in the same currency format (type unification)!',
-    interviewTakeaways: [
-      'Expression vs Statement: Ternary is an expression that yields a value; it cannot stand alone like an if-else statement.',
-      'Short-Circuit Branch Evaluation: Only the branch matching the condition is evaluated; the unselected branch is completely bypassed.',
-      'Type Unification Rule: The compiler unifies the return types of both branches using Binary Numeric Promotion (e.g. int and double unify to double).',
-      'Right-to-Left Associativity: Ternary expressions chain right-to-left: a ? b : c ? d : e parses as a ? b : (c ? d : e).',
-      'Unboxing NPE Hazard: When mixing a wrapper class and primitive in ternary branches, Java auto-unboxes the wrapper, risking NullPointerException if null.'
-    ],
-    cheatSheet: {
-      summary: 'The ternary operator (? :) is Java\'s only three-operand operator, providing a concise inline conditional expression that produces a value.',
-      syntaxTemplate: `type result = (booleanCondition) ? expressionWhenTrue : expressionWhenFalse;
-int max = (a > b) ? a : b;
-String status = (score >= 50) ? "Pass" : "Fail";`,
-      rules: [
-        { rule: 'Expression Semantics', explanation: 'Ternary (? :) is an expression and must evaluate to a concrete value. It cannot contain standalone void statements.' },
-        { rule: 'Short-Circuit Branching', explanation: 'Only the chosen branch evaluates at runtime. Side effects in the alternative branch never run.' },
-        { rule: 'Binary Numeric Promotion', explanation: 'If one operand is int and the other is double, the entire expression promotes to double (e.g. true ? 1 : 2.0 yields 1.0).' },
-        { rule: 'Right-to-Left Associativity', explanation: 'Nested ternaries associate from right to left: c1 ? v1 : c2 ? v2 : v3 is parsed as c1 ? v1 : (c2 ? v2 : v3).' },
-        { rule: 'Auto-Unboxing Trap', explanation: 'If one branch is a null reference and the other is a primitive, the compiler attempts unboxing and throws NullPointerException at runtime.' },
-        { rule: 'Readability Guideline', explanation: 'Do not nest ternaries more than two levels deep; use standard if-else ladders for complex business rules.' }
-      ],
-      quickComparison: [
-        { aspect: 'Feature', optionA: 'Ternary Operator (? :)', optionB: 'if-else Statement' },
-        { aspect: 'Classification', optionA: 'Expression (returns a value)', optionB: 'Control flow statement (no direct value)' },
-        { aspect: 'Inline Assignment', optionA: 'Direct: int x = cond ? 1 : 2;', optionB: 'Verbose: requires multi-line block assignment' },
-        { aspect: 'Type Consistency', optionA: 'Both branches must be type-compatible', optionB: 'Each branch can execute independent statements' },
-        { aspect: 'Short-Circuiting', optionA: 'Evaluates only the selected branch', optionB: 'Executes only the selected block' }
-      ]
-    },
+    beginnerAnalogy: "The conditional operator `? :` is Java's sole ternary operator (JLS \u00a715.25), taking three operands to evaluate a conditional expression: `condition ? expression1 : expression2`. At the JVM bytecode level, the ternary operator is not a statement; it is a value-producing expression. The compiler emits conditional branch jumps (`ifeq` and `goto`) so that only the selected branch is evaluated at runtime, maintaining strict short-circuit behavior. Crucially, the compiler enforces binary numeric promotion across the true and false branch expressions to establish a unified return type. If one branch expression is an `Integer` and the other is a primitive `double`, the compiler unboxes the `Integer` via `intValue()` and promotes both operands to `double`.\n\nArchitecturally, the ternary operator enables concise, immutable variable initialization and functional transformations without multi-line imperative branching. However, mixing wrapper objects and primitive numeric types across the branches creates subtle production hazards: if a nullable wrapper branch evaluates to null during numeric type promotion, the injected unboxing instruction throws a silent `NullPointerException` at runtime.",
     coreExplanation: [
       'The ternary operator (? :) is Java\'s only conditional operator that takes three operands: a boolean condition, an expression if true, and an expression if false.',
       'Expression vs Statement: An if-else construct is a statement that directs execution flow; it does not produce a value on its own. The ternary operator is an expression that computes and returns a concrete value, allowing it to be assigned directly to variables or passed to methods.',
@@ -1276,6 +1292,25 @@ System.out.println("result=" + result + ", a=" + a + ", b=" + b);`,
         solution: 'result=11, a=11, b=6',
         explanation: '1. In (a++ > 4), the current value 4 is compared: (4 > 4) is false. Then a increments to 5. 2. Since condition is false, only the false branch (a += b) executes. 3. a += b adds 6 to 5: a becomes 11. The expression evaluates to 11. 4. b was never modified, so b remains 6. result = 11.'
       }
+    ,
+      {
+        title: "Nested Ternary Precedence and Associativity",
+        problemStatement: "What is the output of the following nested ternary expression?\n```java\nint score = 75;\nString grade = score >= 90 ? \"A\" : score >= 80 ? \"B\" : score >= 70 ? \"C\" : \"F\";\nSystem.out.println(grade);\n```",
+        options: ["B", "C", "F", "Compilation error"],
+        correctOptionIndex: 1,
+        hint: "Ternary operators associate right-to-left: `score >= 90 ? \"A\" : (score >= 80 ? \"B\" : (score >= 70 ? \"C\" : \"F\"))`.",
+        solution: "C",
+        explanation: "Ternary operators associate right-to-left. score >= 90 is false. score >= 80 is false. score >= 70 is true, so it evaluates to 'C'."
+      },
+      {
+        title: "Ternary Mixed Primitive and Boxed Null Crash",
+        problemStatement: "What happens when running:\n```java\nInteger n = null;\nboolean flag = false;\ndouble val = flag ? 1.0 : n;\nSystem.out.println(val);\n```",
+        options: ["Prints 0.0", "Prints null", "Throws NullPointerException at runtime", "Compilation error"],
+        correctOptionIndex: 2,
+        hint: "The second operand is double (1.0) and third is Integer (n). What does numeric type promotion do to 'n'?",
+        solution: "Throws NullPointerException at runtime",
+        explanation: "Because one branch is primitive double, binary numeric promotion unboxes the third operand 'n' by inserting `n.intValue()`. Since flag is false, the third branch is selected and unboxed; invoking `.intValue()` on null throws java.lang.NullPointerException."
+      }
     ],
     interviewQuestions: [
       {
@@ -1444,6 +1479,37 @@ System.out.println("result=" + result + ", a=" + a + ", b=" + b);`,
         ],
         correctIndex: 1,
         explanation: 'In Java, the condition must strictly evaluate to a primitive boolean (true or false). Integers are not implicitly convertible to booleans.'
+      }
+    ,
+      {
+        question: "What is the return type of `(true ? 1 : 2.0)`?",
+        options: ["int", "double", "Number", "Object"],
+        correctIndex: 1,
+        explanation: "Binary numeric promotion between int (1) and double (2.0) promotes the overall expression type to primitive double."
+      },
+      {
+        question: "Which of the following is TRUE about the ternary operator?",
+        options: ["Both expression branches are always evaluated", "Only the selected expression branch is evaluated (short-circuiting)", "It can be used as a standalone statement without assignment or method call", "It cannot return objects"],
+        correctIndex: 1,
+        explanation: "The ternary operator is short-circuiting: only the branch corresponding to the evaluated boolean condition is executed."
+      },
+      {
+        question: "What associativity does the ternary operator follow in Java?",
+        options: ["Left-to-right", "Right-to-left", "Associativity depends on parentheses", "No associativity"],
+        correctIndex: 1,
+        explanation: "Conditional operators `? :` associate from right to left: `a ? b : c ? d : e` parses as `a ? b : (c ? d : e)`."
+      },
+      {
+        question: "Can the ternary operator replace any if-else statement?",
+        options: ["Yes, always", "No, ternary expressions must return a value; they cannot execute standalone void statements", "No, ternary expressions only work with numbers", "Yes, if compiled with Java 21"],
+        correctIndex: 1,
+        explanation: "Ternary expressions must evaluate to a value and cannot contain void statements (such as `System.out.println()`)."
+      },
+      {
+        question: "What happens when `Boolean flag = null; int x = flag ? 1 : 0;` is executed?",
+        options: ["x is set to 0", "x is set to 1", "Throws NullPointerException", "Compile error"],
+        correctIndex: 2,
+        explanation: "The condition of a ternary operator requires a primitive boolean. `flag` is unboxed via `flag.booleanValue()`, which throws NullPointerException because flag is null."
       }
     ]
   }
