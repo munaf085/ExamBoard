@@ -249,7 +249,7 @@ export const JAVA_MODULES: JavaModule[] = [
     icon: 'Layers',
     topics: ['Root Object', 'toString()', 'equals() vs ==', 'hashCode() Contract', 'HashMap Collisions', 'clone()'],
     prerequisites: ['java-oop-basics'],
-    lessonCount: 4,
+    lessonCount: 5,
     mcqCount: 20,
     codingCount: 10,
     interviewCount: 10,

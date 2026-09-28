@@ -2364,5 +2364,117 @@ Validate 'HelloWorld': true
 Validate '': false`,
       explanation: 'Validator uses static factory methods and default method combiners (.and()) without using any lambdas, showcasing higher-order composition via interface contracts.'
     }
-  ]
+  ],
+  'abstraction-challenge': [
+  {
+    "id": "ex-oop13-chal-1",
+    "title": "Problem 1: Abstract Shape Hierarchy with Polymorphic Dispatch",
+    "difficulty": "Easy",
+    "problemStatement": "Build a geometric calculation engine: 1) Abstract class `Shape` with field `String color` and constructor. Declare abstract methods `double getArea()` and `double getPerimeter()`. 2) Subclass `Circle extends Shape` with `double radius`. 3) Subclass `Rectangle extends Shape` with `double width, height`. In `main()`, store a Circle(color='Red', radius=3.0) and Rectangle(color='Blue', width=4.0, height=5.0) in a `Shape[]` array. Loop through and print each shape's color, area, and perimeter (rounded to 2 decimal places).",
+    "hint": "Use Math.PI for circle area (PI * r * r) and perimeter (2 * PI * r).",
+    "solutionCode": "abstract class Shape {\n    protected String color;\n    public Shape(String color) { this.color = color; }\n    public abstract double getArea();\n    public abstract double getPerimeter();\n}\n\nclass Circle extends Shape {\n    double radius;\n    public Circle(String color, double radius) { super(color); this.radius = radius; }\n    @Override public double getArea() { return Math.PI * radius * radius; }\n    @Override public double getPerimeter() { return 2 * Math.PI * radius; }\n}\n\nclass Rectangle extends Shape {\n    double width, height;\n    public Rectangle(String color, double width, double height) {\n        super(color); this.width = width; this.height = height;\n    }\n    @Override public double getArea() { return width * height; }\n    @Override public double getPerimeter() { return 2 * (width + height); }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Shape[] shapes = { new Circle(\"Red\", 3.0), new Rectangle(\"Blue\", 4.0, 5.0) };\n        for (Shape s : shapes) {\n            System.out.printf(\"%s: Area=%.2f, Perim=%.2f%n\", s.color, s.getArea(), s.getPerimeter());\n        }\n    }\n}",
+    "output": "Red: Area=28.27, Perim=18.85\nBlue: Area=20.00, Perim=18.00",
+    "explanation": "Iterating over an abstract class array demonstrates polymorphic dispatch to concrete subclass formulas."
+  },
+  {
+    "id": "ex-oop13-chal-2",
+    "title": "Problem 2: Bank Account with Abstract Fee Structure",
+    "difficulty": "Easy",
+    "problemStatement": "Implement banking accounts with fee deductions: 1) Abstract class `Account` with fields `String accNo`, `double balance`. Constructor initializes both. Method `void deposit(double amt) { balance += amt; }`. Abstract method `abstract boolean withdraw(double amt)`. 2) Subclass `CheckingAccount`: withdraw subtracts amount + $1.50 fee (if balance >= amt + 1.50). 3) Subclass `SavingsAccount`: withdraw subtracts amount with no fee, but fails if balance falls below $100. In `main()`, deposit $200 in both, withdraw $50 from both, and print remaining balances.",
+    "hint": "Check condition balance >= (amt + fee) in CheckingAccount.",
+    "solutionCode": "abstract class Account {\n    String accNo;\n    double balance;\n    public Account(String accNo, double balance) { this.accNo = accNo; this.balance = balance; }\n    public void deposit(double amt) { balance += amt; }\n    public abstract boolean withdraw(double amt);\n}\n\nclass CheckingAccount extends Account {\n    public CheckingAccount(String accNo, double bal) { super(accNo, bal); }\n    @Override\n    public boolean withdraw(double amt) {\n        if (balance >= amt + 1.50) {\n            balance -= (amt + 1.50);\n            return true;\n        }\n        return false;\n    }\n}\n\nclass SavingsAccount extends Account {\n    public SavingsAccount(String accNo, double bal) { super(accNo, bal); }\n    @Override\n    public boolean withdraw(double amt) {\n        if (balance - amt >= 100.0) {\n            balance -= amt;\n            return true;\n        }\n        return false;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Account c = new CheckingAccount(\"CHK-1\", 200.0);\n        Account s = new SavingsAccount(\"SAV-1\", 200.0);\n        c.withdraw(50.0);\n        s.withdraw(50.0);\n        System.out.printf(\"Checking Bal: $%.2f%n\", c.balance);\n        System.out.printf(\"Savings Bal: $%.2f%n\", s.balance);\n    }\n}",
+    "output": "Checking Bal: $148.50\nSavings Bal: $150.00",
+    "explanation": "Abstract base accounts enforce fee calculation variations in derived account types."
+  },
+  {
+    "id": "ex-oop13-chal-3",
+    "title": "Problem 3: Printable and Exportable Multi-Interface Contract",
+    "difficulty": "Easy",
+    "problemStatement": "Design a document system using multiple interfaces: 1) Interface `Printable` with method `void printContent()`. 2) Interface `Exportable` with method `String exportJson()`. 3) Class `Invoice` with `int invoiceId`, `double amount` implementing both interfaces. `printContent()` prints '[PRINT] Invoice #<id>: $<amount>'. `exportJson()` returns '{\"id\":<id>,\"amount\":<amount>}'. In `main()`, instantiate an Invoice(101, 750.50), call both methods, and print the output.",
+    "hint": "Implement both interfaces on Invoice separated by a comma.",
+    "solutionCode": "interface Printable {\n    void printContent();\n}\n\ninterface Exportable {\n    String exportJson();\n}\n\nclass Invoice implements Printable, Exportable {\n    int invoiceId;\n    double amount;\n    public Invoice(int id, double amount) {\n        this.invoiceId = id;\n        this.amount = amount;\n    }\n    @Override\n    public void printContent() {\n        System.out.printf(\"[PRINT] Invoice #%d: $%.2f%n\", invoiceId, amount);\n    }\n    @Override\n    public String exportJson() {\n        return String.format(\"{\\\"id\\\":%d,\\\"amount\\\":%.2f}\", invoiceId, amount);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Invoice inv = new Invoice(101, 750.50);\n        inv.printContent();\n        System.out.println(inv.exportJson());\n    }\n}",
+    "output": "[PRINT] Invoice #101: $750.50\n{\"id\":101,\"amount\":750.50}",
+    "explanation": "A single class implements multiple independent interface contracts cleanly."
+  },
+  {
+    "id": "ex-oop13-chal-4",
+    "title": "Problem 4: Interface Default Method Logging Wrapper",
+    "difficulty": "Easy",
+    "problemStatement": "Demonstrate Java 8 default methods: 1) Interface `Loggable` with abstract method `String getLogPrefix()` and default method `void logInfo(String msg) { System.out.println(\"[\" + getLogPrefix() + \"] INFO: \" + msg); }`. 2) Class `UserService implements Loggable` returning prefix 'USER-SVC'. 3) Class `OrderService implements Loggable` returning prefix 'ORDER-SVC'. In `main()`, instantiate both and call `logInfo('System started')` on each.",
+    "hint": "Default method logInfo calls getLogPrefix() which is implemented by each class.",
+    "solutionCode": "interface Loggable {\n    String getLogPrefix();\n    default void logInfo(String msg) {\n        System.out.println(\"[\" + getLogPrefix() + \"] INFO: \" + msg);\n    }\n}\n\nclass UserService implements Loggable {\n    @Override public String getLogPrefix() { return \"USER-SVC\"; }\n}\n\nclass OrderService implements Loggable {\n    @Override public String getLogPrefix() { return \"ORDER-SVC\"; }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new UserService().logInfo(\"System started\");\n        new OrderService().logInfo(\"System started\");\n    }\n}",
+    "output": "[USER-SVC] INFO: System started\n[ORDER-SVC] INFO: System started",
+    "explanation": "Default methods provide shared execution logic while delegating specialized hooks to implementing classes."
+  },
+  {
+    "id": "ex-oop13-chal-5",
+    "title": "Problem 5: Static Utility Method Interface Calculator",
+    "difficulty": "Easy",
+    "problemStatement": "Create an interface `MathOperations`: 1) Constant `double PHI = 1.6180339887;`. 2) Static method `static long factorial(int n)` returning factorial of n. 3) Static method `static boolean isPrime(int n)`. In `main()`, print `MathOperations.PHI`, calculate `MathOperations.factorial(5)`, and check `MathOperations.isPrime(17)`.",
+    "hint": "Invoke static interface methods directly via MathOperations.methodName().",
+    "solutionCode": "interface MathOperations {\n    double PHI = 1.6180339887;\n    static long factorial(int n) {\n        long res = 1;\n        for (int i = 2; i <= n; i++) res *= i;\n        return res;\n    }\n    static boolean isPrime(int n) {\n        if (n <= 1) return false;\n        for (int i = 2; i * i <= n; i++) {\n            if (n % i == 0) return false;\n        }\n        return true;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        System.out.printf(\"PHI: %.4f%n\", MathOperations.PHI);\n        System.out.println(\"5! = \" + MathOperations.factorial(5));\n        System.out.println(\"Is 17 Prime? \" + MathOperations.isPrime(17));\n    }\n}",
+    "output": "PHI: 1.6180\n5! = 120\nIs 17 Prime? true",
+    "explanation": "Static interface methods act as cohesive utility functions encapsulated directly on the interface type."
+  },
+  {
+    "id": "ex-oop13-chal-6",
+    "title": "Problem 6: Marker Interface Capability Verification",
+    "difficulty": "Easy",
+    "problemStatement": "Demonstrate marker interfaces: 1) Empty marker interface `Deletable`. 2) Class `FileItem` with `String name` and `boolean isDeletable`. 3) Class `TempFile extends FileItem implements Deletable`. 4) Class `SystemFile extends FileItem` (does NOT implement Deletable). Write method `public static void purge(FileItem file)` that checks `if (file instanceof Deletable)`: if yes, print 'Purged: <name>'; if no, print 'Access Denied: <name> cannot be deleted.'. Test with both files in `main()`.",
+    "hint": "Check with if (file instanceof Deletable).",
+    "solutionCode": "interface Deletable {}\n\nclass FileItem {\n    String name;\n    public FileItem(String name) { this.name = name; }\n}\n\nclass TempFile extends FileItem implements Deletable {\n    public TempFile(String name) { super(name); }\n}\n\nclass SystemFile extends FileItem {\n    public SystemFile(String name) { super(name); }\n}\n\npublic class Solution {\n    public static void purge(FileItem file) {\n        if (file instanceof Deletable) {\n            System.out.println(\"Purged: \" + file.name);\n        } else {\n            System.out.println(\"Access Denied: \" + file.name + \" cannot be deleted.\");\n        }\n    }\n\n    public static void main(String[] args) {\n        purge(new TempFile(\"cache.tmp\"));\n        purge(new SystemFile(\"kernel.sys\"));\n    }\n}",
+    "output": "Purged: cache.tmp\nAccess Denied: kernel.sys cannot be deleted.",
+    "explanation": "Marker interfaces communicate runtime authorization and capabilities to caller logic via instanceof."
+  },
+  {
+    "id": "ex-oop13-chal-7",
+    "title": "Problem 7: Multi-Gateway Payment Engine with Abstract Base & Interface",
+    "difficulty": "Medium",
+    "problemStatement": "Build an enterprise payment gateway: 1) Interface `Refundable` with method `boolean refund(String txId, double amount)`. 2) Abstract class `PaymentGateway implements Refundable` with `String gatewayName`, constructor, concrete method `void logAudit(String action)`, and abstract method `boolean processPayment(double amount)`. 3) Subclass `StripeGateway` and `PayPalGateway` implementing `processPayment` and `refund`. In `main()`, process a payment and refund on each gateway.",
+    "hint": "Abstract class PaymentGateway can implement Refundable and leave refund() to concrete subclasses.",
+    "solutionCode": "interface Refundable {\n    boolean refund(String txId, double amount);\n}\n\nabstract class PaymentGateway implements Refundable {\n    protected String gatewayName;\n    public PaymentGateway(String name) { this.gatewayName = name; }\n    public void logAudit(String action) {\n        System.out.println(\"[\" + gatewayName + \" AUDIT] \" + action);\n    }\n    public abstract boolean processPayment(double amount);\n}\n\nclass StripeGateway extends PaymentGateway {\n    public StripeGateway() { super(\"STRIPE\"); }\n    @Override\n    public boolean processPayment(double amount) {\n        logAudit(\"Processed card charge: $\" + amount);\n        return true;\n    }\n    @Override\n    public boolean refund(String txId, double amount) {\n        logAudit(\"Refunded $\" + amount + \" to card on \" + txId);\n        return true;\n    }\n}\n\nclass PayPalGateway extends PaymentGateway {\n    public PayPalGateway() { super(\"PAYPAL\"); }\n    @Override\n    public boolean processPayment(double amount) {\n        logAudit(\"Transferred wallet payment: $\" + amount);\n        return true;\n    }\n    @Override\n    public boolean refund(String txId, double amount) {\n        logAudit(\"Sent wallet refund $\" + amount + \" for \" + txId);\n        return true;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        PaymentGateway stripe = new StripeGateway();\n        stripe.processPayment(120.0);\n        stripe.refund(\"TX-99\", 120.0);\n\n        PaymentGateway paypal = new PayPalGateway();\n        paypal.processPayment(85.0);\n        paypal.refund(\"TX-88\", 85.0);\n    }\n}",
+    "output": "[STRIPE AUDIT] Processed card charge: $120.0\n[STRIPE AUDIT] Refunded $120.0 to card on TX-99\n[PAYPAL AUDIT] Transferred wallet payment: $85.0\n[PAYPAL AUDIT] Sent wallet refund $85.0 for TX-88",
+    "explanation": "Combining abstract classes and interfaces creates structured, auditable payment processing pipelines."
+  },
+  {
+    "id": "ex-oop13-chal-8",
+    "title": "Problem 8: Smart Home Device Controller with Diamond Conflict Resolution",
+    "difficulty": "Medium",
+    "problemStatement": "Resolve a diamond default method conflict: 1) Interface `SmartLight` with default method `void turnOn() { System.out.println(\"SmartLight illuminates.\"); }`. 2) Interface `SmartSpeaker` with default method `void turnOn() { System.out.println(\"SmartSpeaker powers up.\"); }`. 3) Class `SmartDeskLamp implements SmartLight, SmartSpeaker`. In `SmartDeskLamp`, override `turnOn()`: invoke `SmartLight.super.turnOn()`, invoke `SmartSpeaker.super.turnOn()`, and print 'SmartDeskLamp ready.'. In `main()`, test `SmartDeskLamp.turnOn()`. ",
+    "hint": "Use InterfaceName.super.methodName() to resolve diamond ambiguity.",
+    "solutionCode": "interface SmartLight {\n    default void turnOn() {\n        System.out.println(\"SmartLight illuminates.\");\n    }\n}\n\ninterface SmartSpeaker {\n    default void turnOn() {\n        System.out.println(\"SmartSpeaker powers up.\");\n    }\n}\n\nclass SmartDeskLamp implements SmartLight, SmartSpeaker {\n    @Override\n    public void turnOn() {\n        SmartLight.super.turnOn();\n        SmartSpeaker.super.turnOn();\n        System.out.println(\"SmartDeskLamp ready.\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        SmartDeskLamp lamp = new SmartDeskLamp();\n        lamp.turnOn();\n    }\n}",
+    "output": "SmartLight illuminates.\nSmartSpeaker powers up.\nSmartDeskLamp ready.",
+    "explanation": "Explicitly disambiguating diamond default methods maintains deterministic multi-capability integration."
+  },
+  {
+    "id": "ex-oop13-chal-9",
+    "title": "Problem 9: Template Method Pattern for Data Export Pipeline",
+    "difficulty": "Medium",
+    "problemStatement": "Build an export pipeline using an abstract class: 1) Abstract class `DataExporter` with a `public final void export(String data)` template method executing: `validate(data)`, `String formatted = format(data)`, `write(formatted)`. 2) Private method `validate`: if data is null/empty throw IllegalArgumentException. 3) Abstract method `abstract String format(String data)`. 4) Protected method `write(String formatted)` prints '[STORAGE] Saved: <formatted>'. 5) Subclass `JsonExporter` (formats as '{\"data\":\"<data>\"}'). 6) Subclass `XmlExporter` (formats as '<data><data></data>'). Test both in `main()` with data 'Sensor-404'.",
+    "hint": "Declare export() as final in DataExporter so subclasses cannot change the step sequence.",
+    "solutionCode": "abstract class DataExporter {\n    public final void export(String data) {\n        validate(data);\n        String formatted = format(data);\n        write(formatted);\n    }\n    private void validate(String data) {\n        if (data == null || data.isEmpty()) throw new IllegalArgumentException(\"Invalid data\");\n    }\n    protected abstract String format(String data);\n    protected void write(String formatted) {\n        System.out.println(\"[STORAGE] Saved: \" + formatted);\n    }\n}\n\nclass JsonExporter extends DataExporter {\n    @Override protected String format(String data) { return \"{\\\"data\\\":\\\"\" + data + \"\\\"}\"; }\n}\n\nclass XmlExporter extends DataExporter {\n    @Override protected String format(String data) { return \"<data>\" + data + \"</data>\"; }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new JsonExporter().export(\"Sensor-404\");\n        new XmlExporter().export(\"Sensor-404\");\n    }\n}",
+    "output": "[STORAGE] Saved: {\"data\":\"Sensor-404\"}\n[STORAGE] Saved: <data>Sensor-404</data>",
+    "explanation": "The Template Method pattern seals the pipeline sequence in the abstract class while delegating formatting hooks to subclasses."
+  },
+  {
+    "id": "ex-oop13-chal-10",
+    "title": "Problem 10: Extensible Plugin Registry Architecture",
+    "difficulty": "Hard",
+    "problemStatement": "Create an extensible plugin engine: 1) Interface `Plugin` with `String getName()` and `void execute(String context)`. 2) Class `PluginRegistry` with an array `Plugin[] plugins` (max 5) and `int count`. Methods: `void register(Plugin p)` and `void executeAll(String context)`. 3) Subclasses `SecurityScannerPlugin` (prints '[SECURITY] Scanning <context>') and `CompressionPlugin` (prints '[COMPRESS] Compressing <context>'). In `main()`, register both plugins into the registry and trigger `executeAll('payload.dat')`.",
+    "hint": "PluginRegistry holds an array of Plugin interface references.",
+    "solutionCode": "interface Plugin {\n    String getName();\n    void execute(String context);\n}\n\nclass SecurityScannerPlugin implements Plugin {\n    @Override public String getName() { return \"SecurityScanner\"; }\n    @Override public void execute(String context) {\n        System.out.println(\"[SECURITY] Scanning: \" + context);\n    }\n}\n\nclass CompressionPlugin implements Plugin {\n    @Override public String getName() { return \"CompressionEngine\"; }\n    @Override public void execute(String context) {\n        System.out.println(\"[COMPRESS] Compressing: \" + context);\n    }\n}\n\nclass PluginRegistry {\n    private final Plugin[] plugins = new Plugin[5];\n    private int count = 0;\n    public void register(Plugin p) {\n        if (count < plugins.length) plugins[count++] = p;\n    }\n    public void executeAll(String context) {\n        for (int i = 0; i < count; i++) {\n            plugins[i].execute(context);\n        }\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        PluginRegistry registry = new PluginRegistry();\n        registry.register(new SecurityScannerPlugin());\n        registry.register(new CompressionPlugin());\n        registry.executeAll(\"payload.dat\");\n    }\n}",
+    "output": "[SECURITY] Scanning: payload.dat\n[COMPRESS] Compressing: payload.dat",
+    "explanation": "Interface-driven plugin registries allow modular feature extension without coupling to concrete classes."
+  },
+  {
+    "id": "ex-oop13-chal-11",
+    "title": "Problem 11: Enterprise Order Workflow State Machine",
+    "difficulty": "Hard",
+    "problemStatement": "Build a workflow engine using abstract classes and interfaces: 1) Interface `Verifiable` with method `boolean verify(Order order)`. 2) Class `Order(String id, double total, boolean verified)`. 3) Abstract class `OrderWorkflow` with a `public final void processOrder(Order o)` method: 1) if not `verify(o)`, print '[FAIL] Verification failed for <id>' and return; 2) `applyDiscounts(o)`; 3) `chargePayment(o)`; 4) `fulfill(o)`. 4) Subclass `StandardOrderWorkflow extends OrderWorkflow implements Verifiable`: verify checks `total > 0`, discount subtracts 5% if total >= 100, payment charges remaining, fulfill prints '[FULFILL] Order <id> shipped.'. Test in `main()` with an order of $120.",
+    "hint": "Combine abstract template methods with interface verification logic.",
+    "solutionCode": "class Order {\n    String id;\n    double total;\n    boolean isVerified = false;\n    public Order(String id, double total) { this.id = id; this.total = total; }\n}\n\ninterface Verifiable {\n    boolean verify(Order order);\n}\n\nabstract class OrderWorkflow {\n    public final void processOrder(Order o) {\n        if (this instanceof Verifiable v && !v.verify(o)) {\n            System.out.println(\"[FAIL] Verification failed for \" + o.id);\n            return;\n        }\n        applyDiscounts(o);\n        chargePayment(o);\n        fulfill(o);\n    }\n    protected abstract void applyDiscounts(Order o);\n    protected abstract void chargePayment(Order o);\n    protected abstract void fulfill(Order o);\n}\n\nclass StandardOrderWorkflow extends OrderWorkflow implements Verifiable {\n    @Override\n    public boolean verify(Order order) {\n        order.isVerified = (order.total > 0);\n        return order.isVerified;\n    }\n    @Override\n    protected void applyDiscounts(Order o) {\n        if (o.total >= 100) {\n            o.total *= 0.95; // 5% discount\n            System.out.printf(\"[DISCOUNT] 5%% applied. New total: $%.2f%n\", o.total);\n        }\n    }\n    @Override\n    protected void chargePayment(Order o) {\n        System.out.printf(\"[PAYMENT] Charged $%.2f for order %s%n\", o.total, o.id);\n    }\n    @Override\n    protected void fulfill(Order o) {\n        System.out.println(\"[FULFILL] Order \" + o.id + \" shipped successfully.\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        OrderWorkflow workflow = new StandardOrderWorkflow();\n        workflow.processOrder(new Order(\"ORD-9021\", 120.0));\n    }\n}",
+    "output": "[DISCOUNT] 5% applied. New total: $114.00\n[PAYMENT] Charged $114.00 for order ORD-9021\n[FULFILL] Order ORD-9021 shipped successfully.",
+    "explanation": "Integrating abstract workflow templates with interface verification establishes robust enterprise domain processing pipelines."
+  }
+]
 };

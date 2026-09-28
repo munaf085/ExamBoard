@@ -1724,4 +1724,117 @@ Copy [0][0]:     Z`,
       explanation: 'A 2D array is an array of array references. Deep copying requires cloning each 1D row array to decouple them completely.'
     }
   ]
+,
+  'object-class-challenge': [
+  {
+    "id": "ex-oop14-chal-1",
+    "title": "Problem 1: Structured toString() Diagnostic Formatter",
+    "difficulty": "Easy",
+    "problemStatement": "Build a clean diagnostic representation: 1) Class `ServerConfig` with fields `String host`, `int port`, `boolean sslEnabled`. 2) Constructor initializing all fields. 3) Override `toString()` to return: 'ServerConfig[host='<host>', port=<port>, ssl=<sslEnabled>]'. In `main()`, instantiate `ServerConfig('api.prod.com', 443, true)` and print it directly via `System.out.println()`. Verify the overridden format displays.",
+    "hint": "Use String.format() inside toString().",
+    "solutionCode": "public class Solution {\n    static class ServerConfig {\n        String host;\n        int port;\n        boolean sslEnabled;\n        public ServerConfig(String host, int port, boolean ssl) {\n            this.host = host; this.port = port; this.sslEnabled = ssl;\n        }\n        @Override\n        public String toString() {\n            return String.format(\"ServerConfig[host='%s', port=%d, ssl=%b]\", host, port, sslEnabled);\n        }\n    }\n    public static void main(String[] args) {\n        ServerConfig cfg = new ServerConfig(\"api.prod.com\", 443, true);\n        System.out.println(cfg);\n    }\n}",
+    "output": "ServerConfig[host='api.prod.com', port=443, ssl=true]",
+    "explanation": "Overriding toString() replaces the default Class@hash output with clean human-readable diagnostic state."
+  },
+  {
+    "id": "ex-oop14-chal-2",
+    "title": "Problem 2: Robust equals() Implementation with Null and Class Checks",
+    "difficulty": "Easy",
+    "problemStatement": "Implement full logical equality: 1) Class `Book` with `String isbn`, `String title`. 2) Override `equals(Object obj)`: reflexivity check (`this == obj`), null check, strict class check (`getClass() != obj.getClass()`), downcast, and compare `isbn`. In `main()`, test: `b1.equals(b1)` (reflexive, true), `b1.equals(null)` (null-safe, false), `b1.equals(new Book('123', 'Different Title'))` (same ISBN, true), and `b1.equals('A String')` (different class, false).",
+    "hint": "Follow the 4 steps of the equals contract.",
+    "solutionCode": "public class Solution {\n    static class Book {\n        String isbn, title;\n        public Book(String isbn, String title) { this.isbn = isbn; this.title = title; }\n        @Override\n        public boolean equals(Object obj) {\n            if (this == obj) return true;\n            if (obj == null || getClass() != obj.getClass()) return false;\n            Book book = (Book) obj;\n            return isbn != null ? isbn.equals(book.isbn) : book.isbn == null;\n        }\n    }\n    public static void main(String[] args) {\n        Book b1 = new Book(\"978-0134685991\", \"Effective Java\");\n        System.out.println(\"Reflexive: \" + b1.equals(b1));\n        System.out.println(\"Null check: \" + b1.equals(null));\n        System.out.println(\"Same ISBN: \" + b1.equals(new Book(\"978-0134685991\", \"Another Title\")));\n        System.out.println(\"Different class: \" + b1.equals(\"Some String\"));\n    }\n}",
+    "output": "Reflexive: true\nNull check: false\nSame ISBN: true\nDifferent class: false",
+    "explanation": "A robust equals() method guarantees reflexivity, null safety, and strict class type protection."
+  },
+  {
+    "id": "ex-oop14-chal-3",
+    "title": "Problem 3: Synchronized equals() and hashCode() for 2D Point",
+    "difficulty": "Easy",
+    "problemStatement": "Implement a 2D coordinate entity: 1) Class `Point` with `int x, y`. 2) Implement `equals(Object o)` comparing `x` and `y`. 3) Implement `hashCode()` using `Objects.hash(x, y)`. In `main()`, create `p1 = new Point(10, 20)` and `p2 = new Point(10, 20)`. Verify `p1.equals(p2)` is true, and verify `p1.hashCode() == p2.hashCode()` is true.",
+    "hint": "Equal objects must have equal hash codes.",
+    "solutionCode": "import java.util.Objects;\n\npublic class Solution {\n    static class Point {\n        int x, y;\n        public Point(int x, int y) { this.x = x; this.y = y; }\n        @Override\n        public boolean equals(Object o) {\n            if (this == o) return true;\n            if (!(o instanceof Point p)) return false;\n            return x == p.x && y == p.y;\n        }\n        @Override\n        public int hashCode() {\n            return Objects.hash(x, y);\n        }\n    }\n    public static void main(String[] args) {\n        Point p1 = new Point(10, 20);\n        Point p2 = new Point(10, 20);\n        System.out.println(\"p1.equals(p2): \" + p1.equals(p2));\n        System.out.println(\"hashCodes match: \" + (p1.hashCode() == p2.hashCode()));\n    }\n}",
+    "output": "p1.equals(p2): true\nhashCodes match: true",
+    "explanation": "Consistent equals() and hashCode() ensure equal objects are assigned identical hash values."
+  },
+  {
+    "id": "ex-oop14-chal-4",
+    "title": "Problem 4: Demonstrating HashMap Data Loss with Broken hashCode()",
+    "difficulty": "Easy",
+    "problemStatement": "Demonstrate why hashCode() is mandatory: 1) Class `BadKey` with `int id` that overrides `equals()` correctly, but does NOT override `hashCode()`. 2) Class `GoodKey` with `int id` that overrides BOTH `equals()` and `hashCode()`. In `main()`, put an entry into `HashMap<BadKey, String>` with `new BadKey(1)` and attempt to get it using `new BadKey(1)` (prints null!). Then put into `HashMap<GoodKey, String>` and get using `new GoodKey(1)` (prints found value).",
+    "hint": "Without hashCode(), distinct heap objects have different hash codes and land in different buckets.",
+    "solutionCode": "import java.util.HashMap;\nimport java.util.Objects;\n\npublic class Solution {\n    static class BadKey {\n        int id;\n        public BadKey(int id) { this.id = id; }\n        @Override public boolean equals(Object o) {\n            return (o instanceof BadKey b) && this.id == b.id;\n        }\n    }\n    static class GoodKey {\n        int id;\n        public GoodKey(int id) { this.id = id; }\n        @Override public boolean equals(Object o) {\n            return (o instanceof GoodKey g) && this.id == g.id;\n        }\n        @Override public int hashCode() { return Objects.hash(id); }\n    }\n    public static void main(String[] args) {\n        HashMap<BadKey, String> badMap = new HashMap<>();\n        badMap.put(new BadKey(1), \"SecretData\");\n        System.out.println(\"BadKey lookup: \" + badMap.get(new BadKey(1)));\n\n        HashMap<GoodKey, String> goodMap = new HashMap<>();\n        goodMap.put(new GoodKey(1), \"SecretData\");\n        System.out.println(\"GoodKey lookup: \" + goodMap.get(new GoodKey(1)));\n    }\n}",
+    "output": "BadKey lookup: null\nGoodKey lookup: SecretData",
+    "explanation": "Without hashCode(), distinct key instances land in different hash buckets, causing map.get() to return null."
+  },
+  {
+    "id": "ex-oop14-chal-5",
+    "title": "Problem 5: Shallow Copy Mutation Demonstration via Cloneable",
+    "difficulty": "Easy",
+    "problemStatement": "Demonstrate shallow copy pointer sharing: 1) Class `Tag` with `String label`. 2) Class `Article implements Cloneable` with `String title` and `Tag tag`. Override `clone()` calling `super.clone()`. In `main()`, create `a1 = new Article('Java News', new Tag('Tech'))`. Clone `a2 = (Article) a1.clone()`. Mutate `a2.tag.label = 'Gossip'`. Print `a1.tag.label` and `a2.tag.label` to prove that modifying the clone altered the original object.",
+    "hint": "super.clone() copies only the reference pointer to Tag.",
+    "solutionCode": "public class Solution {\n    static class Tag {\n        String label;\n        public Tag(String l) { this.label = l; }\n    }\n    static class Article implements Cloneable {\n        String title;\n        Tag tag;\n        public Article(String t, Tag tag) { this.title = t; this.tag = tag; }\n        @Override public Object clone() throws CloneNotSupportedException {\n            return super.clone(); // Shallow copy!\n        }\n    }\n    public static void main(String[] args) throws Exception {\n        Article a1 = new Article(\"Java News\", new Tag(\"Tech\"));\n        Article a2 = (Article) a1.clone();\n        a2.tag.label = \"Gossip\"; // Mutating clone's nested tag\n        System.out.println(\"a1.tag.label: \" + a1.tag.label);\n        System.out.println(\"a2.tag.label: \" + a2.tag.label);\n    }\n}",
+    "output": "a1.tag.label: Gossip\na2.tag.label: Gossip",
+    "explanation": "In shallow copying, nested reference fields point to the exact same heap instance, causing shared mutations."
+  },
+  {
+    "id": "ex-oop14-chal-6",
+    "title": "Problem 6: Copy Constructor as Idiomatic Cloning Alternative",
+    "difficulty": "Easy",
+    "problemStatement": "Implement object copying using copy constructors: 1) Class `Dimensions` with `int w, h` and a copy constructor `Dimensions(Dimensions other)`. 2) Class `Window` with `String title` and `Dimensions dim`. Copy constructor `Window(Window other)` that initializes `dim` via `new Dimensions(other.dim)` (defensive deep copy!). In `main()`, create `w1`, copy to `w2`, mutate `w2.dim.w = 999`, and print both `w1.dim.w` and `w2.dim.w` to prove isolation.",
+    "hint": "Pass other.dim into the Dimensions copy constructor.",
+    "solutionCode": "public class Solution {\n    static class Dimensions {\n        int w, h;\n        public Dimensions(int w, int h) { this.w = w; this.h = h; }\n        public Dimensions(Dimensions o) { this.w = o.w; this.h = o.h; }\n    }\n    static class Window {\n        String title;\n        Dimensions dim;\n        public Window(String t, Dimensions d) { this.title = t; this.dim = d; }\n        public Window(Window o) {\n            this.title = o.title;\n            this.dim = new Dimensions(o.dim); // Deep copy constructor\n        }\n    }\n    public static void main(String[] args) {\n        Window w1 = new Window(\"Main\", new Dimensions(800, 600));\n        Window w2 = new Window(w1);\n        w2.dim.w = 999;\n        System.out.println(\"w1 width: \" + w1.dim.w);\n        System.out.println(\"w2 width: \" + w2.dim.w);\n    }\n}",
+    "output": "w1 width: 800\nw2 width: 999",
+    "explanation": "Copy constructors provide safe, explicit deep copying without Cloneable exception handling or casts."
+  },
+  {
+    "id": "ex-oop14-chal-7",
+    "title": "Problem 7: Multi-Field Business Entity equals() and hashCode() Contract",
+    "difficulty": "Medium",
+    "problemStatement": "Implement an enterprise User entity: 1) Class `User` with `long id`, `String email`, `String department`. 2) Business rule: Two users are equal if they have the same `id` and `email` (case-insensitive for email). Department does NOT participate in equality. 3) Override `equals()` and `hashCode()` strictly adhering to this rule. In `main()`, verify that User(1, 'ALICE@CORP.COM', 'IT') equals User(1, 'alice@corp.com', 'HR') and that both produce the exact same hashCode.",
+    "hint": "Normalize email to lowercase when comparing and hashing.",
+    "solutionCode": "import java.util.Objects;\n\npublic class Solution {\n    static class User {\n        long id;\n        String email;\n        String department;\n        public User(long id, String email, String dept) {\n            this.id = id; this.email = email; this.department = dept;\n        }\n        @Override\n        public boolean equals(Object o) {\n            if (this == o) return true;\n            if (!(o instanceof User u)) return false;\n            return id == u.id && \n                   (email != null ? email.equalsIgnoreCase(u.email) : u.email == null);\n        }\n        @Override\n        public int hashCode() {\n            return Objects.hash(id, email != null ? email.toLowerCase() : 0);\n        }\n    }\n    public static void main(String[] args) {\n        User u1 = new User(101, \"ALICE@CORP.COM\", \"IT\");\n        User u2 = new User(101, \"alice@corp.com\", \"HR\");\n        System.out.println(\"u1.equals(u2): \" + u1.equals(u2));\n        System.out.println(\"HashCodes match: \" + (u1.hashCode() == u2.hashCode()));\n    }\n}",
+    "output": "u1.equals(u2): true\nHashCodes match: true",
+    "explanation": "Normalizing fields uniformly in both equals() and hashCode() preserves contract symmetry and hash distribution."
+  },
+  {
+    "id": "ex-oop14-chal-8",
+    "title": "Problem 8: Deep Cloning an Object Graph with Nested Mutable References",
+    "difficulty": "Medium",
+    "problemStatement": "Implement complete graph cloning: 1) Class `Engine(String type, int horsepower)` implementing `Cloneable`. 2) Class `Car(String model, Engine engine)` implementing `Cloneable`. In `Car.clone()`, call `super.clone()`, then explicitly deep clone the `engine` via `((Engine) engine.clone())`. In `main()`, instantiate `Car('Model S', Engine('Electric', 670))`, clone it, change cloned engine horsepower to 1020, and verify original car engine remains 670 HP.",
+    "hint": "Car.clone must clone its Engine field.",
+    "solutionCode": "public class Solution {\n    static class Engine implements Cloneable {\n        String type;\n        int hp;\n        public Engine(String t, int hp) { this.type = t; this.hp = hp; }\n        @Override public Object clone() throws CloneNotSupportedException {\n            return super.clone();\n        }\n    }\n    static class Car implements Cloneable {\n        String model;\n        Engine engine;\n        public Car(String m, Engine e) { this.model = m; this.engine = e; }\n        @Override public Object clone() throws CloneNotSupportedException {\n            Car c = (Car) super.clone();\n            c.engine = (Engine) this.engine.clone(); // Deep clone nested reference\n            return c;\n        }\n    }\n    public static void main(String[] args) throws Exception {\n        Car c1 = new Car(\"Model S\", new Engine(\"Electric\", 670));\n        Car c2 = (Car) c1.clone();\n        c2.engine.hp = 1020;\n        System.out.println(\"c1 engine hp: \" + c1.engine.hp);\n        System.out.println(\"c2 engine hp: \" + c2.engine.hp);\n    }\n}",
+    "output": "c1 engine hp: 670\nc2 engine hp: 1020",
+    "explanation": "Explicitly deep-cloning nested objects breaks pointer sharing, ensuring full heap isolation."
+  },
+  {
+    "id": "ex-oop14-chal-9",
+    "title": "Problem 9: Symmetric and Transitive equals() in Inheritance Hierarchy",
+    "difficulty": "Medium",
+    "problemStatement": "Demonstrate the danger of adding fields in subclasses: 1) Class `Point(int x, int y)` with `equals(Object o)` checking `o instanceof Point`. 2) Subclass `ColorPoint(int x, int y, String color)`. If `ColorPoint` attempts to check `color` in equals, symmetry with `Point` is violated (`point.equals(colorPoint)` is true, but `colorPoint.equals(point)` is false!). Solve this by using strict class matching `getClass() != o.getClass()` in both classes. Test in `main()` showing that `point.equals(colorPoint)` is false and `colorPoint.equals(point)` is false.",
+    "hint": "getClass() ensures a Point is never considered equal to a ColorPoint.",
+    "solutionCode": "public class Solution {\n    static class Point {\n        int x, y;\n        public Point(int x, int y) { this.x = x; this.y = y; }\n        @Override\n        public boolean equals(Object o) {\n            if (this == o) return true;\n            if (o == null || getClass() != o.getClass()) return false;\n            Point p = (Point) o;\n            return x == p.x && y == p.y;\n        }\n    }\n    static class ColorPoint extends Point {\n        String color;\n        public ColorPoint(int x, int y, String color) {\n            super(x, y); this.color = color;\n        }\n        @Override\n        public boolean equals(Object o) {\n            if (this == o) return true;\n            if (o == null || getClass() != o.getClass()) return false;\n            ColorPoint cp = (ColorPoint) o;\n            return x == cp.x && y == cp.y && color.equals(cp.color);\n        }\n    }\n    public static void main(String[] args) {\n        Point p = new Point(1, 2);\n        ColorPoint cp = new ColorPoint(1, 2, \"Red\");\n        System.out.println(\"p.equals(cp): \" + p.equals(cp));\n        System.out.println(\"cp.equals(p): \" + cp.equals(p));\n    }\n}",
+    "output": "p.equals(cp): false\ncp.equals(p): false",
+    "explanation": "Strict class checking with getClass() preserves symmetry and transitivity in inheritance hierarchies."
+  },
+  {
+    "id": "ex-oop14-chal-10",
+    "title": "Problem 10: Building a Custom Hash Table Bucket Engine",
+    "difficulty": "Hard",
+    "problemStatement": "Build a custom hash set prototype: 1) Class `SimpleHashSet` with an array of linked list nodes `Node[] buckets` of size 8. Each `Node` has `Object key` and `Node next`. 2) Method `boolean add(Object key)`: computes bucket index `(key.hashCode() & 0x7FFFFFFF) % buckets.length`. Traverses bucket checking `if (curr.key.equals(key))` to prevent duplicates. If not found, prepends new Node and returns true. 3) Method `boolean contains(Object key)`. In `main()`, test adding Point(1, 2), duplicate Point(1, 2), and verify `contains()`.",
+    "hint": "Use Math.abs(key.hashCode()) % buckets.length.",
+    "solutionCode": "import java.util.Objects;\n\npublic class Solution {\n    static class Point {\n        int x, y;\n        public Point(int x, int y) { this.x = x; this.y = y; }\n        @Override public boolean equals(Object o) {\n            if (o instanceof Point p) return x == p.x && y == p.y;\n            return false;\n        }\n        @Override public int hashCode() { return Objects.hash(x, y); }\n    }\n\n    static class SimpleHashSet {\n        static class Node {\n            Object key;\n            Node next;\n            Node(Object k, Node n) { this.key = k; this.next = n; }\n        }\n        private final Node[] buckets = new Node[8];\n\n        public boolean add(Object key) {\n            int bucket = (key.hashCode() & 0x7FFFFFFF) % buckets.length;\n            Node curr = buckets[bucket];\n            while (curr != null) {\n                if (curr.key.equals(key)) return false; // Duplicate\n                curr = curr.next;\n            }\n            buckets[bucket] = new Node(key, buckets[bucket]);\n            return true;\n        }\n\n        public boolean contains(Object key) {\n            int bucket = (key.hashCode() & 0x7FFFFFFF) % buckets.length;\n            Node curr = buckets[bucket];\n            while (curr != null) {\n                if (curr.key.equals(key)) return true;\n                curr = curr.next;\n            }\n            return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        SimpleHashSet set = new SimpleHashSet();\n        System.out.println(\"Add p1: \" + set.add(new Point(1, 2)));\n        System.out.println(\"Add duplicate p2: \" + set.add(new Point(1, 2)));\n        System.out.println(\"Contains Point(1, 2): \" + set.contains(new Point(1, 2)));\n        System.out.println(\"Contains Point(3, 4): \" + set.contains(new Point(3, 4)));\n    }\n}",
+    "output": "Add p1: true\nAdd duplicate p2: false\nContains Point(1, 2): true\nContains Point(3, 4): false",
+    "explanation": "A custom hash set shows the exact interplay: hashCode() selects the bucket array index, and equals() eliminates duplicates."
+  },
+  {
+    "id": "ex-oop14-chal-11",
+    "title": "Problem 11: Deep Graph Cloner with Multi-Level Defensive Cloning",
+    "difficulty": "Hard",
+    "problemStatement": "Build an enterprise document hierarchy: 1) Class `Author(String name)`. 2) Class `Chapter(String title, int pages)`. 3) Class `Book(String title, Author author, Chapter[] chapters)` with `int chapterCount`. Implement full deep copy via copy constructor `Book(Book other)`: deep copies `Author` and allocates a brand new `Chapter[]` array containing independently instantiated `Chapter` copies. In `main()`, construct a Book, clone it via the copy constructor, mutate cloned author name and cloned chapter 0 title, and prove the original book is completely untouched.",
+    "hint": "Loop through other.chapters and instantiate new Chapter(c.title, c.pages).",
+    "solutionCode": "public class Solution {\n    static class Author {\n        String name;\n        public Author(String name) { this.name = name; }\n        public Author(Author o) { this.name = o.name; }\n    }\n    static class Chapter {\n        String title; int pages;\n        public Chapter(String t, int p) { this.title = t; this.pages = p; }\n        public Chapter(Chapter o) { this.title = o.title; this.pages = o.pages; }\n    }\n    static class Book {\n        String title;\n        Author author;\n        Chapter[] chapters;\n        public Book(String t, Author a, Chapter[] ch) {\n            this.title = t; this.author = a; this.chapters = ch;\n        }\n        // Deep Copy Constructor\n        public Book(Book other) {\n            this.title = other.title;\n            this.author = new Author(other.author); // Deep copy author\n            this.chapters = new Chapter[other.chapters.length];\n            for (int i = 0; i < other.chapters.length; i++) {\n                this.chapters[i] = new Chapter(other.chapters[i]); // Deep copy chapters\n            }\n        }\n    }\n    public static void main(String[] args) {\n        Chapter[] chs = { new Chapter(\"Intro\", 15), new Chapter(\"OOP\", 30) };\n        Book b1 = new Book(\"Java Masterclass\", new Author(\"Alice\"), chs);\n\n        Book b2 = new Book(b1); // Deep copy\n        b2.author.name = \"Bob\";\n        b2.chapters[0].title = \"Altered Intro\";\n\n        System.out.println(\"b1 author: \" + b1.author.name + \", ch0: \" + b1.chapters[0].title);\n        System.out.println(\"b2 author: \" + b2.author.name + \", ch0: \" + b2.chapters[0].title);\n    }\n}",
+    "output": "b1 author: Alice, ch0: Intro\nb2 author: Bob, ch0: Altered Intro",
+    "explanation": "Deep copying an entire object graph ensures that changes made to nested child arrays or references never leak into the original structure."
+  }
+]
 };

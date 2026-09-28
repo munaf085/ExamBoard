@@ -15,7 +15,7 @@ export const oop13Lessons: Record<string, DetailedLesson> = {
     title: 'Abstract Classes & Abstract Methods',
     subtitle: 'Incomplete blueprints, mandatory sub-class overrides, partial implementation, and constructor execution in abstract hierarchies',
     estimatedMinutes: 20,
-    beginnerAnalogy: 'Think of an abstract class like a master architectural blueprint for a motor vehicle. The blueprint specifies that every motor vehicle must have a Vehicle Identification Number (VIN), a fuel tank with a current fuel level, and an ignition mechanism. However, the blueprint leaves the exact method of propulsion—`accelerate()`—completely blank because a gasoline sedan, an electric semi-truck, and a diesel train accelerate through fundamentally different mechanical processes. You cannot walk into a dealership and buy a generic "motor vehicle" because it is an incomplete idea (you cannot instantiate an abstract class). Instead, you buy a concrete Tesla Model 3 or a Ford F-150 that fills in every blank blueprint requirement while inheriting the shared chassis, fuel gauge, and safety registration logic.',
+    beginnerAnalogy: "An **Abstract Class** in Java is a superclass blueprint declared with the `abstract` keyword that cannot be directly instantiated using the `new` keyword. It serves as an incomplete template designed specifically to be subclassed, establishing common state and behavior while defining abstract methods that concrete subclasses must implement.\n\nUnlike pure interfaces, an abstract class is a full class: it can define instance fields (with any access modifier: `private`, `protected`, `public`), constructors, and concrete methods. When a concrete subclass is instantiated, the abstract superclass constructor executes via constructor chaining (`super()`) to initialize inherited base fields on the JVM Heap.\n\nAn abstract class hierarchy is defined by three foundational rules:\n1. **Instantiation Prohibition**: You cannot execute `new AbstractClass()`; attempting to do so triggers a compile-time error.\n2. **Abstract Method Contract**: Any method declared `abstract` has no implementation body `{}` and forces every concrete subclass to provide an `@Override` implementation.\n3. **Subclass Obligation**: If a subclass does not implement all inherited abstract methods, that subclass must also be declared `abstract`.",
     coreExplanation: [
       'An abstract class is declared with the `abstract` keyword. It serves as an incomplete superclass blueprint that cannot be directly instantiated using the `new` operator.',
       'An abstract method possesses a signature, return type, and parameter list followed by a semicolon, but has no implementation body `{}`. It establishes a mandatory contract that any concrete subclass must override.',
@@ -1001,6 +1001,62 @@ public class Main {
         correctIndex: 2,
         explanation: 'Intermediate abstract class B may choose to implement m(). If B does not, the first concrete subclass C is obligated to implement it.'
       }
+    ,
+{
+      "question": "Can an abstract class declare protected abstract methods?",
+      "options": [
+            "No, all abstract methods must be strictly public.",
+            "Yes, protected abstract methods are allowed so package and child classes can implement them.",
+            "Only if the class resides in the default package.",
+            "No, protected is reserved for concrete methods only."
+      ],
+      "correctIndex": 1,
+      "explanation": "Abstract methods can be public, protected, or package-private (default). They cannot be private because subclasses must be able to see and override them."
+},
+{
+      "question": "What happens if a concrete subclass fails to implement all abstract methods of its superclass?",
+      "options": [
+            "The JVM throws an AbstractMethodError at runtime when the class is loaded.",
+            "The code fails to compile unless the subclass is also marked as abstract.",
+            "The missing methods default to returning null or 0 automatically.",
+            "The compiler automatically generates empty stub methods."
+      ],
+      "correctIndex": 1,
+      "explanation": "A class with unimplemented abstract methods is incomplete and must be explicitly marked abstract, otherwise a compilation error occurs."
+},
+{
+      "question": "Why can an abstract class have private instance fields but NOT private abstract methods?",
+      "options": [
+            "Private fields are shared globally, but private methods are not.",
+            "Private fields are initialized by constructors and accessed via protected/public methods, but private abstract methods could never be overridden by subclasses.",
+            "Private abstract methods are allowed starting in Java 9.",
+            "Private fields are allocated in Metaspace, whereas methods live on the Heap."
+      ],
+      "correctIndex": 1,
+      "explanation": "Subclasses cannot override private methods because they cannot see them. An abstract method demands an override, making 'private abstract' an illegal contradiction."
+},
+{
+      "question": "Can an abstract class implement an interface without providing bodies for the interface's methods?",
+      "options": [
+            "No, the abstract class must implement every interface method immediately.",
+            "Yes, the abstract class can pass the implementation obligation down to its concrete subclasses.",
+            "Only if the interface methods are marked default.",
+            "Only if the interface has fewer than 3 methods."
+      ],
+      "correctIndex": 1,
+      "explanation": "An abstract class implementing an interface does not need to implement its abstract methods; concrete subclasses extending the abstract class will be forced to implement them."
+},
+{
+      "question": "Which of the following is TRUE regarding constructor chaining in an abstract class hierarchy?",
+      "options": [
+            "Abstract class constructors are never executed because the class cannot be instantiated.",
+            "Abstract class constructors execute only when the Garbage Collector reclaims the instance.",
+            "Abstract class constructors execute during subclass instantiation via super() before the subclass constructor body runs.",
+            "Abstract classes cannot declare constructors at all."
+      ],
+      "correctIndex": 2,
+      "explanation": "When new Subclass() is called, constructor chaining cascades upward to execute the abstract superclass constructor, initializing inherited state."
+}
     ]
   },
 
@@ -1012,7 +1068,7 @@ public class Main {
     title: 'Interfaces: Contracts & Multiple Inheritance of Type',
     subtitle: 'Pure behavioral capability contracts, constant fields (public static final), implementing multiple interfaces, and polymorphic abstraction',
     estimatedMinutes: 22,
-    beginnerAnalogy: 'Think of an interface like a standard universal USB-C specification. The USB-C consortium does not manufacture hard drives, smartphones, cameras, or external monitors. Instead, they publish an exacting interface contract: "If your hardware has a port that implements USB-C, it MUST support 24 pins, provide a minimum transfer protocol, and handle 5-volt power delivery." An external Samsung SSD, an Apple MacBook, and a Sony camera all implement the USB-C interface. Despite being completely unrelated devices built by different companies with completely different internal architectures, any device can plug into another because they all honor the exact same behavioral contract.',
+    beginnerAnalogy: "An **Interface** in Java is an abstract reference type declared with the `interface` keyword that defines a formal behavioral contract. It specifies *what* operations an implementing class must support without dictating *how* those operations are executed, establishing an **IS-A** capability relationship (e.g., `Car implements Drivable`, `Document implements Printable`).\n\nIn Java's type system, a class can inherit state and behavior from only one direct superclass (single class inheritance), but it can implement **multiple interfaces** (`class Service implements Runnable, AutoCloseable, Auditable`). This enables **multiple inheritance of type** without the state-collision pitfalls of multiple class inheritance, as interfaces carry no instance fields.\n\nTraditional Java interfaces are defined by three core characteristics:\n1. **Public Abstract Methods**: By default, all methods without a body are implicitly `public abstract`.\n2. **Constant Fields**: All fields declared in an interface are implicitly `public static final` constants.\n3. **Strict Decoupling**: Callers program against interface references, enabling complete decoupling of API contracts from concrete implementation classes.",
     coreExplanation: [
       'An interface is a reference type in Java that specifies a pure behavioral contract. It defines WHAT a class can do, without dictating HOW it does it.',
       'All methods in an interface prior to Java 8 are implicitly `public` and `abstract`. Explicitly typing these modifiers is optional and redundant.',
@@ -1932,6 +1988,62 @@ public class Main {
         correctIndex: 2,
         explanation: 'If the object referenced by aRef does not implement B, a runtime ClassCastException is thrown.'
       }
+    ,
+{
+      "question": "In a standard Java interface, what are the implicit modifiers for all declared fields?",
+      "options": [
+            "private final",
+            "protected static final",
+            "public static final",
+            "public transient volatile"
+      ],
+      "correctIndex": 2,
+      "explanation": "All fields in a Java interface are implicitly public, static, and final, effectively serving as constants."
+},
+{
+      "question": "Can an interface extend multiple other interfaces?",
+      "options": [
+            "No, Java strictly enforces single inheritance for both classes and interfaces.",
+            "Yes, an interface can extend multiple interfaces using the 'extends' keyword separated by commas.",
+            "Yes, but it must use the 'implements' keyword instead of 'extends'.",
+            "Only if the extended interfaces contain zero methods."
+      ],
+      "correctIndex": 1,
+      "explanation": "An interface can extend multiple interfaces (e.g. interface C extends A, B). Only classes are restricted to single class inheritance."
+},
+{
+      "question": "What happens when a class implements two interfaces that declare the exact same abstract method signature 'void ping();'?",
+      "options": [
+            "Compile error: duplicate method declaration in interfaces.",
+            "A single implementation of 'public void ping()' in the class satisfies both interfaces simultaneously.",
+            "The class must implement each method using explicit interface prefix syntax.",
+            "Runtime IncompatibleClassChangeError."
+      ],
+      "correctIndex": 1,
+      "explanation": "Because abstract methods have no body, providing one public implementation of ping() in the class satisfies the contract of both interfaces with zero ambiguity."
+},
+{
+      "question": "What is a Marker Interface in Java?",
+      "options": [
+            "An interface that marks all methods as deprecated.",
+            "An interface with no fields or methods, used to convey metadata or runtime type capability to the JVM (e.g. Serializable, Cloneable).",
+            "An interface used exclusively for graphic UI rendering.",
+            "An interface that contains only default methods."
+      ],
+      "correctIndex": 1,
+      "explanation": "Marker (or tag) interfaces like Serializable and Cloneable have an empty body and inform the JVM or frameworks that implementing classes possess specific runtime capabilities."
+},
+{
+      "question": "Why must any class implementing an interface method declare that method as 'public'?",
+      "options": [
+            "To allow compiler bytecode optimization.",
+            "Because interface methods are implicitly public, and Java forbids reducing visibility when overriding or implementing methods.",
+            "Because package-private methods cannot be called polymorphically.",
+            "It is optional; protected is also acceptable."
+      ],
+      "correctIndex": 1,
+      "explanation": "Interface methods are implicitly public. Lowering visibility (to protected, package-private, or private) violates the access modifier ladder rule and causes a compile error."
+}
     ]
   },
 
@@ -1943,7 +2055,7 @@ public class Main {
     title: 'Abstract Class vs Interface: When to Use Which?',
     subtitle: 'Architectural decision framework: IS-A core identity vs CAN-DO capability, state sharing, evolutionary compatibility, and mixin composition',
     estimatedMinutes: 20,
-    beginnerAnalogy: 'Think of the difference between your fundamental biological identity (IS-A) versus your learned skills and certifications (CAN-DO). A human is fundamentally a `Mammal`—you inherit warm-blooded circulation, DNA structure, skeletal anatomy, and a biological heart that beats automatically (an Abstract Class representing core identity, internal state, and inherited mechanisms). You cannot be both a Mammal and a Reptile because you have a single biological lineage. However, as a Mammal, you can acquire multiple independent certifications: you can be `DriverCertified`, `ScubaDiverCertified`, and `PianoPlayable` (Interfaces representing behavioral capabilities). A dolphin also implements `ScubaDiverCertified` (swims underwater) without being human. Use an abstract class for who you are; use interfaces for what you can do.',
+    beginnerAnalogy: "The architectural decision between an **Abstract Class** and an **Interface** centers on whether you are modeling shared structural identity (**IS-A**) or defining an orthogonal behavioral capability (**CAN-DO**).\n\nAn abstract class models a tight taxonomic relationship where subclasses share common mutable state, constructors, and non-public helper logic within a single inheritance tree. An interface models a contract that completely unrelated classes across disparate inheritance branches can implement (e.g., both a `String` and a `BankAccount` can implement `Comparable`).\n\nThe fundamental architectural trade-offs include three primary dimensions:\n1. **State & Constructors**: Abstract classes can have instance variables and constructors to initialize state; interfaces cannot maintain instance state or define constructors.\n2. **Inheritance Flexibility**: A class can extend only one abstract class, consuming its single inheritance slot; a class can implement an unlimited number of interfaces.\n3. **Evolution & Coupling**: Adding a new abstract method to an abstract class breaks all subclasses immediately, while interfaces (since Java 8) can provide `default` methods for backward-compatible API evolution.",
     coreExplanation: [
       'The foundational decision between an abstract class and an interface rests on identity vs capability: Use an abstract class for an IS-A relationship sharing identity and state; use an interface for a CAN-DO relationship sharing behavioral contracts across unrelated hierarchies.',
       'State Management: Abstract classes can declare private, protected, and public instance variables, allowing stateful encapsulation. Interfaces cannot maintain instance state; all interface variables are strictly `public static final` constants.',
@@ -2923,6 +3035,62 @@ public class Main {
         correctIndex: 2,
         explanation: 'The JVM uses `invokeinterface` for method calls made through an interface reference type.'
       }
+    ,
+{
+      "question": "When should an architect prefer an Abstract Class over an Interface?",
+      "options": [
+            "When designing loose capabilities across unrelated classes.",
+            "When subclasses need to share common non-static mutable state, constructors, and non-public helper methods in a strict IS-A hierarchy.",
+            "Whenever multiple inheritance of type is required.",
+            "Abstract classes are deprecated; interfaces should always be preferred."
+      ],
+      "correctIndex": 1,
+      "explanation": "Abstract classes are ideal for tightly coupled hierarchies where subclasses share common instance variables, constructors, and internal protected helper methods."
+},
+{
+      "question": "What is the primary drawback of using an Abstract Class instead of an Interface?",
+      "options": [
+            "Abstract classes cannot have abstract methods.",
+            "A class can extend only ONE superclass, permanently consuming the class's single inheritance slot.",
+            "Abstract classes have higher runtime memory overhead than interfaces.",
+            "Abstract classes cannot be used in polymorphic arrays."
+      ],
+      "correctIndex": 1,
+      "explanation": "Because Java enforces single class inheritance, extending an abstract class prevents that class from inheriting from any other class."
+},
+{
+      "question": "Can an interface have instance state (non-static instance variables)?",
+      "options": [
+            "Yes, if marked protected.",
+            "Yes, starting in Java 11.",
+            "No, interfaces cannot declare instance variables; any field is implicitly public static final.",
+            "Only if initialized inside a static block."
+      ],
+      "correctIndex": 2,
+      "explanation": "Interfaces represent pure contracts and cannot hold instance state. All variables in interfaces are static constants."
+},
+{
+      "question": "Can an interface define a constructor?",
+      "options": [
+            "Yes, a default parameterless constructor is always generated.",
+            "Yes, but it can only initialize static constants.",
+            "No, interfaces cannot define constructors because they cannot be instantiated and have no instance state to initialize.",
+            "Yes, starting in Java 17."
+      ],
+      "correctIndex": 2,
+      "explanation": "Interfaces do not participate in instance state allocation, so they cannot declare constructors. Attempting to do so triggers a compile error."
+},
+{
+      "question": "Which relationship best characterizes an interface implementation?",
+      "options": [
+            "Strict taxonomic IS-A specialization (e.g. Dog IS-AN Animal).",
+            "Behavioral capability or CAN-DO contract (e.g. Plane CAN-DO Fly, User CAN-DO Authenticate).",
+            "Composition HAS-A part-whole relationship.",
+            "Data encapsulation boundary."
+      ],
+      "correctIndex": 1,
+      "explanation": "Interfaces typically model orthogonal capabilities (CAN-DO / -ABLE), allowing unrelated classes to implement the same behavioral contract."
+}
     ]
   },
 
@@ -2934,7 +3102,7 @@ public class Main {
     title: 'Java 8+ Default & Static Methods in Interfaces',
     subtitle: 'Interface evolution without breaking implementations, the default keyword, resolution rules for multiple inheritance conflicts, and utility static methods',
     estimatedMinutes: 22,
-    beginnerAnalogy: 'Imagine a municipality issuing a mandatory building code contract to hundreds of independent homeowners: "Every house must have an electrical breaker box and a water meter." For twenty years, homeowners complied. Then, the city decides every home should also have an emergency solar-powered surge protector. If the city simply made it a mandatory empty requirement, hundreds of homeowners would be in immediate violation of the law overnight. Instead, the city supplies a pre-assembled, standardized default surge protector to everyone (a `default` method). Any homeowner who wants a custom high-end surge protector can replace the default with their own (overriding), but those who do nothing remain fully compliant without breaking their existing homes.',
+    beginnerAnalogy: "Starting in **Java 8**, the strict rule that interfaces could only declare abstract methods was modernized with the introduction of **default methods** and **static methods**. This enhancement enabled backward-compatible API evolution without breaking existing implementing classes.\n\nA `default` method (declared with the `default` keyword) provides a concrete fallback implementation body directly inside the interface. Implementing classes inherit this method automatically and can choose to use it as-is or override it with customized behavior. A `static` method in an interface belongs to the interface type itself and is invoked via `InterfaceName.methodName()`, serving as a cohesive utility function.\n\nJava 8+ interface methods are governed by three resolution and conflict rules:\n1. **Backward Compatibility**: Allows adding new methods to established interfaces (like `Collection.stream()` or `Iterable.forEach()`) without breaking legacy classes.\n2. **Class Rule Overrides Interface**: If a superclass and an interface provide conflicting method implementations with the same signature, the superclass method always wins.\n3. **Diamond Conflict Resolution**: If a class implements two interfaces declaring identical default methods, the compiler forces the class to resolve the conflict explicitly using `InterfaceName.super.methodName()`.",
     coreExplanation: [
       'Java 8 introduced `default` methods in interfaces to enable "Interface Evolution"—allowing developers and library authors to add new methods to existing interfaces without breaking any existing implementing classes.',
       'A default method is declared with the `default` keyword and must provide a concrete implementation body `{}` inside the interface.',
@@ -3825,6 +3993,569 @@ public class Main {
         correctIndex: 1,
         explanation: 'The synchronized keyword is illegal on interface methods because interfaces do not manage the lock monitors of implementing objects.'
       }
+    ,
+{
+      "question": "What problem did Java 8 default methods primarily solve?",
+      "options": [
+            "Eliminating the need for abstract classes entirely.",
+            "Enabling backward-compatible API evolution, allowing new methods to be added to interfaces without breaking existing implementing classes.",
+            "Allowing multiple inheritance of state in classes.",
+            "Replacing static utility classes with object blueprints."
+      ],
+      "correctIndex": 1,
+      "explanation": "Before Java 8, adding a new method to an interface broke every class implementing it. Default methods provide an implementation, preserving backward compatibility."
+},
+{
+      "question": "How does a class resolve a diamond problem where two implemented interfaces provide identical default methods 'void run()'?",
+      "options": [
+            "The JVM picks the interface loaded first by the ClassLoader.",
+            "The class must explicitly override the method and can invoke a specific parent using 'InterfaceName.super.run()'.",
+            "The compiler automatically selects the interface declared first in the 'implements' clause.",
+            "Runtime AbstractMethodError is thrown."
+      ],
+      "correctIndex": 1,
+      "explanation": "When two interfaces conflict on a default method, the compiler flags an error unless the implementing class overrides the method and resolves the ambiguity."
+},
+{
+      "question": "If a superclass method 'void greet()' and an interface default method 'void greet()' collide in a subclass, which method wins?",
+      "options": [
+            "The interface default method wins because it is newer.",
+            "The superclass method always wins (the 'class wins' rule).",
+            "Compile error: unresolved collision.",
+            "The JVM picks randomly at runtime."
+      ],
+      "correctIndex": 1,
+      "explanation": "Java's resolution rules state: 'Classes win over interfaces'. Any concrete method declared in a superclass takes precedence over any interface default method."
+},
+{
+      "question": "Can a static method in an interface be invoked through an implementing class reference 'sub.staticMethod()'?",
+      "options": [
+            "Yes, interface static methods are inherited by implementing classes.",
+            "No, interface static methods are not inherited; they can ONLY be invoked via the interface name: 'InterfaceName.staticMethod()'.",
+            "Only if the implementing class marks the method as public.",
+            "Yes, via dynamic virtual dispatch."
+      ],
+      "correctIndex": 1,
+      "explanation": "Interface static methods are never inherited by classes. They must be called directly on the interface type itself: InterfaceName.methodName()."
+},
+{
+      "question": "Can an interface have private methods in modern Java?",
+      "options": [
+            "No, all interface methods must be public.",
+            "Yes, starting in Java 9, interfaces can declare private and private static helper methods to share code between default methods.",
+            "Only in sealed interfaces.",
+            "Private methods can only be declared in abstract classes."
+      ],
+      "correctIndex": 1,
+      "explanation": "Java 9 introduced private interface methods so multiple default methods can share common logic without exposing implementation details to public callers."
+}
     ]
-  }
+  },
+  'abstraction-challenge': {
+  "id": "abstraction-challenge",
+  "moduleId": "java-abstraction",
+  "moduleTitle": "13. Abstraction & Interfaces",
+  "lessonNumber": "Lesson 13.5",
+  "title": "Module 13 Challenge & Interview Assessment",
+  "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all abstraction and interface pillars",
+  "estimatedMinutes": 25,
+  "beginnerAnalogy": "The **Module 13 Capstone Challenge & Interview Assessment** evaluates your comprehensive mastery of abstract classes, pure interfaces, multiple inheritance of type, Java 8+ default and static methods, and diamond conflict resolution in Java.\n\nIn enterprise software architecture, abstraction and interfaces decouple systems: abstract classes establish reusable stateful templates and invariant template method workflows, pure interfaces enforce orthogonal behavioral contracts across unrelated modules, and default methods allow non-breaking, backward-compatible API evolution.\n\nThis assessment is structured across four rigorous evaluation pillars:\n1. **11 Coding Challenges**: Hands-on programming problems ranging from basic abstract shape hierarchies to extensible plugin pipelines and e-commerce payment gateways.\n2. **15 Quiz MCQs**: Technical multiple-choice questions examining diamond problem resolution, constructor chaining in abstract classes, and interface modifier rules.\n3. **12 Human Interview Q&As**: Real-world interview questions with detailed model answers, follow-up scenarios, and key technical phrases.\n4. **10 Code Puzzles**: Output prediction and compilation analysis challenges testing default method collisions, class-wins rules, and static interface dispatch.",
+  "coreExplanation": [
+    "Abstract classes provide partial abstraction, combining common instance fields and constructors with abstract method contracts.",
+    "Interfaces provide pure behavioral contracts, decoupling API definitions from concrete implementations and enabling multiple inheritance of type.",
+    "A class can extend only one abstract or concrete class, but can implement an unlimited number of interfaces.",
+    "Java 8 introduced default methods to allow backward-compatible interface evolution without breaking existing implementing classes.",
+    "Static methods in interfaces belong strictly to the interface type and are never inherited by implementing classes.",
+    "When interface default methods conflict (the Diamond Problem), the compiler mandates that the implementing class explicitly resolve the collision.",
+    "The 'Classes Win' rule dictates that any concrete method inherited from a superclass always overrides an interface default method.",
+    "Marker interfaces (Serializable, Cloneable) convey runtime metadata to the JVM without declaring any methods."
+  ],
+  "codeSnippet": {
+    "title": "Enterprise Cloud Notification Pipeline with Abstract Template and Interfaces",
+    "code": "interface Auditable {\n    void audit(String event);\n}\n\ninterface SecureChannel {\n    default void encrypt() {\n        System.out.println(\"[SECURITY] Payload encrypted with TLS 1.3 AES-GCM.\");\n    }\n}\n\nabstract class NotificationService implements Auditable, SecureChannel {\n    protected String serviceName;\n    public NotificationService(String serviceName) {\n        this.serviceName = serviceName;\n    }\n\n    // Template method defining invariant notification pipeline\n    public final void dispatch(String recipient, String message) {\n        encrypt();\n        audit(\"Dispatch initiated for \" + recipient);\n        sendPayload(recipient, message);\n        audit(\"Dispatch completed.\");\n    }\n\n    protected abstract void sendPayload(String recipient, String message);\n\n    @Override\n    public void audit(String event) {\n        System.out.println(\"[\" + serviceName + \" AUDIT] \" + event);\n    }\n}\n\nclass EmailService extends NotificationService {\n    public EmailService() { super(\"EMAIL-GATEWAY\"); }\n    @Override\n    protected void sendPayload(String recipient, String message) {\n        System.out.println(\"Sending email to \" + recipient + \": \" + message);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        NotificationService service = new EmailService();\n        service.dispatch(\"dev@corp.com\", \"Server Alert: High CPU load\");\n    }\n}",
+    "lineByLineExplanation": [
+      {
+        "line": "interface Auditable { void audit(String event); }",
+        "explanation": "Declares an orthogonal behavioral contract implemented by the abstract base."
+      },
+      {
+        "line": "interface SecureChannel { default void encrypt() { ... } }",
+        "explanation": "Provides a default implementation of payload encryption."
+      },
+      {
+        "line": "public final void dispatch(...) { ... }",
+        "explanation": "Template method: guarantees encryption and auditing steps execute in strict invariant sequence."
+      },
+      {
+        "line": "protected abstract void sendPayload(...);",
+        "explanation": "Deferred hook method implemented by concrete subclasses."
+      },
+      {
+        "line": "service.dispatch(...);",
+        "explanation": "Executes the complete pipeline via polymorphic dynamic dispatch."
+      }
+    ],
+    "output": "[SECURITY] Payload encrypted with TLS 1.3 AES-GCM.\n[EMAIL-GATEWAY AUDIT] Dispatch initiated for dev@corp.com\nSending email to dev@corp.com: Server Alert: High CPU load\n[EMAIL-GATEWAY AUDIT] Dispatch completed."
+  },
+      "practiceProblems": [
+      {
+            "title": "Puzzle 1: Constructor Execution Order in Abstract Hierarchy",
+            "problemStatement": "What does this code print when executed?",
+            "code": "abstract class Component {\n    Component() { System.out.print(\"Comp \"); }\n}\nabstract class UIWidget extends Component {\n    UIWidget() { System.out.print(\"Widget \"); }\n}\nclass Button extends UIWidget {\n    Button() { System.out.print(\"Btn \"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new Button();\n    }\n}",
+            "options": [
+                  "Btn Widget Comp ",
+                  "Comp Widget Btn ",
+                  "Btn Comp Widget ",
+                  "Compilation Error: Abstract classes cannot have constructors"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Constructor chaining executes top-down starting from java.lang.Object down through each abstract superclass constructor to the concrete subclass constructor.",
+            "solution": "Comp Widget Btn ",
+            "explanation": "Abstract classes have constructors to initialize inherited fields. Constructor chaining (via implicit super()) forces the Component constructor to run first, followed by UIWidget, and finally Button."
+      },
+      {
+            "title": "Puzzle 2: Class vs Interface Default Method ('Classes Win' Rule)",
+            "problemStatement": "What is printed by this program?",
+            "code": "interface Notifier {\n    default void send() { System.out.print(\"Interface-Send \"); }\n}\nclass BaseNotifier {\n    public void send() { System.out.print(\"BaseClass-Send \"); }\n}\nclass SlackNotifier extends BaseNotifier implements Notifier {}\npublic class Main {\n    public static void main(String[] args) {\n        Notifier n = new SlackNotifier();\n        n.send();\n    }\n}",
+            "options": [
+                  "Interface-Send ",
+                  "BaseClass-Send ",
+                  "Compilation Error: Conflicting send() implementations",
+                  "Runtime Exception: Ambiguous method dispatch"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Rule 1 of Java default method conflict resolution states that concrete class methods ALWAYS defeat interface default methods.",
+            "solution": "BaseClass-Send ",
+            "explanation": "Under Java's 'Classes Win' rule, any concrete method inherited from a superclass takes strict priority over any default method provided by an interface with the same signature."
+      },
+      {
+            "title": "Puzzle 3: Sub-Interface Default Method ('Sub-interfaces Win' Rule)",
+            "problemStatement": "What is the output of this code?",
+            "code": "interface TopAlpha {\n    default String label() { return \"Top\"; }\n}\ninterface SubAlpha extends TopAlpha {\n    @Override\n    default String label() { return \"Sub\"; }\n}\nclass CoreModel implements SubAlpha {}\npublic class Main {\n    public static void main(String[] args) {\n        TopAlpha ref = new CoreModel();\n        System.out.println(ref.label());\n    }\n}",
+            "options": [
+                  "Top",
+                  "Sub",
+                  "Compilation Error: Ambiguous label() inheritance",
+                  "null"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Rule 2 states that a more specific (sub-)interface default method overrides a more general (super-)interface default method.",
+            "solution": "Sub",
+            "explanation": "SubAlpha extends TopAlpha and overrides label(). Under the 'Sub-interfaces Win' rule, SubAlpha's default method is more specific and wins, even when accessed through a TopAlpha reference."
+      },
+      {
+            "title": "Puzzle 4: Sibling Interface Default Method Collision",
+            "problemStatement": "What happens when compiling and running this code?",
+            "code": "interface Reader {\n    default void scan() { System.out.print(\"Read \"); }\n}\ninterface Scanner {\n    default void scan() { System.out.print(\"Scan \"); }\n}\nclass Copier implements Reader, Scanner {}\npublic class Main {\n    public static void main(String[] args) {\n        new Copier().scan();\n    }\n}",
+            "options": [
+                  "Prints: Read ",
+                  "Prints: Scan ",
+                  "Compilation Error: class Copier inherits unrelated defaults for scan() from Reader and Scanner",
+                  "Prints: Read Scan "
+            ],
+            "correctOptionIndex": 2,
+            "hint": "When two unrelated sibling interfaces provide conflicting default implementations, the compiler refuses to guess.",
+            "solution": "Compilation Error: class Copier inherits unrelated defaults for scan() from Reader and Scanner",
+            "explanation": "If a class implements two unrelated interfaces with conflicting default methods, the compiler flags a diamond collision error unless the implementing class explicitly overrides the method to resolve the conflict."
+      },
+      {
+            "title": "Puzzle 5: Interface Static Method Dispatch Trap",
+            "problemStatement": "What is the result of compiling and running this code?",
+            "code": "interface MathOps {\n    static int square(int x) { return x * x; }\n}\nclass FastMath implements MathOps {}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(FastMath.square(5));\n    }\n}",
+            "options": [
+                  "Prints: 25",
+                  "Compilation Error: cannot find symbol square(int) in FastMath",
+                  "Runtime Exception: NoSuchMethodError",
+                  "Prints: 0"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Static methods declared in interfaces belong strictly to the interface; they are never inherited by implementing classes.",
+            "solution": "Compilation Error: cannot find symbol square(int) in FastMath",
+            "explanation": "Unlike class static methods, interface static methods are NOT inherited by implementing classes. They must be invoked directly using the interface name: MathOps.square(5)."
+      },
+      {
+            "title": "Puzzle 6: Interface Constant Modifier Trap",
+            "problemStatement": "What is the compiler behavior for the following code?",
+            "code": "interface Config {\n    int TIMEOUT = 5000;\n}\nclass ServerConfig implements Config {\n    void update() {\n        TIMEOUT = 10000;\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new ServerConfig().update();\n    }\n}",
+            "options": [
+                  "Compiles cleanly and updates TIMEOUT to 10000",
+                  "Compilation Error: cannot assign a value to final variable TIMEOUT",
+                  "Runtime SecurityException",
+                  "Compiles with a deprecation warning"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Every variable declared in an interface is implicitly public static final.",
+            "solution": "Compilation Error: cannot assign a value to final variable TIMEOUT",
+            "explanation": "All interface variables are compile-time constants (implicitly public static final). Reassigning TIMEOUT in the implementing class causes a compilation error."
+      },
+      {
+            "title": "Puzzle 7: Calling Interface.super.method() Syntax",
+            "problemStatement": "What is printed by this program?",
+            "code": "interface Left {\n    default void ping() { System.out.print(\"L-\"); }\n}\ninterface Right {\n    default void ping() { System.out.print(\"R-\"); }\n}\nclass Bridge implements Left, Right {\n    @Override\n    public void ping() {\n        Right.super.ping();\n        Left.super.ping();\n        System.out.print(\"Done\");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new Bridge().ping();\n    }\n}",
+            "options": [
+                  "L-R-Done",
+                  "R-L-Done",
+                  "Compilation Error: Illegal super qualifier",
+                  "Done"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Follow the sequence of statements inside Bridge.ping().",
+            "solution": "R-L-Done",
+            "explanation": "Bridge resolves the diamond conflict by overriding ping(). It calls Right.super.ping() (printing 'R-'), then Left.super.ping() (printing 'L-'), and finally 'Done', outputting 'R-L-Done'."
+      },
+      {
+            "title": "Puzzle 8: Template Method Dynamic Dispatch in Abstract Class",
+            "problemStatement": "What does this code print?",
+            "code": "abstract class Worker {\n    public void execute() {\n        prepare();\n        System.out.print(\"Work \");\n    }\n    protected abstract void prepare();\n}\nclass CloudWorker extends Worker {\n    @Override\n    protected void prepare() {\n        System.out.print(\"CloudInit \");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Worker w = new CloudWorker();\n        w.execute();\n    }\n}",
+            "options": [
+                  "Work CloudInit ",
+                  "CloudInit Work ",
+                  "Work ",
+                  "Compilation Error: Cannot call abstract prepare() from execute()"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "The abstract class execute() method calls prepare(), which dynamically dispatches to CloudWorker's override.",
+            "solution": "CloudInit Work ",
+            "explanation": "The Template Method pattern allows concrete methods in an abstract class to call abstract hook methods. Dynamic dispatch binds prepare() to CloudWorker.prepare() at runtime, printing 'CloudInit ' followed by 'Work '."
+      },
+      {
+            "title": "Puzzle 9: Re-Abstracting a Default Method",
+            "problemStatement": "What happens when compiling this hierarchy?",
+            "code": "interface BaseLog {\n    default void log() { System.out.println(\"DefaultLog\"); }\n}\ninterface StrictLog extends BaseLog {\n    @Override\n    void log(); // Re-abstracted\n}\nclass Service implements StrictLog {}\npublic class Main {\n    public static void main(String[] args) {}\n}",
+            "options": [
+                  "Compiles successfully and uses DefaultLog",
+                  "Compilation Error: Service is not abstract and does not override abstract method log() in StrictLog",
+                  "Compilation Error: StrictLog cannot re-declare an existing default method as abstract",
+                  "Runtime AbstractMethodError"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "A sub-interface can re-abstract an inherited default method, revoking the default implementation.",
+            "solution": "Compilation Error: Service is not abstract and does not override abstract method log() in StrictLog",
+            "explanation": "StrictLog explicitly re-abstracts log() by declaring it without a body. Consequently, Service is forced to implement log() or be declared abstract itself."
+      },
+      {
+            "title": "Puzzle 10: Private Method in Interface (Java 9+)",
+            "problemStatement": "What is the output of this code?",
+            "code": "interface Pipeline {\n    default void start() { log(\"Start\"); }\n    default void finish() { log(\"Finish\"); }\n    private void log(String step) {\n        System.out.print(\"[\" + step + \"] \");\n    }\n}\nclass BuildJob implements Pipeline {}\npublic class Main {\n    public static void main(String[] args) {\n        BuildJob job = new BuildJob();\n        job.start();\n        job.finish();\n    }\n}",
+            "options": [
+                  "[Start] [Finish] ",
+                  "Compilation Error: Interfaces cannot contain private methods",
+                  "Compilation Error: Cannot call private method log() from default method",
+                  "[Finish] [Start] "
+            ],
+            "correctOptionIndex": 0,
+            "hint": "Java 9 introduced private interface methods specifically to share helper code between default methods.",
+            "solution": "[Start] [Finish] ",
+            "explanation": "Since Java 9, interfaces support private helper methods. Both start() and finish() delegate to the shared private log() helper, outputting '[Start] [Finish] '."
+      }
+],
+  "interviewQuestions": [
+    {
+      "question": "What is the fundamental difference between an Abstract Class and an Interface in Java?",
+      "answer": "An abstract class is an incomplete blueprint that models a strict taxonomic IS-A relationship; it can maintain instance state (variables with private/protected access), constructors, and partial implementation. An interface defines an orthogonal behavioral contract (CAN-DO); it cannot declare instance state or constructors, but a class can implement multiple interfaces, achieving multiple inheritance of type.",
+      "followUp": "Can an interface have concrete methods in modern Java?",
+      "followUpAnswer": "Yes. Starting in Java 8, interfaces can define default and static methods with concrete bodies. Java 9 also introduced private helper methods.",
+      "keyPhrases": [
+        "IS-A vs CAN-DO",
+        "Instance state and constructors",
+        "Multiple inheritance of type",
+        "Java 8 default methods"
+      ]
+    },
+    {
+      "question": "Why can't an interface define a constructor?",
+      "answer": "A constructor's sole purpose is to initialize instance fields of an object allocated on the heap. Because interfaces cannot hold instance variables, there is no instance state to initialize, making constructors meaningless and illegal in interfaces.",
+      "followUp": "Do abstract classes have constructors? Can you call them?",
+      "followUpAnswer": "Yes, abstract classes define constructors to initialize their inherited instance fields. They are invoked via super() constructor chaining during concrete subclass instantiation.",
+      "keyPhrases": [
+        "No instance state",
+        "Heap allocation",
+        "super() constructor chaining"
+      ]
+    },
+    {
+      "question": "Explain the 'Classes Win' rule in Java 8 default method resolution.",
+      "answer": "If a class inherits a concrete method from a superclass and simultaneously inherits a default method with the exact same signature from an interface, the superclass method always wins. The interface default method is completely ignored, ensuring full backward compatibility with legacy class hierarchies.",
+      "followUp": "What happens if two unrelated interfaces declare the same default method?",
+      "followUpAnswer": "The compiler issues an error due to ambiguity. The implementing class must explicitly override the method and choose or combine implementations using InterfaceName.super.methodName().",
+      "keyPhrases": [
+        "Superclass takes precedence",
+        "Backward compatibility",
+        "Diamond conflict resolution",
+        "InterfaceName.super"
+      ]
+    },
+    {
+      "question": "What are the implicit modifiers for variables declared in an interface?",
+      "answer": "Every variable declared in an interface is implicitly public, static, and final. They cannot be marked private, protected, or transient, and they must be initialized at declaration time, functioning as constants.",
+      "followUp": "Can an interface have mutable variables?",
+      "followUpAnswer": "No. An interface cannot have mutable instance state. All interface variables are compile-time or runtime static constants.",
+      "keyPhrases": [
+        "public static final",
+        "Implicit modifiers",
+        "Constants only"
+      ]
+    },
+    {
+      "question": "What is a Functional Interface in Java?",
+      "answer": "A Functional Interface is an interface that contains exactly one abstract method (SAM - Single Abstract Method). It can contain any number of default or static methods. It is optionally annotated with @FunctionalInterface to enforce the SAM rule at compile time and serves as the target type for lambda expressions and method references.",
+      "followUp": "Can a functional interface declare methods from java.lang.Object?",
+      "followUpAnswer": "Yes. Abstract declarations matching public methods of Object (like equals(Object)) do not count against the single abstract method quota because all classes implicitly inherit them from Object.",
+      "keyPhrases": [
+        "Single Abstract Method (SAM)",
+        "@FunctionalInterface",
+        "Target for lambdas",
+        "Object method exclusion"
+      ]
+    },
+    {
+      "question": "What is a Marker Interface? Give two standard JDK examples.",
+      "answer": "A Marker Interface (also known as a Tag Interface) contains zero methods and zero fields. It serves as runtime type metadata informing the JVM or serialization/cloning frameworks that implementing instances have special permissions or capabilities. Two classic examples are java.io.Serializable and java.lang.Cloneable.",
+      "followUp": "Are marker interfaces still used, or are annotations preferred today?",
+      "followUpAnswer": "Modern Java designs generally prefer custom annotations for metadata; however, marker interfaces retain the advantage of type safety because they can be used as compile-time parameter and variable types.",
+      "keyPhrases": [
+        "Empty interface",
+        "Runtime metadata",
+        "Serializable and Cloneable",
+        "Type-safe tagging"
+      ]
+    },
+    {
+      "question": "Can an abstract class be declared final? Why or why not?",
+      "answer": "No. An abstract class cannot be declared final. 'abstract' explicitly requires that the class be subclassed to be completed, while 'final' strictly forbids any subclassing. Combining them creates an impossible logical contradiction that the compiler rejects immediately.",
+      "followUp": "Can an abstract method be declared final?",
+      "followUpAnswer": "No. An abstract method demands an override in a subclass, while final prevents overriding, which is also an illegal contradiction.",
+      "keyPhrases": [
+        "Contradictory modifiers",
+        "Compile-time error",
+        "abstract requires subclassing",
+        "final prohibits inheritance"
+      ]
+    },
+    {
+      "question": "Can an abstract class define static methods? Can an interface define static methods?",
+      "answer": "Yes to both. Abstract classes have always supported static methods. Java 8 introduced static methods in interfaces. However, while static methods in an abstract class can be inherited and called on subclasses (via Subclass.method()), static methods in an interface are NEVER inherited and can only be invoked directly on the interface: InterfaceName.method().",
+      "followUp": "Why are interface static methods not inherited by implementing classes?",
+      "followUpAnswer": "To prevent namespace pollution and name collisions when a class implements multiple interfaces with identical static utility names.",
+      "keyPhrases": [
+        "InterfaceName.method()",
+        "No inheritance of interface static methods",
+        "Namespace pollution prevention"
+      ]
+    },
+    {
+      "question": "How does the Template Method design pattern utilize abstract classes?",
+      "answer": "The Template Method pattern defines the invariant skeleton of an algorithm in a 'public final' method within an abstract class. The algorithm executes a series of sequential steps, some of which are implemented concretely in the base class, while specialized or optional steps are declared as 'protected abstract' or hook methods that subclasses implement.",
+      "followUp": "Why should the template method itself be declared final?",
+      "followUpAnswer": "To prevent subclasses from altering the high-level sequence or control flow of the algorithm, protecting architectural invariants.",
+      "keyPhrases": [
+        "Algorithm skeleton",
+        "public final template",
+        "protected abstract hooks",
+        "Invariant sequence"
+      ]
+    },
+    {
+      "question": "What happens if an abstract class implements an interface?",
+      "answer": "An abstract class implementing an interface is NOT required to provide implementations for any of the interface's abstract methods. It can choose to implement some, none, or all of them. Any unimplemented interface methods remain abstract obligations that concrete child classes must satisfy.",
+      "followUp": "Can an abstract class add new abstract methods on top of an interface?",
+      "followUpAnswer": "Yes, an abstract class can combine interface contracts with its own abstract and concrete methods.",
+      "keyPhrases": [
+        "Optional implementation",
+        "Deferred obligation",
+        "Partial implementation"
+      ]
+    },
+    {
+      "question": "Can an interface have private methods? What is their purpose?",
+      "answer": "Yes. Java 9 introduced private and private static methods in interfaces. Their primary purpose is to allow multiple default methods within the same interface to share common implementation code without exposing those helper methods to implementing classes or external callers.",
+      "followUp": "Can a private interface method be abstract?",
+      "followUpAnswer": "No. Private methods cannot be overridden, so a private abstract method is illegal.",
+      "keyPhrases": [
+        "Java 9",
+        "Code reuse between default methods",
+        "Encapsulation within interfaces"
+      ]
+    },
+    {
+      "question": "Why does Java support multiple inheritance of type through interfaces, but not multiple inheritance of state through classes?",
+      "answer": "Multiple inheritance of state leads to the Deadly Diamond of Death: if class D inherits field 'x' from both B and C (which both inherit from A), D would have conflicting memory layouts and ambiguous state. Because interfaces cannot hold instance variables, multiple interfaces only inherit behavioral contracts without state collisions.",
+      "followUp": "How did Java 8 address default method collisions?",
+      "followUpAnswer": "By requiring implementing classes to explicitly disambiguate collisions, keeping resolution deterministic and compile-time safe.",
+      "keyPhrases": [
+        "Deadly Diamond of Death",
+        "State collision vs Type inheritance",
+        "Memory layout ambiguity",
+        "Deterministic resolution"
+      ]
+    }
+  ],
+  "miniQuiz": [
+    {
+      "question": "Which modifier combination is strictly ILLEGAL on a Java method?",
+      "options": [
+        "public abstract",
+        "protected abstract",
+        "private abstract",
+        "package-private abstract"
+      ],
+      "correctIndex": 2,
+      "explanation": "private abstract is illegal because private methods are invisible to subclasses, making overriding impossible."
+    },
+    {
+      "question": "What is the result of compiling: interface A { int x = 10; } class B implements A { void test() { x = 20; } }",
+      "options": [
+        "Compiles successfully",
+        "Compilation error: cannot assign a value to final variable x",
+        "Runtime Exception",
+        "x becomes 20 for all instances"
+      ],
+      "correctIndex": 1,
+      "explanation": "All interface variables are implicitly final; attempting to reassign x causes a compilation error."
+    },
+    {
+      "question": "Can an abstract class be instantiated using reflection 'AbstractClass.class.newInstance()'?",
+      "options": [
+        "Yes, reflection bypasses abstract checks",
+        "No, the JVM throws InstantiationException at runtime",
+        "Yes, if it has a public no-arg constructor",
+        "Only with Unsafe"
+      ],
+      "correctIndex": 1,
+      "explanation": "The JVM forbids instantiating abstract classes even via reflection, throwing java.lang.InstantiationException."
+    },
+    {
+      "question": "Under what condition can an interface method omit the 'default' keyword and still have a body in Java 8?",
+      "options": [
+        "If it is declared protected",
+        "If it is declared static",
+        "If it is declared abstract",
+        "If it has no arguments"
+      ],
+      "correctIndex": 1,
+      "explanation": "In Java 8, interface methods with bodies must be declared either default or static."
+    },
+    {
+      "question": "Which rule takes precedence when resolving method conflicts: a superclass method or an interface default method?",
+      "options": [
+        "Interface default method always wins",
+        "The superclass method always wins ('Classes Win' rule)",
+        "The compiler throws a collision error",
+        "Whichever has higher visibility wins"
+      ],
+      "correctIndex": 1,
+      "explanation": "The 'Classes Win' rule dictates that any concrete superclass method overrides any interface default method."
+    },
+    {
+      "question": "What is printed by: interface X { default void m() { System.out.print(\"X\"); } } class Y { public void m() { System.out.print(\"Y\"); } } class Z extends Y implements X {} public class Test { public static void main(String[] args) { new Z().m(); } }",
+      "options": [
+        "X",
+        "Y",
+        "XY",
+        "Compilation Error"
+      ],
+      "correctIndex": 1,
+      "explanation": "Because class Y declares a public void m(), the 'Classes Win' rule causes Y's implementation to be executed, printing 'Y'."
+    },
+    {
+      "question": "How do you invoke interface A's default method 'run()' from an implementing class that overrides it?",
+      "options": [
+        "super.run()",
+        "A.run()",
+        "A.super.run()",
+        "((A) this).run()"
+      ],
+      "correctIndex": 2,
+      "explanation": "Java uses the syntax InterfaceName.super.methodName() to explicitly select a specific interface default implementation."
+    },
+    {
+      "question": "What are the implicit modifiers of an interface declared without any access modifier inside a package?",
+      "options": [
+        "public abstract",
+        "package-private abstract",
+        "protected static",
+        "private final"
+      ],
+      "correctIndex": 1,
+      "explanation": "Top-level interfaces can be public or package-private (default). All interfaces are implicitly abstract."
+    },
+    {
+      "question": "Can an interface declare a static block in Java?",
+      "options": [
+        "Yes, to initialize static constants",
+        "No, static initializers are not permitted in interfaces",
+        "Only in sealed interfaces",
+        "Yes, starting in Java 9"
+      ],
+      "correctIndex": 1,
+      "explanation": "Interfaces cannot contain static initializer blocks; all static constant fields must be initialized at declaration."
+    },
+    {
+      "question": "What happens if interface A extends interface B, and both declare default method 'test()'? Which implementation does an implementor of A get?",
+      "options": [
+        "B's implementation",
+        "A's implementation (Sub-interfaces Win rule)",
+        "Compiler ambiguity error",
+        "Neither"
+      ],
+      "correctIndex": 1,
+      "explanation": "The 'Sub-interfaces Win' rule states that a more specific interface's default method overrides a super-interface's default method."
+    },
+    {
+      "question": "Can an interface inherit from java.lang.Object?",
+      "options": [
+        "Yes, all interfaces implicitly extend Object",
+        "No, interfaces do not extend Object, though all instances implementing an interface are Objects",
+        "Only through multiple inheritance",
+        "Yes, if declared explicitly"
+      ],
+      "correctIndex": 1,
+      "explanation": "Interfaces do not extend Object. However, every object implementing an interface is an Object, so Object methods are accessible on interface references."
+    },
+    {
+      "question": "What is the maximum number of abstract classes a Java class can extend?",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "Unlimited"
+      ],
+      "correctIndex": 1,
+      "explanation": "Java strictly enforces single class inheritance: a class can extend at most one superclass (abstract or concrete)."
+    },
+    {
+      "question": "What is the maximum number of interfaces a Java class can implement?",
+      "options": [
+        "1",
+        "10",
+        "65,535",
+        "Unlimited (subject only to JVM classfile attribute limits)"
+      ],
+      "correctIndex": 3,
+      "explanation": "A class can implement as many interfaces as needed, enabling flexible multiple inheritance of type."
+    },
+    {
+      "question": "Can an interface method be declared 'native'?",
+      "options": [
+        "Yes, for JNI bindings",
+        "No, interface methods cannot be native",
+        "Only static interface methods",
+        "Only in Java 8+"
+      ],
+      "correctIndex": 1,
+      "explanation": "The 'native' modifier is forbidden on interface methods because native methods require platform-specific C/C++ implementations tied to classes."
+    },
+    {
+      "question": "What is the primary benefit of programming to an Interface rather than a Concrete Class?",
+      "options": [
+        "Faster bytecode execution",
+        "Loose coupling, interchangeability of implementations, and ease of unit testing with mocks",
+        "Automatic thread safety",
+        "Direct memory access"
+      ],
+      "correctIndex": 1,
+      "explanation": "Programming to interfaces decouples callers from concrete classes, allowing implementations to be swapped or mocked without modifying client code."
+    }
+  ]
+}
 };

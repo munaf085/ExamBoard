@@ -15,7 +15,7 @@ export const oop14Lessons: Record<string, DetailedLesson> = {
     title: 'The Root java.lang.Object Class',
     subtitle: 'The universal ancestor, JVM type hierarchy, default inherited methods, and universal reference polymorphism',
     estimatedMinutes: 20,
-    beginnerAnalogy: 'Think of `java.lang.Object` like the fundamental carbon atom in organic chemistry. Every living cell—whether a blade of grass, a blue whale, an eagle, or a bacterium—is fundamentally built upon carbon atoms and inherits core atomic rules of physics. In Java, every single class you or anyone else will ever write—whether a `String`, a `JFrame`, a `Thread`, or a custom `UserAccount`—implicitly inherits from `java.lang.Object`. If you do not write `extends` on your class, the Java compiler automatically injects `extends java.lang.Object` behind the scenes. It provides the universal baseline DNA that makes any entity an authentic object in the JVM memory space.',
+    beginnerAnalogy: "The **java.lang.Object** class is the universal root and ultimate ancestor of all classes in the Java programming language. Every class in Java\u2014whether a built-in standard JDK class or a custom user-defined class\u2014directly or indirectly extends `Object`. If a class declaration omits the `extends` clause, the Java compiler (`javac`) automatically appends `extends java.lang.Object` at compile time.\n\nBecause `Object` is the root of the type hierarchy, an `Object` reference variable can point to an instance of any class or array on the JVM Heap. Furthermore, through autoboxing, primitive values wrapped in their corresponding wrapper types (like `Integer` or `Double`) can also be assigned to `Object` references.\n\nThe `Object` class defines 11 foundational methods inherited by every Java object:\n1. **Core Identity & String Representation**: `toString()`, `equals(Object obj)`, and `hashCode()`.\n2. **Lifecycle & Introspection**: `getClass()`, `clone()`, and `finalize()` (deprecated).\n3. **Concurrency & Thread Synchronization**: `wait()`, `wait(long)`, `wait(long, int)`, `notify()`, and `notifyAll()`.",
     coreExplanation: [
       '`java.lang.Object` sits at the absolute root of the Java class hierarchy. Every class in Java is a direct or indirect descendant of `Object`. It is the only class in the entire Java language that has no superclass.',
       'If a class declaration does not explicitly include an `extends` clause, the Java compiler automatically inserts `extends java.lang.Object`. If a class does extend another class, it still inherits `Object` indirectly through its ancestor chain.',
@@ -799,6 +799,62 @@ public class Main {
         correctIndex: 1,
         explanation: 'An invalid downcast fails the JVM runtime type check and throws a java.lang.ClassCastException.'
       }
+    ,
+{
+      "question": "Which of the following is NOT a method declared directly in java.lang.Object?",
+      "options": [
+            "getClass()",
+            "hashCode()",
+            "compareTo(Object o)",
+            "notifyAll()"
+      ],
+      "correctIndex": 2,
+      "explanation": "compareTo(Object o) belongs to the java.lang.Comparable interface, not to java.lang.Object."
+},
+{
+      "question": "Can the 'getClass()' method of java.lang.Object be overridden by a subclass?",
+      "options": [
+            "Yes, to provide custom class metadata.",
+            "No, getClass() is declared as 'public final native Class<?> getClass()' and cannot be overridden.",
+            "Only if the subclass is marked abstract.",
+            "Yes, starting in Java 17."
+      ],
+      "correctIndex": 1,
+      "explanation": "getClass() is final in Object to guarantee that runtime type introspection cannot be forged or overridden."
+},
+{
+      "question": "What happens when you assign a primitive 'int x = 42;' to an 'Object obj' reference?",
+      "options": [
+            "Compile error: primitive cannot be assigned to Object.",
+            "The primitive is automatically autoboxed into an Integer heap object and assigned to obj.",
+            "The primitive value is stored directly in the reference pointer.",
+            "Runtime ClassCastException."
+      ],
+      "correctIndex": 1,
+      "explanation": "Java's compiler automatically autoboxes primitive int into java.lang.Integer, which inherits from Object."
+},
+{
+      "question": "What is the status of the 'finalize()' method in modern Java?",
+      "options": [
+            "Actively recommended for cleaning up file handles.",
+            "Deprecated since Java 9 and marked for removal due to unpredictable timing and GC deadlocks.",
+            "Removed completely in Java 8.",
+            "It is a mandatory method in all network sockets."
+      ],
+      "correctIndex": 1,
+      "explanation": "finalize() was deprecated in Java 9 because its execution timing is nondeterministic and can resurrect dead objects or cause memory leaks."
+},
+{
+      "question": "Why are wait(), notify(), and notifyAll() declared in java.lang.Object rather than java.lang.Thread?",
+      "options": [
+            "Because threads do not exist in the JVM core.",
+            "Because every Java object has an internal synchronization lock monitor in its Object Header on the Heap.",
+            "It was an accidental design flaw in Java 1.0.",
+            "Because Thread does not extend Object."
+      ],
+      "correctIndex": 1,
+      "explanation": "In Java, locks belong to heap object monitors, not threads. Threads acquire and release monitors on objects, so wait/notify live on Object."
+}
     ]
   },
 
@@ -810,7 +866,7 @@ public class Main {
     title: 'The toString() Method & String Representation',
     subtitle: 'Deconstructing the default ClassName@hexHashCode format, string concatenation mechanics, logging readability, and builder patterns',
     estimatedMinutes: 20,
-    beginnerAnalogy: 'Imagine traveling through an international airport with an unlabelled black suitcase. The airline luggage handler attaches a default barcoded adhesive tag: `LuggageBag@3f99bd1a`. While the automated scanner understands the hex tracking code, you and the airport staff cannot tell what is inside or who owns it by reading that tag. Overriding `toString()` is like replacing that cryptic luggage barcode with a clear, readable leather nameplate: `[LuggageBag: Brand="Samsonite", Owner="Amara Vance", Destination="HND Tokyo", Weight=18.5kg]`. Whenever someone inspects the bag (printing it to console or logs), they immediately understand its state.',
+    beginnerAnalogy: "The **toString()** method in Java returns a textual string representation of an object. Declared in `java.lang.Object`, its default implementation returns a string composed of the class's fully qualified name, the `@` symbol, and the object's unsigned hexadecimal identity hash code (`getClass().getName() + '@' + Integer.toHexString(hashCode())`).\n\nIn production enterprise systems, this default output (e.g. `User@15db9742`) is uninformative and provides zero insight into an object's internal state. Whenever an object reference is passed to `System.out.println(obj)`, concatenated with a string (`\"User: \" + obj`), or logged by a logging framework (like Log4j or SLF4J), the runtime automatically calls `obj.toString()`.\n\nBest practices for overriding `toString()` include three primary rules:\n1. **Informative Diagnostic State**: Include the class name and key identifying fields (e.g., `\"User[id=101, name='Alice']\"`).\n2. **Zero Side-Effects**: Calling `toString()` must be completely safe, idempotent, and cause no state mutation or external I/O.\n3. **Security Invariant**: Never expose sensitive fields (such as plaintext passwords, credit card numbers, or cryptographic tokens) in `toString()` output.",
     coreExplanation: [
       'The `toString()` method is declared in `java.lang.Object` as `public String toString()`. Its design contract is to return a concise, informative, human-readable textual representation of the object.',
       'The default implementation in `Object` produces: `getClass().getName() + \'@\' + Integer.toHexString(hashCode())`. For a class `User`, this outputs something like `User@45ee12a7`, which provides zero insight into the object\'s actual field values.',
@@ -1633,6 +1689,61 @@ public class Main {
         ],
         correctIndex: 1,
         explanation: 'java.util.Arrays.toString(arr) is the standard utility for generating a readable comma-separated string of array elements.'
+      },
+      {
+        question: 'What method should be used to obtain a readable string representation of a multi-dimensional array like int[][] matrix?',
+        options: [
+          'Arrays.toString(matrix)',
+          'Arrays.deepToString(matrix)',
+          'matrix.toString()',
+          'Arrays.toMultiString(matrix)'
+        ],
+        correctIndex: 1,
+        explanation: 'Arrays.deepToString() recursively traverses nested sub-arrays, converting all primitive and object elements to readable strings, whereas Arrays.toString() on a 2D array prints memory address hashes for inner rows.'
+      },
+      {
+        question: 'How does a Java 14+ record (e.g., record Point(int x, int y)) handle toString() by default?',
+        options: [
+          'It inherits Object.toString() directly and prints Point@hexHash.',
+          'The Java compiler automatically synthesizes an implementation formatted like Point[x=1, y=2].',
+          'Records prohibit calling toString() unless explicitly implemented.',
+          'It outputs an automatic JSON string format.'
+        ],
+        correctIndex: 1,
+        explanation: 'In Java records, the compiler automatically generates a canonical toString() method displaying the record class name along with the names and current values of all components.'
+      },
+      {
+        question: 'When is calling super.toString() inside a subclass\'s toString() method recommended?',
+        options: [
+          'Always, to print the superclass object identity hash code.',
+          'Never, calling super.toString() results in a compile-time recursion error.',
+          'When the superclass has already overridden toString() to format its inherited fields, and the subclass wants to append its own specific fields.',
+          'Only when the superclass is an interface.'
+        ],
+        correctIndex: 2,
+        explanation: 'In class hierarchies where the superclass provides a meaningful toString() formatting its own fields, subclasses can call super.toString() and append their specific state, adhering to DRY principles.'
+      },
+      {
+        question: 'What does the expression String s = "Value: " + (String) null produce at runtime?',
+        options: [
+          'Throws NullPointerException immediately.',
+          '"Value: null"',
+          '"Value: "',
+          'Compile-time error.'
+        ],
+        correctIndex: 1,
+        explanation: 'String concatenation using the binary + operator delegates null operands to String.valueOf(), safely producing the character sequence "null" without throwing NullPointerException.'
+      },
+      {
+        question: 'Why should an overridden toString() method NEVER modify the internal state or fields of an object?',
+        options: [
+          'Because the compiler flags any field reassignment inside toString() as a fatal syntax error.',
+          'Because toString() must be strictly side-effect-free: debuggers, loggers, and monitoring frameworks invoke it unpredictably, and state mutations would cause subtle bugs.',
+          'Because toString() executes exclusively on a background GC thread.',
+          'Only public static fields can be safely modified inside toString().'
+        ],
+        correctIndex: 1,
+        explanation: 'toString() must be strictly idempotent and free of side effects. Debuggers, loggers, and APM tools invoke toString() asynchronously during diagnostic inspections; altering state during inspection causes severe non-deterministic defects.'
       }
     ]
   },
@@ -1645,7 +1756,7 @@ public class Main {
     title: 'The equals() and hashCode() Contract',
     subtitle: 'Identity vs value equality, the 5 mathematical properties of equals, hash collision mechanics, bucket distribution, and the unbreakable contract',
     estimatedMinutes: 24,
-    beginnerAnalogy: 'Think of looking up a book in a massive university library with 1,000,000 volumes. Reference equality (`==`) asks: "Are these two book references pointing to the exact same physical copy sitting on shelf #42?" Logical equality (`equals()`) asks: "Do these two books have the exact same ISBN and content, even if one is in my hand and one is on the shelf?" To avoid searching 1,000,000 shelves sequentially, the library uses a Dewey Decimal number—a `hashCode()`. The hash code assigns the book to a specific room or aisle (a hash bucket). The Golden Contract states: If two books have the same ISBN (`equals() == true`), they MUST be assigned the exact same Dewey Decimal aisle (`hashCode() == same`). If they were placed in different aisles, the librarian would look in aisle A and conclude the book does not exist, even though an identical copy is sitting in aisle B!',
+    beginnerAnalogy: "The **equals()** and **hashCode()** methods form the fundamental identity contract of Java's type system, determining logical equality and storage placement in hash-based collections (such as `HashMap`, `HashSet`, and `Hashtable`).\n\nBy default, `Object.equals(Object obj)` performs strict **reference equality** (`this == obj`), returning `true` only if both reference variables point to the exact same memory address on the Heap. Overriding `equals()` enables **logical value equality**, returning `true` if two distinct heap objects possess equivalent business field values.\n\nThe Java Language Specification mandates a strict **Equals & HashCode Contract** across three non-negotiable rules:\n1. **Consistency**: If `a.equals(b)` is true, then `a.hashCode()` MUST equal `b.hashCode()`. (Failure to honor this causes objects to vanish inside HashMaps!)\n2. **Unequal Objects**: If `a.equals(b)` is false, their hashCodes do NOT need to be distinct (though distinct hashCodes reduce bucket collisions and optimize lookup to O(1)).\n3. **Equivalence Relation**: `equals()` must be Reflexive (`x.equals(x)` is true), Symmetric (`x.equals(y) == y.equals(x)`), Transitive, and Consistent, and `x.equals(null)` must always return `false`.",
     coreExplanation: [
       'Reference Identity (`==`) vs Value Equality (`equals()`): `==` checks if two reference variables hold the exact same memory address on the heap. `equals()` evaluates whether two distinct objects represent the same logical value.',
       'Default Behavior: The default implementation in `java.lang.Object` simply performs `this == obj`. Unless you override `equals()`, two distinct instances with identical field values are considered NOT equal.',
@@ -2197,7 +2308,7 @@ public class Main {
           'Transitivity is optional in Java'
         ],
         correctOptionIndex: 0,
-        hint: 'Think of basic mathematical equivalence relations.',
+        hint: 'Recall basic mathematical equivalence relations.',
         solution: 'It must evaluate to true (Transitive property)',
         explanation: 'Transitivity is one of the five mandatory mathematical axioms of the equals() contract: if A equals B and B equals C, then A must equal C.'
       },
@@ -2543,6 +2654,62 @@ public class Main {
         correctIndex: 2,
         explanation: 'Default hashCode() in Object is a native method that computes an identity hash code tied to the object\'s header mark word.'
       }
+    ,
+{
+      "question": "What is the critical rule of the equals() and hashCode() contract in Java?",
+      "options": [
+            "If two objects have the same hashCode(), they MUST be equal according to equals().",
+            "If two objects are equal according to equals(), they MUST have the same hashCode() value.",
+            "hashCode() must always return a positive number.",
+            "equals() must never return false."
+      ],
+      "correctIndex": 1,
+      "explanation": "The core contract stipulates: a.equals(b) == true IMPLIES a.hashCode() == b.hashCode(). The reverse is NOT required (hash collisions are permitted)."
+},
+{
+      "question": "What catastrophic bug happens if you override equals() but forget to override hashCode() when using a class as a HashMap key?",
+      "options": [
+            "The HashMap throws a RuntimeException on put().",
+            "Equal objects will produce different hash codes, placing them in different buckets, making 'map.get(equalKey)' return null!",
+            "The HashMap converts into a TreeMap automatically.",
+            "The JVM memory leaks instantly."
+      ],
+      "correctIndex": 1,
+      "explanation": "Without overriding hashCode(), distinct heap objects generate different hash codes, scattering equal objects across different hash buckets so map.get() fails to find them."
+},
+{
+      "question": "What does the symmetry property of equals() require?",
+      "options": [
+            "x.equals(x) must return true.",
+            "x.equals(y) must return true if and only if y.equals(x) returns true.",
+            "If x.equals(y) and y.equals(z), then x.equals(z).",
+            "x.equals(null) must return true."
+      ],
+      "correctIndex": 1,
+      "explanation": "Symmetry requires: for any non-null references x and y, x.equals(y) must yield the exact same boolean result as y.equals(x)."
+},
+{
+      "question": "Why is 'public boolean equals(MyClass other)' considered a dangerous trap in Java?",
+      "options": [
+            "It causes a compile error in modern Java.",
+            "It OVERLOADS equals(MyClass) instead of OVERRIDING equals(Object), so collections like HashSet will still call Object.equals(Object)!",
+            "It runs slower than Object.equals.",
+            "It makes the class abstract."
+      ],
+      "correctIndex": 1,
+      "explanation": "Overriding requires exact parameter type matching 'equals(Object obj)'. Writing 'equals(MyClass)' is an overload; collections pass Object references and will bypass your custom logic!"
+},
+{
+      "question": "What should 'x.equals(null)' return for any non-null reference x?",
+      "options": [
+            "Throw NullPointerException",
+            "true",
+            "false",
+            "It depends on whether x's fields are null"
+      ],
+      "correctIndex": 2,
+      "explanation": "The equals contract explicitly mandates: for any non-null reference value x, x.equals(null) must return false without throwing NullPointerException."
+}
     ]
   },
 
@@ -2554,7 +2721,7 @@ public class Main {
     title: 'Shallow Copy vs Deep Copy & Cloning',
     subtitle: 'Object duplication mechanics, Cloneable marker interface, field-by-field bitwise copy, deep recursive cloning, and copy constructors',
     estimatedMinutes: 22,
-    beginnerAnalogy: 'Think of cloning a home office. A "Shallow Copy" duplicates the physical office room and buys a new desk, but leaves the physical filing cabinet shared: both rooms have a doorway leading to the exact same shared filing cabinet in the hallway. If the occupant of Office B opens the cabinet and burns a contract, the occupant of Office A opens the cabinet and discovers their contract is destroyed! A "Deep Copy", on the other hand, builds a brand-new office room, buys a new desk, AND manufactures an identical second filing cabinet, photocopying every single document inside. Office A and Office B are completely autonomous: changes made in one office can never affect the other.',
+    beginnerAnalogy: "**Object Cloning and Copying** in Java is the process of creating an independent copy of an existing object with identical state. Java distinguishes between two fundamentally different copying depths: **Shallow Copy** and **Deep Copy**.\n\nA **Shallow Copy** duplicates the top-level object instance and copies all primitive fields directly. However, for object reference fields, it copies only the memory pointers\u2014meaning both the original object and the cloned object point to the *exact same* nested child objects on the Heap. Modifying a nested child object through the clone inadvertently mutates the original object.\n\nA **Deep Copy** duplicates the top-level object AND recursively clones all nested reference objects throughout the entire object graph, creating fully isolated, independent heap structures.\n\nJava provides three primary mechanisms to achieve object copying:\n1. **The `clone()` Method & `Cloneable` Marker Interface**: The legacy Object-level mechanism, which performs a shallow copy by default via native memory bitwise copying.\n2. **Copy Constructors**: The preferred, idiomatically clean approach (e.g. `public User(User other)`), avoiding Cloneable's brittle unchecked casting and exception ceremonies.\n3. **Static Copy Factory Methods**: Factory methods (e.g. `User.copyOf(User other)`) that cleanly control copying depth, validation, and immutability.",
     coreExplanation: [
       'Duplicating an object in Java can be achieved via Shallow Copy or Deep Copy. In a Shallow Copy, primitive fields are copied by value, but reference fields simply copy the memory address pointers, causing both objects to share the same underlying child objects.',
       'In a Deep Copy, all primitive fields are copied, and all referenced objects (and their nested children, recursively) are newly instantiated and duplicated, producing two completely independent object graphs.',
@@ -3480,6 +3647,573 @@ public class Main {
         correctIndex: 1,
         explanation: 'If all fields are primitive or immutable (e.g. String), the shared objects cannot be mutated, making shallow copying 100% safe.'
       }
+    ,
+{
+      "question": "What happens if a class calls 'super.clone()' without implementing the Cloneable interface?",
+      "options": [
+            "The object is cloned successfully.",
+            "The JVM throws a java.lang.CloneNotSupportedException at runtime.",
+            "A compile-time error occurs.",
+            "A NullPointerException is thrown."
+      ],
+      "correctIndex": 1,
+      "explanation": "Object.clone() checks if the runtime class implements the Cloneable marker interface; if not, it throws CloneNotSupportedException."
+},
+{
+      "question": "In a Shallow Copy, what happens when a mutable nested object (like an internal Date or Address) is modified via the cloned object?",
+      "options": [
+            "Only the cloned object sees the change.",
+            "Both the original and the cloned object reflect the modification because both references point to the exact same heap object.",
+            "The JVM creates a copy-on-write replica automatically.",
+            "A ConcurrentModificationException is thrown."
+      ],
+      "correctIndex": 1,
+      "explanation": "In a shallow copy, reference fields are shared. Mutating an internal referenced object affects both the clone and the original."
+},
+{
+      "question": "Why are Copy Constructors generally preferred over implementing the Cloneable interface in Java?",
+      "options": [
+            "Copy constructors run 10x faster.",
+            "Copy constructors avoid the brittle CloneNotSupportedException, do not require type-casting from Object, and handle final fields properly.",
+            "Cloneable is removed from modern Java.",
+            "Copy constructors automatically deep-clone third party libraries."
+      ],
+      "correctIndex": 1,
+      "explanation": "As noted by Joshua Bloch in Effective Java, Cloneable is flawed: it bypasses normal constructor execution, requires casts from Object, and cannot initialize final fields."
+},
+{
+      "question": "What is the visibility of the 'clone()' method in java.lang.Object?",
+      "options": [
+            "public",
+            "protected",
+            "package-private",
+            "private"
+      ],
+      "correctIndex": 1,
+      "explanation": "Object.clone() is declared protected. A class must override it and broaden its visibility to 'public' if it wants external callers to be able to clone instances."
+},
+{
+      "question": "How can you achieve a true Deep Copy of an object graph without using Cloneable?",
+      "options": [
+            "Using the '==' operator.",
+            "Creating a copy constructor that explicitly instantiates new copies of all nested mutable reference objects.",
+            "Casting the object to an interface.",
+            "Calling System.identityHashCode()."
+      ],
+      "correctIndex": 1,
+      "explanation": "A copy constructor can recursively instantiate new copies of nested mutable objects, ensuring complete isolation between original and copied graphs."
+}
     ]
   }
+,
+  'object-class-challenge': {
+  "id": "object-class-challenge",
+  "moduleId": "java-object-class",
+  "moduleTitle": "14. Object Class & Contract",
+  "lessonNumber": "Lesson 14.5",
+  "title": "Module 14 Challenge & Interview Assessment",
+  "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all Object class methods and contracts",
+  "estimatedMinutes": 25,
+  "beginnerAnalogy": "The **Module 14 Capstone Challenge & Interview Assessment** evaluates your comprehensive mastery of the root `java.lang.Object` class, string representations via `toString()`, the non-negotiable `equals()` and `hashCode()` contract, and object copying dynamics (shallow vs deep copy).\n\nIn production enterprise systems, the Object contract is the backbone of collection integrity: broken `hashCode()` implementations cause silent data loss in HashMaps, sloppy `equals()` checks violate symmetry and transitivity in domain models, and unintended shallow copies leak mutable state across concurrency boundaries.\n\nThis assessment is structured across four rigorous evaluation pillars:\n1. **11 Coding Challenges**: Hands-on programming problems ranging from diagnostic `toString()` formatters to robust `equals()`/`hashCode()` implementations and deep object graph cloners.\n2. **15 Quiz MCQs**: Technical multiple-choice questions examining identity vs logical equality, hash collisions, and copy constructor semantics.\n3. **12 Human Interview Q&As**: Real-world interview questions with detailed model answers, follow-up scenarios, and key technical phrases.\n4. **10 Code Puzzles**: Output prediction and compilation analysis challenges testing tricky HashMap bucket behavior, identity hash codes, and clone mutations.",
+  "coreExplanation": [
+    "The java.lang.Object class is the universal root of the Java class hierarchy, automatically extended by any class that does not declare a superclass.",
+    "The default toString() method returns 'ClassName@hexIdentityHashCode'; overriding it provides human-readable diagnostic state for debugging and logging.",
+    "Reference equality (==) tests if two variables point to the exact same memory address; logical equality (.equals()) compares internal business state.",
+    "The Equals & HashCode contract mandates that if a.equals(b) is true, then a.hashCode() must equal b.hashCode().",
+    "Failing to override hashCode() when overriding equals() corrupts hash-based collections (HashMap, HashSet), making stored keys unretrievable.",
+    "Shallow copying duplicates primitive fields but shares reference pointers to nested heap objects.",
+    "Deep copying recursively duplicates both the root object and all nested child objects, guaranteeing complete state isolation.",
+    "Copy constructors and static factory methods are preferred over the legacy Cloneable interface due to superior type safety and final field support."
+  ],
+  "codeSnippet": {
+    "title": "Comprehensive Domain Entity with Robust Object Contract and Deep Copy",
+    "code": "import java.util.Objects;\n\nclass Address {\n    String city;\n    public Address(String city) { this.city = city; }\n    public Address(Address other) { this.city = other.city; } // Copy constructor\n    @Override public String toString() { return city; }\n}\n\nclass Employee {\n    private final int id;\n    private final String name;\n    private final Address address;\n\n    public Employee(int id, String name, Address address) {\n        this.id = id;\n        this.name = name;\n        this.address = new Address(address); // Defensive copy\n    }\n\n    // Deep copy constructor\n    public Employee(Employee other) {\n        this(other.id, other.name, other.address);\n    }\n\n    public Address getAddress() { return new Address(address); } // Defensive getter\n\n    @Override\n    public boolean equals(Object obj) {\n        if (this == obj) return true;\n        if (obj == null || getClass() != obj.getClass()) return false;\n        Employee other = (Employee) obj;\n        return id == other.id && Objects.equals(name, other.name);\n    }\n\n    @Override\n    public int hashCode() {\n        return Objects.hash(id, name);\n    }\n\n    @Override\n    public String toString() {\n        return String.format(\"Employee[id=%d, name='%s', city='%s']\", id, name, address.city);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Address addr = new Address(\"Seattle\");\n        Employee e1 = new Employee(101, \"Alice\", addr);\n        Employee e2 = new Employee(101, \"Alice\", new Address(\"Boston\"));\n\n        System.out.println(e1); // Uses overridden toString()\n        System.out.println(\"e1.equals(e2): \" + e1.equals(e2)); // true (same id & name)\n        System.out.println(\"e1.hashCode() == e2.hashCode(): \" + (e1.hashCode() == e2.hashCode())); // true\n    }\n}",
+    "lineByLineExplanation": [
+      {
+        "line": "if (this == obj) return true;",
+        "explanation": "Reflexivity optimization: returns true immediately if references are identical."
+      },
+      {
+        "line": "if (obj == null || getClass() != obj.getClass()) return false;",
+        "explanation": "Null safety and strict class equality check."
+      },
+      {
+        "line": "return Objects.hash(id, name);",
+        "explanation": "Generates hash code consistent with the fields compared in equals()."
+      },
+      {
+        "line": "public Employee(Employee other)",
+        "explanation": "Deep copy constructor recursively cloning nested Address."
+      },
+      {
+        "line": "System.out.println(e1);",
+        "explanation": "Invokes custom toString() formatting."
+      }
+    ],
+    "output": "Employee[id=101, name='Alice', city='Seattle']\ne1.equals(e2): true\ne1.hashCode() == e2.hashCode(): true"
+  },
+      "practiceProblems": [
+      {
+            "title": "Puzzle 1: Default Array toString() Output",
+            "problemStatement": "What is printed when this program is executed?",
+            "code": "public class Main {\n    public static void main(String[] args) {\n        int[] numbers = {10, 20, 30};\n        System.out.println(numbers.toString().startsWith(\"[I@\"));\n    }\n}",
+            "options": [
+                  "true",
+                  "false",
+                  "Prints: [10, 20, 30]",
+                  "Compilation Error: Arrays do not have a toString() method"
+            ],
+            "correctOptionIndex": 0,
+            "hint": "Java arrays are objects that inherit Object.toString() directly without overriding it.",
+            "solution": "true",
+            "explanation": "Java arrays do not override toString(); they inherit Object.toString(), which formats as '[I@' followed by the unsigned hexadecimal hash code ('[' indicates array, 'I' indicates int)."
+      },
+      {
+            "title": "Puzzle 2: String Pool vs new String Equality",
+            "problemStatement": "What is the exact output of this code?",
+            "code": "public class Main {\n    public static void main(String[] args) {\n        String s1 = \"Java\";\n        String s2 = new String(\"Java\");\n        System.out.print((s1 == s2) + \" \" + s1.equals(s2));\n    }\n}",
+            "options": [
+                  "true true",
+                  "false true",
+                  "false false",
+                  "true false"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "'==' compares memory reference addresses on the heap, while '.equals()' compares character contents.",
+            "solution": "false true",
+            "explanation": "s1 references a string literal in the String Intern Pool, while s2 references a distinct newly allocated object on the Heap; hence s1 == s2 is false. However, String overrides equals() to compare characters, so s1.equals(s2) evaluates to true."
+      },
+      {
+            "title": "Puzzle 3: Broken hashCode() in HashSet",
+            "problemStatement": "What does this code print?",
+            "code": "import java.util.HashSet;\nclass Key {\n    int val;\n    Key(int v) { this.val = v; }\n    @Override\n    public boolean equals(Object o) {\n        return (o instanceof Key k) && this.val == k.val;\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        HashSet<Key> set = new HashSet<>();\n        set.add(new Key(5));\n        System.out.println(set.contains(new Key(5)));\n    }\n}",
+            "options": [
+                  "true",
+                  "false",
+                  "Compilation Error",
+                  "Runtime Exception: MissingHashCodeException"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "HashSet first uses hashCode() to locate the bucket; if hashCode() is not overridden, Object.hashCode() uses distinct memory addresses.",
+            "solution": "false",
+            "explanation": "Because Key overrides equals() but fails to override hashCode(), the two Key(5) instances inherit default Object.hashCode(), producing different bucket hashes. HashSet looks in the wrong bucket and returns false."
+      },
+      {
+            "title": "Puzzle 4: Mutating a HashMap Key After Insertion",
+            "problemStatement": "What is the output of this code?",
+            "code": "import java.util.HashMap;\nimport java.util.Objects;\nclass MutableKey {\n    int id;\n    MutableKey(int id) { this.id = id; }\n    @Override public boolean equals(Object o) { return (o instanceof MutableKey k) && id == k.id; }\n    @Override public int hashCode() { return Objects.hash(id); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        HashMap<MutableKey, String> map = new HashMap<>();\n        MutableKey k = new MutableKey(10);\n        map.put(k, \"Alpha\");\n        k.id = 20; // Mutated in place!\n        System.out.println(map.get(k));\n    }\n}",
+            "options": [
+                  "Alpha",
+                  "null",
+                  "Compilation Error",
+                  "ConcurrentModificationException"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "When id changes from 10 to 20, k.hashCode() changes, directing map.get(k) to the wrong bucket.",
+            "solution": "null",
+            "explanation": "The entry was placed in bucket hash(10). When id is mutated to 20, map.get(k) searches bucket hash(20), which is empty. Thus it returns null. This is why Map keys should always be immutable."
+      },
+      {
+            "title": "Puzzle 5: Shallow Copy Mutation Leakage",
+            "problemStatement": "What is printed by this program?",
+            "code": "class Tag { String name; Tag(String n) { this.name = n; } }\nclass Item implements Cloneable {\n    Tag tag;\n    Item(Tag t) { this.tag = t; }\n    @Override public Item clone() {\n        try { return (Item) super.clone(); }\n        catch (CloneNotSupportedException e) { throw new AssertionError(); }\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Item item1 = new Item(new Tag(\"Original\"));\n        Item item2 = item1.clone();\n        item2.tag.name = \"Mutated\";\n        System.out.println(item1.tag.name);\n    }\n}",
+            "options": [
+                  "Original",
+                  "Mutated",
+                  "null",
+                  "CloneNotSupportedException"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Object.clone() performs a field-by-field shallow copy, sharing reference fields across instances.",
+            "solution": "Mutated",
+            "explanation": "super.clone() only copies reference pointers. Both item1.tag and item2.tag point to the same Tag object on the Heap. Modifying item2.tag.name alters item1.tag.name directly, printing 'Mutated'."
+      },
+      {
+            "title": "Puzzle 6: Deep Copy via Copy Constructor Isolation",
+            "problemStatement": "What does this code print?",
+            "code": "class Coordinate {\n    int x, y;\n    Coordinate(int x, int y) { this.x = x; this.y = y; }\n    Coordinate(Coordinate other) { this.x = other.x; this.y = other.y; }\n}\nclass Player {\n    Coordinate pos;\n    Player(Coordinate pos) { this.pos = new Coordinate(pos); }\n    Player(Player other) { this.pos = new Coordinate(other.pos); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Player p1 = new Player(new Coordinate(10, 20));\n        Player p2 = new Player(p1);\n        p2.pos.x = 99;\n        System.out.println(p1.pos.x + \" \" + p2.pos.x);\n    }\n}",
+            "options": [
+                  "99 99",
+                  "10 99",
+                  "10 10",
+                  "Compilation Error"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "The copy constructors instantiate a new Coordinate object for p2, establishing complete heap isolation.",
+            "solution": "10 99",
+            "explanation": "Player's copy constructor invokes new Coordinate(other.pos), allocating a distinct Coordinate object on the heap. Mutating p2.pos.x to 99 leaves p1.pos.x untouched at 10."
+      },
+      {
+            "title": "Puzzle 7: Overloading vs Overriding equals() Trap",
+            "problemStatement": "What does this code print?",
+            "code": "class Account {\n    int id;\n    Account(int id) { this.id = id; }\n    public boolean equals(Account other) {\n        return this.id == other.id;\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Object a1 = new Account(42);\n        Object a2 = new Account(42);\n        System.out.println(a1.equals(a2));\n    }\n}",
+            "options": [
+                  "true",
+                  "false",
+                  "Compilation Error",
+                  "ClassCastException"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Because the parameter is Account instead of Object, this overloads equals() instead of overriding it. At compile-time, a1.equals(a2) binds to Object.equals(Object).",
+            "solution": "false",
+            "explanation": "The developer overloaded equals(Account) instead of overriding equals(Object). Because references a1 and a2 are declared as type Object, dynamic dispatch routes to Object.equals(Object), which compares reference addresses (==), returning false."
+      },
+      {
+            "title": "Puzzle 8: System.identityHashCode vs Overridden hashCode",
+            "problemStatement": "What does this program output?",
+            "code": "class ConstantHash {\n    @Override\n    public int hashCode() { return 42; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        ConstantHash obj = new ConstantHash();\n        boolean same = (obj.hashCode() == System.identityHashCode(obj));\n        System.out.println(same);\n    }\n}",
+            "options": [
+                  "true",
+                  "false",
+                  "Compilation Error",
+                  "Always 42"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "System.identityHashCode() returns the default JVM memory-based hash code, ignoring any class override.",
+            "solution": "false",
+            "explanation": "obj.hashCode() returns 42, whereas System.identityHashCode(obj) returns the default JVM identity hash code (derived from the object header/memory address), which almost certainly is not 42, returning false."
+      },
+      {
+            "title": "Puzzle 9: Transitivity Violation in Subclass equals()",
+            "problemStatement": "What is the output of this code testing transitivity?",
+            "code": "import java.util.Objects;\nclass Point {\n    int x, y;\n    Point(int x, int y) { this.x = x; this.y = y; }\n    @Override public boolean equals(Object o) {\n        if (!(o instanceof Point p)) return false;\n        return x == p.x && y == p.y;\n    }\n}\nclass ColorPoint extends Point {\n    String color;\n    ColorPoint(int x, int y, String c) { super(x, y); this.color = c;\n    }\n    @Override public boolean equals(Object o) {\n        if (!(o instanceof Point)) return false;\n        if (!(o instanceof ColorPoint cp)) return super.equals(o);\n        return super.equals(o) && Objects.equals(color, cp.color);\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        ColorPoint cp1 = new ColorPoint(1, 2, \"Red\");\n        Point p = new Point(1, 2);\n        ColorPoint cp2 = new ColorPoint(1, 2, \"Blue\");\n        System.out.print(cp1.equals(p) + \" \" + p.equals(cp2) + \" \" + cp1.equals(cp2));\n    }\n}",
+            "options": [
+                  "true true true",
+                  "true true false",
+                  "false false false",
+                  "Compilation Error"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "cp1 equals p (ignores color) and p equals cp2 (ignores color), but cp1 does NOT equal cp2 (different colors!).",
+            "solution": "true true false",
+            "explanation": "This classic Effective Java example proves that you cannot extend an instantiable class and add an aspect (field) while preserving equals() transitivity. cp1.equals(p) is true, p.equals(cp2) is true, but cp1.equals(cp2) is false (violating transitivity)."
+      },
+      {
+            "title": "Puzzle 10: Calling clone() without Cloneable Interface",
+            "problemStatement": "What happens when this code is executed?",
+            "code": "class SimpleData {\n    int val = 100;\n    public Object copy() {\n        try { return super.clone(); }\n        catch (CloneNotSupportedException e) { return \"CaughtException\"; }\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        System.out.println(new SimpleData().copy());\n    }\n}",
+            "options": [
+                  "Prints: 100",
+                  "CaughtException",
+                  "Compilation Error",
+                  "Prints: SimpleData@hex"
+            ],
+            "correctOptionIndex": 1,
+            "hint": "Object.clone() checks if the runtime class implements the Cloneable marker interface.",
+            "solution": "CaughtException",
+            "explanation": "Because SimpleData does NOT implement java.lang.Cloneable, Object.clone() throws CloneNotSupportedException at runtime, which is caught and returns 'CaughtException'."
+      }
+],
+  "interviewQuestions": [
+    {
+      "question": "Why must you override hashCode() whenever you override equals() in Java?",
+      "answer": "The Java language specification establishes a strict contract: if two objects are equal according to equals(), they must produce the exact same integer hash code from hashCode(). Hash-based collections (like HashMap and HashSet) use hashCode() to compute the bucket location where an entry is stored. If you override equals() without hashCode(), two logically equal objects will produce different hash codes and be routed to different buckets, causing map.get() to return null even when the key exists.",
+      "followUp": "If two objects have the same hashCode(), are they guaranteed to be equal?",
+      "followUpAnswer": "No. Different objects can produce the same hash code\u2014this is called a hash collision. When a collision occurs, HashMap stores both entries in the same bucket (as a linked list or red-black tree) and uses equals() to differentiate between them.",
+      "keyPhrases": [
+        "Equals and HashCode Contract",
+        "Hash bucket routing",
+        "HashMap.get() returns null",
+        "Hash collision handling"
+      ]
+    },
+    {
+      "question": "What is the difference between '==' and the '.equals()' method?",
+      "answer": "'==' is a relational operator that performs reference identity comparison: it evaluates whether two reference variables point to the exact same physical memory address on the Heap. The '.equals()' method performs logical value comparison, testing whether two distinct objects contain equivalent internal data fields.",
+      "followUp": "What does '==' compare for primitive types?",
+      "followUpAnswer": "For primitives (int, double, char, etc.), '==' compares the raw binary bit values directly.",
+      "keyPhrases": [
+        "Reference identity vs Logical value equality",
+        "Heap memory address",
+        "Overridable method vs binary operator"
+      ]
+    },
+    {
+      "question": "Explain the 5 properties of the equals() contract in Java.",
+      "answer": "The equals contract mandates that for non-null references: 1) Reflexive: x.equals(x) must return true. 2) Symmetric: x.equals(y) must equal y.equals(x). 3) Transitive: if x.equals(y) and y.equals(z), then x.equals(z). 4) Consistent: multiple invocations must consistently return the same result if fields haven't changed. 5) Null Comparison: x.equals(null) must always return false without throwing NullPointerException.",
+      "followUp": "How do you guarantee null-safety inside equals()?",
+      "followUpAnswer": "By writing 'if (obj == null) return false;' or using pattern matching 'if (!(obj instanceof TargetType other)) return false;'.",
+      "keyPhrases": [
+        "Reflexive",
+        "Symmetric",
+        "Transitive",
+        "Consistent",
+        "Null-safe"
+      ]
+    },
+    {
+      "question": "What is the difference between a Shallow Copy and a Deep Copy?",
+      "answer": "A shallow copy creates a new top-level object instance and copies all primitive fields, but for reference fields, it copies only the memory pointers. Consequently, both the original and cloned objects share references to the same underlying nested objects on the Heap. A deep copy recursively duplicates the root object and all nested child objects, producing two completely isolated object graphs where mutating one cannot affect the other.",
+      "followUp": "When is a shallow copy completely safe to use?",
+      "followUpAnswer": "When all fields are primitives or references to immutable objects (like String, Integer, or LocalDate).",
+      "keyPhrases": [
+        "Pointer sharing vs Recursive duplication",
+        "Heap object graph",
+        "Shared mutable state",
+        "Safe with immutables"
+      ]
+    },
+    {
+      "question": "Why is the Cloneable interface considered flawed by Java architects like Joshua Bloch?",
+      "answer": "The Cloneable interface is flawed for several reasons: 1) It is an empty marker interface that does not declare the clone() method itself (clone() is declared protected in Object). 2) It bypasses standard constructor execution, allocating memory via native bitwise copying. 3) It forces callers to handle checked CloneNotSupportedException. 4) It cannot properly initialize final reference fields in deep clones.",
+      "followUp": "What is the recommended alternative to Cloneable in modern Java?",
+      "followUpAnswer": "Copy constructors (e.g. 'public User(User other)') or static copy factory methods (e.g. 'User.copyOf(User other)').",
+      "keyPhrases": [
+        "Effective Java",
+        "Protected method on Object",
+        "Bypasses constructors",
+        "Copy constructors are preferred"
+      ]
+    },
+    {
+      "question": "What does System.identityHashCode(Object obj) do?",
+      "answer": "System.identityHashCode(obj) returns the default hash code that java.lang.Object would have generated for the object based on its memory identity, regardless of whether the object's class has overridden hashCode(). If obj is null, it returns 0.",
+      "followUp": "Can an object's identityHashCode change during its lifetime?",
+      "followUpAnswer": "No. Once computed, the identity hash code is written into the object's Mark Word in its Object Header and remains constant, even if the Garbage Collector moves the object across memory regions.",
+      "keyPhrases": [
+        "Bypasses overridden hashCode",
+        "Object header Mark Word",
+        "Constant across GC relocations",
+        "Returns 0 for null"
+      ]
+    },
+    {
+      "question": "Why should you use Objects.equals(a, b) and Objects.hash(...) in modern Java?",
+      "answer": "java.util.Objects.equals(a, b) provides built-in null-safety: if both are null it returns true, if one is null it returns false, and only invokes a.equals(b) when a is non-null, preventing NullPointerExceptions. Objects.hash(f1, f2, ...) cleanly combines multiple fields into an evenly distributed 31-multiplier hash code with zero boilerplate.",
+      "followUp": "What is the significance of the number 31 in hashCode calculations?",
+      "followUpAnswer": "31 is a prime number that reduces hash collisions. Furthermore, modern JVM JIT compilers optimize '31 * x' into a lightning-fast bit shift and subtraction: '(x << 5) - x'.",
+      "keyPhrases": [
+        "Null-safety",
+        "java.util.Objects utility",
+        "Prime multiplier 31",
+        "Bit-shift optimization"
+      ]
+    },
+    {
+      "question": "Can you use a mutable object as a key in a HashMap? What is the risk?",
+      "answer": "You can technically use a mutable object as a HashMap key, but doing so is extremely dangerous. If a mutable field that participates in hashCode() is modified after the object has been inserted into the map, the object's hash code changes. When you subsequently call map.get(key), the map calculates the new hash code, searches the wrong bucket, and fails to find the entry, causing a silent memory leak and unretrievable data.",
+      "followUp": "How do you protect HashMap keys against this bug?",
+      "followUpAnswer": "Always use immutable classes (like String or Integer) or records as HashMap keys.",
+      "keyPhrases": [
+        "Mutable key trap",
+        "Bucket hash change",
+        "Unretrievable entries",
+        "Silent memory leaks"
+      ]
+    },
+    {
+      "question": "What is the difference between getClass() == other.getClass() and instanceof in equals()?",
+      "answer": "'getClass() == other.getClass()' enforces strict class equivalence: objects of different classes can never be equal, even if one is a subclass of the other. 'instanceof' allows symmetric equality across subclasses that add no new state, but breaks the symmetry or transitivity contracts if a subclass introduces new fields and overrides equals().",
+      "followUp": "Which approach did Effective Java recommend?",
+      "followUpAnswer": "Bloch recommends strict class matching (or composition instead of inheritance) whenever subclasses introduce new value components.",
+      "keyPhrases": [
+        "Strict class match vs Hierarchy matching",
+        "Symmetry violation",
+        "Subclass field addition"
+      ]
+    },
+    {
+      "question": "How does Java 14+ Records handle equals(), hashCode(), and toString()?",
+      "answer": "Java Records automatically generate canonical implementations of equals(), hashCode(), and toString() at compile time based on all record components. Two record instances are equal if and only if they are of the same record class and all components are pairwise equal.",
+      "followUp": "Can you customize equals() or hashCode() inside a Record?",
+      "followUpAnswer": "Yes. A record can explicitly override equals() or hashCode() if custom comparison logic is needed.",
+      "keyPhrases": [
+        "Automatic generation",
+        "Component-wise equality",
+        "Immutable carrier",
+        "Java 14+ feature"
+      ]
+    },
+    {
+      "question": "What happens if an equals() implementation throws an unexpected exception (like NullPointerException)?",
+      "answer": "It violates the contract. The equals() method must be totally defensive and must never throw an exception when evaluated against any input, including null or incompatible types. It should simply return false.",
+      "followUp": "What is the recommended structure for an equals method?",
+      "followUpAnswer": "1) Check reference equality (==). 2) Check null and type compatibility. 3) Downcast. 4) Compare fields.",
+      "keyPhrases": [
+        "Never throw exceptions",
+        "Total defensiveness",
+        "Return false on mismatch"
+      ]
+    },
+    {
+      "question": "Explain how HashMap handles hash collisions using the equals() method.",
+      "answer": "When two distinct keys produce the same hashCode, HashMap places both Key-Value nodes into the same bucket. When map.get(key) is called, the map jumps to that bucket using the hash code, and then iterates through the nodes in the bucket calling 'node.key.equals(key)' to locate the exact matching entry. Once a bucket exceeds 8 entries, the JVM converts the linked list into a red-black tree for O(log N) lookup.",
+      "followUp": "What is the worst-case time complexity of HashMap if hashCode() always returns 1?",
+      "followUpAnswer": "O(N) with a linked list, or O(log N) in Java 8+ after treeifying the bucket.",
+      "keyPhrases": [
+        "Bucket chain iteration",
+        "node.key.equals()",
+        "Red-black tree conversion (TREEIFY_THRESHOLD = 8)",
+        "O(log N) worst case"
+      ]
+    }
+  ],
+  "miniQuiz": [
+    {
+      "question": "What is the root class of every Java class hierarchy?",
+      "options": [
+        "java.lang.Class",
+        "java.lang.Object",
+        "java.lang.System",
+        "java.lang.Type"
+      ],
+      "correctIndex": 1,
+      "explanation": "java.lang.Object is the universal root superclass of all classes in Java."
+    },
+    {
+      "question": "What does 'p1 == p2' evaluate to if p1 and p2 are two distinct 'new Point(1, 2)' instances on the heap?",
+      "options": [
+        "true",
+        "false",
+        "Compile Error",
+        "NullPointerException"
+      ],
+      "correctIndex": 1,
+      "explanation": "'==' compares heap memory addresses; because p1 and p2 were created with separate 'new' calls, they have different addresses and '==' is false."
+    },
+    {
+      "question": "If you override equals(), which other method MUST be overridden to preserve collection integrity?",
+      "options": [
+        "toString()",
+        "hashCode()",
+        "clone()",
+        "finalize()"
+      ],
+      "correctIndex": 1,
+      "explanation": "The contract mandates that equal objects must produce equal hash codes; failing to override hashCode() breaks HashMaps and HashSets."
+    },
+    {
+      "question": "What is printed by: Object o = null; System.out.println(String.valueOf(o));",
+      "options": [
+        "null",
+        "Throws NullPointerException",
+        "Empty string",
+        "0"
+      ],
+      "correctIndex": 0,
+      "explanation": "String.valueOf(null) safely returns the string literal 'null'."
+    },
+    {
+      "question": "What is the return type of Object.getClass()?",
+      "options": [
+        "java.lang.String",
+        "java.lang.Class<?>",
+        "java.lang.Object",
+        "void"
+      ],
+      "correctIndex": 1,
+      "explanation": "getClass() returns a Class<?> object representing the runtime class of the entity."
+    },
+    {
+      "question": "Which equals property is violated if 'a.equals(b)' returns true, but 'b.equals(a)' returns false?",
+      "options": [
+        "Reflexivity",
+        "Symmetry",
+        "Transitivity",
+        "Consistency"
+      ],
+      "correctIndex": 1,
+      "explanation": "Symmetry demands that a.equals(b) must equal b.equals(a) for all non-null references."
+    },
+    {
+      "question": "Why does Joshua Bloch advise against using the Cloneable interface?",
+      "options": [
+        "It is too slow",
+        "It bypasses constructor execution, has no clone() method in the interface, and handles final fields poorly",
+        "It is deprecated in Java 17",
+        "It cannot copy primitive types"
+      ],
+      "correctIndex": 1,
+      "explanation": "Cloneable is a flawed marker interface that creates objects without invoking constructors and cannot safely populate final fields."
+    },
+    {
+      "question": "In a Shallow Copy of an object with an 'int[] data' field, what does the clone receive?",
+      "options": [
+        "A brand new int[] array containing duplicate numbers",
+        "A copy of the reference pointer targeting the EXACT SAME int[] array in memory",
+        "An empty array",
+        "null"
+      ],
+      "correctIndex": 1,
+      "explanation": "In shallow copying, reference fields are copied by value (pointer copy); both objects point to the same array on the Heap."
+    },
+    {
+      "question": "What is the default implementation of equals() in java.lang.Object?",
+      "options": [
+        "Compares all fields for equality",
+        "return this == obj;",
+        "return this.hashCode() == obj.hashCode();",
+        "return true;"
+      ],
+      "correctIndex": 1,
+      "explanation": "Object.equals() performs strict reference equality check: 'return this == obj;'."
+    },
+    {
+      "question": "What happens if you mutate a field of an object that is currently used as a key in a HashMap?",
+      "options": [
+        "The HashMap automatically reorganizes its buckets",
+        "The object's hashCode changes, causing it to be stranded in the wrong bucket and making map.get(key) return null",
+        "The HashMap throws ConcurrentModificationException",
+        "The key is deleted automatically"
+      ],
+      "correctIndex": 1,
+      "explanation": "Mutating fields that determine hashCode changes the bucket lookup hash, making the entry unfindable by map.get()."
+    },
+    {
+      "question": "What is the result of '\"hello\".equals(null)' in Java?",
+      "options": [
+        "true",
+        "false",
+        "Throws NullPointerException",
+        "Compile Error"
+      ],
+      "correctIndex": 1,
+      "explanation": "The equals contract mandates that x.equals(null) must return false for any non-null x."
+    },
+    {
+      "question": "Which utility class in java.util simplifies writing null-safe equals and hash codes?",
+      "options": [
+        "java.util.Arrays",
+        "java.util.Objects",
+        "java.util.Collections",
+        "java.util.Optional"
+      ],
+      "correctIndex": 1,
+      "explanation": "java.util.Objects provides Objects.equals() and Objects.hash() for clean, null-safe comparisons."
+    },
+    {
+      "question": "What does calling 'clone()' on a class that does NOT implement Cloneable throw?",
+      "options": [
+        "NullPointerException",
+        "CloneNotSupportedException",
+        "IllegalAccessException",
+        "ClassCastException"
+      ],
+      "correctIndex": 1,
+      "explanation": "Object.clone() throws CloneNotSupportedException if the object's class does not implement Cloneable."
+    },
+    {
+      "question": "Can an enum in Java override the equals() or hashCode() methods?",
+      "options": [
+        "Yes, like any other class",
+        "No, enum equals() and hashCode() are declared final in java.lang.Enum",
+        "Only if it has custom fields",
+        "Only in Java 8+"
+      ],
+      "correctIndex": 1,
+      "explanation": "In java.lang.Enum, equals() and hashCode() are final to preserve strict singleton identity comparison (==)."
+    },
+    {
+      "question": "Why is 31 traditionally used as a multiplier in custom hashCode() implementations?",
+      "options": [
+        "It is the largest integer under 32",
+        "It is prime, reduces collisions, and can be optimized by the JVM as (x << 5) - x",
+        "It is required by the Java Language Specification",
+        "It produces 64-bit hashes"
+      ],
+      "correctIndex": 1,
+      "explanation": "31 is a small prime that distributes hash values well and compiles to a single bit-shift and subtraction instruction on modern CPUs."
+    }
+  ]
+}
 };
