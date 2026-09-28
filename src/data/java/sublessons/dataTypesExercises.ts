@@ -1,8 +1,8 @@
 import { ProgrammingExercise } from '../detailedLessons';
 
 // ============================================================
-// MODULE 2: DATA TYPES & VARIABLES EXERCISES (LESSONS 2.1 - 2.7)
-// Exactly 10 dedicated coding assignments per lesson (70 total)
+// MODULE 2: DATA TYPES & VARIABLES EXERCISES (LESSONS 2.1 - 2.8)
+// Exactly 10 dedicated coding assignments per lesson (80 total)
 // ============================================================
 
 export const dataTypesExercises: Record<string, ProgrammingExercise[]> = {
@@ -719,5 +719,107 @@ export const dataTypesExercises: Record<string, ProgrammingExercise[]> = {
       "output": "25! = 15511210043330985984000000",
       "explanation": "BigInteger allocates dynamic byte arrays on the heap, supporting arbitrarily large integer calculations."
     }
+  ],
+  "data-types-challenge": [
+      {
+          "id": "dtc-1",
+          "title": "Exercise 1: Integer Cache Reference vs Value Verification",
+          "difficulty": "Easy",
+          "problemStatement": "Write a program that initializes two `Integer` references to 100 via `Integer.valueOf(100)` and two to 200 via `Integer.valueOf(200)`. Print `(a == b)` and `(c == d)` on separate lines to demonstrate the JLS Integer Cache boundary.",
+          "hint": "The default Integer cache caches values in the range [-128, 127].",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Integer a = Integer.valueOf(100);\n        Integer b = Integer.valueOf(100);\n        Integer c = Integer.valueOf(200);\n        Integer d = Integer.valueOf(200);\n        System.out.println(a == b);\n        System.out.println(c == d);\n    }\n}",
+          "output": "true\nfalse",
+          "explanation": "Values between -128 and 127 are cached in IntegerCache, returning the identical heap reference. Values outside that range allocate distinct objects."
+      },
+      {
+          "id": "dtc-2",
+          "title": "Exercise 2: Downcasting & Two's Complement Truncation",
+          "difficulty": "Medium",
+          "problemStatement": "Given an integer variable `val = 130`, cast it to `byte` and print the resulting byte value. Explain the two's complement modular arithmetic outcome in the console.",
+          "hint": "Byte range is -128 to 127. Truncation takes the lowest 8 bits: 130 - 256 = -126.",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int val = 130;\n        byte b = (byte) val;\n        System.out.println(\"Byte value: \" + b);\n    }\n}",
+          "output": "Byte value: -126",
+          "explanation": "Binary representation of 130 is 00000000 00000000 00000000 10000010. Narrowing to byte keeps the lowest 8 bits (10000010), which represents -126 in 8-bit signed two's complement."
+      },
+      {
+          "id": "dtc-3",
+          "title": "Exercise 3: High-Precision Financial Rounding with BigDecimal",
+          "difficulty": "Medium",
+          "problemStatement": "Calculate exact tax for a monetary amount of \"100.05\" with a tax rate of \"0.0825\" using `BigDecimal`. Round the result to 2 decimal places using `RoundingMode.HALF_UP` and print the result.",
+          "hint": "Construct BigDecimal from String literals, multiply, and call setScale(2, RoundingMode.HALF_UP).",
+          "solutionCode": "import java.math.BigDecimal;\nimport java.math.RoundingMode;\n\npublic class Solution {\n    public static void main(String[] args) {\n        BigDecimal amount = new BigDecimal(\"100.05\");\n        BigDecimal rate = new BigDecimal(\"0.0825\");\n        BigDecimal tax = amount.multiply(rate).setScale(2, RoundingMode.HALF_UP);\n        System.out.println(\"Tax: \" + tax);\n    }\n}",
+          "output": "Tax: 8.25",
+          "explanation": "100.05 * 0.0825 = 8.254125. With RoundingMode.HALF_UP at 2 decimal places, 4 rounds down, giving 8.25 without binary floating-point representation drift."
+      },
+      {
+          "id": "dtc-4",
+          "title": "Exercise 4: Unboxing NullPointerException Safeguard",
+          "difficulty": "Medium",
+          "problemStatement": "Create a method `public static int getScore(Integer remoteScore, int defaultScore)` that safely returns `remoteScore` without throwing NullPointerException when `remoteScore` is null, falling back to `defaultScore`. Demonstrate with null and 95.",
+          "hint": "Check for null explicitly before allowing implicit unboxing, or use a null-checked ternary.",
+          "solutionCode": "public class Solution {\n    public static int getScore(Integer remoteScore, int defaultScore) {\n        return (remoteScore != null) ? remoteScore : defaultScore;\n    }\n    public static void main(String[] args) {\n        System.out.println(getScore(null, 0));\n        System.out.println(getScore(95, 0));\n    }\n}",
+          "output": "0\n95",
+          "explanation": "If a null wrapper is directly unboxed (e.g. int x = remoteScore), JVM invokes .intValue() resulting in NullPointerException. Explicit null check guards the dereference."
+      },
+      {
+          "id": "dtc-5",
+          "title": "Exercise 5: Unsigned Byte Unpacking via Bitmask",
+          "difficulty": "Medium",
+          "problemStatement": "In network protocols, raw bytes are unsigned [0, 255]. Write code that converts a signed Java `byte b = -1` into an `int` containing its true unsigned value 255 using bitwise masking (`& 0xFF`). Print the result.",
+          "hint": "In Java, byte promotes to 32-bit int with sign-extension. Masking with 0xFF clears the top 24 sign bits.",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        byte b = -1;\n        int unsignedVal = b & 0xFF;\n        System.out.println(\"Unsigned: \" + unsignedVal);\n    }\n}",
+          "output": "Unsigned: 255",
+          "explanation": "Byte -1 is 0xFF (11111111). When widened to int, sign-extension produces 0xFFFFFFFF (-1). Applying & 0xFF isolates the lower 8 bits, yielding 0x000000FF (255)."
+      },
+      {
+          "id": "dtc-6",
+          "title": "Exercise 6: Binary Numeric Promotion in Arithmetic",
+          "difficulty": "Easy",
+          "problemStatement": "Declare `byte a = 40` and `byte b = 50`. Calculate their sum and assign it to a `byte` variable using an explicit cast. Print the sum.",
+          "hint": "Arithmetic operators on byte promote both operands to int. An explicit cast (byte)(a + b) is required.",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        byte a = 40;\n        byte b = 50;\n        byte sum = (byte)(a + b);\n        System.out.println(\"Sum: \" + sum);\n    }\n}",
+          "output": "Sum: 90",
+          "explanation": "Per JLS 5.6.2, binary operators (+, -, *, /) promote byte, short, and char operands to int before computation. The int sum must be cast back to byte."
+      },
+      {
+          "id": "dtc-7",
+          "title": "Exercise 7: Detecting Numeric Overflow with Math.addExact",
+          "difficulty": "Hard",
+          "problemStatement": "Demonstrate the difference between silent integer overflow and checked overflow. Print the result of `Integer.MAX_VALUE + 1` (silent overflow), then catch and print the exception name thrown by `Math.addExact(Integer.MAX_VALUE, 1)`.",
+          "hint": "Use try-catch block catching ArithmeticException around Math.addExact.",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int silent = Integer.MAX_VALUE + 1;\n        System.out.println(\"Silent: \" + silent);\n        try {\n            Math.addExact(Integer.MAX_VALUE, 1);\n        } catch (ArithmeticException e) {\n            System.out.println(\"Caught: \" + e.getClass().getSimpleName());\n        }\n    }\n}",
+          "output": "Silent: -2147483648\nCaught: ArithmeticException",
+          "explanation": "Standard arithmetic wraps around silently according to 32-bit two's complement. Java 8+ Math.addExact explicitly checks for overflow and throws ArithmeticException."
+      },
+      {
+          "id": "dtc-8",
+          "title": "Exercise 8: Unicode Char Representation & Arithmetic",
+          "difficulty": "Easy",
+          "problemStatement": "Declare a char variable `c = 'A'`. Add 3 to it and print the resulting character. Also print its integer codepoint.",
+          "hint": "char is an unsigned 16-bit numeric type. (char)(c + 3) gives 'D'. (int)c gives 65.",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        char c = 'A';\n        char next = (char)(c + 3);\n        System.out.println(\"Char: \" + next);\n        System.out.println(\"Codepoint: \" + (int)next);\n    }\n}",
+          "output": "Char: D\nCodepoint: 68",
+          "explanation": "In Java, char represents a UTF-16 code unit (0 to 65535). Arithmetic on char promotes to int; casting back yields character 'D' (ASCII/Unicode 68)."
+      },
+      {
+          "id": "dtc-9",
+          "title": "Exercise 9: Floating-Point Special Values Comparison",
+          "difficulty": "Medium",
+          "problemStatement": "Demonstrate IEEE 754 special values by printing: 1.0 / 0.0, -1.0 / 0.0, 0.0 / 0.0, and `Double.isNaN(0.0 / 0.0)`. Also verify that `(Double.NaN == Double.NaN)` is false.",
+          "hint": "Floating-point division by zero produces Infinity or NaN without throwing ArithmeticException.",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        double posInf = 1.0 / 0.0;\n        double negInf = -1.0 / 0.0;\n        double nan = 0.0 / 0.0;\n        System.out.println(posInf);\n        System.out.println(negInf);\n        System.out.println(nan);\n        System.out.println(Double.isNaN(nan));\n        System.out.println(nan == nan);\n    }\n}",
+          "output": "Infinity\n-Infinity\nNaN\ntrue\nfalse",
+          "explanation": "Under IEEE 754, non-zero float divided by zero yields Infinity. 0.0 / 0.0 yields NaN (Not a Number). By IEEE definition, NaN is never equal to anything, including itself."
+      },
+      {
+          "id": "dtc-10",
+          "title": "Exercise 10: Parsing Primitives vs Wrapper Instantiation",
+          "difficulty": "Easy",
+          "problemStatement": "Parse the string \"12345\" into a primitive `int` using `Integer.parseInt()` and into an `Integer` object using `Integer.valueOf()`. Print their types and values to demonstrate the difference.",
+          "hint": "parseInt returns primitive int; valueOf returns wrapper Integer (and utilizes the cache for -128..127).",
+          "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        int p = Integer.parseInt(\"12345\");\n        Integer w = Integer.valueOf(\"12345\");\n        System.out.println(\"Primitive: \" + p);\n        System.out.println(\"Wrapper: \" + w);\n        System.out.println(\"Matches: \" + (p == w));\n    }\n}",
+          "output": "Primitive: 12345\nWrapper: 12345\nMatches: true",
+          "explanation": "Integer.parseInt() returns a primitive int without heap allocation. Integer.valueOf() returns an Integer object reference, which unboxes automatically during (p == w)."
+      }
   ]
 };

@@ -1,7 +1,7 @@
 import { DetailedLesson } from '../detailedLessons';
 
 // ============================================================
-// MODULE 2: DATA TYPES & VARIABLES (LESSONS 2.1 - 2.7)
+// MODULE 2: DATA TYPES & VARIABLES (LESSONS 2.1 - 2.8)
 // Comprehensive in-depth curriculum matching OOP standard
 // ============================================================
 
@@ -3603,6 +3603,519 @@ export const dataTypesLessons: Record<string, DetailedLesson> = {
         "correctOptionIndex": 1,
         "explanation": "BigDecimal.valueOf(unscaledVal, scale) calculates unscaledVal * 10^-scale. 100 * 10^-2 = 1.00.",
         "correctIndex": 1
+      }
+    ]
+  },
+  "data-types-challenge": {
+    "id": "data-types-challenge",
+    "moduleId": "java-data-types",
+    "moduleTitle": "2. Data Types & Variables",
+    "lessonNumber": "Lesson 2.8",
+    "title": "Module 2 Challenge & Interview Assessment",
+    "subtitle": "Comprehensive capstone assessment synthesizing primitives, IEEE 754, type casting wrap-around, wrapper immutability, IntegerCache traps, and BigDecimal",
+    "estimatedMinutes": 25,
+    "beginnerAnalogy": "The Java type system is bifurcated into primitive value types and reference types, reflecting a deliberate balance between hardware CPU throughput and object-oriented polymorphism. At the JVM memory level, the 8 primitives store direct binary bits on the executing thread's stack or within contiguous heap object layouts, operating via native ALU instructions. In contrast, wrapper classes encapsulate primitives inside 16-to-24 byte heap objects with 12-byte object headers, managed by Garbage Collection. Autoboxing bridges these models at compile-time via `valueOf()` and `xxxValue()`, introducing critical architectural side effects: Flyweight caching in `IntegerCache` (-128 to 127) which creates identity hazards under `==`, silent loop allocation storms, and runtime `NullPointerException` crashes during unboxing.\n\nArchitecturally, mastering numeric boundaries (two's complement modular overflow), IEEE 754 recurring binary fractions ($0.1 + 0.2 \\neq 0.3$), and exact arbitrary-precision decimal modeling via `java.math.BigDecimal` is vital. In financial accounting, telemetry data processing, and enterprise persistence layers, confusing wrapper reference equality with numeric equality is a primary cause of high-severity production outages.",
+    "coreExplanation": [
+      "Primitive vs Reference Duality: 8 primitives (byte, short, int, long, float, double, char, boolean) store raw binary data with zero heap pointer dereference overhead. Reference types store heap addresses pointing to object headers and field payloads.",
+      "Two's Complement Modular Arithmetic: Java integer types (except char) are signed two's complement. Adding 1 to Integer.MAX_VALUE produces Integer.MIN_VALUE (-2147483648) with zero runtime warning unless Math.addExact() is used.",
+      "Floating-Point IEEE 754 Representation: float (32-bit) and double (64-bit) represent real numbers using sign, exponent, and mantissa. Fractions whose denominators have factors other than 2 (like 0.1) cannot be represented finitely in binary base-2.",
+      "Exact Financial Modeling with BigDecimal: A BigDecimal consists of an arbitrary-precision BigInteger unscaled value and a 32-bit integer scale. Always instantiate via `new BigDecimal(\"0.1\")` or `BigDecimal.valueOf(0.1)` to avoid importing binary IEEE inaccuracies.",
+      "BigDecimal Comparison Discrepancy: `equals()` compares numerical value AND scale (`2.0` does NOT equal `2.00` in equals()), while `compareTo()` evaluates pure numerical value (`2.0` compareTo `2.00` is 0). This causes distinct behavior in HashSet vs TreeSet.",
+      "The Flyweight IntegerCache Trap: Values from -128 to 127 are pre-allocated in `IntegerCache`. Comparing wrapper objects with `==` checks heap memory addresses: returns true within the cache, but false above 127. Always use `.equals()` or `Objects.equals()`.",
+      "Silent GC Overhead in Loop Autoboxing: Using `Long` or `Integer` as a loop accumulator forces continuous unboxing, addition, and re-boxing (`valueOf`), instantiating millions of temporary heap objects and triggering severe Garbage Collection latency.",
+      "Unboxing NullPointerException: Unboxing compiles to an instance method call (`.intValue()`, `.booleanValue()`). If a wrapper reference is null during unboxing—in arithmetic, boolean conditions, or mixed-type ternaries—the JVM throws an immediate NullPointerException."
+    ],
+    "diagram": "================ MODULE 2 CAPSTONE: DATA TYPES & MEMORY ARCHITECTURE ================\n\n  1. PRIMITIVE MEMORY RESIDENCE (Direct Bits on Stack Frame):\n     int x = 42;          ===> [ 00000000 00000000 00000000 00101010 ] (4 Bytes on Stack)\n\n  2. WRAPPER HEAP ALLOCATION (64-bit JVM, Compressed OOPs):\n     Integer box = 42;    ===> Stack: [ Ref 0x7A10 ] ===> Heap: [ Mark(8B) | Klass(4B) | Val(4B) ] = 16B\n\n  3. THE INTEGER CACHE BOUNDARY HAZARD (-128 to 127):\n     Integer a = 127, b = 127;  ===> Points to SAME static array element ===> a == b is TRUE\n     Integer c = 128, d = 128;  ===> Allocates TWO separate heap objects ===> c == d is FALSE!\n\n  4. FINANCIAL ARITHMETIC (Binary IEEE 754 vs Base-10 BigDecimal):\n     double d = 0.1 + 0.2;      ===> 0.30000000000000004 (Binary truncation error!)\n     BigDecimal bd = b1.add(b2);===> 0.3 (Exact Arbitrary Precision: unscaled 3, scale 1)\n=====================================================================================",
+    "codeSnippet": {
+      "title": "Comprehensive Data Type Traps: Overflow, Autoboxing NPE, Cache, and BigDecimal",
+      "code": "import java.math.BigDecimal;\nimport java.math.RoundingMode;\nimport java.util.Objects;\n\npublic class DataTypesCapstoneDemo {\n    public static void main(String[] args) {\n        // 1. Integer overflow wrap-around vs Math.addExact\n        int max = Integer.MAX_VALUE;\n        int overflowed = max + 1; // Silently wraps to -2147483648\n        System.out.println(\"Silent overflow: \" + overflowed);\n        \n        // 2. IntegerCache boundary test\n        Integer id1 = 127, id2 = 127;\n        Integer id3 = 128, id4 = 128;\n        System.out.println(\"Cache <= 127 (==): \" + (id1 == id2)); // true\n        System.out.println(\"Cache >= 128 (==): \" + (id3 == id4)); // FALSE!\n        System.out.println(\"Safe equality: \" + Objects.equals(id3, id4)); // true\n        \n        // 3. Unboxing NullPointerException hazard\n        try {\n            Integer nullScore = null;\n            int finalScore = nullScore + 10; // Unboxes nullScore.intValue()!\n        } catch (NullPointerException e) {\n            System.out.println(\"Caught unboxing NPE as expected!\");\n        }\n        \n        // 4. Exact currency calculation via BigDecimal\n        BigDecimal price = new BigDecimal(\"19.99\");\n        BigDecimal taxRate = new BigDecimal(\"0.0825\");\n        BigDecimal total = price.multiply(BigDecimal.ONE.add(taxRate)).setScale(2, RoundingMode.HALF_EVEN);\n        System.out.println(\"Exact Total: $\" + total);\n    }\n}",
+      "lineByLineExplanation": [
+        {
+          "line": "int overflowed = max + 1;",
+          "explanation": "32-bit two's complement arithmetic overflows cyclically into Integer.MIN_VALUE."
+        },
+        {
+          "line": "(id1 == id2)",
+          "explanation": "Returns true because 127 is pre-allocated in IntegerCache.cache[255]."
+        },
+        {
+          "line": "(id3 == id4)",
+          "explanation": "Returns false because 128 exceeds the cache bound, allocating distinct heap objects with unique memory addresses."
+        },
+        {
+          "line": "int finalScore = nullScore + 10;",
+          "explanation": "The '+' operator forces unboxing by injecting nullScore.intValue(), which throws NullPointerException on null."
+        },
+        {
+          "line": "total.setScale(2, RoundingMode.HALF_EVEN);",
+          "explanation": "Applies Banker's Rounding to 2 decimal places, avoiding statistical bias across ledger entries."
+        }
+      ],
+      "output": "Silent overflow: -2147483648\nCache <= 127 (==): true\nCache >= 128 (==): false\nSafe equality: true\nCaught unboxing NPE as expected!\nExact Total: $21.64"
+    },
+    "codeExamples": [
+      {
+        "title": "Scale-Aware Collections with BigDecimal",
+        "description": "Why equals() and compareTo() behave differently in Hash-based vs Tree-based collections.",
+        "code": "import java.math.BigDecimal;\nimport java.util.HashSet;\nimport java.util.TreeSet;\n\npublic class ScaleCollectionDemo {\n    public static void main(String[] args) {\n        BigDecimal b1 = new BigDecimal(\"10.0\");\n        BigDecimal b2 = new BigDecimal(\"10.00\");\n        \n        // HashSet uses equals() (checks scale 1 vs scale 2)\n        HashSet<BigDecimal> hash = new HashSet<>();\n        hash.add(b1); hash.add(b2);\n        System.out.println(\"HashSet size: \" + hash.size()); // 2 elements!\n        \n        // TreeSet uses compareTo() (checks numerical value only)\n        TreeSet<BigDecimal> tree = new TreeSet<>();\n        tree.add(b1); tree.add(b2);\n        System.out.println(\"TreeSet size: \" + tree.size()); // 1 element (deduplicated)\n    }\n}",
+        "explanation": "HashSet checks equals() and hashCode(), which depend on scale. TreeSet relies on Comparable.compareTo(), treating 10.0 and 10.00 as identical."
+      },
+      {
+        "title": "Silent Compound Narrowing Wrap-Around",
+        "description": "How compound operators mask narrowing type conversions without compile-time errors.",
+        "code": "public class CompoundNarrowingDemo {\n    public static void main(String[] args) {\n        short balance = 32000;\n        // balance = balance + 1000; // COMPILE ERROR: cannot assign int to short\n        balance += 1000; // Compiles silently via (short)(balance + 1000)!\n        System.out.println(\"Wrapped balance: \" + balance); // -32536!\n    }\n}",
+        "explanation": "Compound assignment operators inject an implicit narrowing cast, causing silent overflow and negative balances in business code."
+      }
+    ],
+    "cheatSheet": {
+      "summary": "Module 2 Capstone synthesizes primitive bit widths, two's complement overflow, wrapper class immutability, IntegerCache boundaries, and exact BigDecimal financial arithmetic.",
+      "rules": [
+        {
+          "rule": "Never use == on wrappers",
+          "explanation": "== checks reference memory addresses; always use .equals() or Objects.equals()."
+        },
+        {
+          "rule": "Always use String for BigDecimal",
+          "explanation": "new BigDecimal(\"0.1\") is exact; new BigDecimal(0.1) imports IEEE binary error."
+        },
+        {
+          "rule": "Specify RoundingMode on divide()",
+          "explanation": "Non-terminating division (e.g. 1/3) throws ArithmeticException without RoundingMode."
+        },
+        {
+          "rule": "Guard against unboxing NPE",
+          "explanation": "Unboxing null references unconditionally throws NullPointerException."
+        },
+        {
+          "rule": "Avoid wrappers in high-iteration loops",
+          "explanation": "Accumulating in Long or Integer generates millions of heap objects, thrashing GC."
+        },
+        {
+          "rule": "Use Math.xxxExact() for critical math",
+          "explanation": "Throws ArithmeticException instead of silent two's complement wrap-around."
+        }
+      ],
+      "quickComparison": [
+        {
+          "aspect": "Primitives vs Wrappers",
+          "optionA": "Primitives: Raw binary on stack, zero GC overhead",
+          "optionB": "Wrappers: 16-24B heap object, nullable, supports Generics"
+        },
+        {
+          "aspect": "BigDecimal vs Double",
+          "optionA": "Double: Fast hardware base-2 floating point (imprecise)",
+          "optionB": "BigDecimal: Arbitrary-precision base-10 decimal (exact)"
+        },
+        {
+          "aspect": "equals() vs compareTo()",
+          "optionA": "equals(): Value AND scale must match exactly",
+          "optionB": "compareTo(): Numerical value only; scale is ignored"
+        }
+      ]
+    },
+    "beginnerMistakes": [
+      {
+        "mistake": "Testing wrapper equality with `==` in unit tests with small numbers.",
+        "whyItHappens": "Unit tests using test IDs <= 127 pass due to IntegerCache, but crash in production with real IDs >= 128.",
+        "howToFix": "Always use Objects.equals(a, b) or a.equals(b) across all wrapper objects.",
+        "codeSnippet": "// WRONG: passes test with id=10, fails in prod with id=500\nif (order1.getId() == order2.getId()) { ... }\n// RIGHT\nif (Objects.equals(order1.getId(), order2.getId())) { ... }"
+      },
+      {
+        "mistake": "Using `double` for currency and calculating tax with binary floating point.",
+        "whyItHappens": "Developer assumes double stores 0.1 accurately, causing missing-penny reconciliation errors.",
+        "howToFix": "Use BigDecimal with String constructors and RoundingMode.HALF_EVEN (Banker's Rounding).",
+        "codeSnippet": "// WRONG\ndouble total = 0.1 + 0.2; // 0.30000000000000004\n// RIGHT\nBigDecimal total = new BigDecimal(\"0.1\").add(new BigDecimal(\"0.2\")); // 0.3"
+      }
+    ],
+    "practiceProblems": [
+      {
+        "title": "IntegerCache Range Crossing Puzzle",
+        "problemStatement": "What is printed by:\n```java\nInteger a = 120;\nInteger b = 120;\nInteger c = 130;\nInteger d = 130;\nSystem.out.println((a == b) + \" \" + (c == d) + \" \" + c.equals(d));\n```",
+        "options": [
+          "true true true",
+          "true false true",
+          "false false true",
+          "true false false"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "120 is within the -128..127 cache; 130 exceeds the cache. equals() checks numeric value.",
+        "solution": "true false true",
+        "explanation": "120 is inside IntegerCache, so a and b reference the same cached object (true). 130 is outside the cache, so c and d reference distinct heap objects (false). c.equals(d) compares primitive int values (true)."
+      },
+      {
+        "title": "Ternary Unboxing with Mixed Types and Null",
+        "problemStatement": "What is the result of running:\n```java\nInteger n = null;\nboolean cond = true;\ndouble res = cond ? 5.0 : n;\nSystem.out.println(res);\n```",
+        "options": [
+          "Prints 5.0",
+          "Throws NullPointerException at runtime",
+          "Compilation error",
+          "Prints 0.0"
+        ],
+        "correctOptionIndex": 0,
+        "hint": "Because cond is true, is the false branch (n) evaluated?",
+        "solution": "Prints 5.0",
+        "explanation": "In a ternary expression `cond ? expr1 : expr2`, short-circuit evaluation guarantees that only the selected branch is evaluated. Because cond is true, only 5.0 is evaluated. The false branch (n) is never evaluated, so no unboxing NPE occurs."
+      },
+      {
+        "title": "Two's Complement Byte Overflow Wrap",
+        "problemStatement": "What is the output of:\n```java\nbyte b = 125;\nb += 5;\nSystem.out.println(b);\n```",
+        "options": [
+          "130",
+          "-126",
+          "-128",
+          "Compilation error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "125 + 5 = 130. 130 - 256 = -126 in 8-bit signed two's complement.",
+        "solution": "-126",
+        "explanation": "125 + 5 = 130. A byte can only hold up to +127. 130 wraps into negative space: 130 - 256 = -126."
+      },
+      {
+        "title": "BigDecimal HashSet Duplicate Detection",
+        "problemStatement": "What does the following snippet print?\n```java\nSet<BigDecimal> set = new HashSet<>();\nset.add(new BigDecimal(\"1.0\"));\nset.add(new BigDecimal(\"1.00\"));\nSystem.out.println(set.size());\n```",
+        "options": [
+          "1",
+          "2",
+          "Throws IllegalArgumentException",
+          "Compilation error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "HashSet relies on equals() and hashCode(). In BigDecimal, does 1.0 equal 1.00?",
+        "solution": "2",
+        "explanation": "BigDecimal.equals() compares both value and scale. Scale 1 != scale 2, so equals() returns false and hash codes differ; HashSet retains both as distinct items (size 2)."
+      },
+      {
+        "title": "Primitive Widening vs Boxing in Overload",
+        "problemStatement": "Given:\n```java\nstatic String check(long l) { return \"primitive long\"; }\nstatic String check(Integer i) { return \"boxed Integer\"; }\npublic static void main(String[] args) {\n    int val = 10;\n    System.out.println(check(val));\n}\n```\nWhat is printed?",
+        "options": [
+          "boxed Integer",
+          "primitive long",
+          "Compilation error: ambiguous call",
+          "Throws ClassCastException"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Java overload resolution prioritizes primitive widening over autoboxing.",
+        "solution": "primitive long",
+        "explanation": "Primitive widening (int -> long) has higher priority than autoboxing (int -> Integer) in Java method overload resolution."
+      },
+      {
+        "title": "Integer Division in Floating Assignment",
+        "problemStatement": "What does `double d = 10 / 4; System.out.println(d);` print?",
+        "options": [
+          "2.5",
+          "2.0",
+          "2",
+          "Compilation error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Both 10 and 4 are integer literals. Integer division truncates before widening to double.",
+        "solution": "2.0",
+        "explanation": "10 / 4 executes as integer division, truncating to 2. The int 2 is then widened to double, yielding 2.0 (not 2.5)."
+      },
+      {
+        "title": "Character Code Point vs Digit Difference",
+        "problemStatement": "What is the output of:\n```java\nchar ch = '5';\nint a = ch;\nint b = ch - '0';\nSystem.out.println(a + \":\" + b);\n```",
+        "options": [
+          "5:5",
+          "53:5",
+          "53:53",
+          "5:53"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "ASCII code for '0' is 48, '5' is 53.",
+        "solution": "53:5",
+        "explanation": "Assigning char '5' to int widens its Unicode code point (ASCII 53). Subtracting '0' (53 - 48) computes the numeric value 5."
+      },
+      {
+        "title": "Double.compare Natural Ordering",
+        "problemStatement": "What is printed by:\n```java\nSystem.out.print((Double.NaN == Double.NaN) + \" \");\nSystem.out.println(Double.compare(Double.NaN, Double.NaN));\n```",
+        "options": [
+          "true 0",
+          "false 0",
+          "false 1",
+          "true -1"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Primitive NaN == NaN is always false, but Double.compare() treats NaN as equal to itself.",
+        "solution": "false 0",
+        "explanation": "According to IEEE 754, primitive NaN == NaN is always false. Double.compare() establishes a natural total order for sorting where Double.NaN equals Double.NaN (returning 0)."
+      },
+      {
+        "title": "BigDecimal Non-Terminating Division Crash",
+        "problemStatement": "What occurs when executing `BigDecimal.ONE.divide(new BigDecimal(\"3\"))`?",
+        "options": [
+          "Returns 0.333",
+          "Returns 0.3333333333333333",
+          "Throws ArithmeticException: Non-terminating decimal expansion",
+          "Returns 0"
+        ],
+        "correctOptionIndex": 2,
+        "hint": "1/3 has infinite decimal expansion; divide() without RoundingMode refuses to discard digits.",
+        "solution": "Throws ArithmeticException: Non-terminating decimal expansion",
+        "explanation": "BigDecimal.divide() requires an explicit RoundingMode when the quotient is non-terminating, or it throws ArithmeticException."
+      },
+      {
+        "title": "Wrapper Array Default Initialization",
+        "problemStatement": "Given:\n```java\nint[] prims = new int[2];\nInteger[] boxes = new Integer[2];\nSystem.out.println(prims[0] + \" vs \" + boxes[0]);\n```\nWhat is printed?",
+        "options": [
+          "0 vs 0",
+          "0 vs null",
+          "null vs null",
+          "Throws NullPointerException"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Primitives default to 0; reference arrays default to null.",
+        "solution": "0 vs null",
+        "explanation": "Primitive int arrays initialize slots to 0. Reference arrays (like Integer[]) initialize reference pointers to null."
+      }
+    ],
+    "interviewQuestions": [
+      {
+        "question": "Why does `Integer a = 127; Integer b = 127; a == b` return true, while `Integer a = 128; Integer b = 128; a == b` returns false?",
+        "expectedAnswer": "Autoboxing invokes `Integer.valueOf()`. The JVM maintains an internal static cache (`IntegerCache`) that pre-instantiates Integer objects for values between -128 and +127 (inclusive). For 127, both variables receive the exact same cached reference pointer, so `==` compares identical memory addresses (true). For 128, the value exceeds the cache range, so `Integer.valueOf(128)` allocates two distinct heap objects. Because `==` on objects compares memory addresses, `a == b` evaluates to false.",
+        "followUp": "How do you configure the upper bound of the Integer Cache?",
+        "followUpAnswer": "Using the JVM option `-XX:AutoBoxCacheMax=<size>` or system property `-Djava.lang.Integer.IntegerCache.high=<size>`. The lower bound is fixed at -128 by the JLS.",
+        "commonMistake": "Using `==` on wrapper objects in business logic.",
+        "commonMistakeAnswer": "Never use == on wrapper objects; always use .equals() or Objects.equals()."
+      },
+      {
+        "question": "Why should you never use `new BigDecimal(double)` for monetary calculations?",
+        "expectedAnswer": "Passing a double primitive to `new BigDecimal(double)` imports the IEEE 754 binary floating-point representation error into the BigDecimal instance. For example, `new BigDecimal(0.1)` yields `0.1000000000000000055511151231257827021181583404541015625`. Always use `new BigDecimal(\"0.1\")` or `BigDecimal.valueOf(0.1)`, which safely converts the double to its canonical String representation first.",
+        "followUp": "What is the difference between BigDecimal.equals() and BigDecimal.compareTo()?",
+        "followUpAnswer": "equals() compares numerical value AND scale (`2.0` does NOT equal `2.00`). compareTo() compares only numerical value (`2.0` compareTo `2.00` is 0). In business logic, always use compareTo(other) == 0.",
+        "commonMistake": "Using equals() to check if two monetary totals match.",
+        "commonMistakeAnswer": "If one has scale 2 ($10.50) and another has scale 3 ($10.500), equals() returns false."
+      },
+      {
+        "question": "How can autoboxing cause high Garbage Collection latency in high-throughput applications?",
+        "expectedAnswer": "All wrapper classes are completely immutable. When an accumulator in a loop uses a wrapper type (e.g. `Long sum = 0L; sum += i;`), each iteration unboxes `sum`, performs addition on primitives, and calls `Long.valueOf(newSum)`, creating a new heap object. In a loop of 10 million iterations, 10 million temporary objects are allocated in Eden space, thrashing the CPU cache and triggering frequent Minor Garbage Collection Stop-The-World pauses.",
+        "followUp": "How do you eliminate this overhead?",
+        "followUpAnswer": "Use primitive `long sum = 0L;` or primitive collections libraries (like Eclipse Collections or fastutil) that store primitives directly without boxing.",
+        "commonMistake": "Thinking modern JIT escape analysis always eliminates wrapper allocations.",
+        "commonMistakeAnswer": "Escape analysis cannot eliminate heap allocations if accumulators escape method boundaries or exceed compiler inlining thresholds."
+      },
+      {
+        "question": "Explain how unboxing can silently cause a NullPointerException.",
+        "expectedAnswer": "Unboxing is implemented by invoking an instance method on the wrapper object (e.g. `wrapper.intValue()`, `wrapper.booleanValue()`). If the wrapper variable is null when unboxed—such as in arithmetic `box + 5`, an if condition `if (boolBox)`, or in a mixed-type ternary `flag ? 1.0 : intBox`—invoking the method on a null reference throws a runtime NullPointerException.",
+        "followUp": "How do you protect against unboxing NPEs in ternary expressions?",
+        "followUpAnswer": "Ensure all branches return consistent object types, or perform an explicit null check: `(val != null ? val : 0)`.",
+        "commonMistake": "Assuming unboxing null defaults to 0.",
+        "commonMistakeAnswer": "Unboxing null never defaults to zero; it always throws an immediate NullPointerException."
+      },
+      {
+        "question": "What is the difference between Widening and Narrowing primitive conversions?",
+        "expectedAnswer": "Widening converts a smaller type to a larger type (e.g. byte -> short -> int -> long -> float -> double). It occurs automatically (implicitly) without explicit casting and never causes runtime exceptions. Narrowing converts a larger type to a smaller type (e.g. double -> int). It requires an explicit cast `(int)` because it can lose magnitude bits (wrap-around) or precision (truncation).",
+        "followUp": "Can widening conversion ever lose precision?",
+        "followUpAnswer": "Yes. Widening from `int` (32 bits) or `long` (64 bits) to `float` (24-bit mantissa) or `long` to `double` (53-bit mantissa) can lose least-significant precision bits, even though magnitude is preserved.",
+        "commonMistake": "Believing widening conversions are 100% mathematically lossless.",
+        "commonMistakeAnswer": "Int-to-float and long-to-double widening can lose precision bits."
+      },
+      {
+        "question": "What is RoundingMode.HALF_EVEN and why is it preferred for financial calculations?",
+        "expectedAnswer": "RoundingMode.HALF_EVEN (Banker's Rounding) rounds towards the nearest neighbor unless both neighbors are equidistant, in which case it rounds towards the even neighbor (e.g. 2.5 -> 2, 3.5 -> 4). Standard HALF_UP introduces a systematic upward inflationary bias across millions of ledger entries. HALF_EVEN balances rounds up and down evenly, eliminating cumulative statistical drift.",
+        "followUp": "What does RoundingMode.UNNECESSARY do?",
+        "followUpAnswer": "It asserts that the division or scale adjustment has an exact result; if rounding is required, it throws ArithmeticException, acting as an automated integrity check.",
+        "commonMistake": "Using HALF_UP for banking applications.",
+        "commonMistakeAnswer": "Financial standards (like ISO and GAAP) mandate HALF_EVEN to prevent systematic rounding errors."
+      },
+      {
+        "question": "What are the memory sizes of primitives vs their corresponding wrapper objects on a 64-bit JVM?",
+        "expectedAnswer": "Primitives: byte (1B), short (2B), int (4B), long (8B), float (4B), double (8B), char (2B), boolean (1B on stack/heap array). Wrappers (on 64-bit JVM with compressed OOPs): Integer/Float/Boolean/Byte/Short/Character consume 16 bytes (8B mark word + 4B klass word + primitive payload + padding). Long/Double consume 24 bytes (12B header + 8B payload + 4B padding). Plus 4-8 bytes for the reference pointer.",
+        "followUp": "What is the memory footprint ratio of `int[]` vs `Integer[]` for 1 million numbers?",
+        "followUpAnswer": "`int[1_000_000]` consumes ~4 MB of contiguous memory. `Integer[1_000_000]` consumes ~24 MB (~4 MB pointer array + ~20 MB of scattered 16-24B heap objects), a 6x memory explosion with poor CPU cache locality.",
+        "commonMistake": "Assuming wrappers have negligible overhead compared to primitives.",
+        "commonMistakeAnswer": "Wrappers create a 4x to 6x memory explosion and heavy pointer chasing."
+      },
+      {
+        "question": "How does `Math.addExact(a, b)` differ from standard `a + b`?",
+        "expectedAnswer": "Standard primitive addition `a + b` performs modular two's complement arithmetic; when the result exceeds 32-bit `Integer.MAX_VALUE`, it silently wraps around into negative numbers. `Math.addExact(a, b)` checks for arithmetic overflow and throws `java.lang.ArithmeticException: integer overflow`, providing fail-fast safety in mission-critical applications.",
+        "followUp": "What other exact methods exist in java.lang.Math?",
+        "followUpAnswer": "`subtractExact`, `multiplyExact`, `incrementExact`, `decrementExact`, `negateExact`, `toIntExact` (safe narrowing long to int), and `divideExact` (detecting MIN_VALUE / -1).",
+        "commonMistake": "Assuming Java throws an exception when integers overflow.",
+        "commonMistakeAnswer": "Java integer arithmetic wraps around silently by default; overflow exceptions require Math.xxxExact()."
+      },
+      {
+        "question": "Why are wrapper classes declared `public final class` and completely immutable?",
+        "expectedAnswer": "Wrapper classes are immutable and final to ensure thread safety, security, and hash-based collection integrity. Because they cannot be mutated, their hash codes never change, allowing them to serve safely as keys in `HashMap` and elements in `HashSet`. Immutability also allows safe sharing of pre-allocated Flyweight objects in `IntegerCache` without defensive copying.",
+        "followUp": "Can you subclass `java.lang.Number` to create your own custom numeric type?",
+        "followUpAnswer": "Yes, `Number` is an abstract class (extended by `BigDecimal`, `BigInteger`, `AtomicInteger`). However, you cannot subclass the wrapper classes themselves (`Integer`, `Double`, etc.) because they are final.",
+        "commonMistake": "Believing `new Integer(10)` creates a mutable object.",
+        "commonMistakeAnswer": "All wrapper objects are 100% immutable; any arithmetic produces a brand-new object."
+      },
+      {
+        "question": "How does Java 10+ `var` interact with primitive types and literals?",
+        "expectedAnswer": "`var` performs compile-time static type inference based on the initializer expression. For literals: `var a = 10;` is inferred as `int`. `var b = 10L;` is inferred as `long`. `var c = 10.0;` is inferred as `double`. `var d = 10.0f;` is inferred as `float`. `var e = \"hello\";` is inferred as `String`. `var` is not dynamic typing; once inferred at compile time, the variable is strictly and statically typed.",
+        "followUp": "Can `var` be initialized to `null`?",
+        "followUpAnswer": "No. `var x = null;` produces a compile-time error because `null` has no type from which javac can infer a concrete static type.",
+        "commonMistake": "Thinking `var` behaves like JavaScript `var` or Python variables.",
+        "commonMistakeAnswer": "`var` in Java is purely compile-time syntactic sugar; types are strictly static."
+      }
+    ],
+    "miniQuiz": [
+      {
+        "question": "What is the result of `Integer.valueOf(127) == Integer.valueOf(127)` vs `Integer.valueOf(128) == Integer.valueOf(128)`?",
+        "options": [
+          "true true",
+          "true false",
+          "false false",
+          "false true"
+        ],
+        "correctIndex": 1,
+        "explanation": "127 is within the IntegerCache [-128, 127], returning the same object. 128 exceeds the cache, allocating two distinct heap objects."
+      },
+      {
+        "question": "Why does `0.1 + 0.2 == 0.3` evaluate to false in primitive double arithmetic?",
+        "options": [
+          "0.1 and 0.2 are infinite repeating binary fractions in IEEE 754 base-2, producing 0.30000000000000004",
+          "double can only store whole numbers",
+          "Java compiler promotes 0.3 to float",
+          "The addition overflows 64 bits"
+        ],
+        "correctIndex": 0,
+        "explanation": "In IEEE 754 base-2 binary floating point, 0.1 cannot be represented finitely, causing truncation and rounding errors."
+      },
+      {
+        "question": "Which constructor for `BigDecimal` should be AVOIDED for exact values?",
+        "options": [
+          "new BigDecimal(String)",
+          "new BigDecimal(double)",
+          "BigDecimal.valueOf(double)",
+          "new BigDecimal(int)"
+        ],
+        "correctIndex": 1,
+        "explanation": "new BigDecimal(double) captures the already-imprecise IEEE 754 binary floating-point representation."
+      },
+      {
+        "question": "What is printed by `new BigDecimal(\"1.0\").equals(new BigDecimal(\"1.00\"))`?",
+        "options": [
+          "true",
+          "false",
+          "Compilation error",
+          "Throws ArithmeticException"
+        ],
+        "correctIndex": 1,
+        "explanation": "BigDecimal.equals() compares value AND scale; scale 1 != scale 2, returning false."
+      },
+      {
+        "question": "How do you compare two `BigDecimal` values for numeric equivalence ignoring scale?",
+        "options": [
+          "a == b",
+          "a.equals(b)",
+          "a.compareTo(b) == 0",
+          "Objects.equals(a, b)"
+        ],
+        "correctIndex": 2,
+        "explanation": "compareTo() compares only the mathematical numerical value and ignores differences in scale."
+      },
+      {
+        "question": "What happens when unboxing an `Integer` reference that is null?",
+        "options": [
+          "Evaluates to 0",
+          "Throws NullPointerException",
+          "Evaluates to -1",
+          "Compile-time error"
+        ],
+        "correctIndex": 1,
+        "explanation": "Unboxing invokes `.intValue()` on the reference; calling an instance method on null throws NullPointerException."
+      },
+      {
+        "question": "What is the memory size of a primitive `int` vs a `java.lang.Integer` object on a 64-bit JVM with compressed OOPs?",
+        "options": [
+          "4 bytes vs 4 bytes",
+          "4 bytes vs 8 bytes",
+          "4 bytes vs 16 bytes",
+          "4 bytes vs 32 bytes"
+        ],
+        "correctIndex": 2,
+        "explanation": "Primitive int is 4 bytes. An Integer object on a 64-bit JVM with compressed OOPs has a 12-byte header + 4-byte payload = 16 bytes."
+      },
+      {
+        "question": "What does `byte b = 127; b++;` evaluate to?",
+        "options": [
+          "128",
+          "-128",
+          "0",
+          "Throws ArithmeticException"
+        ],
+        "correctIndex": 1,
+        "explanation": "127 + 1 overflows the maximum signed 8-bit byte value (+127) and wraps cyclically around to -128."
+      },
+      {
+        "question": "Which rounding mode is known as Banker's Rounding and is standard for financial applications?",
+        "options": [
+          "RoundingMode.HALF_UP",
+          "RoundingMode.HALF_DOWN",
+          "RoundingMode.HALF_EVEN",
+          "RoundingMode.FLOOR"
+        ],
+        "correctIndex": 2,
+        "explanation": "RoundingMode.HALF_EVEN rounds towards the nearest even neighbor when equidistant, eliminating statistical bias."
+      },
+      {
+        "question": "What does `Integer.parseInt(\"100\")` return vs `Integer.valueOf(\"100\")`?",
+        "options": [
+          "parseInt returns primitive int; valueOf returns an Integer object reference",
+          "parseInt returns Integer object; valueOf returns primitive int",
+          "Both return primitive int",
+          "Both return Integer objects"
+        ],
+        "correctIndex": 0,
+        "explanation": "parseInt() parses directly to raw primitive int; valueOf() returns a java.lang.Integer object from IntegerCache."
+      },
+      {
+        "question": "Which numeric wrapper classes do NOT have a Flyweight cache?",
+        "options": [
+          "Byte and Short",
+          "Float and Double",
+          "Character and Long",
+          "Boolean and Integer"
+        ],
+        "correctIndex": 1,
+        "explanation": "Float and Double have no cache because real numbers form an infinitely dense continuum."
+      },
+      {
+        "question": "What exception is thrown by `Math.addExact(Integer.MAX_VALUE, 1)`?",
+        "options": [
+          "NullPointerException",
+          "ArithmeticException",
+          "IndexOutOfBoundsException",
+          "ClassCastException"
+        ],
+        "correctIndex": 1,
+        "explanation": "Math.addExact detects integer overflow and throws java.lang.ArithmeticException."
+      },
+      {
+        "question": "What is the return type of `(true ? Integer.valueOf(1) : Double.valueOf(2.0))`?",
+        "options": [
+          "Integer",
+          "Double",
+          "Number",
+          "Object"
+        ],
+        "correctIndex": 1,
+        "explanation": "Binary numeric promotion unboxes both operands, promotes to double, and boxes the result to java.lang.Double."
+      },
+      {
+        "question": "Why does `List<int>` fail to compile in Java?",
+        "options": [
+          "Generics use type erasure and compile down to Object; primitives do not inherit from Object",
+          "int does not have methods",
+          "Collections only accept Strings",
+          "int is not serializable"
+        ],
+        "correctIndex": 0,
+        "explanation": "Java Generics require reference types assignable to java.lang.Object; primitives require wrapper types like List<Integer>."
+      },
+      {
+        "question": "What is the result of `var x = 10 / 4.0;`?",
+        "options": [
+          "x is inferred as int with value 2",
+          "x is inferred as double with value 2.5",
+          "x is inferred as float",
+          "Compile error"
+        ],
+        "correctIndex": 1,
+        "explanation": "Because 4.0 is a double literal, binary numeric promotion widens 10 to 10.0, evaluating to double 2.5."
       }
     ]
   }
