@@ -1361,46 +1361,22 @@ export default function JavaSubLessonPage() {
                             Click "Reveal" to view the model answer and technical explanation.
                           </div>
                         ) : (
-                          <div className="space-y-3 pt-1">
                             <div className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
-                              <strong className="text-indigo-300 block mb-1">
-                                🌟 Ideal Model Answer:
+                              <strong className="text-blue-300 block mb-1.5 font-semibold">
+                                Answer:
                               </strong>
                               {q.answer}
                             </div>
 
-                            {q.keyPhrases && q.keyPhrases.length > 0 && (
-                              <div className="space-y-1.5">
-                                <div className="text-[11px] font-bold text-amber-400 uppercase tracking-wider">
-                                  Keywords the interviewer wants to hear:
-                                </div>
-                                <div className="flex flex-wrap gap-1.5">
-                                  {q.keyPhrases.map((phrase, pIdx) => (
-                                    <span
-                                      key={pIdx}
-                                      className="px-2 py-0.5 rounded text-[11px] font-mono bg-amber-500/10 border border-amber-500/20 text-amber-300"
-                                    >
-                                      ✓ {phrase}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
-                            {q.commonMistakeAnswer && (
-                              <div className="p-2.5 rounded-lg bg-rose-950/20 border border-rose-500/25 text-xs text-rose-300">
-                                <strong>🛑 Common Fresher Mistake: </strong> {q.commonMistakeAnswer}
-                              </div>
-                            )}
-
                             {q.followUp && (
-                              <div className="text-xs text-cyan-300 bg-cyan-950/30 border border-cyan-500/30 rounded-lg p-2.5 space-y-1.5">
-                                <div>
-                                  <strong>Expected Follow-Up Question: </strong> {q.followUp}
+                              <div className="text-xs text-slate-300 bg-slate-900/60 border border-slate-800 rounded-xl p-3 space-y-1.5">
+                                <div className="text-amber-400 font-semibold">
+                                  Follow-Up Question: <span className="text-slate-200 font-normal">{q.followUp}</span>
                                 </div>
                                 {q.followUpAnswer && (
-                                  <div className="pt-1.5 border-t border-cyan-500/20 text-slate-200 leading-relaxed">
-                                    <strong className="text-cyan-400">💡 Confident Follow-Up Answer: </strong> {q.followUpAnswer}
+                                  <div className="pt-2 border-t border-slate-800/80 text-slate-300 leading-relaxed">
+                                    <strong className="text-blue-400 font-semibold">Follow-Up Answer: </strong>
+                                    {q.followUpAnswer}
                                   </div>
                                 )}
                               </div>
