@@ -164,15 +164,15 @@ export const JAVA_MODULES: JavaModule[] = [
     section: 'fundamentals',
   },
 
-  // ── SECTION 2: OBJECT-ORIENTED PROGRAMMING (11 - 16) ──────────────────
+  // ── SECTION 2: OBJECT-ORIENTED PROGRAMMING (1 - 7) ───────────────────
   {
     id: 'java-oop-basics',
-    title: '11. OOP Fundamentals',
+    title: '1. OOP Fundamentals',
     description: 'Why OOP, classes, heap objects, stack vs heap memory, constructors, this() chaining, static members, and garbage collection',
     difficulty: 'Medium',
     estimatedMinutes: 60,
     icon: 'Layers',
-    topics: ['Why OOP?', 'What is a Class?', 'Creating Objects with new', 'Stack vs Heap & Aliasing', 'Constructors & Overloading', 'this Keyword & Chaining', 'Static vs Instance', 'Garbage Collection & Lifecycle', 'Module 11 Capstone Challenge'],
+    topics: ['Why OOP?', 'What is a Class?', 'Creating Objects with new', 'Stack vs Heap & Aliasing', 'Constructors & Overloading', 'this Keyword & Chaining', 'Static vs Instance', 'Garbage Collection & Lifecycle', 'Module 1 Capstone Challenge'],
     prerequisites: ['java-methods'],
     lessonCount: 9,
     mcqCount: 40,
@@ -182,7 +182,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-encapsulation',
-    title: '12. Encapsulation & Data Hiding',
+    title: '2. Encapsulation & Data Hiding',
     description: 'private fields, public getters/setters with validation, 4 access modifiers, immutable class pattern',
     difficulty: 'Medium',
     estimatedMinutes: 45,
@@ -197,7 +197,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-inheritance',
-    title: '13. Inheritance & Hierarchy',
+    title: '3. Inheritance & Hierarchy',
     description: 'extends keyword, super() constructor chaining, single class inheritance, avoiding diamond problem',
     difficulty: 'Medium',
     estimatedMinutes: 60,
@@ -212,7 +212,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-polymorphism',
-    title: '14. Polymorphism & Dispatch',
+    title: '4. Polymorphism & Dispatch',
     description: 'Overloading (compile-time) vs Overriding (runtime), Dynamic Method Dispatch, covariant return types',
     difficulty: 'Medium',
     estimatedMinutes: 55,
@@ -227,7 +227,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-abstraction',
-    title: '15. Abstraction & Interfaces',
+    title: '5. Abstraction & Interfaces',
     description: 'Abstract classes vs Interfaces, Java 8 default/static methods, functional interfaces, contract design',
     difficulty: 'Medium',
     estimatedMinutes: 55,
@@ -242,7 +242,7 @@ export const JAVA_MODULES: JavaModule[] = [
   },
   {
     id: 'java-object-class',
-    title: '16. Object Class & Contract',
+    title: '6. Object Class & Contract',
     description: 'Root Object class, toString(), equals() and hashCode() contract, memory leak prevention in HashMaps',
     difficulty: 'Medium',
     estimatedMinutes: 45,
@@ -253,6 +253,21 @@ export const JAVA_MODULES: JavaModule[] = [
     mcqCount: 20,
     codingCount: 10,
     interviewCount: 10,
+    section: 'oop',
+  },
+  {
+    id: 'java-oop-misc',
+    title: '7. Modern OOP & Miscellaneous Concepts',
+    description: 'Java 16+ Records, Java 17+ Sealed Classes & Interfaces, Static vs Inner classes with memory leak traps, Liskov Substitution Principle (LSP)',
+    difficulty: 'Hard',
+    estimatedMinutes: 65,
+    icon: 'Sparkles',
+    topics: ['Java Records (record)', 'Sealed Classes & permits', 'Nested & Inner Classes', 'Outer.this Memory Leaks', 'Liskov Substitution Principle (LSP)', 'Module 7 Capstone Challenge'],
+    prerequisites: ['java-oop-basics', 'java-inheritance', 'java-abstraction'],
+    lessonCount: 5,
+    mcqCount: 20,
+    codingCount: 11,
+    interviewCount: 12,
     section: 'oop',
   },
 

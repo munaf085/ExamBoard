@@ -9,8 +9,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "encapsulation-principles": {
     "id": "encapsulation-principles",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "12. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 12.1",
+    "moduleTitle": "2. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 2.1",
     "title": "The Principle of Encapsulation & Data Hiding",
     "subtitle": "Bundling data with behavior, restricting direct state manipulation, maintaining class invariants, and reducing architectural coupling",
     "estimatedMinutes": 18,
@@ -638,8 +638,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "access-modifiers-deep-dive": {
     "id": "access-modifiers-deep-dive",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "12. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 12.2",
+    "moduleTitle": "2. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 2.2",
     "title": "Java's 4 Access Modifiers",
     "subtitle": "Private, package-private (default), protected, and public scopes across classes, packages, and compilation units",
     "estimatedMinutes": 18,
@@ -1267,8 +1267,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "getters-setters-defensive-copying": {
     "id": "getters-setters-defensive-copying",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "12. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 12.3",
+    "moduleTitle": "2. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 2.3",
     "title": "Getters, Setters & Defensive Copying",
     "subtitle": "JavaBeans conventions, validation guards, and preventing internal representation leaks with mutable reference types",
     "estimatedMinutes": 18,
@@ -1897,8 +1897,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "immutable-class-pattern": {
     "id": "immutable-class-pattern",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "12. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 12.4",
+    "moduleTitle": "2. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 2.4",
     "title": "Immutable Class Design Pattern",
     "subtitle": "Thread-safe, side-effect-free architecture using private final fields, defensive copying, and functional 'with-er' methods",
     "estimatedMinutes": 18,
@@ -2279,7 +2279,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
       },
       {
         "question": "If all fields in a class are marked 'final', is the class guaranteed to be immutable? Give a counter-example.",
-        "answer": "No! Marking fields 'final' is necessary but NOT sufficient for immutability. If any of those final fields is a mutable reference type (such as an array 'int[]' or a mutable object like a Date), the object is NOT immutable. Counter-example: 'class Profile { private final int[] scores; public Profile(int[] s) { this.scores = s; } public int[] getScores() { return scores; } }'. Even though 'scores' is final, external code can execute 'profile.getScores()[0] = 999;' and mutate internal state. True immutability requires defensive copying of mutable components.",
+        "answer": "No! Marking fields 'final' is necessary but NOT sufficient for immutability. If any of those final fields is a mutable reference type (such as an array 'int[]' or a mutable object such as a Date), the object is NOT immutable. Counter-example: 'class Profile { private final int[] scores; public Profile(int[] s) { this.scores = s; } public int[] getScores() { return scores; } }'. Even though 'scores' is final, external code can execute 'profile.getScores()[0] = 999;' and mutate internal state. True immutability requires defensive copying of mutable components.",
         "followUp": "When is a class with all final fields truly immutable without defensive copying?",
         "followUpAnswer": "When all fields are primitives (int, double, boolean) or known immutable types (like String).",
         "keyPhrases": [
@@ -2527,9 +2527,9 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "encapsulation-challenge": {
     "id": "encapsulation-challenge",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "12. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 12.5",
-    "title": "Module 12 Challenge & Interview Assessment",
+    "moduleTitle": "2. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 2.5",
+    "title": "Module 2 Challenge & Interview Assessment",
     "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all encapsulation pillars",
     "estimatedMinutes": 25,
     "beginnerAnalogy": "This Capstone Challenge brings together everything you have learned in Module 12. In production Java systems, enterprise software relies on all 4 encapsulation pillars acting together:\n1. Private fields to hide raw internal data from external corruption.\n2. The Principle of Least Privilege with access modifiers to keep public API surfaces small and secure.\n3. Validating getters and setters to protect critical business invariants (e.g. balance >= 0).\n4. Defensive copying to eliminate representation exposure (rep leaks) when handling mutable objects.\n5. The Immutable Class Pattern to build thread-safe, robust value objects.\nUse this challenge to test your interview readiness, solve multi-concept code puzzles, and build confidence before moving to Inheritance!",
@@ -2623,7 +2623,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         "question": "Explain shallow copy vs deep copy vs defensive copy with an example.",
         "answer": "A shallow copy duplicates the container (like the array slots) but copies the reference addresses, so both arrays still point to the same underlying objects. A deep copy recursively duplicates the container AND every object inside it. A defensive copy is the design pattern of making a copy (shallow or deep) before saving data in a constructor or returning data from a getter to protect internal state.",
         "followUp": "Does array.clone() create a shallow or deep copy?",
-        "followUpAnswer": "It creates a shallow copy. If the array holds primitive numbers, it acts like a full copy. But if it holds objects, only the references are copied."
+        "followUpAnswer": "It creates a shallow copy. If the array holds primitive numbers, it acts as an independent copy. But if it holds objects, only the references are copied."
       },
       {
         "question": "What are the 5 rules to make a class immutable in Java?",
