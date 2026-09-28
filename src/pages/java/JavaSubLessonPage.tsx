@@ -131,6 +131,11 @@ export default function JavaSubLessonPage() {
   const [showExerciseHints, setShowExerciseHints] = useState<Record<number, boolean>>({});
 
   const lesson: DetailedLesson | undefined = lessonId ? getDetailedLesson(lessonId) : undefined;
+  const isChallenge = Boolean(
+    lesson?.id.includes('challenge') ||
+    lesson?.title.toLowerCase().includes('challenge') ||
+    lesson?.title.toLowerCase().includes('assessment')
+  );
   const adjacent = lesson ? getAdjacentLessons(lesson.id) : { prev: undefined, next: undefined };
   const allLessons = getAllDetailedLessons();
 
@@ -192,20 +197,33 @@ export default function JavaSubLessonPage() {
 
     // Read initial tab from URL query param
     const queryTab = searchParams.get('tab');
-    if (queryTab) {
-      if (queryTab === 'takeaways' || queryTab === 'lesson') setActiveTab('lesson');
-      else if (queryTab === 'interview' || queryTab === 'interview_qa' || queryTab === 'self-eval' || queryTab === 'self_eval') setActiveTab('interview_qa');
-      else if (['lesson', 'cheatsheet', 'practice', 'assignments', 'interview_qa', 'quiz', 'all'].includes(queryTab)) {
+    if (isChallenge) {
+      if (queryTab && ['assignments', 'quiz', 'interview_qa', 'practice', 'all'].includes(queryTab)) {
         setActiveTab(queryTab as ActiveTab);
+      } else {
+        // In challenge mode, default directly to hands-on coding challenges (or quiz)
+        setActiveTab(
+          lesson?.programmingExercises && lesson.programmingExercises.length > 0
+            ? 'assignments'
+            : 'quiz'
+        );
+      }
+    } else {
+      if (queryTab) {
+        if (queryTab === 'takeaways' || queryTab === 'lesson') setActiveTab('lesson');
+        else if (queryTab === 'interview' || queryTab === 'interview_qa' || queryTab === 'self-eval' || queryTab === 'self_eval') setActiveTab('interview_qa');
+        else if (['lesson', 'cheatsheet', 'practice', 'assignments', 'interview_qa', 'quiz', 'all'].includes(queryTab)) {
+          setActiveTab(queryTab as ActiveTab);
+        } else {
+          setActiveTab('lesson');
+        }
       } else {
         setActiveTab('lesson');
       }
-    } else {
-      setActiveTab('lesson');
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [lessonId, searchParams]);
+  }, [lessonId, searchParams, isChallenge, lesson?.programmingExercises]);
 
   const handleToggleSolvedAssignment = (assignmentKey: string) => {
     toggleSolvedAssignment(assignmentKey);
@@ -514,21 +532,40 @@ export default function JavaSubLessonPage() {
         <main className="flex-1 p-3 sm:p-5 md:p-8 max-w-4xl mx-auto w-full space-y-5">
           {/* Compact, Slim Header Card */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-3 sm:p-4 shadow-sm">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
-              <div className="flex items-center gap-2 text-xs">
-                <span className="font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px]">
-                  Lesson {formatLessonNum(lesson.lessonNumber)}
-                </span>
-                <span className="text-slate-400 font-medium truncate max-w-[200px] sm:max-w-xs">
-                  {lesson.moduleTitle.replace(/^\d+\.\s*/, '')}
-                </span>
+            {isChallenge ? (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] flex items-center gap-1 shadow-sm">
+                    <Sparkles className="w-3 h-3 text-amber-400" />
+                    <span>Capstone Challenge & Test Arena</span>
+                  </span>
+                  <span className="text-slate-400 font-medium truncate max-w-[200px] sm:max-w-xs">
+                    {lesson.moduleTitle.replace(/^\d+\.\s*/, '')}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-amber-400 font-medium">
+                  <span>🎯 Hands-on Test Mode</span>
+                  <span className="text-slate-600">·</span>
+                  <span className="text-slate-400">Topic {currentLessonIndex + 1}/{allLessons.length}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-[11px] text-slate-500">
-                <span>⏱ ~{lesson.estimatedMinutes}m read</span>
-                <span>·</span>
-                <span>Topic {currentLessonIndex + 1}/{allLessons.length}</span>
+            ) : (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px]">
+                    Lesson {formatLessonNum(lesson.lessonNumber)}
+                  </span>
+                  <span className="text-slate-400 font-medium truncate max-w-[200px] sm:max-w-xs">
+                    {lesson.moduleTitle.replace(/^\d+\.\s*/, '')}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-[11px] text-slate-500">
+                  <span>⏱ ~{lesson.estimatedMinutes}m read</span>
+                  <span>·</span>
+                  <span>Topic {currentLessonIndex + 1}/{allLessons.length}</span>
+                </div>
               </div>
-            </div>
+            )}
 
             <h1 className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight">
               {lesson.title}
@@ -538,106 +575,198 @@ export default function JavaSubLessonPage() {
                 {lesson.subtitle}
               </p>
             )}
+
+            {isChallenge && (
+              <div className="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
+                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1.5">
+                  <Code2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{lesson.programmingExercises?.length || 0} Coding Challenges</span>
+                </span>
+                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 font-semibold flex items-center gap-1.5">
+                  <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>{lesson.miniQuiz?.length || 0} Quiz MCQs</span>
+                </span>
+                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 font-semibold flex items-center gap-1.5">
+                  <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>{lesson.interviewQuestions?.length || 0} Interview Q&As</span>
+                </span>
+                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/30 text-purple-300 font-semibold flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                  <span>{practiceProblemsList.length} Code Puzzles</span>
+                </span>
+              </div>
+            )}
           </div>
 
           {/* ── EASY NAVIGATION TABS FOR EACH TOPIC (STICKY & MOBILE-OPTIMIZED) ── */}
           <div className="sticky top-[49px] sm:top-[53px] z-30 bg-slate-950/95 backdrop-blur-md pt-2 pb-2 -mx-3 px-3 sm:-mx-4 sm:px-4 md:-mx-6 md:px-6 border-b border-slate-800/90 shadow-sm">
             <div className="flex items-center gap-1.5 overflow-x-auto scroll-smooth overscroll-x-contain scrollbar-none pb-0.5">
-              {/* 1. Lesson */}
-              <button
-                onClick={() => setActiveTab('lesson')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'lesson'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <BookOpen className="w-3.5 h-3.5 text-blue-400" />
-                <span>Lesson</span>
-              </button>
+              {isChallenge ? (
+                <>
+                  {/* 1. Coding Challenges */}
+                  <button
+                    onClick={() => setActiveTab('assignments')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'assignments'
+                        ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>🎯 Coding Challenges ({lesson.programmingExercises?.length || 0})</span>
+                  </button>
 
-              {/* 2. 📋 Cheat Sheet */}
-              <button
-                onClick={() => setActiveTab('cheatsheet')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'cheatsheet'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5 text-amber-400" />
-                <span>Cheat Sheet</span>
-              </button>
+                  {/* 2. Quiz */}
+                  <button
+                    onClick={() => setActiveTab('quiz')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'quiz'
+                        ? 'bg-cyan-600 text-white shadow-md shadow-cyan-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>📝 Quiz ({lesson.miniQuiz?.length || 0})</span>
+                  </button>
 
-              {/* 3. Examples */}
-              <button
-                onClick={() => setActiveTab('practice')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'practice'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>Examples ({practiceProblemsList.length})</span>
-              </button>
+                  {/* 3. Interview Q&A */}
+                  <button
+                    onClick={() => setActiveTab('interview_qa')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'interview_qa'
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>💼 Interview Q&A ({lesson.interviewQuestions?.length || 0})</span>
+                  </button>
 
-              {/* 4. Practice */}
-              <button
-                onClick={() => setActiveTab('assignments')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'assignments'
-                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                <span>Practice ({lesson.programmingExercises?.length || 0})</span>
-              </button>
+                  {/* 4. Code Puzzles */}
+                  <button
+                    onClick={() => setActiveTab('practice')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'practice'
+                        ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <Code2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>🧩 Code Puzzles ({practiceProblemsList.length})</span>
+                  </button>
 
-              {/* 5. Interview Q&A */}
-              <button
-                onClick={() => setActiveTab('interview_qa')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'interview_qa'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Q&A ({lesson.interviewQuestions?.length || 0})</span>
-              </button>
+                  {/* 5. All */}
+                  <button
+                    onClick={() => setActiveTab('all')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'all'
+                        ? 'bg-slate-700 text-white'
+                        : 'bg-slate-900 text-slate-500 hover:text-slate-300 border border-slate-800'
+                    }`}
+                  >
+                    <ListFilter className="w-3.5 h-3.5" />
+                    <span>All Questions</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* 1. Lesson */}
+                  <button
+                    onClick={() => setActiveTab('lesson')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'lesson'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <BookOpen className="w-3.5 h-3.5 text-blue-400" />
+                    <span>Lesson</span>
+                  </button>
 
-              {/* 6. Quiz */}
-              <button
-                onClick={() => setActiveTab('quiz')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'quiz'
-                    ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-                }`}
-              >
-                <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
-                <span>Quiz ({lesson.miniQuiz?.length || 0})</span>
-              </button>
+                  {/* 2. 📋 Cheat Sheet */}
+                  <button
+                    onClick={() => setActiveTab('cheatsheet')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'cheatsheet'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <FileText className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Cheat Sheet</span>
+                  </button>
 
-              {/* 7. All */}
-              <button
-                onClick={() => setActiveTab('all')}
-                className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
-                  activeTab === 'all'
-                    ? 'bg-slate-700 text-white'
-                    : 'bg-slate-900 text-slate-500 hover:text-slate-300 border border-slate-800'
-                }`}
-              >
-                <ListFilter className="w-3.5 h-3.5" />
-                <span>All</span>
-              </button>
+                  {/* 3. Examples */}
+                  <button
+                    onClick={() => setActiveTab('practice')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'practice'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <Code2 className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Examples ({practiceProblemsList.length})</span>
+                  </button>
+
+                  {/* 4. Practice */}
+                  <button
+                    onClick={() => setActiveTab('assignments')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'assignments'
+                        ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Practice ({lesson.programmingExercises?.length || 0})</span>
+                  </button>
+
+                  {/* 5. Interview Q&A */}
+                  <button
+                    onClick={() => setActiveTab('interview_qa')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'interview_qa'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Q&A ({lesson.interviewQuestions?.length || 0})</span>
+                  </button>
+
+                  {/* 6. Quiz */}
+                  <button
+                    onClick={() => setActiveTab('quiz')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'quiz'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                        : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    }`}
+                  >
+                    <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
+                    <span>Quiz ({lesson.miniQuiz?.length || 0})</span>
+                  </button>
+
+                  {/* 7. All */}
+                  <button
+                    onClick={() => setActiveTab('all')}
+                    className={`px-3 sm:px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 active:scale-95 ${
+                      activeTab === 'all'
+                        ? 'bg-slate-700 text-white'
+                        : 'bg-slate-900 text-slate-500 hover:text-slate-300 border border-slate-800'
+                    }`}
+                  >
+                    <ListFilter className="w-3.5 h-3.5" />
+                    <span>All</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
           {/* ── TAB 1: LESSON OVERVIEW ── */}
-          {(activeTab === 'lesson' || activeTab === 'all') && (
+          {!isChallenge && (activeTab === 'lesson' || activeTab === 'all') && (
             <article className="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-5 sm:p-7 md:p-9 space-y-7 text-slate-300 leading-relaxed shadow-sm">
               {/* 1. Concept Overview */}
               {lesson.beginnerAnalogy && (
@@ -807,7 +936,7 @@ export default function JavaSubLessonPage() {
           )}
 
           {/* ── TAB: DEDICATED TOPIC CHEAT SHEET ── */}
-          {(activeTab === 'cheatsheet' || activeTab === 'all') && (
+          {!isChallenge && (activeTab === 'cheatsheet' || activeTab === 'all') && (
             <div className="space-y-4">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -915,7 +1044,9 @@ export default function JavaSubLessonPage() {
               {practiceProblemsList.length > 0 && (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <h2 className="text-base font-bold text-white">Practice Problems ({practiceProblemsList.length})</h2>
+                    <h2 className="text-base font-bold text-white">
+                      {isChallenge ? '🧩 Tricky Output & Concept Puzzles' : 'Practice Problems'} ({practiceProblemsList.length})
+                    </h2>
                   </div>
 
                   <div className="space-y-4">
@@ -1051,62 +1182,64 @@ export default function JavaSubLessonPage() {
               )}
 
               {/* Standard Code In Action Snippet */}
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
-                    <Code2 className="w-4 h-4" />
-                    <span>Primary Example: {lesson.codeSnippet.title}</span>
+              {!isChallenge && (
+                <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-sm uppercase tracking-wider">
+                      <Code2 className="w-4 h-4" />
+                      <span>Primary Example: {lesson.codeSnippet.title}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono text-slate-500 uppercase">Java 21</span>
+                      <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-slate-500 uppercase">Java 21</span>
-                    <CopyButton text={lesson.codeSnippet.code} label="Copy Code" />
+
+                  <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
+                    <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
+                      <code>{lesson.codeSnippet.code}</code>
+                    </pre>
                   </div>
-                </div>
 
-                <div className="bg-slate-950 border border-slate-800 rounded-xl p-3.5 overflow-x-auto">
-                  <pre className="font-mono text-xs sm:text-sm text-emerald-300 leading-relaxed">
-                    <code>{lesson.codeSnippet.code}</code>
-                  </pre>
-                </div>
-
-                {/* Line by line explanation */}
-                <div className="space-y-1.5">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                    Line-by-Line Breakdown:
-                  </h4>
+                  {/* Line by line explanation */}
                   <div className="space-y-1.5">
-                    {lesson.codeSnippet.lineByLineExplanation.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/60 text-xs flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2.5"
-                      >
-                        <code className="font-mono text-emerald-400 font-semibold shrink-0">
-                          {item.line}
-                        </code>
-                        <span className="text-slate-300">{item.explanation}</span>
-                      </div>
-                    ))}
+                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                      Line-by-Line Breakdown:
+                    </h4>
+                    <div className="space-y-1.5">
+                      {lesson.codeSnippet.lineByLineExplanation.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="p-2 rounded-lg bg-slate-950/60 border border-slate-800/60 text-xs flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-2.5"
+                        >
+                          <code className="font-mono text-emerald-400 font-semibold shrink-0">
+                            {item.line}
+                          </code>
+                          <span className="text-slate-300">{item.explanation}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* Output */}
-                {lesson.codeSnippet.output && (
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                        Console Output:
+                  {/* Output */}
+                  {lesson.codeSnippet.output && (
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                          Console Output:
+                        </div>
+                        <CopyButton text={lesson.codeSnippet.output} label="Copy Output" />
                       </div>
-                      <CopyButton text={lesson.codeSnippet.output} label="Copy Output" />
+                      <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
+                        {lesson.codeSnippet.output}
+                      </div>
                     </div>
-                    <div className="bg-black/70 border border-slate-800 rounded-xl p-3 font-mono text-xs text-slate-300 whitespace-pre">
-                      {lesson.codeSnippet.output}
-                    </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
 
               {/* Extra Real-World Code Examples if present */}
-              {lesson.codeExamples && lesson.codeExamples.length > 0 && (
+              {!isChallenge && lesson.codeExamples && lesson.codeExamples.length > 0 && (
                 <div className="space-y-4">
                   <div className="text-xs font-bold uppercase tracking-wider text-blue-400 flex items-center gap-1.5">
                     <Code2 className="w-4 h-4" />
@@ -1151,7 +1284,9 @@ export default function JavaSubLessonPage() {
                 <>
                   {/* Clean Minimal Header */}
                   <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                    <h2 className="text-base font-bold text-white">Coding Problems ({lesson.programmingExercises.length})</h2>
+                    <h2 className="text-base font-bold text-white">
+                      {isChallenge ? '🎯 Capstone Coding Challenges' : 'Coding Problems'} ({lesson.programmingExercises.length})
+                    </h2>
                     <span className="text-xs text-slate-400 font-mono">
                       {lesson.programmingExercises.filter((_, idx) => solvedAssignments.includes(`${lesson.id}-ex-${idx}`)).length} / {lesson.programmingExercises.length} Solved
                     </span>
@@ -1299,7 +1434,9 @@ export default function JavaSubLessonPage() {
             <div className="space-y-4">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <h2 className="text-base font-bold text-white">Interview Questions ({lesson.interviewQuestions.length})</h2>
+                  <h2 className="text-base font-bold text-white">
+                    {isChallenge ? '💼 Real-World Interview Q&A' : 'Interview Questions'} ({lesson.interviewQuestions.length})
+                  </h2>
                 </div>
 
                 <div className="space-y-4">
@@ -1494,7 +1631,9 @@ export default function JavaSubLessonPage() {
             <div className="space-y-4">
               <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
                 <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                  <h2 className="text-base font-bold text-white">Quiz Questions ({lesson.miniQuiz.length})</h2>
+                  <h2 className="text-base font-bold text-white">
+                    {isChallenge ? '📝 Capstone Multiple-Choice Assessment' : 'Quiz Questions'} ({lesson.miniQuiz.length})
+                  </h2>
                 </div>
 
                 <div className="space-y-4">
