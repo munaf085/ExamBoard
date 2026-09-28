@@ -9,8 +9,8 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
   "extends-and-is-a": {
     "id": "extends-and-is-a",
     "moduleId": "java-inheritance",
-    "moduleTitle": "11. Inheritance & Hierarchy",
-    "lessonNumber": "Lesson 11.1",
+    "moduleTitle": "13. Inheritance & Hierarchy",
+    "lessonNumber": "Lesson 13.1",
     "title": "The extends Keyword & IS-A Relationship",
     "subtitle": "Class derivation, code reuse, single inheritance in Java, and Object as the root class",
     "estimatedMinutes": 16,
@@ -574,8 +574,8 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
   "super-constructor-chaining": {
     "id": "super-constructor-chaining",
     "moduleId": "java-inheritance",
-    "moduleTitle": "11. Inheritance & Hierarchy",
-    "lessonNumber": "Lesson 11.2",
+    "moduleTitle": "13. Inheritance & Hierarchy",
+    "lessonNumber": "Lesson 13.2",
     "title": "super() Constructor Chaining & Execution Order",
     "subtitle": "Top-down constructor invocation, the super() call, parameter passing to parents, and JVM instance initialization",
     "estimatedMinutes": 18,
@@ -1133,8 +1133,8 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
   "method-overriding-rules": {
     "id": "method-overriding-rules",
     "moduleId": "java-inheritance",
-    "moduleTitle": "11. Inheritance & Hierarchy",
-    "lessonNumber": "Lesson 11.3",
+    "moduleTitle": "13. Inheritance & Hierarchy",
+    "lessonNumber": "Lesson 13.3",
     "title": "Method Overriding & @Override Annotation",
     "subtitle": "Redefining superclass behavior, signature matching, covariant return types, access visibility rules, and exception constraints",
     "estimatedMinutes": 18,
@@ -1697,8 +1697,8 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
   "final-keyword-in-oop": {
     "id": "final-keyword-in-oop",
     "moduleId": "java-inheritance",
-    "moduleTitle": "11. Inheritance & Hierarchy",
-    "lessonNumber": "Lesson 11.4",
+    "moduleTitle": "13. Inheritance & Hierarchy",
+    "lessonNumber": "Lesson 13.4",
     "title": "The final Keyword with Classes, Methods & Fields",
     "subtitle": "Immutability guarantees, preventing inheritance, sealing methods against modification, and blank final variables",
     "estimatedMinutes": 16,

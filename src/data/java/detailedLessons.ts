@@ -81,6 +81,7 @@ export interface DetailedLesson {
   };
 }
 
+import { JAVA_MODULES } from './curriculum';
 import { fundamentalsLessons } from './sublessons/fundamentalsLessons';
 import { dataTypesLessons } from './sublessons/dataTypesLessons';
 import { operatorsLessons } from './sublessons/operatorsLessons';
@@ -400,9 +401,16 @@ export function getAllDetailedLessons(): DetailedLesson[] {
   for (const lesson of Object.values(DETAILED_LESSONS)) {
     uniqueLessons.set(lesson.id, lesson);
   }
-  return Array.from(uniqueLessons.values()).sort((a, b) =>
-    a.lessonNumber.localeCompare(b.lessonNumber, undefined, { numeric: true })
-  );
+  const moduleIndexMap = new Map<string, number>();
+  JAVA_MODULES.forEach((m, idx) => {
+    moduleIndexMap.set(m.id.toLowerCase(), idx);
+  });
+  return Array.from(uniqueLessons.values()).sort((a, b) => {
+    const modA = moduleIndexMap.get(a.moduleId.toLowerCase()) ?? 999;
+    const modB = moduleIndexMap.get(b.moduleId.toLowerCase()) ?? 999;
+    if (modA !== modB) return modA - modB;
+    return a.lessonNumber.localeCompare(b.lessonNumber, undefined, { numeric: true });
+  });
 }
 
 export function getLessonsForModule(moduleId: string): DetailedLesson[] {

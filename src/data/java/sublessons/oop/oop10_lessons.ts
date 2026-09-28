@@ -9,8 +9,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "encapsulation-principles": {
     "id": "encapsulation-principles",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "10. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 10.1",
+    "moduleTitle": "12. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 12.1",
     "title": "The Principle of Encapsulation & Data Hiding",
     "subtitle": "Bundling data with behavior, restricting direct state manipulation, maintaining class invariants, and reducing architectural coupling",
     "estimatedMinutes": 18,
@@ -583,8 +583,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "access-modifiers-deep-dive": {
     "id": "access-modifiers-deep-dive",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "10. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 10.2",
+    "moduleTitle": "12. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 12.2",
     "title": "Java's 4 Access Modifiers",
     "subtitle": "Private, package-private (default), protected, and public scopes across classes, packages, and compilation units",
     "estimatedMinutes": 18,
@@ -1157,8 +1157,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "getters-setters-defensive-copying": {
     "id": "getters-setters-defensive-copying",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "10. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 10.3",
+    "moduleTitle": "12. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 12.3",
     "title": "Getters, Setters & Defensive Copying",
     "subtitle": "JavaBeans conventions, validation guards, and preventing internal representation leaks with mutable reference types",
     "estimatedMinutes": 18,
@@ -1732,8 +1732,8 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
   "immutable-class-pattern": {
     "id": "immutable-class-pattern",
     "moduleId": "java-encapsulation",
-    "moduleTitle": "10. Encapsulation & Data Hiding",
-    "lessonNumber": "Lesson 10.4",
+    "moduleTitle": "12. Encapsulation & Data Hiding",
+    "lessonNumber": "Lesson 12.4",
     "title": "Immutable Class Design Pattern",
     "subtitle": "Thread-safe, side-effect-free architecture using private final fields, defensive copying, and functional 'with-er' methods",
     "estimatedMinutes": 18,

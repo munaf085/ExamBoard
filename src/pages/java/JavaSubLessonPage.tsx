@@ -289,42 +289,32 @@ export default function JavaSubLessonPage() {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col pb-24 md:pb-12">
       {/* ── STICKY TOP APP BAR (MOBILE FIRST) ── */}
       <header className="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-800/90 px-3 sm:px-4 py-2.5 flex items-center justify-between shadow-md">
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 -ml-1 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition lg:hidden active:scale-95"
+            className="p-2 -ml-1 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 transition lg:hidden active:scale-95 shrink-0"
             aria-label="Open syllabus menu"
           >
             <Menu className="w-5 h-5 text-blue-400" />
           </button>
 
-          <Link
-            to="/java/syllabus"
-            className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition font-medium"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Syllabus</span>
-          </Link>
-
-          <div className="flex items-center gap-1.5 sm:gap-2 truncate">
-            <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30 shrink-0">
-              {formatLessonNum(lesson.lessonNumber)}
+          {/* Breadcrumb Navigation */}
+          <nav className="flex items-center gap-2 text-xs sm:text-sm font-medium truncate">
+            <Link
+              to="/java/syllabus"
+              className="flex items-center gap-1 text-slate-400 hover:text-white transition shrink-0"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Syllabus</span>
+            </Link>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300 truncate">
+              {lesson.moduleTitle.replace(/^\d+\.\s*/, '')}
             </span>
-            <span className="text-xs sm:text-sm font-semibold text-slate-200 truncate max-w-[150px] sm:max-w-xs md:max-w-md">
-              {lesson.title}
-            </span>
-          </div>
+          </nav>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Quick link to Revision cheat sheets */}
-          <Link
-            to="/java/revision"
-            className="hidden sm:flex items-center gap-1 text-xs text-slate-400 hover:text-blue-300 px-2.5 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700 bg-slate-900/80 transition"
-          >
-            <FileText className="w-3.5 h-3.5 text-blue-400" />
-            <span>All Cheatsheets</span>
-          </Link>
+        <div className="flex items-center gap-2 shrink-0">
 
           {/* Rating Badge */}
           {currentRating && (
@@ -527,10 +517,10 @@ export default function JavaSubLessonPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-1.5">
               <div className="flex items-center gap-2 text-xs">
                 <span className="font-bold px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30 text-[11px]">
-                  {formatLessonNum(lesson.lessonNumber)}
+                  Lesson {formatLessonNum(lesson.lessonNumber)}
                 </span>
                 <span className="text-slate-400 font-medium truncate max-w-[200px] sm:max-w-xs">
-                  {lesson.moduleTitle}
+                  {lesson.moduleTitle.replace(/^\d+\.\s*/, '')}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-[11px] text-slate-500">

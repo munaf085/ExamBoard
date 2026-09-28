@@ -10,8 +10,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
   "compile-vs-runtime-polymorphism": {
     "id": "compile-vs-runtime-polymorphism",
     "moduleId": "java-polymorphism",
-    "moduleTitle": "12. Polymorphism & Dispatch",
-    "lessonNumber": "Lesson 12.1",
+    "moduleTitle": "14. Polymorphism & Dispatch",
+    "lessonNumber": "Lesson 14.1",
     "title": "Compile-Time vs Runtime Polymorphism",
     "subtitle": "Static binding vs dynamic dispatch, method overloading vs method overriding, and bytecode invocation opcodes",
     "estimatedMinutes": 18,
@@ -538,8 +538,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
   "dynamic-method-dispatch": {
     "id": "dynamic-method-dispatch",
     "moduleId": "java-polymorphism",
-    "moduleTitle": "12. Polymorphism & Dispatch",
-    "lessonNumber": "Lesson 12.2",
+    "moduleTitle": "14. Polymorphism & Dispatch",
+    "lessonNumber": "Lesson 14.2",
     "title": "Dynamic Method Dispatch & Virtual Method Invocation",
     "subtitle": "How the JVM invokes methods at runtime: the vtable (virtual method table), invokevirtual bytecode, and object headers",
     "estimatedMinutes": 18,
@@ -1064,8 +1064,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
   "casting-and-classcastexception": {
     "id": "casting-and-classcastexception",
     "moduleId": "java-polymorphism",
-    "moduleTitle": "12. Polymorphism & Dispatch",
-    "lessonNumber": "Lesson 12.3",
+    "moduleTitle": "14. Polymorphism & Dispatch",
+    "lessonNumber": "Lesson 14.3",
     "title": "Upcasting, Downcasting & ClassCastException",
     "subtitle": "Widening reference conversion vs narrowing reference conversion, heap object safety, and handling ClassCastException",
     "estimatedMinutes": 18,
@@ -1593,8 +1593,8 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
   "instanceof-and-pattern-matching": {
     "id": "instanceof-and-pattern-matching",
     "moduleId": "java-polymorphism",
-    "moduleTitle": "12. Polymorphism & Dispatch",
-    "lessonNumber": "Lesson 12.4",
+    "moduleTitle": "14. Polymorphism & Dispatch",
+    "lessonNumber": "Lesson 14.4",
     "title": "The instanceof Operator & Modern Pattern Matching",
     "subtitle": "Runtime type testing, null safety, modern Java pattern matching syntax, and scoping rules",
     "estimatedMinutes": 18,
