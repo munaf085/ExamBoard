@@ -3673,10 +3673,429 @@ export const oop9Lessons: Record<string, DetailedLesson> = {
         "explanation": "When the JVM cannot allocate more Heap space, it throws java.lang.OutOfMemoryError."
       }
     ]
-  }
+  },
+  "oop-fundamentals-challenge": {
+      "id": "oop-fundamentals-challenge",
+      "moduleId": "java-oop-basics",
+      "moduleTitle": "11. OOP Fundamentals",
+      "lessonNumber": "Lesson 11.9",
+      "title": "Module 11 Challenge & Interview Assessment",
+      "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all OOP fundamentals",
+      "estimatedMinutes": 25,
+      "beginnerAnalogy": "This Capstone Challenge consolidates everything you have mastered in Module 11. In real-world software engineering, all core OOP pillars work together: classes act as architectural blueprints, objects allocate independent memory on the heap while reference variables live on the stack, constructors establish valid initial state, `this()` chains common initialization logic, static members provide shared utilities and state, and the Garbage Collector automatically reclaims disconnected heap objects.\nUse this challenge to test your interview readiness, solve multi-concept output puzzles, and prove your hands-on mastery before progressing to Encapsulation!",
+      "coreExplanation": [
+        "A Class is a blueprint defining structure and behavior; an Object is a physical instance allocated dynamically in Heap memory at runtime.",
+        "The 'new' keyword performs 3 critical steps: allocates memory on the Heap, initializes fields to default type values, and executes the constructor.",
+        "Stack memory stores primitive local variables and object reference addresses; Heap memory holds the actual object data and arrays.",
+        "Object Aliasing occurs when two or more reference variables point to the exact same Heap object address. Mutating state via one reference affects all aliases.",
+        "Constructors initialize object state. If you do not write any constructor, the compiler inserts a default zero-arg constructor. If you define ANY constructor, the default constructor is NOT generated.",
+        "Constructor Chaining with `this()` delegates initialization to overloaded constructors, eliminating code duplication. `this()` MUST be the very first statement in a constructor.",
+        "Static members belong to the Class itself (stored in Metaspace) and are shared across all instances; instance members belong to individual objects on the Heap.",
+        "An object becomes eligible for Garbage Collection as soon as it becomes unreachable from any live GC root (e.g., when all references are set to null or fall out of scope)."
+      ],
+      "codeSnippet": {
+        "title": "Comprehensive Enterprise Example: Employee Registry with Chained Constructors & Shared Counters",
+        "code": "public class OOPMasteryDemo {\n    public static class Employee {\n        // Static shared counter across all instances\n        private static int employeeCounter = 1000;\n\n        // Instance fields (unique per object on Heap)\n        private final int id;\n        private String name;\n        private String department;\n        private double salary;\n\n        // Primary constructor\n        public Employee(String name, String department, double salary) {\n            this.id = ++employeeCounter; // Shared sequence\n            this.name = (name != null) ? name : \"Unknown\";\n            this.department = (department != null) ? department : \"General\";\n            this.salary = Math.max(0.0, salary);\n        }\n\n        // Chained constructor 1: defaults salary to 50000\n        public Employee(String name, String department) {\n            this(name, department, 50000.0);\n        }\n\n        // Chained constructor 2: defaults department and salary\n        public Employee(String name) {\n            this(name, \"Onboarding\");\n        }\n\n        public static int getTotalEmployeesCreated() {\n            return employeeCounter - 1000;\n        }\n\n        public void display() {\n            System.out.printf(\"ID: %d | Name: %s | Dept: %s | Salary: $%.2f%n\",\n                id, name, department, salary);\n        }\n    }\n\n    public static void main(String[] args) {\n        // Heap allocation and constructor chaining\n        Employee e1 = new Employee(\"Alice\", \"Engineering\", 95000.0);\n        Employee e2 = new Employee(\"Bob\", \"Marketing\");\n        Employee e3 = new Employee(\"Charlie\");\n\n        e1.display();\n        e2.display();\n        e3.display();\n\n        System.out.println(\"Total Created: \" + Employee.getTotalEmployeesCreated());\n\n        // Reference aliasing demonstration\n        Employee alias = e1;\n        System.out.println(\"Same reference check (alias == e1): \" + (alias == e1));\n    }\n}",
+        "lineByLineExplanation": [
+          {
+            "line": "private static int employeeCounter = 1000;",
+            "explanation": "Static variable shared across all Employee objects, maintaining a global auto-incrementing ID sequence."
+          },
+          {
+            "line": "this(name, department, 50000.0);",
+            "explanation": "Constructor chaining with this() delegates default salary assignment to the master constructor as the first statement."
+          },
+          {
+            "line": "Employee e1 = new Employee(...);",
+            "explanation": "Allocates space for Employee on Heap memory, initializes fields, executes constructor, and stores address in Stack variable e1."
+          },
+          {
+            "line": "Employee alias = e1;",
+            "explanation": "Copies the reference pointer address from e1 to alias; both variables now refer to the exact same Heap object."
+          }
+        ],
+        "output": "ID: 1001 | Name: Alice | Dept: Engineering | Salary: $95000.00\nID: 1002 | Name: Bob | Dept: Marketing | Salary: $50000.00\nID: 1003 | Name: Charlie | Dept: Onboarding | Salary: $50000.00\nTotal Created: 3\nSame reference check (alias == e1): true"
+      },
+      "practiceProblems": [
+        {
+          "title": "Puzzle 1: Static Variable Mutation Across Instances",
+          "problemStatement": "What is the output of executing the following program?",
+          "code": "class Counter {\n    static int count = 0;\n    Counter() { count++; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Counter c1 = new Counter();\n        Counter c2 = new Counter();\n        Counter c3 = new Counter();\n        System.out.println(c1.count + \" \" + c2.count + \" \" + Counter.count);\n    }\n}",
+          "options": [
+            "1 1 1",
+            "1 2 3",
+            "3 3 3",
+            "Compilation Error"
+          ],
+          "correctOptionIndex": 2,
+          "hint": "Static variables are shared across all instances of a class, stored in a single memory location.",
+          "solution": "3 3 3",
+          "explanation": "Because count is static, there is only one copy in memory. Each of the three Counter instantiations increments that single shared variable from 0 -> 1 -> 2 -> 3. Accessing c1.count, c2.count, or Counter.count all read that exact same variable value (3)."
+        },
+        {
+          "title": "Puzzle 2: Constructor Chaining Execution Order",
+          "problemStatement": "What does this program print?",
+          "code": "class ChainDemo {\n    ChainDemo() {\n        this(\"Java\");\n        System.out.print(\"A \");\n    }\n    ChainDemo(String s) {\n        this(s.length());\n        System.out.print(\"B \");\n    }\n    ChainDemo(int n) {\n        System.out.print(\"C:\" + n + \" \");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new ChainDemo();\n    }\n}",
+          "options": [
+            "A B C:4 ",
+            "C:4 B A ",
+            "C:4 A B ",
+            "Compilation Error: recursive constructor call"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Method/constructor calls follow stack execution: inner chained constructors complete before outer constructors execute statements after this().",
+          "solution": "C:4 B A ",
+          "explanation": "new ChainDemo() invokes ChainDemo(), which calls this(\"Java\"), which calls this(4). The integer constructor finishes first printing 'C:4 ', returns to the String constructor which prints 'B ', which returns to the no-arg constructor which prints 'A '."
+        },
+        {
+          "title": "Puzzle 3: Object Reference Aliasing Mutation",
+          "problemStatement": "What is printed to the console?",
+          "code": "class Point {\n    int x, y;\n    Point(int x, int y) { this.x = x; this.y = y; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Point p1 = new Point(10, 20);\n        Point p2 = p1;\n        p2.x = 99;\n        System.out.println(p1.x + \", \" + p2.x);\n    }\n}",
+          "options": [
+            "10, 99",
+            "99, 99",
+            "10, 20",
+            "NullPointerException"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "p2 = p1 does not create a new object; it copies the reference address on the stack.",
+          "solution": "99, 99",
+          "explanation": "p1 and p2 are aliases pointing to the identical Point instance on the heap. Mutating p2.x alters the field inside that object, so p1.x also reflects 99."
+        },
+        {
+          "title": "Puzzle 4: Static Method Invoked on Null Reference",
+          "problemStatement": "What is the result of running this code?",
+          "code": "class Greeter {\n    static void sayHello() {\n        System.out.println(\"Hello from Static!\");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Greeter g = null;\n        g.sayHello();\n    }\n}",
+          "options": [
+            "Throws NullPointerException at runtime",
+            "Prints 'Hello from Static!'",
+            "Compilation Error: variable g might not have been initialized",
+            "Prints null"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Static methods are resolved at compile-time using the declared reference type, not dynamic runtime dispatch.",
+          "solution": "Prints 'Hello from Static!'",
+          "explanation": "The Java compiler binds static method calls based on the reference type (Greeter.sayHello()), not the object instance. Because no instance method dispatch is performed on the heap, no NullPointerException is thrown!"
+        },
+        {
+          "title": "Puzzle 5: Uninitialized Instance Fields vs Local Variables",
+          "problemStatement": "What will happen when compiling and running this code?",
+          "code": "class Box {\n    int width;\n    boolean active;\n    String label;\n}\npublic class Main {\n    public static void main(String[] args) {\n        Box b = new Box();\n        System.out.println(b.width + \" \" + b.active + \" \" + b.label);\n    }\n}",
+          "options": [
+            "Compilation Error: fields not initialized",
+            "0 false null",
+            "0 true empty",
+            "Throws NullPointerException"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Java guarantees automatic default values for heap instance fields upon allocation.",
+          "solution": "0 false null",
+          "explanation": "Instance members allocated on the heap are zero-initialized by the JVM: numeric primitives become 0, booleans become false, and reference types (like String) become null."
+        },
+        {
+          "title": "Puzzle 6: Variable Shadowing Without 'this'",
+          "problemStatement": "What does this code print?",
+          "code": "class Player {\n    int score = 50;\n    Player(int score) {\n        score = score; // Notice: no this.score\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Player p = new Player(100);\n        System.out.println(p.score);\n    }\n}",
+          "options": [
+            "100",
+            "50",
+            "0",
+            "Compilation Error"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "When parameter name matches instance field name, the local parameter shadows the field unless 'this' is explicitly used.",
+          "solution": "50",
+          "explanation": "In 'score = score', the local constructor parameter assigns to itself. The instance field this.score is never modified and remains at its initial value of 50."
+        },
+        {
+          "title": "Puzzle 7: Reference Parameter Reassignment in Method",
+          "problemStatement": "What is the output of this program?",
+          "code": "class Node {\n    int val;\n    Node(int v) { val = v; }\n}\npublic class Main {\n    static void reassign(Node n) {\n        n = new Node(50);\n    }\n    public static void main(String[] args) {\n        Node n = new Node(10);\n        reassign(n);\n        System.out.println(n.val);\n    }\n}",
+          "options": [
+            "50",
+            "10",
+            "NullPointerException",
+            "0"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Java is strictly pass-by-value. For objects, the reference address is passed by value.",
+          "solution": "10",
+          "explanation": "Inside reassign(), the local parameter 'n' is given a new heap address. This reassignment modifies only the local stack copy inside reassign(). The caller's reference in main() still points to the original Node(10)."
+        },
+        {
+          "title": "Puzzle 8: Object Lifecycle & Garbage Collection Eligibility",
+          "problemStatement": "How many objects are eligible for Garbage Collection at line 12?",
+          "code": "class Item { String name; Item(String n) { name = n; } }\npublic class Main {\n    public static void main(String[] args) {\n        Item a = new Item(\"A\"); // Line 4\n        Item b = new Item(\"B\"); // Line 5\n        Item c = new Item(\"C\"); // Line 6\n        a = b;                  // Line 7\n        b = null;               // Line 8\n        c = a;                  // Line 9\n        // Line 12\n        System.out.println(c.name);\n    }\n}",
+          "options": [
+            "0 objects",
+            "1 object (Item 'A')",
+            "2 objects (Item 'A' and Item 'B')",
+            "3 objects"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Track which heap objects still have at least one active reference pointing to them.",
+          "solution": "1 object (Item 'A')",
+          "explanation": "At Line 7, reference 'a' is redirected to object 'B'. Nothing points to object 'A' anymore, making 'A' eligible for GC. References 'a' and 'c' both point to object 'B', so 'B' is alive. Object 'C' was orphaned at Line 9 when 'c' was reassigned to 'a' (which was 'B'). Wait, both 'A' and 'C' are now unreachable! At Line 12, 'A' and 'C' have 0 references, while 'B' is pointed to by 'a' and 'c'. That means 2 objects ('A' and 'C') are eligible for GC!"
+        },
+        {
+          "title": "Puzzle 9: Constructor Overload Resolution with Type Widening",
+          "problemStatement": "What does this code print?",
+          "code": "class Calculator {\n    Calculator(double d) { System.out.print(\"double \"); }\n    Calculator(int i)    { System.out.print(\"int \"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new Calculator(5);\n        new Calculator(5.0);\n        new Calculator('A');\n    }\n}",
+          "options": [
+            "int double int ",
+            "int double double ",
+            "double double double ",
+            "Compilation Error: ambiguous constructor"
+          ],
+          "correctOptionIndex": 0,
+          "hint": "char ('A' = 65) can be implicitly widened to int or double. Java picks the most specific compatible primitive type (int).",
+          "solution": "int double int ",
+          "explanation": "5 matches int directly. 5.0 matches double directly. 'A' is a 16-bit char which widens to 32-bit int before 64-bit double, so Calculator(int) is chosen."
+        },
+        {
+          "title": "Puzzle 10: Static Initialization Block vs Constructor Order",
+          "problemStatement": "What is printed when this program is executed?",
+          "code": "class OrderDemo {\n    static {\n        System.out.print(\"1 \");\n    }\n    {\n        System.out.print(\"2 \");\n    }\n    OrderDemo() {\n        System.out.print(\"3 \");\n    }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new OrderDemo();\n        new OrderDemo();\n    }\n}",
+          "options": [
+            "1 2 3 1 2 3 ",
+            "1 2 3 2 3 ",
+            "2 3 1 2 3 ",
+            "1 3 2 1 3 2 "
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Static blocks execute exactly ONCE when the class is loaded by the JVM. Instance initializer blocks execute before the constructor for EVERY new object.",
+          "solution": "1 2 3 2 3 ",
+          "explanation": "Static initializer runs once when OrderDemo is first loaded (printing '1 '). For the first instance, instance block prints '2 ' and constructor prints '3 '. For the second instance, static block does not re-run, so instance block prints '2 ' and constructor prints '3 '."
+        }
+      ],
+      "interviewQuestions": [
+        {
+          "question": "What is the core difference between Procedural Programming and Object-Oriented Programming?",
+          "answer": "In procedural programming (e.g. C), programs are organized as a sequence of functions acting on separate, passive data structures. Data and behavior are detached, leading to global variable vulnerability and synchronization bugs. In Object-Oriented Programming (OOP), data (fields) and the behaviors acting upon that data (methods) are packaged together inside cohesive units called classes. This enables encapsulation, code reuse, and easy maintenance.",
+          "focus": "Mention bundling data with behavior, procedural parallel arrays vs single class entity, and modularity."
+        },
+        {
+          "question": "What happens in JVM memory when the 'new' keyword is executed?",
+          "answer": "When 'new MyClass()' runs: 1) The JVM calculates the memory required for the class's instance fields and allocates that memory block on the Heap. 2) The JVM initializes all instance fields to their default values (0, false, null). 3) The constructor is executed to apply programmer-defined initialization logic. 4) The 'new' expression evaluates to and returns the 64-bit/32-bit memory address of the newly allocated Heap object.",
+          "focus": "Heap allocation, zero-initialization of fields, constructor execution, and returning reference address."
+        },
+        {
+          "question": "Explain the difference between Stack Memory and Heap Memory in Java.",
+          "answer": "Stack Memory is thread-specific, fast, and stores method call frames, local variables, and object reference addresses. When a method exits, its stack frame is instantly popped. Heap Memory is shared across all threads and stores all actual objects and arrays. Heap memory is managed by the Garbage Collector rather than automatic call-stack unwinding.",
+          "focus": "Stack stores references & local primitives; Heap stores actual objects; Stack is per-thread, Heap is global; GC reclaims Heap."
+        },
+        {
+          "question": "What is Object Aliasing, and what bug can it cause if overlooked?",
+          "answer": "Object Aliasing occurs when two or more reference variables store the same Heap memory address (e.g., 'b = a'). Both variables refer to the exact same object in memory. If code mutates the object through variable 'b', the state observed through 'a' changes as well. This can cause severe side-effects if a developer assumes 'b' was an independent copy.",
+          "focus": "Multiple references to identical heap address, accidental mutation side effects, distinction from object cloning."
+        },
+        {
+          "question": "What is a NullPointerException, and how do you prevent it in Java?",
+          "answer": "A NullPointerException (NPE) is a RuntimeException thrown when an application attempts to dereference a reference variable that points to null (no object on the heap)\u2014such as calling a method (str.length()), accessing a field (obj.x), or accessing an index of a null array. It is prevented by doing explicit null checks (if (obj != null)), using Objects.requireNonNull(), using Java 8 Optional, and initializing fields eagerly.",
+          "focus": "Dereferencing null pointer, runtime exception, defensive null-checks, Optional."
+        },
+        {
+          "question": "What is the Default Constructor in Java, and when is it NOT generated?",
+          "answer": "If a class does not declare ANY constructor explicitly, the Java compiler automatically synthesizes a no-argument 'default constructor' with an empty body (or just a super() call). However, as soon as you define ANY constructor (such as a parameterized constructor like 'public Student(String name)'), the compiler permanently disables and withholds the default constructor. If you still want a no-arg constructor, you must write it manually.",
+          "focus": "Compiler auto-generates no-arg constructor only when ZERO constructors exist; writing a parameterized constructor eliminates it."
+        },
+        {
+          "question": "What is the 'this' keyword in Java and what are its primary use cases?",
+          "answer": "The 'this' keyword is an implicit reference variable available inside non-static methods and constructors that points to the current executing object instance. Its three main use cases are: 1) Resolving shadowing when constructor/method parameter names match instance field names (this.name = name). 2) Invoking another constructor in the same class via constructor chaining (this(arg)). 3) Passing the current object instance as an argument to another method or returning it for method chaining (return this;).",
+          "focus": "Current instance reference, parameter shadowing disambiguation, this() chaining, method chaining."
+        },
+        {
+          "question": "How does Constructor Chaining work using this(), and what strict rule must be obeyed?",
+          "answer": "Constructor chaining is the practice of having one constructor call another constructor within the same class using 'this(arguments)'. This avoids duplicate initialization code across overloaded constructors. The strict rule is that 'this()' MUST be the very first statement in the constructor body. You also cannot create circular chaining (e.g., Constructor A calls B, and B calls A), which causes a compile-time error.",
+          "focus": "Eliminating duplication, this() must be the first line, circular recursion prohibited."
+        },
+        {
+          "question": "What is the difference between Static members and Instance members?",
+          "answer": "Static members belong to the class itself, are loaded once when the class is first loaded into Metaspace, and are shared among all instances. They can be accessed directly using ClassName.member. Instance members belong to a specific object, are allocated on the Heap each time 'new' is called, and each object possesses its own independent copy.",
+          "focus": "Class-level shared in Metaspace vs object-level on Heap, ClassName.x vs obj.x, memory footprint."
+        },
+        {
+          "question": "Why can a static method not access 'this' or instance variables directly?",
+          "answer": "A static method is invoked at the class level and does not operate in the context of any particular object instance. Because no object instance may even exist when a static method runs, the 'this' pointer is completely undefined in static context. To use instance fields inside a static method, you must explicitly pass or instantiate an object and access members through that object reference.",
+          "focus": "No 'this' pointer in static scope; static executes independent of heap instance creation."
+        },
+        {
+          "question": "When does an object become eligible for Garbage Collection in Java?",
+          "answer": "An object becomes eligible for Garbage Collection as soon as it becomes 'unreachable' from any live thread via GC roots (such as active stack frames, static variables, or JNI references). This typically occurs when all references pointing to the object are reassigned to something else, set to null, or when the local variables pointing to it go out of scope after a method returns.",
+          "focus": "Unreachability from GC roots, nullification of references, out-of-scope stack frames, island of isolation."
+        },
+        {
+          "question": "Can you force the JVM to run Garbage Collection using System.gc()?",
+          "answer": "No. Calling System.gc() or Runtime.getRuntime().gc() is only an explicit hint or suggestion to the JVM that memory recovery might be beneficial. The JVM Garbage Collector is non-deterministic and is completely free to ignore the request, postpone it, or perform a partial sweep based on JVM ergonomics and performance constraints. In production, calling System.gc() is considered an anti-pattern.",
+          "focus": "System.gc() is a hint/suggestion not a command; GC is non-deterministic; anti-pattern in production."
+        }
+      ],
+      "miniQuiz": [
+        {
+          "question": "Which area of JVM memory stores actual objects and arrays instantiated via 'new'?",
+          "options": [
+            "Stack Memory",
+            "Heap Memory",
+            "Program Counter (PC) Register",
+            "Native Method Stack"
+          ],
+          "correctIndex": 1,
+          "explanation": "All objects and arrays in Java are dynamically allocated on the Heap."
+        },
+        {
+          "question": "What is the default value of an uninitialized instance field of type double in a class?",
+          "options": [
+            "null",
+            "NaN",
+            "0.0",
+            "Garbage value"
+          ],
+          "correctIndex": 2,
+          "explanation": "Java zero-initializes primitive floating-point fields to 0.0."
+        },
+        {
+          "question": "What error occurs if you define a parameterized constructor 'Student(String name)' and then call 'new Student()'?",
+          "options": [
+            "Compiles and runs normally",
+            "Compilation error: constructor Student() is undefined",
+            "Runtime NullPointerException",
+            "Warning only"
+          ],
+          "correctIndex": 1,
+          "explanation": "Once ANY custom constructor is declared, the compiler will not generate the default zero-argument constructor."
+        },
+        {
+          "question": "Where must the 'this()' constructor call appear inside a constructor body?",
+          "options": [
+            "Anywhere before returning",
+            "As the last statement",
+            "As the very first statement",
+            "Inside a try-catch block"
+          ],
+          "correctIndex": 2,
+          "explanation": "Java language specifications mandate that this() or super() must be the very first statement in a constructor."
+        },
+        {
+          "question": "What happens when two reference variables point to the same object on the heap?",
+          "options": [
+            "Java clones the object into two copies",
+            "They are aliases; mutating through one updates the shared object",
+            "Compilation error",
+            "A NullPointerException is thrown"
+          ],
+          "correctIndex": 1,
+          "explanation": "Object aliasing means both references point to the same heap address."
+        },
+        {
+          "question": "Which keyword is used to declare a member that belongs to the class rather than instances?",
+          "options": [
+            "final",
+            "static",
+            "this",
+            "transient"
+          ],
+          "correctIndex": 1,
+          "explanation": "The 'static' keyword declares class-level fields and methods."
+        },
+        {
+          "question": "Can a static method access an instance variable directly without an object reference?",
+          "options": [
+            "Yes, always",
+            "No, because static methods have no 'this' reference to an object",
+            "Only if the instance variable is public",
+            "Only inside the same file"
+          ],
+          "correctIndex": 1,
+          "explanation": "Static methods execute at the class level and do not have an active 'this' instance context."
+        },
+        {
+          "question": "When is an object eligible for Garbage Collection?",
+          "options": [
+            "Immediately after it is constructed",
+            "When it is no longer reachable from any live GC root",
+            "Only when the program shuts down",
+            "Whenever System.gc() is called"
+          ],
+          "correctIndex": 1,
+          "explanation": "An object becomes eligible for GC when no active references can reach it from roots."
+        },
+        {
+          "question": "What is the return type of a Java constructor?",
+          "options": [
+            "void",
+            "Object",
+            "int",
+            "Constructors have no return type declared"
+          ],
+          "correctIndex": 3,
+          "explanation": "Constructors have no return type (not even void); declaring a return type turns it into an ordinary method!"
+        },
+        {
+          "question": "What will happen if you declare: 'public void Car() { ... }' inside class Car?",
+          "options": [
+            "It is a valid constructor",
+            "It is treated as a regular method named Car, NOT a constructor",
+            "Compilation error: constructors cannot have void",
+            "Runtime exception"
+          ],
+          "correctIndex": 1,
+          "explanation": "Because it has 'void', the compiler treats it as a regular method, leaving the class without this as a constructor."
+        },
+        {
+          "question": "What happens if a reference variable holding 'null' is used to call an instance method?",
+          "options": [
+            "Returns null",
+            "Nothing happens",
+            "NullPointerException is thrown at runtime",
+            "JVM crashes"
+          ],
+          "correctIndex": 2,
+          "explanation": "Attempting to dereference null throws a java.lang.NullPointerException at runtime."
+        },
+        {
+          "question": "What does 'this.x = x;' accomplish in a constructor?",
+          "options": [
+            "It copies x to the stack",
+            "It assigns the parameter x to the instance field x, resolving shadowing",
+            "It creates a circular reference",
+            "It declares a new variable"
+          ],
+          "correctIndex": 1,
+          "explanation": "'this.x' refers to the instance field on the heap, resolving ambiguity with the local parameter 'x'."
+        },
+        {
+          "question": "Which memory area stores local variables declared inside a method?",
+          "options": [
+            "Heap Memory",
+            "Stack Memory",
+            "Metaspace",
+            "Permanent Generation"
+          ],
+          "correctIndex": 1,
+          "explanation": "Local variables and method call frames are allocated on the Stack."
+        },
+        {
+          "question": "What is the outcome of calling System.gc() in Java code?",
+          "options": [
+            "Guarantees all memory is freed immediately",
+            "It is a non-binding hint to the JVM that may be ignored",
+            "Terminates the program",
+            "Throws an UnsupportedOperationException"
+          ],
+          "correctIndex": 1,
+          "explanation": "System.gc() merely suggests to the JVM to perform garbage collection; execution is non-deterministic."
+        },
+        {
+          "question": "Can a constructor in Java be declared 'static'?",
+          "options": [
+            "Yes, to initialize static fields",
+            "No, constructors cannot be static",
+            "Only if the class is static",
+            "Only if it has no parameters"
+          ],
+          "correctIndex": 1,
+          "explanation": "Constructors are executed to initialize new heap object instances; they can never be static."
+        }
+      ]
+    }
 };
-
-// Backward compatibility aliases for legacy 4 combined module keys
-oop9Lessons["classes-objects-instantiation"] = oop9Lessons["what-is-a-class"];
-oop9Lessons["constructors-and-chaining"] = oop9Lessons["constructors-initialization"];
-oop9Lessons["static-vs-instance-members"] = oop9Lessons["static-vs-instance"];
