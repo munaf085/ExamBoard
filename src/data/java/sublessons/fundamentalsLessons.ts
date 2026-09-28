@@ -1,8 +1,8 @@
 import { DetailedLesson } from '../detailedLessons';
 
 // ============================================================
-// MODULE 1: JAVA FUNDAMENTALS (LESSONS 1.1 - 1.6)
-// Comprehensive in-depth curriculum matching OOP standard
+// MODULE 1: JAVA FUNDAMENTALS (LESSONS 1.1 - 1.7)
+// Includes Lesson 1.7: Module 1 Challenge & Interview Assessment
 // ============================================================
 
 export const fundamentalsLessons: Record<string, DetailedLesson> = {
@@ -2870,6 +2870,519 @@ export const fundamentalsLessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "ProtectionDomain.getCodeSource().getLocation() returns the physical URL of the loaded archive or directory."
+      }
+    ]
+  },
+  "fundamentals-challenge": {
+    "id": "fundamentals-challenge",
+    "moduleId": "java-fundamentals",
+    "moduleTitle": "1. Java Fundamentals",
+    "lessonNumber": "Lesson 1.7",
+    "title": "Module 1 Challenge & Interview Assessment",
+    "subtitle": "Comprehensive capstone assessment synthesizing JDK/JRE/JVM architecture, classloader delegation, bytecode inspection, packages, and classpath execution",
+    "estimatedMinutes": 25,
+    "beginnerAnalogy": "The Java runtime execution model is a layered architecture comprising the Java Development Kit (JDK), Java Runtime Environment (JRE), and Java Virtual Machine (JVM). At the JVM execution level, the compilation phase (`javac`) translates high-level Java source text into platform-neutral bytecode (.class) starting with magic identifier `0xCAFEBABE`. At runtime, the ClassLoader subsystem (Bootstrap, Platform, and Application ClassLoaders) employs hierarchical delegation to dynamically locate, link, and initialize bytecodes into Metaspace. Once loaded, the Execution Engine coordinates interpreter execution, generational Garbage Collection, and tiered Just-In-Time (C1 Client / C2 Server) compilation to generate optimized native machine code.\n\nArchitecturally, this decoupled structure provides cross-platform portability ('Write Once, Run Anywhere'), memory isolation, and a hardened security sandbox. Mastering the interplay between classpath resolution, package encapsulation, entry-point semantics, and classloading hierarchy is essential to prevent production failures such as `NoClassDefFoundError`, `ClassNotFoundException`, and classpath shadowing in containerized enterprise microservices.",
+    "coreExplanation": [
+      "The JDK vs JRE vs JVM Hierarchy: The JDK provides compilation and diagnostic tooling (javac, javap, jcmd); the JRE provides runtime libraries; the JVM provides the abstract computing machine executing bytecode.",
+      "Compilation to Bytecode: `javac` verifies syntax, performs type checking, and emits `.class` files containing bytecode, constant pool tables, and attributes. Bytecode is completely independent of host CPU registers and endianness.",
+      "ClassLoader Delegation Hierarchy: Class loading strictly follows the Parental Delegation Principle: Application ClassLoader delegates to Platform ClassLoader, which delegates to Bootstrap ClassLoader. Classes are only loaded locally if all ancestors fail.",
+      "Class Lifecycle in JVM: The three core phases are Loading (reading binary byte stream), Linking (Verification, Preparation with default zeroes, Resolution of symbolic references), and Initialization (executing static initializers <clinit>).",
+      "The main() Method Bootstrap: `public static void main(String[] args)` is invoked via reflection by the JVM launcher on the primordial thread. Omitting 'static' or altering arguments breaks the launcher contract and prevents JVM execution.",
+      "Package-Private Encapsulation: Packages establish namespace boundaries and govern default access control (package-private). Types without access modifiers are visible only to sibling classes within the exact same package.",
+      "Classpath Resolution vs Modulepath: The classpath (`-cp`) instructs the Application ClassLoader where to search for user-defined `.class` files and JAR archives. Classpath order is significant: the first matching class name in the classpath wins, causing silent classpath shadowing if duplicate classes exist.",
+      "Common Production Classpath Errors: `ClassNotFoundException` occurs at runtime when dynamic reflection (`Class.forName()`) fails to locate a class; `NoClassDefFoundError` occurs when a class present during compilation is missing during runtime execution."
+    ],
+    "diagram": "================ MODULE 1 CAPSTONE: END-TO-END EXECUTION PIPELINE ================\n\n  1. COMPILATION PHASE:\n     App.java  ======[ javac -d bin ]======>  bin/com/corp/App.class (0xCAFEBABE)\n\n  2. CLASSLOADING PHASE (Parental Delegation Model):\n     [ Bootstrap ClassLoader (lib/modules) ]        ^ Delegates upward first\n                   ^                               |\n     [ Platform ClassLoader (extensions) ]          |\n                   ^                               |\n     [ Application ClassLoader (-cp / -classpath) ]-+ Finds App.class\n\n  3. JVM RUNTIME MEMORY ALLOCATION:\n     +--------------------+   +-----------------------------------+\n     |     METASPACE      |   |             JVM HEAP              |\n     | Class Metadata,    |   | String Pool, Heap Objects,        |\n     | Bytecode, Statics  |   | Arrays (Managed by GC)            |\n     +--------------------+   +-----------------------------------+\n     +--------------------+   +-----------------------------------+\n     |  JVM STACK FRAMES  |   |        EXECUTION ENGINE           |\n     | Local Vars (args), |   | Interpreter -> C1/C2 JIT ->       |\n     | Operand Stack      |   | Garbage Collector (G1/ZGC)        |\n     +--------------------+   +-----------------------------------+\n===================================================================================",
+    "codeSnippet": {
+      "title": "Comprehensive JVM Runtime Diagnostic and ClassLoader Inspection",
+      "code": "package com.exam.diagnostics;\n\npublic class RuntimeInspector {\n    public static void main(String[] args) {\n        // 1. Inspecting JVM process environment\n        String javaVer = System.getProperty(\"java.version\");\n        String jvmVendor = System.getProperty(\"java.vm.name\");\n        String classPath = System.getProperty(\"java.class.path\");\n        \n        System.out.println(\"Java Version: \" + javaVer);\n        System.out.println(\"VM Name: \" + jvmVendor);\n        System.out.println(\"ClassPath: \" + (classPath.isEmpty() ? \".\" : classPath));\n        \n        // 2. Inspecting ClassLoader Hierarchy\n        ClassLoader appLoader = RuntimeInspector.class.getClassLoader();\n        ClassLoader platformLoader = appLoader.getParent();\n        ClassLoader bootstrapLoader = platformLoader != null ? platformLoader.getParent() : null;\n        \n        System.out.println(\"App ClassLoader: \" + appLoader.getClass().getSimpleName());\n        System.out.println(\"Platform ClassLoader: \" + (platformLoader != null ? platformLoader.getClass().getSimpleName() : \"null\"));\n        System.out.println(\"Bootstrap ClassLoader: \" + bootstrapLoader); // Represented as null in Java\n        \n        // 3. Inspecting CLI Arguments\n        System.out.println(\"Args Length: \" + args.length);\n        if (args.length > 0) {\n            System.out.println(\"First Arg: \" + args[0]);\n        }\n    }\n}",
+      "lineByLineExplanation": [
+        {
+          "line": "package com.exam.diagnostics;",
+          "explanation": "Defines package namespace, requiring binary to reside at com/exam/diagnostics/RuntimeInspector.class."
+        },
+        {
+          "line": "System.getProperty(\"java.class.path\");",
+          "explanation": "Queries the active classpath used by the Application ClassLoader during process boot."
+        },
+        {
+          "line": "ClassLoader appLoader = RuntimeInspector.class.getClassLoader();",
+          "explanation": "Retrieves the Application (System) ClassLoader responsible for loading user classes."
+        },
+        {
+          "line": "ClassLoader platformLoader = appLoader.getParent();",
+          "explanation": "Ascends delegation hierarchy to access Platform (extension) ClassLoader."
+        },
+        {
+          "line": "System.out.println(\"Bootstrap ClassLoader: \" + bootstrapLoader);",
+          "explanation": "Prints null because Bootstrap ClassLoader is written in native C/C++ and has no Java Object representation."
+        }
+      ],
+      "output": "Java Version: 21\nVM Name: OpenJDK 64-Bit Server VM\nClassPath: .\nApp ClassLoader: AppClassLoader\nPlatform ClassLoader: PlatformClassLoader\nBootstrap ClassLoader: null\nArgs Length: 0"
+    },
+    "codeExamples": [
+      {
+        "title": "Static Initialization Order during Class Loading",
+        "description": "Demonstrating the exact sequence of static initializers, main method execution, and instance initialization.",
+        "code": "public class ClassLoadingOrderDemo {\n    static {\n        System.out.println(\"1. Static initializer of driver class runs\");\n    }\n\n    static class Helper {\n        static {\n            System.out.println(\"3. Helper loaded lazily on first reference\");\n        }\n        static void action() {\n            System.out.println(\"4. Helper action executed\");\n        }\n    }\n\n    public static void main(String[] args) {\n        System.out.println(\"2. main() entry point invoked\");\n        Helper.action();\n    }\n}",
+        "explanation": "Static blocks execute when the class is initialized. The driver class initializes before main() is entered. Nested static classes are loaded lazily upon their first active use."
+      },
+      {
+        "title": "Package-Private Isolation Across Directories",
+        "description": "Why placing files in different directory hierarchies prevents access to package-private members.",
+        "code": "// File: com/service/InternalConfig.java\npackage com.service;\nclass InternalConfig {\n    static String API_KEY = \"SECRET_123\"; // Package-private\n}\n\n// File: com/controller/ApiController.java\npackage com.controller;\n// import com.service.InternalConfig; // COMPILE ERROR: InternalConfig is not public!\npublic class ApiController {\n    public static void main(String[] args) {\n        // Direct access is prohibited by Java access control.\n        System.out.println(\"Package boundaries enforced.\");\n    }\n}",
+        "explanation": "Types without access modifiers cannot be imported or accessed by classes in other packages, enforcing strong module boundaries."
+      }
+    ],
+    "cheatSheet": {
+      "summary": "Module 1 Capstone summarizes JDK/JRE/JVM roles, bytecode generation, classloader parental delegation, main() method contract, packages, and classpath linking.",
+      "rules": [
+        {
+          "rule": "JDK contains JRE and tools",
+          "explanation": "Use JDK for building and compiling; JRE or stripped runtime image for deployment."
+        },
+        {
+          "rule": "Parental Delegation Model",
+          "explanation": "Application ClassLoader delegates to Platform ClassLoader, which delegates to Bootstrap ClassLoader."
+        },
+        {
+          "rule": "Bootstrap ClassLoader returns null",
+          "explanation": "The native C/C++ root classloader has no java.lang.ClassLoader object representation."
+        },
+        {
+          "rule": "main() signature is mandatory",
+          "explanation": "Must be 'public static void main(String[] args)' or the JVM launcher refuses execution."
+        },
+        {
+          "rule": "Directory must match package",
+          "explanation": "Class 'com.foo.Bar' must reside in directory 'com/foo/Bar.class'."
+        },
+        {
+          "rule": "Classpath order matters",
+          "explanation": "The first matching class encountered on the classpath wins, causing potential shadowing."
+        }
+      ],
+      "quickComparison": [
+        {
+          "aspect": "JDK vs JRE",
+          "optionA": "JDK: Compiler (javac) + Tools (javap, jcmd)",
+          "optionB": "JRE: JVM + Standard Class Libraries"
+        },
+        {
+          "aspect": "Error Type",
+          "optionA": "ClassNotFoundException: Dynamic reflection lookup failure",
+          "optionB": "NoClassDefFoundError: Class present at compile-time missing at runtime"
+        },
+        {
+          "aspect": "Execution Type",
+          "optionA": "Interpreter: Interprets bytecode instruction-by-instruction",
+          "optionB": "JIT Compiler: Compiles hot bytecode to native x86/ARM machine code"
+        }
+      ]
+    },
+    "beginnerMistakes": [
+      {
+        "mistake": "Executing `java com/exam/Main.class` from the command line.",
+        "whyItHappens": "Developer passes file system path and '.class' suffix instead of Fully Qualified Class Name.",
+        "howToFix": "Run using FQCN without extension from classpath root: `java -cp . com.exam.Main`.",
+        "codeSnippet": "// INCORRECT\njava com/exam/Main.class\n// CORRECT\njava -cp . com.exam.Main"
+      },
+      {
+        "mistake": "Confusing `ClassNotFoundException` with `NoClassDefFoundError` in interview answers.",
+        "whyItHappens": "Both indicate a missing class, but they occur in completely different execution pathways.",
+        "howToFix": "ClassNotFoundException is a checked exception thrown during dynamic loading (e.g. Class.forName); NoClassDefFoundError is an unchecked LinkageError indicating binary absence of a previously compiled dependency.",
+        "codeSnippet": "// Checked Exception\ntry { Class.forName(\"com.mysql.Driver\"); } catch (ClassNotFoundException e) {}\n// Unchecked LinkageError\nMyDependency obj = new MyDependency(); // Crashes if dependency deleted after build"
+      }
+    ],
+    "practiceProblems": [
+      {
+        "title": "Main Method Signature Permutations",
+        "problemStatement": "Which of the following main method signatures will be successfully recognized by the standard JVM launcher?\n1. `static public void main(String[] args)`\n2. `public static void main(String... args)`\n3. `public static void main(String args[])`\n4. `public void main(String[] args)`",
+        "options": [
+          "Only 1 and 3",
+          "1, 2, and 3",
+          "All of them",
+          "Only 1"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Modifier order between 'public' and 'static' is interchangeable. Varargs 'String...' compiles to 'String[]'. 'main' MUST be static.",
+        "solution": "1, 2, and 3",
+        "explanation": "In Java, modifier order does not matter (`public static` == `static public`). Varargs `String...` compiles directly to `String[]` array in bytecode. Signature 4 lacks `static` and will be rejected by the launcher."
+      },
+      {
+        "title": "ClassLoader Parental Delegation Output",
+        "problemStatement": "What is printed when checking the ClassLoader of `java.lang.String`?\n```java\nSystem.out.println(String.class.getClassLoader());\n```",
+        "options": [
+          "AppClassLoader",
+          "PlatformClassLoader",
+          "BootstrapClassLoader",
+          "null"
+        ],
+        "correctOptionIndex": 3,
+        "hint": "Core classes in java.base (like String) are loaded by the Bootstrap ClassLoader, which is native C/C++.",
+        "solution": "null",
+        "explanation": "The Bootstrap ClassLoader is implemented in native code (C/C++ inside the JVM binary) and has no Java Object representation; calling getClassLoader() on core JDK classes returns null."
+      },
+      {
+        "title": "Static Initializer Execution Order",
+        "problemStatement": "What is the output of the following program?\n```java\nclass Alpha {\n    static { System.out.print(\"A \"); }\n}\nclass Beta extends Alpha {\n    static { System.out.print(\"B \"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        Beta b = new Beta();\n    }\n}\n```",
+        "options": [
+          "B A",
+          "A B",
+          "A",
+          "Compilation error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Before a subclass can be initialized, its superclass must be loaded and initialized.",
+        "solution": "A B",
+        "explanation": "When class Beta is initialized, the JVM ensures that its superclass Alpha is initialized first. Alpha's static initializer runs (prints 'A '), followed by Beta's static initializer (prints 'B ')."
+      },
+      {
+        "title": "Command-Line Arguments Space Quoting",
+        "problemStatement": "If a program is executed from the terminal as:\n`java Solution \"Hello World\" 42`\nWhat are `args.length` and `args[0]`?",
+        "options": [
+          "3 and \"Hello\"",
+          "2 and \"Hello World\"",
+          "2 and \"\\\"Hello World\\\"\"",
+          "1 and \"Hello World 42\""
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Double quotes bundle words containing spaces into a single command-line argument.",
+        "solution": "2 and \"Hello World\"",
+        "explanation": "The terminal shell parses \"Hello World\" as a single argument (args[0]) and 42 as the second argument (args[1]). args.length is 2."
+      },
+      {
+        "title": "Package Directory Structure Failure",
+        "problemStatement": "A class contains `package com.example;`. If the compiled `App.class` file is located directly in the root directory `.` instead of `./com/example/App.class`, what happens when executing `java -cp . com.example.App`?",
+        "options": [
+          "Runs successfully",
+          "Throws NoClassDefFoundError (wrong name: com/example/App)",
+          "Compiles automatically",
+          "Throws NullPointerException"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "The JVM enforces that directory structure must strictly reflect package hierarchy.",
+        "solution": "Throws NoClassDefFoundError (wrong name: com/example/App)",
+        "explanation": "The JVM expects package `com.example` to map to filesystem path `com/example/App.class`. If the class is found in the wrong path, it throws `NoClassDefFoundError: com/example/App (wrong name)`."
+      },
+      {
+        "title": "Magic Bytes Identification",
+        "problemStatement": "What are the first 4 bytes of every valid compiled Java class file in hexadecimal notation?",
+        "options": [
+          "0xDEADBEEF",
+          "0xCAFEBABE",
+          "0xFEEDFACE",
+          "0xBAADF00D"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "James Gosling and the Oak team chose this hex string inspired by coffee.",
+        "solution": "0xCAFEBABE",
+        "explanation": "The JVM specification mandates that all valid Java `.class` files begin with the 4-byte magic number 0xCAFEBABE for file format verification."
+      },
+      {
+        "title": "Classpath Shadowing Resolution",
+        "problemStatement": "Given command `java -cp libA.jar:libB.jar com.App`, if both JAR files contain `com.util.Helper.class`, which class will the JVM load?",
+        "options": [
+          "The class inside libB.jar",
+          "The class inside libA.jar",
+          "The JVM throws ClassCollisionException",
+          "The newest file based on timestamp"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "Classpath search is sequential: left to right.",
+        "solution": "The class inside libA.jar",
+        "explanation": "The Application ClassLoader searches classpath entries sequentially from left to right. The first entry containing the requested class is loaded; subsequent matching classes are shadowed and ignored."
+      },
+      {
+        "title": "System.exit and Finally Block Execution",
+        "problemStatement": "What is the output of the following code?\n```java\npublic class ExitTest {\n    public static void main(String[] args) {\n        try {\n            System.out.print(\"A \");\n            System.exit(0);\n        } finally {\n            System.out.print(\"B \");\n        }\n    }\n}\n```",
+        "options": [
+          "A B",
+          "A",
+          "B",
+          "Compilation error"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "System.exit halts the entire JVM immediately.",
+        "solution": "A",
+        "explanation": "System.exit(0) immediately terminates the running Java Virtual Machine process. The `finally` block is never executed when the JVM is terminated abruptly via System.exit()."
+      },
+      {
+        "title": "Source File Naming Restriction",
+        "problemStatement": "Can a Java source file named `Utils.java` contain a `public class MathHelper {}`?",
+        "options": [
+          "Yes, as long as it has no main method",
+          "No, a public class must be declared in a file named exactly after the class (`MathHelper.java`)",
+          "Yes, if compiled with `-target 21`",
+          "Only if packaged in java.lang"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "A .java file can have at most one public top-level class, matching the filename.",
+        "solution": "No, a public class must be declared in a file named exactly after the class (`MathHelper.java`)",
+        "explanation": "JLS §7.6 requires that if a top-level type is declared `public`, it must reside in a compilation unit whose filename matches the type name."
+      },
+      {
+        "title": "JIT Tiered Compilation Levels",
+        "problemStatement": "In modern HotSpot JVMs, what are the two main JIT compilation tiers?",
+        "options": [
+          "Interpreter and Native Code",
+          "C1 (Client compiler with fast startup) and C2 (Server compiler with deep optimization)",
+          "AOT and Garbage Collector",
+          "Stack Compiler and Heap Compiler"
+        ],
+        "correctOptionIndex": 1,
+        "hint": "One is Client, the other is Server/Opto.",
+        "solution": "C1 (Client compiler with fast startup) and C2 (Server compiler with deep optimization)",
+        "explanation": "Tiered compilation uses the C1 (Client) compiler for rapid bytecode compilation with profiling, and escalates hot methods to C2 (Opto/Server) for aggressive inlining and loop unrolling."
+      }
+    ],
+    "interviewQuestions": [
+      {
+        "question": "Can you explain the complete lifecycle of a Java class inside the JVM?",
+        "expectedAnswer": "A Java class lifecycle consists of five major phases: 1. Loading: The ClassLoader locates the binary .class file and loads it into Metaspace. 2. Linking: Subdivided into Verification (ensuring bytecode safety), Preparation (allocating memory for static fields and initializing them to default zeros), and Resolution (replacing symbolic references with direct memory references). 3. Initialization: Executing static initializers (`<clinit>`) and assigning explicit static field values. 4. Usage: Instantiating objects, invoking static methods, and accessing fields. 5. Unloading: The class is eligible for garbage collection only if its ClassLoader becomes unreachable.",
+        "followUp": "When does class initialization occur?",
+        "followUpAnswer": "Initialization is lazy; it occurs on the first 'active use' of a class, such as creating a new instance via 'new', invoking a static method, accessing a non-constant static field, or launching the class via main().",
+        "commonMistake": "Thinking preparation assigns explicit values (e.g. static int x = 10; is prepared to 10).",
+        "commonMistakeAnswer": "Preparation assigns default type zeroes (0, null); explicit assignment happens during initialization (<clinit>)."
+      },
+      {
+        "question": "What is the difference between `ClassNotFoundException` and `NoClassDefFoundError`?",
+        "expectedAnswer": "`ClassNotFoundException` is a checked Exception thrown at runtime when an application attempts to dynamically load a class by name (e.g. `Class.forName()`, `ClassLoader.loadClass()`) and the class cannot be found on the classpath. In contrast, `NoClassDefFoundError` is an unchecked LinkageError thrown when a class that was present at compile time is missing at runtime when the JVM tries to link or instantiate it.",
+        "followUp": "What is a common cause of `NoClassDefFoundError` besides a missing JAR?",
+        "followUpAnswer": "A common cause is a failure during static class initialization: if a static initializer throws an unhandled RuntimeException during the first access, subsequent attempts to reference that class fail with `NoClassDefFoundError`.",
+        "commonMistake": "Treating both as the same exception in logging and error handling.",
+        "commonMistakeAnswer": "ClassNotFoundException is an Exception (recoverable), while NoClassDefFoundError is an Error (indicates fatal linkage/dependency misconfiguration)."
+      },
+      {
+        "question": "Explain the Parental Delegation Model of ClassLoaders and how it provides security.",
+        "expectedAnswer": "In the Parental Delegation Model, when a ClassLoader receives a request to load a class, it always delegates the request to its parent ClassLoader first before attempting to load the class itself. The request ascends from Application ClassLoader -> Platform ClassLoader -> Bootstrap ClassLoader. Only if the parent cannot find the class does the child search its own classpath. This provides critical security: it prevents malicious code from replacing trusted core Java classes (like `java.lang.String` or `java.lang.SecurityManager`) with rogue implementations.",
+        "followUp": "Can the Parental Delegation Model be broken or bypassed?",
+        "followUpAnswer": "Yes. Frameworks like OSGi, Apache Tomcat, and the Thread Context ClassLoader (used in SPIs like JDBC DriverLoader) invert delegation to achieve module isolation and hot-reloading (Child-First class loading).",
+        "commonMistake": "Believing custom ClassLoaders automatically bypass parental delegation.",
+        "commonMistakeAnswer": "Custom classloaders extending `ClassLoader` follow parental delegation by default in `loadClass()`; overriding `findClass()` preserves delegation."
+      },
+      {
+        "question": "Why is the `main()` method declared `public static void main(String[] args)`?",
+        "expectedAnswer": "`public`: Must be accessible to the external JVM launcher from outside the class package. `static`: The JVM must be able to invoke the entry point without instantiating an instance of the class (as the constructor might require unknown dependencies). `void`: The method returns nothing; process termination status is communicated to the OS via `System.exit(status)`. `String[] args`: Accepts runtime command-line arguments passed from the host operating system shell.",
+        "followUp": "Can the `main()` method be overloaded?",
+        "followUpAnswer": "Yes, `main()` can be overloaded with different parameters (e.g. `main(int x)`), but the JVM launcher will strictly search for and invoke `main(String[] args)` as the process entry point.",
+        "commonMistake": "Thinking `main()` can return an integer exit code like C/C++ `int main()`.",
+        "commonMistakeAnswer": "In Java, main() return type is strictly void; exit codes must be set with System.exit(int)."
+      },
+      {
+        "question": "What is the difference between `-classpath` (`-cp`) and the modern Java Module System (`--module-path`)?",
+        "expectedAnswer": "The classpath (`-cp`) treats all JARs and folders as a flat, unstructured collection of classes with no encapsulation; package splits across JARs are allowed, and missing dependencies are only discovered when a class is accessed at runtime. The modulepath (`-p` / `--module-path`, Java 9+) uses modular JARs with `module-info.java` descriptors. It enforces explicit dependency declaration (`requires`), strong package encapsulation (`exports`), prohibits split packages, and validates all dependencies at JVM startup (fail-fast).",
+        "followUp": "What is the Unnamed Module in the module system?",
+        "followUpAnswer": "Classes loaded from the traditional classpath are automatically placed into the Unnamed Module, which can read all modules and exports all of its own packages for backward compatibility.",
+        "commonMistake": "Assuming Java 9+ abolished the traditional classpath.",
+        "commonMistakeAnswer": "The classpath is fully supported in all modern Java LTS releases alongside the modulepath."
+      },
+      {
+        "question": "What is JIT Tiered Compilation and how does HotSpot use it?",
+        "expectedAnswer": "Tiered Compilation combines fast application startup with maximum peak runtime performance. Execution begins with the Bytecode Interpreter (Tier 0). Hot methods are escalated to Tier 1-3 using the C1 (Client) compiler, which compiles quickly and inserts profiling counters. Extremely hot methods are escalated to Tier 4 using the C2 (Server/Opto) compiler, which performs aggressive optimizations like method inlining, loop unrolling, escape analysis, and dead code elimination.",
+        "followUp": "What is Deoptimization in HotSpot?",
+        "followUpAnswer": "If a speculative optimization made by C2 becomes invalid (such as a polymorphic class violating a class hierarchy assumption), the JVM deoptimizes the code and falls back to interpreted mode or C1.",
+        "commonMistake": "Thinking Java is purely interpreted or purely compiled.",
+        "commonMistakeAnswer": "Java is a hybrid system combining interpreted execution and dynamic tiered JIT compilation."
+      },
+      {
+        "question": "What is Metaspace and how does it differ from the legacy PermGen?",
+        "expectedAnswer": "Metaspace was introduced in Java 8 to replace the Permanent Generation (PermGen). PermGen resided within the contiguous JVM heap and had a fixed maximum size, frequently triggering `java.lang.OutOfMemoryError: PermGen space`. Metaspace stores class metadata, method bytecodes, and constant pools in native OS memory outside the JVM heap. It expands dynamically up to available system RAM by default (or can be constrained via `-XX:MaxMetaspaceSize`).",
+        "followUp": "Where were interned Strings and class static variables moved when PermGen was eliminated?",
+        "followUpAnswer": "Interned Strings and class static variables were relocated to the main Java Heap (managed by Garbage Collection), not to Metaspace.",
+        "commonMistake": "Assuming Metaspace is unlimited and can never throw OutOfMemoryError.",
+        "commonMistakeAnswer": "Metaspace can still throw `OutOfMemoryError: Metaspace` if continuous class generation (e.g., CGLIB, reflection) exhausts physical RAM or hits MaxMetaspaceSize."
+      },
+      {
+        "question": "What does `System.lineSeparator()` do and why is it preferred over `\\n`?",
+        "expectedAnswer": "`System.lineSeparator()` returns the platform-specific line termination string configured by the host operating system: `\\r\\n` on Windows and `\\n` on Linux/macOS. Hardcoding `\\n` causes formatting corruption when opening files in standard Windows text utilities and fails strict cross-platform file verification tests.",
+        "followUp": "What format specifier does `System.out.printf()` use for platform-independent newlines?",
+        "followUpAnswer": "In printf and String.format, the `%n` specifier emits the host platform's native line separator, whereas `\\n` always emits ASCII LF.",
+        "commonMistake": "Using `\\n` in `System.out.printf()` expecting platform adaptation.",
+        "commonMistakeAnswer": "`\\n` is a literal newline; `%n` is the platform-adaptive line separator in printf."
+      },
+      {
+        "question": "Explain package-private (default) access modifier and its architectural purpose.",
+        "expectedAnswer": "Package-private (no modifier) restricts member and class visibility to types declared within the exact same package. It enables strong package encapsulation: internal implementation details, helper classes, and state structures can interact freely within the package while remaining completely hidden from outside consumers, creating clean public API surfaces.",
+        "followUp": "Can a subclass in a different package access package-private members of its superclass?",
+        "followUpAnswer": "No. Subclasses in different packages have zero visibility into package-private members (only `public` and `protected` members are accessible).",
+        "commonMistake": "Thinking package-private is equivalent to protected.",
+        "commonMistakeAnswer": "Protected allows access from subclasses outside the package; package-private strictly forbids access outside the package."
+      },
+      {
+        "question": "How does `java.lang.Runtime.getRuntime()` provide access to the operating environment?",
+        "expectedAnswer": "`Runtime.getRuntime()` returns the singleton Runtime object associated with the current Java application process. It exposes process-level controls: available CPU cores (`availableProcessors()`), memory statistics (`totalMemory()`, `freeMemory()`, `maxMemory()`), shutdown hooks (`addShutdownHook()`), and process exit (`exit()`).",
+        "followUp": "What is a JVM Shutdown Hook?",
+        "followUpAnswer": "A Shutdown Hook is an initialized but unstarted thread registered with `Runtime.getRuntime().addShutdownHook(Thread)` that the JVM starts automatically when a graceful shutdown occurs (e.g. SIGTERM, CTRL+C).",
+        "commonMistake": "Calling `new Runtime()` directly.",
+        "commonMistakeAnswer": "Runtime constructor is private; it implements the Singleton pattern accessed via `Runtime.getRuntime()`."
+      }
+    ],
+    "miniQuiz": [
+      {
+        "question": "Which ClassLoader is responsible for loading standard application classes from the classpath?",
+        "options": [
+          "Bootstrap ClassLoader",
+          "Platform ClassLoader",
+          "Application ClassLoader",
+          "System Native Loader"
+        ],
+        "correctIndex": 2,
+        "explanation": "The Application ClassLoader (formerly System ClassLoader) loads classes found on the application classpath (`-cp`)."
+      },
+      {
+        "question": "What is the return value of `Object.class.getClassLoader()`?",
+        "options": [
+          "AppClassLoader",
+          "PlatformClassLoader",
+          "null",
+          "BootstrapClassLoader"
+        ],
+        "correctIndex": 2,
+        "explanation": "Object is loaded by the Bootstrap ClassLoader, which is implemented in native C/C++ and represented as null in Java API."
+      },
+      {
+        "question": "What happens when `java -cp . com.App` is executed without a package directory?",
+        "options": [
+          "The JVM creates directories automatically",
+          "Throws NoClassDefFoundError (wrong name)",
+          "Runs successfully",
+          "Throws ClassNotFoundException"
+        ],
+        "correctIndex": 1,
+        "explanation": "If a class declared in `package com;` is placed directly in root `.`, the JVM fails with `NoClassDefFoundError: com/App (wrong name)`."
+      },
+      {
+        "question": "In what memory area does the JVM store class metadata, bytecode, and method tables in Java 8+?",
+        "options": [
+          "PermGen",
+          "JVM Heap",
+          "Metaspace (Native Memory)",
+          "Thread Stack"
+        ],
+        "correctIndex": 2,
+        "explanation": "Java 8 replaced PermGen with Metaspace, which stores class metadata in native memory."
+      },
+      {
+        "question": "Which phase of class loading allocates memory for static fields and initializes them to default zeros?",
+        "options": [
+          "Loading",
+          "Preparation",
+          "Resolution",
+          "Initialization"
+        ],
+        "correctIndex": 1,
+        "explanation": "The Preparation phase of Linking allocates memory for static fields and fills them with default type values (0, null, false)."
+      },
+      {
+        "question": "What happens to a `finally` block when `System.exit(0)` is executed in the `try` block?",
+        "options": [
+          "The finally block always runs",
+          "The finally block is skipped completely as the JVM terminates",
+          "Throws IllegalStateException",
+          "Finally runs on a background daemon"
+        ],
+        "correctIndex": 1,
+        "explanation": "System.exit immediately stops the JVM process, bypassing any pending finally blocks."
+      },
+      {
+        "question": "Which command displays the disassembled bytecode of a compiled Java class?",
+        "options": [
+          "javadoc",
+          "jdb",
+          "javap -c",
+          "jconsole"
+        ],
+        "correctIndex": 2,
+        "explanation": "`javap -c` disassembles the specified class file into human-readable JVM bytecode instructions."
+      },
+      {
+        "question": "What is the result of running `javac App.java` when `App.java` contains syntax errors?",
+        "options": [
+          "Emits partial bytecode",
+          "Compiler aborts and emits zero .class files",
+          "Throws RuntimeException",
+          "Creates App.obj"
+        ],
+        "correctIndex": 1,
+        "explanation": "If any compile-time error occurs, javac produces no `.class` file and returns an exit code of 1."
+      },
+      {
+        "question": "What is the default access modifier of members declared with no access keyword?",
+        "options": [
+          "public",
+          "private",
+          "protected",
+          "package-private (default)"
+        ],
+        "correctIndex": 3,
+        "explanation": "In Java, members without an explicit access modifier have package-private visibility, accessible only within the same package."
+      },
+      {
+        "question": "Which JVM component compiles hot bytecode into native machine code at runtime?",
+        "options": [
+          "Interpreter",
+          "Just-In-Time (JIT) Compiler",
+          "Garbage Collector",
+          "Bytecode Verifier"
+        ],
+        "correctIndex": 1,
+        "explanation": "The JIT compiler (C1/C2) monitors execution metrics and compiles frequently executed bytecode loops into native machine instructions."
+      },
+      {
+        "question": "What does `System.getProperty(\"java.version\")` return?",
+        "options": [
+          "The OS version",
+          "The JVM runtime version string",
+          "The JDK compiler path",
+          "The Classpath"
+        ],
+        "correctIndex": 1,
+        "explanation": "The system property 'java.version' returns the active Java runtime environment version string."
+      },
+      {
+        "question": "Can two different packages contain classes with the same simple name?",
+        "options": [
+          "No, Java requires globally unique class names",
+          "Yes, because their Fully Qualified Class Names (FQCN) are distinct",
+          "Only in test directories",
+          "Yes, if declared static"
+        ],
+        "correctIndex": 1,
+        "explanation": "Packages prevent name collisions by qualifying simple names into distinct Fully Qualified Class Names (e.g. `java.util.Date` vs `java.sql.Date`)."
+      },
+      {
+        "question": "What error occurs if an external JAR needed at runtime was present during compilation but missing from classpath at runtime?",
+        "options": [
+          "ClassNotFoundException",
+          "NoClassDefFoundError",
+          "ClassCastException",
+          "NoSuchMethodError"
+        ],
+        "correctIndex": 1,
+        "explanation": "NoClassDefFoundError is thrown when the JVM tries to link a class that compiled successfully but is absent from the runtime classpath."
+      },
+      {
+        "question": "What does `args.length` evaluate to when a program is launched with zero arguments (`java App`)?",
+        "options": [
+          "Throws NullPointerException",
+          "0",
+          "1 (program name)",
+          "-1"
+        ],
+        "correctIndex": 1,
+        "explanation": "In Java, unlike C/C++, args does not include the program name; if no arguments are passed, args is an array of length 0."
+      },
+      {
+        "question": "What is the primary role of the Bytecode Verifier in the JVM?",
+        "options": [
+          "Translating bytecode to machine code",
+          "Ensuring bytecode does not violate type safety or stack constraints before execution",
+          "Managing garbage collection",
+          "Downloading classes from the internet"
+        ],
+        "correctIndex": 1,
+        "explanation": "The Bytecode Verifier inspects loaded bytecode to ensure it does not forge pointers, overflow the operand stack, or violate type safety."
       }
     ]
   }

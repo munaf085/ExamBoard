@@ -1,9 +1,8 @@
 import { ProgrammingExercise } from '../detailedLessons';
 
 // ============================================================
-// MODULE 1: JAVA FUNDAMENTALS - EXERCISES
-// Total: 60 exercises (10 per sub-lesson)
-// Lessons 1.1 to 1.6
+// MODULE 1: JAVA FUNDAMENTALS EXERCISES (LESSONS 1.1 - 1.7)
+// Exactly 10 dedicated coding assignments per lesson (70 total)
 // ============================================================
 
 export const fundamentalsExercises: Record<string, ProgrammingExercise[]> = {
@@ -617,6 +616,108 @@ export const fundamentalsExercises: Record<string, ProgrammingExercise[]> = {
       "solutionCode": "public class Solution {\n    public static String getRoot(String fullPath, String pkgPath) {\n        return fullPath.replace(pkgPath, \"\");\n    }\n    public static void main(String[] args) {\n        String root = getRoot(\"/app/build/com/company/App.class\", \"com/company/App.class\");\n        System.out.println(\"Root: \" + root.replace(\"//\", \"/\"));\n    }\n}",
       "output": "Root: /app/build/",
       "explanation": "Classpath entries must strictly point to the root directory where package hierarchies begin."
+    }
+  ],
+  "fundamentals-challenge": [
+    {
+      "id": "ex-fund-chal-1",
+      "title": "Exercise 1: JVM Runtime Metrics Reporter",
+      "difficulty": "Medium",
+      "problemStatement": "Write a program that queries the JVM Runtime to report available CPU cores and verifies that total heap memory is greater than 0. Print 'Cores: [count], Heap: OK'.",
+      "hint": "Use Runtime.getRuntime().availableProcessors() and Runtime.getRuntime().totalMemory().",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Runtime rt = Runtime.getRuntime();\n        int cores = rt.availableProcessors();\n        boolean heapOk = rt.totalMemory() > 0;\n        System.out.println(\"Cores: \" + cores + \", Heap: \" + (heapOk ? \"OK\" : \"FAIL\"));\n    }\n}",
+      "output": "Cores: 8, Heap: OK",
+      "explanation": "Runtime provides access to process metrics managed by the host JVM."
+    },
+    {
+      "id": "ex-fund-chal-2",
+      "title": "Exercise 2: Command-Line Arguments Validator and Sum",
+      "difficulty": "Easy",
+      "problemStatement": "Write a method `int sumArgs(String[] args)` that parses integer command-line arguments and returns their sum. If no arguments are provided, return 0. Test with args ['10', '20', '30'].",
+      "hint": "Loop through args and use Integer.parseInt().",
+      "solutionCode": "public class Solution {\n    static int sumArgs(String[] args) {\n        int sum = 0;\n        for (String s : args) {\n            sum += Integer.parseInt(s);\n        }\n        return sum;\n    }\n    public static void main(String[] args) {\n        String[] testArgs = {\"10\", \"20\", \"30\"};\n        System.out.println(\"Total: \" + sumArgs(testArgs));\n    }\n}",
+      "output": "Total: 60",
+      "explanation": "Command-line arguments are passed into main() as an array of Strings, requiring parsing for numeric use."
+    },
+    {
+      "id": "ex-fund-chal-3",
+      "title": "Exercise 3: ClassLoader Hierarchy Inspection",
+      "difficulty": "Medium",
+      "problemStatement": "Write a program that inspects the ClassLoader of the current class and checks if the Bootstrap ClassLoader of `String.class` is null. Print 'Bootstrap is null: true'.",
+      "hint": "Core classes in java.base return null for getClassLoader().",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        boolean isNull = String.class.getClassLoader() == null;\n        System.out.println(\"Bootstrap is null: \" + isNull);\n    }\n}",
+      "output": "Bootstrap is null: true",
+      "explanation": "The native Bootstrap ClassLoader is represented by null in the Java ClassLoader API."
+    },
+    {
+      "id": "ex-fund-chal-4",
+      "title": "Exercise 4: Cross-Platform Path Construction",
+      "difficulty": "Easy",
+      "problemStatement": "Construct a platform-independent filesystem path 'app/config/settings.json' using `System.getProperty(\"file.separator\")` or `File.separator`. Print the normalized path with forward slashes for output verification.",
+      "hint": "Use String.join with File.separator.",
+      "solutionCode": "import java.io.File;\npublic class Solution {\n    public static void main(String[] args) {\n        String path = String.join(\"/\", \"app\", \"config\", \"settings.json\");\n        System.out.println(\"Path: \" + path);\n    }\n}",
+      "output": "Path: app/config/settings.json",
+      "explanation": "Using platform separators avoids hardcoding Windows backslashes or POSIX slashes."
+    },
+    {
+      "id": "ex-fund-chal-5",
+      "title": "Exercise 5: Static Initialization Sequence Verification",
+      "difficulty": "Medium",
+      "problemStatement": "Demonstrate that static initializer blocks run exactly once when a class is initialized. Create a class with a static block that increments a counter. Access a static method twice and print the counter.",
+      "hint": "The JVM guarantees that a class's <clinit> method is executed only once per classloader.",
+      "solutionCode": "public class Solution {\n    static class Counter {\n        static int count = 0;\n        static {\n            count++;\n        }\n        static void ping() {}\n    }\n    public static void main(String[] args) {\n        Counter.ping();\n        Counter.ping();\n        System.out.println(\"Init count: \" + Counter.count);\n    }\n}",
+      "output": "Init count: 1",
+      "explanation": "Static initializer blocks run exactly once when the class is first linked and initialized by the JVM."
+    },
+    {
+      "id": "ex-fund-chal-6",
+      "title": "Exercise 6: Dynamic Reflection and ClassNotFoundException Handling",
+      "difficulty": "Medium",
+      "problemStatement": "Write a method `boolean classExists(String className)` that uses `Class.forName(className)` and safely catches `ClassNotFoundException` returning false. Test with 'java.lang.String' and 'com.fake.Missing'.",
+      "hint": "Catch ClassNotFoundException and return false.",
+      "solutionCode": "public class Solution {\n    static boolean classExists(String name) {\n        try {\n            Class.forName(name);\n            return true;\n        } catch (ClassNotFoundException e) {\n            return false;\n        }\n    }\n    public static void main(String[] args) {\n        System.out.println(classExists(\"java.lang.String\") + \" and \" + classExists(\"com.fake.Missing\"));\n    }\n}",
+      "output": "true and false",
+      "explanation": "Class.forName dynamically asks the ClassLoader to load a class by name, throwing ClassNotFoundException if not found."
+    },
+    {
+      "id": "ex-fund-chal-7",
+      "title": "Exercise 7: System Property Fallback Query",
+      "difficulty": "Easy",
+      "problemStatement": "Use `System.getProperty(key, def)` with a default fallback to query 'app.environment'. Print 'Environment: [value]'.",
+      "hint": "System.getProperty takes a key and a default value if the key is not set.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        String env = System.getProperty(\"app.environment\", \"production\");\n        System.out.println(\"Environment: \" + env);\n    }\n}",
+      "output": "Environment: production",
+      "explanation": "System.getProperty allows runtime application configuration via `-Dkey=value` flags with safe defaults."
+    },
+    {
+      "id": "ex-fund-chal-8",
+      "title": "Exercise 8: JVM Shutdown Hook Registration",
+      "difficulty": "Hard",
+      "problemStatement": "Demonstrate registering a shutdown hook using `Runtime.getRuntime().addShutdownHook()`. Print 'Hook registered successfully'.",
+      "hint": "Pass an unstarted Thread into addShutdownHook.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        Thread hook = new Thread(() -> {});\n        Runtime.getRuntime().addShutdownHook(hook);\n        System.out.println(\"Hook registered successfully\");\n    }\n}",
+      "output": "Hook registered successfully",
+      "explanation": "Shutdown hooks allow applications to release resources, flush logs, and close connections during graceful exit."
+    },
+    {
+      "id": "ex-fund-chal-9",
+      "title": "Exercise 9: OS Environment Variable Inspection",
+      "difficulty": "Easy",
+      "problemStatement": "Check whether `System.getenv(\"PATH\")` or `System.getenv(\"Path\")` is non-null. Print 'PATH configured: true'.",
+      "hint": "System.getenv queries host operating system environment variables.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        String p = System.getenv(\"PATH\");\n        if (p == null) p = System.getenv(\"Path\");\n        System.out.println(\"PATH configured: \" + (p != null));\n    }\n}",
+      "output": "PATH configured: true",
+      "explanation": "System.getenv() provides access to environment variables passed by the host OS process launcher."
+    },
+    {
+      "id": "ex-fund-chal-10",
+      "title": "Exercise 10: Modern Process Handle Uptime Query",
+      "difficulty": "Medium",
+      "problemStatement": "In Java 9+, query `ProcessHandle.current().pid()`. Verify that the PID is greater than 0 and print 'Process PID valid: true'.",
+      "hint": "ProcessHandle.current() returns the handle to the running JVM process.",
+      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        long pid = ProcessHandle.current().pid();\n        System.out.println(\"Process PID valid: \" + (pid > 0));\n    }\n}",
+      "output": "Process PID valid: true",
+      "explanation": "Java 9 ProcessHandle API provides native operating system PID and process tree management."
     }
   ]
 };
