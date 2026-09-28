@@ -475,63 +475,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "Encapsulation is bundling data and methods; Data Hiding is restricting direct access via private fields",
           "Data Hiding applies only to static methods; Encapsulation applies only to constructors",
           "They are exact synonyms with no distinction"
-        ,
-{
-      "question": "What is the key difference between Encapsulation and Abstraction in Java?",
-      "options": [
-            "Encapsulation is hiding internal data using private fields; Abstraction is hiding implementation complexity by exposing clean interfaces",
-            "Encapsulation applies only to methods; Abstraction applies only to variables",
-            "There is no difference; they are exact synonyms in OOP",
-            "Abstraction requires private fields while Encapsulation requires abstract classes"
-      ],
-      "correctIndex": 0,
-      "explanation": "Encapsulation bundles data and methods while hiding internal state (data hiding); Abstraction hides complex implementation details behind simpler interfaces."
-},
-{
-      "question": "Why is declaring 'public double balance;' in a BankAccount class considered a severe anti-pattern?",
-      "options": [
-            "It makes the program run slower because public variables use more memory",
-            "Any external code can directly set balance to an invalid state (like -50000) without validation",
-            "Java does not allow public fields inside classes",
-            "Public fields cannot be initialized in constructors"
-      ],
-      "correctIndex": 1,
-      "explanation": "Public fields allow outside callers to bypass business rules and corrupt class invariants, destroying data integrity."
-},
-{
-      "question": "What should a well-encapsulated setter method do when passed invalid input (e.g., setAge(-5))?",
-      "options": [
-            "Ignore the error and assign the invalid value anyway",
-            "Crash the entire JVM immediately",
-            "Reject the update, throw an IllegalArgumentException, or clamp to a safe default",
-            "Delete the object from Heap memory"
-      ],
-      "correctIndex": 2,
-      "explanation": "Encapsulated mutators act as gatekeepers; they must validate arguments and reject invalid data to keep the object in a valid state."
-},
-{
-      "question": "Which design principle is violated when client code writes 'if (acc.balance >= 100) acc.balance -= 100;' instead of 'acc.withdraw(100);'?",
-      "options": [
-            "The 'Tell, Don't Ask' principle",
-            "The Polymorphism principle",
-            "The Garbage Collection rule",
-            "The Static Factory principle"
-      ],
-      "correctIndex": 0,
-      "explanation": "The 'Tell, Don't Ask' principle states that you should tell an object what action to perform on its data, rather than extracting its data to calculate externally."
-},
-{
-      "question": "How does encapsulation protect client code when the internal data representation changes (e.g., storing time in milliseconds instead of seconds)?",
-      "options": [
-            "The client code automatically updates its own source code",
-            "Clients interact only with public method signatures (e.g., getTime()), so internal field changes do not break external code",
-            "The JVM recompiles client classes at runtime",
-            "Changing internal fields always forces every client to rewrite their code"
-      ],
-      "correctIndex": 1,
-      "explanation": "Because clients depend on method contracts rather than raw fields, internal representation can evolve freely without breaking callers."
-}
-    ],
+        ],
         "correctIndex": 1,
         "explanation": "Encapsulation bundles data with behavior; Data Hiding uses access modifiers like private to prevent external tampering."
       },
@@ -633,6 +577,61 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 2,
         "explanation": "Private methods are implementation details; testing the public API verifies their behavior cleanly without coupling tests to internals."
+      },
+      {
+        "question": "What is the key difference between Encapsulation and Abstraction in Java?",
+        "options": [
+          "Encapsulation is hiding internal data using private fields; Abstraction is hiding implementation complexity by exposing clean interfaces",
+          "Encapsulation applies only to methods; Abstraction applies only to variables",
+          "There is no difference; they are exact synonyms in OOP",
+          "Abstraction requires private fields while Encapsulation requires abstract classes"
+        ],
+        "correctIndex": 0,
+        "explanation": "Encapsulation bundles data and methods while hiding internal state (data hiding); Abstraction hides complex implementation details behind simpler interfaces."
+      },
+      {
+        "question": "Why is declaring 'public double balance;' in a BankAccount class considered a severe anti-pattern?",
+        "options": [
+          "It makes the program run slower because public variables use more memory",
+          "Any external code can directly set balance to an invalid state (like -50000) without validation",
+          "Java does not allow public fields inside classes",
+          "Public fields cannot be initialized in constructors"
+        ],
+        "correctIndex": 1,
+        "explanation": "Public fields allow outside callers to bypass business rules and corrupt class invariants, destroying data integrity."
+      },
+      {
+        "question": "What should a well-encapsulated setter method do when passed invalid input (e.g., setAge(-5))?",
+        "options": [
+          "Ignore the error and assign the invalid value anyway",
+          "Crash the entire JVM immediately",
+          "Reject the update, throw an IllegalArgumentException, or clamp to a safe default",
+          "Delete the object from Heap memory"
+        ],
+        "correctIndex": 2,
+        "explanation": "Encapsulated mutators act as gatekeepers; they must validate arguments and reject invalid data to keep the object in a valid state."
+      },
+      {
+        "question": "Which design principle is violated when client code writes 'if (acc.balance >= 100) acc.balance -= 100;' instead of 'acc.withdraw(100);'?",
+        "options": [
+          "The 'Tell, Don't Ask' principle",
+          "The Polymorphism principle",
+          "The Garbage Collection rule",
+          "The Static Factory principle"
+        ],
+        "correctIndex": 0,
+        "explanation": "The 'Tell, Don't Ask' principle states that you should tell an object what action to perform on its data, rather than extracting its data to calculate externally."
+      },
+      {
+        "question": "How does encapsulation protect client code when the internal data representation changes (e.g., storing time in milliseconds instead of seconds)?",
+        "options": [
+          "The client code automatically updates its own source code",
+          "Clients interact only with public method signatures (e.g., getTime()), so internal field changes do not break external code",
+          "The JVM recompiles client classes at runtime",
+          "Changing internal fields always forces every client to rewrite their code"
+        ],
+        "correctIndex": 1,
+        "explanation": "Because clients depend on method contracts rather than raw fields, internal representation can evolve freely without breaking callers."
       }
     ]
   },
@@ -1105,63 +1104,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "private",
           "protected",
           "public"
-        ,
-{
-      "question": "If a method is declared as 'void calculateTotal()', what is its access modifier?",
-      "options": [
-            "public",
-            "private",
-            "protected",
-            "Package-private (default visibility, since no keyword was specified)"
-      ],
-      "correctIndex": 3,
-      "explanation": "In Java, omitting the access modifier keyword gives the member package-private (default) visibility."
-},
-{
-      "question": "Can a subclass in package 'com.reports' access a 'protected' method declared in package 'com.core'?",
-      "options": [
-            "Yes, because protected members are accessible to subclasses across different packages",
-            "No, protected members are only accessible within the same package",
-            "Only if the subclass is declared private",
-            "Only if the method has no return type"
-      ],
-      "correctIndex": 0,
-      "explanation": "Protected visibility allows access within the same package PLUS subclasses in different packages through inheritance."
-},
-{
-      "question": "Can a subclass in package 'com.reports' access a package-private (default) method declared in package 'com.core'?",
-      "options": [
-            "Yes, inheritance always bypasses package boundaries",
-            "No, package-private members are strictly invisible outside their declaring package, even to subclasses",
-            "Yes, but only via reflection",
-            "Only if the superclass is public"
-      ],
-      "correctIndex": 1,
-      "explanation": "Package-private members are strictly confined to the declaring package; foreign subclasses cannot see or inherit them."
-},
-{
-      "question": "What happens if a developer writes 'private class DatabaseConfig { }' as a top-level class?",
-      "options": [
-            "It compiles and creates a hidden singleton",
-            "It causes a compile-time error: modifier private not allowed here",
-            "It compiles but throws an IllegalAccessException at runtime",
-            "It automatically converts to package-private"
-      ],
-      "correctIndex": 1,
-      "explanation": "Top-level classes can only be public or package-private (default). Declaring them private or protected causes a compiler error."
-},
-{
-      "question": "Can a local variable inside a method be marked with an access modifier (e.g. 'public int x = 10;')?",
-      "options": [
-            "Yes, if it needs to be accessed by other methods in the class",
-            "Yes, but only 'protected' is allowed on local variables",
-            "No, access modifiers cannot be applied to local variables; doing so causes a compile-time error",
-            "Yes, it makes the variable global"
-      ],
-      "correctIndex": 2,
-      "explanation": "Access modifiers apply strictly to class members (fields, methods, constructors, inner classes), never to local variables inside methods."
-}
-    ],
+        ],
         "correctIndex": 1,
         "explanation": "private is the most restrictive access level, confining visibility strictly to the declaring class."
       },
@@ -1263,6 +1206,61 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "Narrowing access at runtime causes the JVM bytecode verifier/linker to throw java.lang.IllegalAccessError."
+      },
+      {
+        "question": "If a method is declared as 'void calculateTotal()', what is its access modifier?",
+        "options": [
+          "public",
+          "private",
+          "protected",
+          "Package-private (default visibility, since no keyword was specified)"
+        ],
+        "correctIndex": 3,
+        "explanation": "In Java, omitting the access modifier keyword gives the member package-private (default) visibility."
+      },
+      {
+        "question": "Can a subclass in package 'com.reports' access a 'protected' method declared in package 'com.core'?",
+        "options": [
+          "Yes, because protected members are accessible to subclasses across different packages",
+          "No, protected members are only accessible within the same package",
+          "Only if the subclass is declared private",
+          "Only if the method has no return type"
+        ],
+        "correctIndex": 0,
+        "explanation": "Protected visibility allows access within the same package PLUS subclasses in different packages through inheritance."
+      },
+      {
+        "question": "Can a subclass in package 'com.reports' access a package-private (default) method declared in package 'com.core'?",
+        "options": [
+          "Yes, inheritance always bypasses package boundaries",
+          "No, package-private members are strictly invisible outside their declaring package, even to subclasses",
+          "Yes, but only via reflection",
+          "Only if the superclass is public"
+        ],
+        "correctIndex": 1,
+        "explanation": "Package-private members are strictly confined to the declaring package; foreign subclasses cannot see or inherit them."
+      },
+      {
+        "question": "What happens if a developer writes 'private class DatabaseConfig { }' as a top-level class?",
+        "options": [
+          "It compiles and creates a hidden singleton",
+          "It causes a compile-time error: modifier private not allowed here",
+          "It compiles but throws an IllegalAccessException at runtime",
+          "It automatically converts to package-private"
+        ],
+        "correctIndex": 1,
+        "explanation": "Top-level classes can only be public or package-private (default). Declaring them private or protected causes a compiler error."
+      },
+      {
+        "question": "Can a local variable inside a method be marked with an access modifier (e.g. 'public int x = 10;')?",
+        "options": [
+          "Yes, if it needs to be accessed by other methods in the class",
+          "Yes, but only 'protected' is allowed on local variables",
+          "No, access modifiers cannot be applied to local variables; doing so causes a compile-time error",
+          "Yes, it makes the variable global"
+        ],
+        "correctIndex": 2,
+        "explanation": "Access modifiers apply strictly to class members (fields, methods, constructors, inner classes), never to local variables inside methods."
       }
     ]
   },
@@ -1736,63 +1734,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "isValid()",
           "hasValid()",
           "booleanValid()"
-        ,
-{
-      "question": "According to JavaBeans naming conventions, what is the standard getter name for 'private boolean isVerified;'?",
-      "options": [
-            "getIsVerified() or isVerified()",
-            "booleanVerified()",
-            "fetchVerified()",
-            "checkVerified()"
-      ],
-      "correctIndex": 0,
-      "explanation": "JavaBeans specifies 'isProperty()' or 'getProperty()' for boolean fields."
-},
-{
-      "question": "What is 'representation exposure' (rep exposure) in Java?",
-      "options": [
-            "Displaying private code in the console",
-            "When a getter returns a direct reference to a mutable internal object, allowing outside code to alter private state",
-            "Printing an object's toString() output",
-            "Converting an integer to a double"
-      ],
-      "correctIndex": 1,
-      "explanation": "Rep exposure occurs when internal mutable references (like arrays or Date) leak to callers who can then mutate them directly."
-},
-{
-      "question": "Does a getter returning a primitive field (e.g. 'private int age;') require defensive copying?",
-      "options": [
-            "Yes, all fields require cloning",
-            "No, primitive values are copied by value, so modifying the returned primitive cannot affect the object's field",
-            "Only if the primitive is negative",
-            "Only if the class is public"
-      ],
-      "correctIndex": 1,
-      "explanation": "Primitives (int, double, boolean) are passed and returned by value; changing the caller's copy has zero effect on the internal field."
-},
-{
-      "question": "If a class has 'private int[] scores;', why is 'public int[] getScores() { return this.scores; }' unsafe?",
-      "options": [
-            "It causes a NullPointerException",
-            "It returns a reference to the private array, allowing any caller to execute 'getScores()[0] = 0' and modify private data",
-            "Arrays cannot be returned from methods in Java",
-            "It makes the array immutable"
-      ],
-      "correctIndex": 1,
-      "explanation": "Returning the private array reference directly allows external code to modify array elements without calling any setter."
-},
-{
-      "question": "How should a constructor handle an incoming mutable array 'public GradeBook(int[] input)' to ensure defensive copying?",
-      "options": [
-            "this.scores = input; (direct reference assignment)",
-            "this.scores = input != null ? input.clone() : new int[0]; (store an independent clone)",
-            "Set input to null",
-            "Convert the array to an int primitive"
-      ],
-      "correctIndex": 1,
-      "explanation": "Cloning the incoming array inside the constructor prevents the caller from altering the class's data by modifying their original array reference later."
-}
-    ],
+        ],
         "correctIndex": 1,
         "explanation": "JavaBeans specifies 'isProperty()' for primitive boolean accessors (isValid())."
       },
@@ -1894,6 +1836,61 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "A computed getter calculates derived values dynamically from existing state, avoiding redundant or desynchronized fields."
+      },
+      {
+        "question": "According to JavaBeans naming conventions, what is the standard getter name for 'private boolean isVerified;'?",
+        "options": [
+          "getIsVerified() or isVerified()",
+          "booleanVerified()",
+          "fetchVerified()",
+          "checkVerified()"
+        ],
+        "correctIndex": 0,
+        "explanation": "JavaBeans specifies 'isProperty()' or 'getProperty()' for boolean fields."
+      },
+      {
+        "question": "What is 'representation exposure' (rep exposure) in Java?",
+        "options": [
+          "Displaying private code in the console",
+          "When a getter returns a direct reference to a mutable internal object, allowing outside code to alter private state",
+          "Printing an object's toString() output",
+          "Converting an integer to a double"
+        ],
+        "correctIndex": 1,
+        "explanation": "Rep exposure occurs when internal mutable references (like arrays or Date) leak to callers who can then mutate them directly."
+      },
+      {
+        "question": "Does a getter returning a primitive field (e.g. 'private int age;') require defensive copying?",
+        "options": [
+          "Yes, all fields require cloning",
+          "No, primitive values are copied by value, so modifying the returned primitive cannot affect the object's field",
+          "Only if the primitive is negative",
+          "Only if the class is public"
+        ],
+        "correctIndex": 1,
+        "explanation": "Primitives (int, double, boolean) are passed and returned by value; changing the caller's copy has zero effect on the internal field."
+      },
+      {
+        "question": "If a class has 'private int[] scores;', why is 'public int[] getScores() { return this.scores; }' unsafe?",
+        "options": [
+          "It causes a NullPointerException",
+          "It returns a reference to the private array, allowing any caller to execute 'getScores()[0] = 0' and modify private data",
+          "Arrays cannot be returned from methods in Java",
+          "It makes the array immutable"
+        ],
+        "correctIndex": 1,
+        "explanation": "Returning the private array reference directly allows external code to modify array elements without calling any setter."
+      },
+      {
+        "question": "How should a constructor handle an incoming mutable array 'public GradeBook(int[] input)' to ensure defensive copying?",
+        "options": [
+          "this.scores = input; (direct reference assignment)",
+          "this.scores = input != null ? input.clone() : new int[0]; (store an independent clone)",
+          "Set input to null",
+          "Convert the array to an int primitive"
+        ],
+        "correctIndex": 1,
+        "explanation": "Cloning the incoming array inside the constructor prevents the caller from altering the class's data by modifying their original array reference later."
       }
     ]
   },
@@ -1977,7 +1974,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         {
           "aspect": "JMM Safe Publication Guarantee",
           "optionA": "Mutable Class: Requires explicit synchronized/locks/volatile to prevent stale reads",
-          "optionB": "Immutable Class: Guaranteed safe publication across threads via JLS §17.5 final field freeze"
+          "optionB": "Immutable Class: Guaranteed safe publication across threads via JLS \u00a717.5 final field freeze"
         }
       ]
     },
@@ -2367,63 +2364,7 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
           "An object whose observable state cannot be modified after its construction is complete",
           "An object that cannot be garbage collected",
           "An object with no fields"
-        ,
-{
-      "question": "Why must an immutable class be declared with the 'final' keyword?",
-      "options": [
-            "To prevent subclasses from overriding methods and introducing mutable state or side-effects",
-            "To allow the class to be serialized",
-            "To force all methods to run in static memory",
-            "To allow the class to be instantiated without 'new'"
-      ],
-      "correctIndex": 0,
-      "explanation": "If an immutable class is not final, a subclass could override methods to maintain mutable state, violating immutability guarantees."
-},
-{
-      "question": "If a field is declared as 'private final StringBuilder sb = new StringBuilder(\"A\");', is the object immutable?",
-      "options": [
-            "Yes, because the 'final' keyword guarantees complete immutability",
-            "No, 'final' only prevents reassigning 'sb'; the StringBuilder object itself can still be mutated via sb.append(\"B\")",
-            "Yes, StringBuilder is an immutable class in Java",
-            "No, final fields cannot hold objects"
-      ],
-      "correctIndex": 1,
-      "explanation": "A 'final' reference cannot point to a different object, but the object itself remains fully mutable unless its class is designed to be immutable."
-},
-{
-      "question": "Which of the following standard Java classes is designed using the Immutable Class Pattern?",
-      "options": [
-            "java.lang.String and java.lang.Integer",
-            "java.util.ArrayList",
-            "java.lang.StringBuilder",
-            "java.util.Date"
-      ],
-      "correctIndex": 0,
-      "explanation": "String, Integer, Double, and all wrapper classes, as well as java.time classes (LocalDate), are immutable."
-},
-{
-      "question": "Why are immutable objects inherently thread-safe without requiring 'synchronized' locks?",
-      "options": [
-            "They run on a separate CPU core automatically",
-            "Because their state never changes after construction, multiple threads can read them simultaneously without race conditions",
-            "The JVM freezes all other threads when an immutable object is accessed",
-            "Immutable objects cannot be shared between threads"
-      ],
-      "correctIndex": 1,
-      "explanation": "Thread safety issues (race conditions) only occur when multiple threads read and write mutable state. Since immutable objects never change, they are safe to share freely across threads."
-},
-{
-      "question": "How do immutable classes evolve state (e.g. String.toUpperCase() or LocalDate.plusDays())?",
-      "options": [
-            "They modify internal private fields directly in memory",
-            "They return a brand-new instance containing the modified state, leaving the original object unchanged",
-            "They temporarily disable the 'final' modifier using reflection",
-            "They restart the JVM"
-      ],
-      "correctIndex": 1,
-      "explanation": "Immutable classes use functional 'with-er' or transform methods that return a new object with the updated value, leaving the original instance untouched."
-}
-    ],
+        ],
         "correctIndex": 1,
         "explanation": "An immutable object is one whose state is permanently fixed upon completion of construction."
       },
@@ -2525,6 +2466,61 @@ export const oop10Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "java.lang.String is one of the most prominent built-in immutable classes in Java."
+      },
+      {
+        "question": "Why must an immutable class be declared with the 'final' keyword?",
+        "options": [
+          "To prevent subclasses from overriding methods and introducing mutable state or side-effects",
+          "To allow the class to be serialized",
+          "To force all methods to run in static memory",
+          "To allow the class to be instantiated without 'new'"
+        ],
+        "correctIndex": 0,
+        "explanation": "If an immutable class is not final, a subclass could override methods to maintain mutable state, violating immutability guarantees."
+      },
+      {
+        "question": "If a field is declared as 'private final StringBuilder sb = new StringBuilder(\"A\");', is the object immutable?",
+        "options": [
+          "Yes, because the 'final' keyword guarantees complete immutability",
+          "No, 'final' only prevents reassigning 'sb'; the StringBuilder object itself can still be mutated via sb.append(\"B\")",
+          "Yes, StringBuilder is an immutable class in Java",
+          "No, final fields cannot hold objects"
+        ],
+        "correctIndex": 1,
+        "explanation": "A 'final' reference cannot point to a different object, but the object itself remains fully mutable unless its class is designed to be immutable."
+      },
+      {
+        "question": "Which of the following standard Java classes is designed using the Immutable Class Pattern?",
+        "options": [
+          "java.lang.String and java.lang.Integer",
+          "java.util.ArrayList",
+          "java.lang.StringBuilder",
+          "java.util.Date"
+        ],
+        "correctIndex": 0,
+        "explanation": "String, Integer, Double, and all wrapper classes, as well as java.time classes (LocalDate), are immutable."
+      },
+      {
+        "question": "Why are immutable objects inherently thread-safe without requiring 'synchronized' locks?",
+        "options": [
+          "They run on a separate CPU core automatically",
+          "Because their state never changes after construction, multiple threads can read them simultaneously without race conditions",
+          "The JVM freezes all other threads when an immutable object is accessed",
+          "Immutable objects cannot be shared between threads"
+        ],
+        "correctIndex": 1,
+        "explanation": "Thread safety issues (race conditions) only occur when multiple threads read and write mutable state. Since immutable objects never change, they are safe to share freely across threads."
+      },
+      {
+        "question": "How do immutable classes evolve state (e.g. String.toUpperCase() or LocalDate.plusDays())?",
+        "options": [
+          "They modify internal private fields directly in memory",
+          "They return a brand-new instance containing the modified state, leaving the original object unchanged",
+          "They temporarily disable the 'final' modifier using reflection",
+          "They restart the JVM"
+        ],
+        "correctIndex": 1,
+        "explanation": "Immutable classes use functional 'with-er' or transform methods that return a new object with the updated value, leaving the original instance untouched."
       }
     ]
   }
