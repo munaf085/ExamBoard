@@ -125,18 +125,18 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "code": "class Parent {\n    int value = 100;\n    void display() { System.out.println(\"Parent display: \" + value); }\n}\n\nclass Child extends Parent {\n    int value = 200; // Shadows Parent.value\n    @Override\n    void display() { System.out.println(\"Child display: \" + value); }\n}\n\npublic class FieldTrap {\n    public static void main(String[] args) {\n        Parent ref = new Child();\n        System.out.println(\"ref.value: \" + ref.value); // Field: compile-time bound to Parent\n        ref.display(); // Method: runtime dispatched to Child\n    }\n}",
         "output": "ref.value: 100\nChild display: 200"
       },
-      {
-        "title": "Overloaded Math Calculator vs Overridden Tax Calculator",
-        "description": "Contrasting static compile-time selection of math utility overloads with dynamic runtime dispatch of regional tax calculators.",
-        "code": "class Calculator {\n    // Overloading: compile-time decision based on argument count & type\n    public int multiply(int a, int b) { return a * b; }\n    public double multiply(double a, double b) { return a * b; }\n}\n\nclass TaxService {\n    // Overriding candidate: runtime dynamic dispatch\n    public double calculateTax(double amount) {\n        return amount * 0.05; // Standard 5% tax\n    }\n}\n\nclass LuxuryTaxService extends TaxService {\n    @Override\n    public double calculateTax(double amount) {\n        return amount * 0.18; // Luxury 18% tax\n    }\n}\n\npublic class PolyComparisonDemo {\n    public static void main(String[] args) {\n        Calculator calc = new Calculator();\n        System.out.println(\"Int multiply: \" + calc.multiply(4, 5));\n        System.out.println(\"Double multiply: \" + calc.multiply(4.5, 2.0));\n\n        TaxService tax = new LuxuryTaxService();\n        System.out.println(\"Tax calculated: $\" + tax.calculateTax(1000.0));\n    }\n}",
-        "output": "Int multiply: 20\nDouble multiply: 9.0\nTax calculated: $180.0"
-      },
-      {
-        "title": "Static Method Hiding with DatabaseConnection vs Dynamic Method Dispatch with PostgresConnection",
-        "description": "Demonstrating how static methods are hidden and bound by reference type, while instance methods are dispatched dynamically by runtime object.",
-        "code": "class DatabaseConnection {\n    public static void printDriverInfo() {\n        System.out.println(\"Driver: Generic JDBC 1.0 (Static/Hidden)\");\n    }\n    public void connect() {\n        System.out.println(\"Connecting via generic TCP socket... (Dynamic)\");\n    }\n}\n\nclass PostgresConnection extends DatabaseConnection {\n    public static void printDriverInfo() {\n        System.out.println(\"Driver: PostgreSQL v42.7 (Static/Hidden)\");\n    }\n    @Override\n    public void connect() {\n        System.out.println(\"Connecting via PostgreSQL wire protocol on port 5432... (Dynamic)\");\n    }\n}\n\npublic class StaticVsDynamicDemo {\n    public static void main(String[] args) {\n        DatabaseConnection conn = new PostgresConnection();\n\n        // Static call: compiler binds to DatabaseConnection reference type\n        conn.printDriverInfo();\n\n        // Dynamic call: JVM dispatches to PostgresConnection object on heap\n        conn.connect();\n    }\n}",
-        "output": "Driver: Generic JDBC 1.0 (Static/Hidden)\nConnecting via PostgreSQL wire protocol on port 5432... (Dynamic)"
-      }
+{
+      "title": "Overloaded Math Calculator vs Overridden Tax Calculator",
+      "description": "Contrasting static compile-time selection of math utility overloads with dynamic runtime dispatch of regional tax calculators.",
+      "code": "class Calculator {\n    public int multiply(int a, int b) { return a * b; }\n    public double multiply(double a, double b) { return a * b; }\n}\n\nclass TaxService {\n    public double calculateTax(double amount) {\n        return amount * 0.05;\n    }\n}\n\nclass LuxuryTaxService extends TaxService {\n    @Override\n    public double calculateTax(double amount) {\n        return amount * 0.18;\n    }\n}\n\npublic class PolyComparisonDemo {\n    public static void main(String[] args) {\n        Calculator calc = new Calculator();\n        System.out.println(\"Int multiply: \" + calc.multiply(4, 5));\n        System.out.println(\"Double multiply: \" + calc.multiply(4.5, 2.0));\n\n        TaxService tax = new LuxuryTaxService();\n        System.out.println(\"Tax calculated: $\" + tax.calculateTax(1000.0));\n    }\n}",
+      "output": "Int multiply: 20\nDouble multiply: 9.0\nTax calculated: $180.0"
+},
+{
+      "title": "Static Method Hiding with DatabaseConnection vs Dynamic Method Dispatch with PostgresConnection",
+      "description": "Demonstrating how static methods are hidden and bound by reference type, while instance methods are dispatched dynamically by runtime object.",
+      "code": "class DatabaseConnection {\n    public static void printDriverInfo() {\n        System.out.println(\"Driver: Generic JDBC 1.0 (Static/Hidden)\");\n    }\n    public void connect() {\n        System.out.println(\"Connecting via generic TCP socket... (Dynamic)\");\n    }\n}\n\nclass PostgresConnection extends DatabaseConnection {\n    public static void printDriverInfo() {\n        System.out.println(\"Driver: PostgreSQL v42.7 (Static/Hidden)\");\n    }\n    @Override\n    public void connect() {\n        System.out.println(\"Connecting via PostgreSQL wire protocol on port 5432... (Dynamic)\");\n    }\n}\n\npublic class StaticVsDynamicDemo {\n    public static void main(String[] args) {\n        DatabaseConnection conn = new PostgresConnection();\n        conn.printDriverInfo();\n        conn.connect();\n    }\n}",
+      "output": "Driver: Generic JDBC 1.0 (Static/Hidden)\nConnecting via PostgreSQL wire protocol on port 5432... (Dynamic)"
+}
     ],
     "beginnerMistakes": [
       {
@@ -149,16 +149,16 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "whyItHappens": "Defining a static method with identical signature in Child compiles without error.",
         "howToFix": "Recognize that static methods are hidden, not overridden. Calls resolve based on the declared reference type."
       },
-      {
-        "mistake": "Thinking overloaded methods are chosen based on the runtime object type",
-        "whyItHappens": "Passing an upcast object (like 'Object obj = \"test\"') to an overloaded method and expecting the String overload to run.",
-        "howToFix": "Remember that method overloading is resolved strictly at compile time based on the declared type of the reference variable passed."
-      },
-      {
-        "mistake": "Attempting to overload methods by changing only the return type",
-        "whyItHappens": "Trying to write 'int getData()' and 'String getData()' in the same class.",
-        "howToFix": "In Java, return type alone does not differentiate overloaded methods. Parameter lists must differ in types, count, or order."
-      }
+{
+      "mistake": "Thinking overloaded methods are chosen based on the runtime object type",
+      "whyItHappens": "Passing an upcast object (like 'Object obj = \"test\"') to an overloaded method and expecting the String overload to run.",
+      "howToFix": "Remember that method overloading is resolved strictly at compile time based on the declared type of the reference variable passed."
+},
+{
+      "mistake": "Attempting to overload methods by changing only the return type",
+      "whyItHappens": "Trying to write 'int getData()' and 'String getData()' in the same class.",
+      "howToFix": "In Java, return type alone does not differentiate overloaded methods. Parameter lists must differ in types, count, or order."
+}
     ],
     "practiceProblems": [
       {
@@ -554,62 +554,7 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "Getter methods are virtual and participate in runtime polymorphism."
-      },
-      {
-          "question": "Which of the following is an example of compile-time (static) polymorphism in Java?",
-          "options": [
-            "Method overriding",
-            "Method overloading",
-            "Dynamic method dispatch",
-            "Interface implementation"
-          ],
-          "correctIndex": 1,
-          "explanation": "Method overloading is resolved at compile time based on parameter types and counts."
-        },
-        {
-          "question": "Can an overloaded method differ ONLY in its return type?",
-          "options": [
-            "Yes, if both types are primitives",
-            "No, changing only the return type produces a compile-time error",
-            "Yes, in Java 17+",
-            "Only if one return type is void"
-          ],
-          "correctIndex": 1,
-          "explanation": "Overloading requires a different parameter list. Changing only the return type causes a compilation error: method already defined."
-        },
-        {
-          "question": "When does Java resolve which overridden method implementation to execute?",
-          "options": [
-            "At compile time by inspecting reference type",
-            "At runtime by inspecting actual object type on the heap",
-            "When the bytecode is loaded by ClassLoader",
-            "During Garbage Collection"
-          ],
-          "correctIndex": 1,
-          "explanation": "Runtime polymorphism (overriding) uses dynamic method dispatch to bind calls based on the actual heap object."
-        },
-        {
-          "question": "Can private methods achieve runtime polymorphism?",
-          "options": [
-            "Yes, if called via super",
-            "No, private methods are bound statically at compile time and cannot be overridden",
-            "Only inside the same file",
-            "Yes, if annotated with @Override"
-          ],
-          "correctIndex": 1,
-          "explanation": "Private methods are not visible to subclasses and use non-virtual invoke-special dispatch, making runtime polymorphism impossible."
-        },
-        {
-          "question": "What is the primary architectural advantage of polymorphism in enterprise software?",
-          "options": [
-            "It reduces heap memory by 50%",
-            "It allows high-level code to work with generic abstractions without knowing specific concrete implementations",
-            "It eliminates the need for compilation",
-            "It turns checked exceptions into unchecked ones"
-          ],
-          "correctIndex": 1,
-          "explanation": "Polymorphism enables open-closed architecture: code can interact with base types or interfaces, seamlessly accommodating new subtypes without modification."
-        }
+      }
     ]
   },
   "dynamic-method-dispatch": {
@@ -726,18 +671,18 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "code": "class Notifier {\n    void notifyUser(String msg) { System.out.println(\"Standard notification: \" + msg); }\n}\nclass SmsNotifier extends Notifier {\n    @Override\n    void notifyUser(String msg) { System.out.println(\"SMS Sent: [\" + msg + \"]\"); }\n}\nclass PushNotifier extends Notifier {\n    @Override\n    void notifyUser(String msg) { System.out.println(\"Push Alert: >> \" + msg + \" <<\"); }\n}\n\npublic class NotificationDemo {\n    public static void send(Notifier n, String msg) {\n        n.notifyUser(msg); // Dynamic dispatch point\n    }\n    public static void main(String[] args) {\n        send(new SmsNotifier(), \"Your code is 1234\");\n        send(new PushNotifier(), \"Meeting starts in 5m\");\n    }\n}",
         "output": "SMS Sent: [Your code is 1234]\nPush Alert: >> Meeting starts in 5m <<"
       },
-      {
-        "title": "Polymorphic Payroll System with Dynamic Dispatch",
-        "description": "Iterating over a collection of different employee subtypes through a superclass reference array and letting dynamic dispatch compute exact wages.",
-        "code": "class Employee {\n    protected String name;\n    public Employee(String name) { this.name = name; }\n    public double calculateMonthlyPay() { return 0.0; }\n}\n\nclass SalariedEmployee extends Employee {\n    private double annualSalary;\n    public SalariedEmployee(String name, double salary) { super(name); this.annualSalary = salary; }\n    @Override\n    public double calculateMonthlyPay() { return annualSalary / 12.0; }\n}\n\nclass HourlyEmployee extends Employee {\n    private double hourlyRate;\n    private int hoursWorked;\n    public HourlyEmployee(String name, double rate, int hours) { super(name); this.hourlyRate = rate; this.hoursWorked = hours; }\n    @Override\n    public double calculateMonthlyPay() { return hourlyRate * hoursWorked; }\n}\n\npublic class PayrollDemo {\n    public static void main(String[] args) {\n        Employee[] staff = {\n            new SalariedEmployee(\"Alice\", 120000.0),\n            new HourlyEmployee(\"Bob\", 45.0, 160)\n        };\n        for (Employee e : staff) {\n            System.out.printf(\"%s monthly pay: $%.2f%n\", e.name, e.calculateMonthlyPay());\n        }\n    }\n}",
-        "output": "Alice monthly pay: $10000.00\nBob monthly pay: $7200.00"
-      },
-      {
-        "title": "Virtual Method Invocation in Gaming Entity System",
-        "description": "Demonstrating how a game loop invokes update() on polymorphic GameEntity references, triggering specialized behavior without knowing concrete types.",
-        "code": "class GameEntity {\n    protected String tag;\n    public GameEntity(String tag) { this.tag = tag; }\n    public void update() { System.out.println(tag + \" idle\"); }\n}\n\nclass Player extends GameEntity {\n    public Player(String tag) { super(tag); }\n    @Override\n    public void update() { System.out.println(tag + \" processing input and moving\"); }\n}\n\nclass Enemy extends GameEntity {\n    public Enemy(String tag) { super(tag); }\n    @Override\n    public void update() { System.out.println(tag + \" pathfinding towards player\"); }\n}\n\npublic class GameLoopDemo {\n    public static void main(String[] args) {\n        GameEntity[] entities = { new Player(\"Hero\"), new Enemy(\"Goblin\") };\n        for (GameEntity entity : entities) {\n            entity.update(); // Virtual method invocation\n        }\n    }\n}",
-        "output": "Hero processing input and moving\nGoblin pathfinding towards player"
-      }
+{
+      "title": "Polymorphic Payroll System with Dynamic Dispatch",
+      "description": "Iterating over a collection of different employee subtypes through a superclass reference array and letting dynamic dispatch compute exact wages.",
+      "code": "class Employee {\n    protected String name;\n    public Employee(String name) { this.name = name; }\n    public double calculateMonthlyPay() { return 0.0; }\n}\n\nclass SalariedEmployee extends Employee {\n    private double annualSalary;\n    public SalariedEmployee(String name, double salary) { super(name); this.annualSalary = salary; }\n    @Override\n    public double calculateMonthlyPay() { return annualSalary / 12.0; }\n}\n\nclass HourlyEmployee extends Employee {\n    private double hourlyRate;\n    private int hoursWorked;\n    public HourlyEmployee(String name, double rate, int hours) { super(name); this.hourlyRate = rate; this.hoursWorked = hours; }\n    @Override\n    public double calculateMonthlyPay() { return hourlyRate * hoursWorked; }\n}\n\npublic class PayrollDemo {\n    public static void main(String[] args) {\n        Employee[] staff = {\n            new SalariedEmployee(\"Alice\", 120000.0),\n            new HourlyEmployee(\"Bob\", 45.0, 160)\n        };\n        for (Employee e : staff) {\n            System.out.printf(\"%s monthly pay: $%.2f%n\", e.name, e.calculateMonthlyPay());\n        }\n    }\n}",
+      "output": "Alice monthly pay: $10000.00\nBob monthly pay: $7200.00"
+},
+{
+      "title": "Virtual Method Invocation in Gaming Entity System",
+      "description": "Demonstrating how a game loop invokes update() on polymorphic GameEntity references, triggering specialized behavior without knowing concrete types.",
+      "code": "class GameEntity {\n    protected String tag;\n    public GameEntity(String tag) { this.tag = tag; }\n    public void update() { System.out.println(tag + \" idle\"); }\n}\n\nclass Player extends GameEntity {\n    public Player(String tag) { super(tag); }\n    @Override\n    public void update() { System.out.println(tag + \" processing input and moving\"); }\n}\n\nclass Enemy extends GameEntity {\n    public Enemy(String tag) { super(tag); }\n    @Override\n    public void update() { System.out.println(tag + \" pathfinding towards player\"); }\n}\n\npublic class GameLoopDemo {\n    public static void main(String[] args) {\n        GameEntity[] entities = { new Player(\"Hero\"), new Enemy(\"Goblin\") };\n        for (GameEntity entity : entities) {\n            entity.update();\n        }\n    }\n}",
+      "output": "Hero processing input and moving\nGoblin pathfinding towards player"
+}
     ],
     "beginnerMistakes": [
       {
@@ -750,16 +695,16 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "whyItHappens": "Assuming because the heap object is a SportsCar, 'Vehicle v = new SportsCar(); v.turboBoost();' will work.",
         "howToFix": "The compiler checks the reference type! If turboBoost() is not declared in Vehicle, you must downcast first."
       },
-      {
-        "mistake": "Calling an overridable method inside a superclass constructor",
-        "whyItHappens": "Calling 'init()' inside Parent() when Child overrides 'init()' and uses child fields.",
-        "howToFix": "Subclass fields are uninitialized (null or 0) when the superclass constructor runs! Keep constructor methods private or final."
-      },
-      {
-        "mistake": "Assuming private methods participate in dynamic method dispatch",
-        "whyItHappens": "Declaring a private method in Parent and writing the same signature in Child.",
-        "howToFix": "Private methods are not visible to subclasses and use invokespecial (static binding), not dynamic vtable dispatch."
-      }
+{
+      "mistake": "Calling an overridable method inside a superclass constructor",
+      "whyItHappens": "Calling 'init()' inside Parent() when Child overrides 'init()' and uses child fields.",
+      "howToFix": "Subclass fields are uninitialized (null or 0) when the superclass constructor runs! Keep constructor methods private or final."
+},
+{
+      "mistake": "Assuming private methods participate in dynamic method dispatch",
+      "whyItHappens": "Declaring a private method in Parent and writing the same signature in Child.",
+      "howToFix": "Private methods are not visible to subclasses and use invokespecial (static binding), not dynamic vtable dispatch."
+}
     ],
     "practiceProblems": [
       {
@@ -1157,62 +1102,7 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 0,
         "explanation": "Dynamic dispatch adheres to the Open-Closed Principle: new subclasses add behavior without editing caller code."
-      },
-      {
-          "question": "What JVM bytecode instruction is typically used to execute regular virtual method calls on objects?",
-          "options": [
-            "invokestatic",
-            "invokespecial",
-            "invokevirtual",
-            "invokedynamic"
-          ],
-          "correctIndex": 2,
-          "explanation": "invokevirtual is the standard bytecode instruction for dynamic dispatch on non-interface object instances."
-        },
-        {
-          "question": "What is a 'vtable' (virtual method table) in JVM execution?",
-          "options": [
-            "A stack frame storing local variables",
-            "An internal array of pointers to method implementations used for O(1) dynamic method dispatch",
-            "A database table storing class names",
-            "A Garbage Collection root"
-          ],
-          "correctIndex": 1,
-          "explanation": "The vtable is an internal JVM structure that maps method signatures to their exact memory addresses for fast runtime dispatch."
-        },
-        {
-          "question": "Are field accesses resolved dynamically through dynamic dispatch in Java?",
-          "options": [
-            "Yes, fields are fully polymorphic",
-            "No, fields are resolved statically at compile time using the declared reference type",
-            "Only protected fields are dynamic",
-            "Only if marked volatile"
-          ],
-          "correctIndex": 1,
-          "explanation": "Fields are NOT polymorphic in Java. Field accesses are bound at compile time based strictly on the reference type."
-        },
-        {
-          "question": "What happens if a parent class method is invoked, but the child class did NOT override it?",
-          "options": [
-            "A NoSuchMethodError is thrown",
-            "The JVM traverses up the vtable hierarchy and executes the parent's implementation",
-            "The call returns null",
-            "Compilation fails"
-          ],
-          "correctIndex": 1,
-          "explanation": "If a subclass does not override an inherited method, its vtable slot points directly to the parent's method implementation."
-        },
-        {
-          "question": "Why does calling 'p.toString()' invoke the subclass implementation even if 'p' is declared as Object?",
-          "options": [
-            "Because Object is an interface",
-            "Because toString() is a virtual method that dynamically dispatches to the runtime object's override",
-            "Due to autoboxing",
-            "Because javac rewrites the code"
-          ],
-          "correctIndex": 1,
-          "explanation": "All non-final, non-private instance methods in Java are virtual by default and dispatch dynamically to the heap object's implementation."
-        }
+      }
     ]
   },
   "casting-and-classcastexception": {
@@ -1333,18 +1223,18 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "code": "class Test {\n    public static void main(String[] args) {\n        String str = null;\n        Object obj = str; // Upcast null to Object\n        Integer num = (Integer) obj; // Downcast null Object to Integer\n\n        System.out.println(\"num reference is: \" + num);\n        System.out.println(\"Cast of null succeeded with zero exceptions!\");\n    }\n}",
         "output": "num reference is: null\nCast of null succeeded with zero exceptions!"
       },
-      {
-        "title": "Polymorphic Media Player with Downcasting to Access Specialized Controls",
-        "description": "Managing a list of Media files with safe downcasting to access Video-only resolution or Audio-only bitrate controls.",
-        "code": "class MediaFile {\n    String filename;\n    public MediaFile(String f) { this.filename = f; }\n    public void play() { System.out.println(\"Playing \" + filename); }\n}\n\nclass VideoFile extends MediaFile {\n    int resolutionP;\n    public VideoFile(String f, int res) { super(f); this.resolutionP = res; }\n    public void setSubtitleTrack(String lang) {\n        System.out.println(\"Subtitles set to: \" + lang + \" for \" + filename + \" (\" + resolutionP + \"p)\");\n    }\n}\n\npublic class MediaPlayerDemo {\n    public static void main(String[] args) {\n        MediaFile media = new VideoFile(\"matrix.mp4\", 1080);\n        media.play(); // Polymorphic method call\n\n        // Safe downcast to access VideoFile-specific subtitle method\n        if (media instanceof VideoFile) {\n            VideoFile video = (VideoFile) media;\n            video.setSubtitleTrack(\"English\");\n        }\n    }\n}",
-        "output": "Playing matrix.mp4\nSubtitles set to: English for matrix.mp4 (1080p)"
-      },
-      {
-        "title": "Defensive Downcasting in Heterogeneous Data Processing",
-        "description": "Processing a heterogeneous array of Object references with defensive instanceof guards to handle Strings, Numbers, and custom types safely.",
-        "code": "public class HeterogeneousProcessorDemo {\n    public static void inspect(Object obj) {\n        if (obj instanceof String) {\n            String s = (String) obj;\n            System.out.println(\"String of length \" + s.length() + \": \" + s.toUpperCase());\n        } else if (obj instanceof Integer) {\n            Integer i = (Integer) obj;\n            System.out.println(\"Integer squared: \" + (i * i));\n        } else {\n            System.out.println(\"Other type: \" + obj);\n        }\n    }\n\n    public static void main(String[] args) {\n        Object[] items = { \"Java\", 7, 3.14 };\n        for (Object item : items) inspect(item);\n    }\n}",
-        "output": "String of length 4: JAVA\nInteger squared: 49\nOther type: 3.14"
-      }
+{
+      "title": "Polymorphic Media Player with Downcasting to Access Specialized Controls",
+      "description": "Managing a list of Media files with safe downcasting to access Video-only resolution or Audio-only bitrate controls.",
+      "code": "class MediaFile {\n    String filename;\n    public MediaFile(String f) { this.filename = f; }\n    public void play() { System.out.println(\"Playing \" + filename); }\n}\n\nclass VideoFile extends MediaFile {\n    int resolutionP;\n    public VideoFile(String f, int res) { super(f); this.resolutionP = res; }\n    public void setSubtitleTrack(String lang) {\n        System.out.println(\"Subtitles set to: \" + lang + \" for \" + filename + \" (\" + resolutionP + \"p)\");\n    }\n}\n\npublic class MediaPlayerDemo {\n    public static void main(String[] args) {\n        MediaFile media = new VideoFile(\"matrix.mp4\", 1080);\n        media.play();\n\n        if (media instanceof VideoFile) {\n            VideoFile video = (VideoFile) media;\n            video.setSubtitleTrack(\"English\");\n        }\n    }\n}",
+      "output": "Playing matrix.mp4\nSubtitles set to: English for matrix.mp4 (1080p)"
+},
+{
+      "title": "Defensive Downcasting in Heterogeneous Data Processing",
+      "description": "Processing a heterogeneous array of Object references with defensive instanceof guards to handle Strings, Numbers, and custom types safely.",
+      "code": "public class HeterogeneousProcessorDemo {\n    public static void inspect(Object obj) {\n        if (obj instanceof String) {\n            String s = (String) obj;\n            System.out.println(\"String of length \" + s.length() + \": \" + s.toUpperCase());\n        } else if (obj instanceof Integer) {\n            Integer i = (Integer) obj;\n            System.out.println(\"Integer squared: \" + (i * i));\n        } else {\n            System.out.println(\"Other type: \" + obj);\n        }\n    }\n\n    public static void main(String[] args) {\n        Object[] items = { \"Java\", 7, 3.14 };\n        for (Object item : items) inspect(item);\n    }\n}",
+      "output": "String of length 4: JAVA\nInteger squared: 49\nOther type: 3.14"
+}
     ],
     "beginnerMistakes": [
       {
@@ -1357,16 +1247,16 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "whyItHappens": "Assuming an array of superclass elements will only ever contain one specific subclass.",
         "howToFix": "Always guard explicit downcasts with 'if (ref instanceof TargetType)' to prevent ClassCastException crashes."
       },
-      {
-        "mistake": "Attempting to cast between sibling classes",
-        "whyItHappens": "Trying to cast Dog to Cat because both extend Animal.",
-        "howToFix": "Sibling classes share a parent but have zero inheritance relationship with each other. The compiler will reject direct casts as inconvertible types."
-      },
-      {
-        "mistake": "Assuming downcasting an object modifies its internal memory layout",
-        "whyItHappens": "Thinking that '(Child) parentRef' converts the object on the heap.",
-        "howToFix": "Casting NEVER changes the heap object. It only changes the compiler's reference type lens used to access members."
-      }
+{
+      "mistake": "Attempting to cast between sibling classes",
+      "whyItHappens": "Trying to cast Dog to Cat because both extend Animal.",
+      "howToFix": "Sibling classes share a parent but have zero inheritance relationship with each other. The compiler will reject direct casts as inconvertible types."
+},
+{
+      "mistake": "Assuming downcasting an object modifies its internal memory layout",
+      "whyItHappens": "Thinking that '(Child) parentRef' converts the object on the heap.",
+      "howToFix": "Casting NEVER changes the heap object. It only changes the compiler's reference type lens used to access members."
+}
     ],
     "practiceProblems": [
       {
@@ -1763,62 +1653,7 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "The compiler restricts method calls to those declared on the reference type (Animal)."
-      },
-      {
-          "question": "What is 'Upcasting' in Java?",
-          "options": [
-            "Casting a primitive int to long",
-            "Assigning a subclass reference to a superclass type (e.g. 'Animal a = new Dog();')",
-            "Casting a parent object to a child reference",
-            "Converting a double to String"
-          ],
-          "correctIndex": 1,
-          "explanation": "Upcasting assigns a derived object to a base reference. It is completely safe and implicit."
-        },
-        {
-          "question": "What is 'Downcasting' in Java?",
-          "options": [
-            "Assigning an object to null",
-            "Casting a superclass reference down to a more specific subclass type (e.g. 'Dog d = (Dog) a;')",
-            "Calling super() in a constructor",
-            "Converting numbers to lower precision"
-          ],
-          "correctIndex": 1,
-          "explanation": "Downcasting casts a broader reference to a narrower subtype, requiring an explicit cast syntax '(Subtype)'."
-        },
-        {
-          "question": "What runtime exception occurs if you downcast an object to a type it does not actually belong to?",
-          "options": [
-            "NullPointerException",
-            "IllegalArgumentException",
-            "ClassCastException",
-            "IllegalStateException"
-          ],
-          "correctIndex": 2,
-          "explanation": "Downcasting an incompatible heap object (e.g. casting a Cat object to Dog) throws java.lang.ClassCastException at runtime."
-        },
-        {
-          "question": "Which of the following downcasts will throw a ClassCastException at runtime?",
-          "options": [
-            "Animal a = new Dog(); Dog d = (Dog) a;",
-            "Animal a = new Animal(); Dog d = (Dog) a;",
-            "Object o = \"Hello\"; String s = (String) o;",
-            "CharSequence cs = \"Text\"; String s = (String) cs;"
-          ],
-          "correctIndex": 1,
-          "explanation": "'new Animal()' creates a raw Animal object, not a Dog. Attempting to downcast it to Dog fails with ClassCastException."
-        },
-        {
-          "question": "How can you safely avoid ClassCastException when downcasting?",
-          "options": [
-            "Using a try-catch block or checking with 'instanceof' before casting",
-            "By marking the variable static",
-            "By disabling JVM verification",
-            "Using public fields"
-          ],
-          "correctIndex": 0,
-          "explanation": "Verifying the type with 'instanceof' or modern pattern matching ensures safe downcasting without exceptions."
-        }
+      }
     ]
   },
   "instanceof-and-pattern-matching": {
@@ -1930,18 +1765,18 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "code": "class Account {\n    String id;\n    Account(String id) { this.id = id; }\n}\n\npublic class GuardDemo {\n    public static void process(Object obj) {\n        if (!(obj instanceof Account acc)) {\n            System.out.println(\"Not an account, exiting.\");\n            return;\n        }\n        // 'acc' is in scope here because the method would have returned if it wasn't an Account!\n        System.out.println(\"Processing Account ID: \" + acc.id);\n    }\n\n    public static void main(String[] args) {\n        process(new Account(\"ACC-404\"));\n        process(\"A random string\");\n    }\n}",
         "output": "Processing Account ID: ACC-404\nNot an account, exiting."
       },
-      {
-        "title": "Polymorphic Document Exporter with Pattern Matching",
-        "description": "Exporting different document types using clean pattern matching branches with zero explicit downcast syntax.",
-        "code": "abstract class Document {\n    abstract String getTitle();\n}\n\nclass Spreadsheet extends Document {\n    String title; int rowCount;\n    Spreadsheet(String t, int r) { this.title = t; this.rowCount = r; }\n    String getTitle() { return title; }\n    int getRowCount() { return rowCount; }\n}\n\nclass Presentation extends Document {\n    String title; int slideCount;\n    Presentation(String t, int s) { this.title = t; this.slideCount = s; }\n    String getTitle() { return title; }\n    int getSlideCount() { return slideCount; }\n}\n\npublic class ExporterDemo {\n    public static void export(Document doc) {\n        if (doc instanceof Spreadsheet sheet && sheet.getRowCount() > 0) {\n            System.out.println(\"Exporting CSV: \" + sheet.getTitle() + \" with \" + sheet.getRowCount() + \" rows\");\n        } else if (doc instanceof Presentation pres) {\n            System.out.println(\"Exporting PDF slides: \" + pres.getTitle() + \" (" + pres.getSlideCount() + \" slides)\");\n        } else {\n            System.out.println(\"Exporting empty generic document\");\n        }\n    }\n\n    public static void main(String[] args) {\n        export(new Spreadsheet(\"Q3 Financials\", 500));\n        export(new Presentation(\"Keynote\", 24));\n    }\n}",
-        "output": "Exporting CSV: Q3 Financials with 500 rows\nExporting PDF slides: Keynote (24 slides)"
-      },
-      {
-        "title": "Event Handling Pipeline with Pattern Matching and Flow Scoping",
-        "description": "Showing how modern pattern matching cleanly handles event processing pipelines with flow-scoped variables.",
-        "code": "class AppEvent { String timestamp = \"12:00:00\"; }\nclass ClickEvent extends AppEvent { int x, y; ClickEvent(int x, int y) { this.x = x; this.y = y; } }\nclass KeyEvent extends AppEvent { char key; KeyEvent(char k) { this.key = k; } }\n\npublic class EventPipelineDemo {\n    public static void handle(AppEvent event) {\n        if (event instanceof ClickEvent click && click.x >= 0 && click.y >= 0) {\n            System.out.println(\"Click processed at (" + click.x + \", \" + click.y + \")\");\n        } else if (event instanceof KeyEvent key) {\n            System.out.println(\"Key pressed: '" + key.key + "'\");\n        } else {\n            System.out.println(\"Unknown event\");\n        }\n    }\n\n    public static void main(String[] args) {\n        handle(new ClickEvent(150, 300));\n        handle(new KeyEvent('Enter'));\n    }\n}",
-        "output": "Click processed at (150, 300)\nKey pressed: 'Enter'"
-      }
+{
+      "title": "Polymorphic Document Exporter with Pattern Matching",
+      "description": "Exporting different document types using clean pattern matching branches with zero explicit downcast syntax.",
+      "code": "abstract class Document {\n    abstract String getTitle();\n}\n\nclass Spreadsheet extends Document {\n    String title; int rowCount;\n    Spreadsheet(String t, int r) { this.title = t; this.rowCount = r; }\n    String getTitle() { return title; }\n    int getRowCount() { return rowCount; }\n}\n\nclass Presentation extends Document {\n    String title; int slideCount;\n    Presentation(String t, int s) { this.title = t; this.slideCount = s; }\n    String getTitle() { return title; }\n    int getSlideCount() { return slideCount; }\n}\n\npublic class ExporterDemo {\n    public static void export(Document doc) {\n        if (doc instanceof Spreadsheet sheet && sheet.getRowCount() > 0) {\n            System.out.println(\"Exporting CSV: \" + sheet.getTitle() + \" with \" + sheet.getRowCount() + \" rows\");\n        } else if (doc instanceof Presentation pres) {\n            System.out.println(\"Exporting PDF slides: \" + pres.getTitle() + \" (\" + pres.getSlideCount() + \" slides)\");\n        } else {\n            System.out.println(\"Exporting empty generic document\");\n        }\n    }\n\n    public static void main(String[] args) {\n        export(new Spreadsheet(\"Q3 Financials\", 500));\n        export(new Presentation(\"Keynote\", 24));\n    }\n}",
+      "output": "Exporting CSV: Q3 Financials with 500 rows\nExporting PDF slides: Keynote (24 slides)"
+},
+{
+      "title": "Event Handling Pipeline with Pattern Matching and Flow Scoping",
+      "description": "Showing how modern pattern matching cleanly handles event processing pipelines with flow-scoped variables.",
+      "code": "class AppEvent { String timestamp = \"12:00:00\"; }\nclass ClickEvent extends AppEvent { int x, y; ClickEvent(int x, int y) { this.x = x; this.y = y; } }\nclass KeyEvent extends AppEvent { char key; KeyEvent(char k) { this.key = k; } }\n\npublic class EventPipelineDemo {\n    public static void handle(AppEvent event) {\n        if (event instanceof ClickEvent click && click.x >= 0 && click.y >= 0) {\n            System.out.println(\"Click processed at (\" + click.x + \", \" + click.y + \")\");\n        } else if (event instanceof KeyEvent key) {\n            System.out.println(\"Key pressed: \" + key.key);\n        } else {\n            System.out.println(\"Unknown event\");\n        }\n    }\n\n    public static void main(String[] args) {\n        handle(new ClickEvent(150, 300));\n        handle(new KeyEvent('E'));\n    }\n}",
+      "output": "Click processed at (150, 300)\nKey pressed: E"
+}
     ],
     "beginnerMistakes": [
       {
@@ -1954,16 +1789,16 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         "whyItHappens": "Trying to write 'if (obj instanceof String s || s.isEmpty())'.",
         "howToFix": "If the left side is false, 's' is not defined. The compiler rejects pattern variables in || expressions for safety."
       },
-      {
-        "mistake": "Trying to access a pattern variable outside its flow-scoped branch",
-        "whyItHappens": "Trying to use the pattern variable in the else branch or after an if-statement where the condition was not guaranteed true.",
-        "howToFix": "Pattern variables are flow-scoped. They only exist in branches where the compiler is 100% certain the instanceof check succeeded."
-      },
-      {
-        "mistake": "Negating pattern matching without an early return/throw",
-        "whyItHappens": "Writing 'if (!(obj instanceof String s)) { doSomething(); } System.out.println(s);' without returning inside the if block.",
-        "howToFix": "To use 's' below the if statement, the if block MUST return, throw an exception, or terminate so execution cannot fall through when the check fails."
-      }
+{
+      "mistake": "Trying to access a pattern variable outside its flow-scoped branch",
+      "whyItHappens": "Trying to use the pattern variable in the else branch or after an if-statement where the condition was not guaranteed true.",
+      "howToFix": "Pattern variables are flow-scoped. They only exist in branches where the compiler is 100% certain the instanceof check succeeded."
+},
+{
+      "mistake": "Negating pattern matching without an early return/throw",
+      "whyItHappens": "Writing 'if (!(obj instanceof String s)) { doSomething(); } System.out.println(s);' without returning inside the if block.",
+      "howToFix": "To use 's' below the if statement, the if block MUST return, throw an exception, or terminate so execution cannot fall through when the check fails."
+}
     ],
     "practiceProblems": [
       {
@@ -2359,479 +2194,7 @@ export const oop12Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "Pattern matching merges type-testing and extraction into a safe, concise idiom."
-      },
-      {
-          "question": "What is the return value of 'null instanceof String'?",
-          "options": [
-            "true",
-            "false",
-            "Throws NullPointerException",
-            "Compilation error"
-          ],
-          "correctIndex": 1,
-          "explanation": "In Java, 'null instanceof AnyType' always safely evaluates to 'false' without throwing an exception."
-        },
-        {
-          "question": "What feature was introduced in Java 16 for pattern matching with instanceof?",
-          "options": [
-            "Automatic method overriding",
-            "Type test and variable binding in a single expression ('if (obj instanceof String s)')",
-            "Multi-inheritance support",
-            "Auto-generating getters"
-          ],
-          "correctIndex": 1,
-          "explanation": "Pattern matching allows declaring a typed variable directly in the instanceof check, eliminating the boilerplate cast."
-        },
-        {
-          "question": "In 'if (obj instanceof String s && s.length() > 5)', why is 's.length()' safe from NullPointerException?",
-          "options": [
-            "String cannot be null",
-            "The short-circuiting '&&' ensures s is only evaluated if obj is non-null and an instance of String",
-            "length() returns -1 for null",
-            "JVM compiler magic"
-          ],
-          "correctIndex": 1,
-          "explanation": "Because 'instanceof' checks for non-null, if it succeeds, 's' is guaranteed non-null and safely accessible."
-        },
-        {
-          "question": "What is the scope of pattern variable 's' in 'if (obj instanceof String s) { ... }'?",
-          "options": [
-            "The entire enclosing class",
-            "Only within the 'if' block where the test succeeded",
-            "Globally across the method",
-            "Only in the else block"
-          ],
-          "correctIndex": 1,
-          "explanation": "Pattern variables are scoped by flow analysis to branches where the instanceof test is guaranteed to be true."
-        },
-        {
-          "question": "Can you use pattern matching with instanceof in combination with '||' (OR)?",
-          "options": [
-            "Yes, without restrictions",
-            "No, because if the first condition is false, the pattern variable is not initialized in the second condition",
-            "Only with primitive types",
-            "Only inside switch statements"
-          ],
-          "correctIndex": 1,
-          "explanation": "'if (obj instanceof String s || s.length() > 0)' fails compilation because 's' is not in scope when the first condition is false."
-        }
+      }
     ]
-  },
-  "polymorphism-challenge": {
-      "id": "polymorphism-challenge",
-      "moduleId": "java-polymorphism",
-      "moduleTitle": "14. Polymorphism & Dispatch",
-      "lessonNumber": "Lesson 14.5",
-      "title": "Module 14 Challenge & Interview Assessment",
-      "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all polymorphism pillars",
-      "estimatedMinutes": 25,
-      "beginnerAnalogy": "This Capstone Challenge synthesizes everything you have learned in Module 14. In professional software design, polymorphism is the cornerstone of extensible architecture: code treats diverse objects uniformly through high-level abstractions, the JVM handles dynamic method dispatch automatically via vtables, upcasting creates clean API boundaries, and modern `instanceof` pattern matching ensures safe, concise downcasting.\nUse this challenge to test your interview readiness, solve tricky dynamic dispatch puzzles, and prove your hands-on mastery of polymorphism!",
-      "coreExplanation": [
-        "Polymorphism ('many forms') allows objects of different types to be treated uniformly through a common superclass or interface.",
-        "Compile-time polymorphism is achieved via Method Overloading and is resolved statically by parameter types at compile time.",
-        "Runtime polymorphism is achieved via Method Overriding and uses Dynamic Method Dispatch to execute the actual heap object's implementation at runtime.",
-        "Virtual Method Invocation is Java's default: all non-final, non-static, non-private instance methods are virtual and use vtable lookups.",
-        "Fields and static methods are NOT polymorphic in Java; they are resolved at compile time based strictly on the declared reference type.",
-        "Upcasting (Subclass to Superclass) is always implicit, automatic, and type-safe.",
-        "Downcasting (Superclass to Subclass) requires an explicit cast and throws ClassCastException if the heap object is incompatible.",
-        "The 'instanceof' operator safely tests object types without throwing exceptions ('null instanceof T' is always false).",
-        "Java 16+ Pattern Matching combines type-checking and downcasting into a single fluent expression ('if (obj instanceof String s)')."
-      ],
-      "codeSnippet": {
-        "title": "Comprehensive Polymorphic Architecture: Extensible Notification Dispatcher",
-        "code": "import java.util.ArrayList;\nimport java.util.List;\n\npublic class PolymorphismMasteryDemo {\n    // Base polymorphic abstraction\n    public static abstract class Notification {\n        protected String recipient;\n        public Notification(String recipient) { this.recipient = recipient; }\n        public abstract boolean dispatch(String message);\n    }\n\n    public static class EmailNotification extends Notification {\n        public EmailNotification(String email) { super(email); }\n        @Override\n        public boolean dispatch(String message) {\n            System.out.printf(\"[EMAIL] Sent to %s: '%s'%n\", recipient, message);\n            return true;\n        }\n    }\n\n    public static class SmsNotification extends Notification {\n        public SmsNotification(String phone) { super(phone); }\n        @Override\n        public boolean dispatch(String message) {\n            System.out.printf(\"[SMS] Sent to %s: '%s'%n\", recipient, message);\n            return true;\n        }\n    }\n\n    public static void broadcast(List<Notification> channels, String alertMessage) {\n        // Polymorphic dispatch: one loop handles all notification types\n        for (Notification channel : channels) {\n            channel.dispatch(alertMessage); // Dynamic method dispatch via vtable!\n        }\n    }\n\n    public static void main(String[] args) {\n        List<Notification> alerts = new ArrayList<>();\n        alerts.add(new EmailNotification(\"admin@company.com\")); // Upcasting\n        alerts.add(new SmsNotification(\"+1-555-0199\"));          // Upcasting\n\n        broadcast(alerts, \"Security Alert: Unauthorized access detected\");\n    }\n}",
-        "lineByLineExplanation": [
-          {
-            "line": "alerts.add(new EmailNotification(...));",
-            "explanation": "Implicit upcasting: EmailNotification instance is stored into a List of base Notification references."
-          },
-          {
-            "line": "channel.dispatch(alertMessage);",
-            "explanation": "Dynamic method dispatch: JVM checks the actual heap object type and routes to EmailNotification or SmsNotification."
-          }
-        ],
-        "output": "[EMAIL] Sent to admin@company.com: 'Security Alert: Unauthorized access detected'\n[SMS] Sent to +1-555-0199: 'Security Alert: Unauthorized access detected'"
-      },
-      "practiceProblems": [
-        {
-          "title": "Puzzle 1: Virtual Method Invocation vs Field Hiding",
-          "problemStatement": "What is the output of executing this code?",
-          "code": "class SuperItem {\n    int price = 100;\n    int getPrice() { return price; }\n}\nclass SubItem extends SuperItem {\n    int price = 200;\n    int getPrice() { return price; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        SuperItem item = new SubItem();\n        System.out.println(item.price + \" \" + item.getPrice());\n    }\n}",
-          "options": [
-            "100 100",
-            "200 200",
-            "100 200",
-            "200 100"
-          ],
-          "correctOptionIndex": 2,
-          "hint": "Fields are resolved at compile time by reference type; methods are resolved at runtime by actual object type.",
-          "solution": "100 200",
-          "explanation": "item.price is resolved at compile time using the SuperItem reference type, yielding 100. item.getPrice() dynamically dispatches to SubItem's overridden method on the heap, yielding 200."
-        },
-        {
-          "title": "Puzzle 2: Overloaded Method Resolution with Null Argument",
-          "problemStatement": "What does this program print?",
-          "code": "public class Main {\n    static void test(Object o) { System.out.println(\"Object\"); }\n    static void test(String s) { System.out.println(\"String\"); }\n    public static void main(String[] args) {\n        test(null);\n    }\n}",
-          "options": [
-            "Object",
-            "String",
-            "Compilation Error: ambiguous method call",
-            "Throws NullPointerException"
-          ],
-          "correctOptionIndex": 1,
-          "hint": "When multiple overloaded methods accept null, the compiler picks the most specific compatible subtype.",
-          "solution": "String",
-          "explanation": "String is a subtype of Object. Because String is more specific than Object, the compiler resolves 'test(null)' to test(String s) without ambiguity."
-        },
-        {
-          "title": "Puzzle 3: Safe vs Unsafe Downcasting",
-          "problemStatement": "What is the result of running this snippet?",
-          "code": "class Animal {}\nclass Cat extends Animal {}\nclass Dog extends Animal {}\npublic class Main {\n    public static void main(String[] args) {\n        Animal a = new Cat();\n        Dog d = (Dog) a;\n        System.out.println(\"Done\");\n    }\n}",
-          "options": [
-            "Done",
-            "Throws ClassCastException at runtime",
-            "Compilation Error: incompatible types",
-            "Prints null"
-          ],
-          "correctOptionIndex": 1,
-          "hint": "a holds a Cat object in heap memory. Cat cannot be cast to Dog.",
-          "solution": "Throws ClassCastException at runtime",
-          "explanation": "Even though Animal is a superclass of Dog, the actual object on the heap is a Cat. Downcasting a Cat to Dog causes a java.lang.ClassCastException at runtime."
-        },
-        {
-          "title": "Puzzle 4: Pattern Matching Variable Scope in If-Else",
-          "problemStatement": "What occurs when compiling and running this code?",
-          "code": "public class Main {\n    public static void main(String[] args) {\n        Object obj = \"Java 21\";\n        if (obj instanceof String s) {\n            System.out.println(\"Match: \" + s.toUpperCase());\n        } else {\n            // System.out.println(s); // Line X\n        }\n    }\n}",
-          "options": [
-            "Compiles and prints 'Match: JAVA 21'",
-            "Compilation Error: s is already defined",
-            "Throws ClassCastException",
-            "Line X is in scope"
-          ],
-          "correctOptionIndex": 0,
-          "hint": "The pattern variable 's' is scoped strictly to the if-branch where the type-test was true.",
-          "solution": "Compiles and prints 'Match: JAVA 21'",
-          "explanation": "Flow scoping guarantees 's' is initialized and in scope only inside the 'if' block. The program compiles and prints 'Match: JAVA 21'."
-        },
-        {
-          "title": "Puzzle 5: Static Method Calling via Subclass Reference",
-          "problemStatement": "What is printed by this code?",
-          "code": "class Alpha {\n    static void log() { System.out.print(\"Alpha \"); }\n}\nclass Beta extends Alpha {\n    static void log() { System.out.print(\"Beta \"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Alpha a = new Beta();\n        Beta b = new Beta();\n        a.log();\n        b.log();\n    }\n}",
-          "options": [
-            "Beta Beta ",
-            "Alpha Beta ",
-            "Alpha Alpha ",
-            "Beta Alpha "
-          ],
-          "correctOptionIndex": 1,
-          "hint": "Static methods are hidden, not overridden. The reference type dictates which static method is called.",
-          "solution": "Alpha Beta ",
-          "explanation": "a is declared as Alpha, so a.log() compiles to Alpha.log(). b is declared as Beta, so b.log() compiles to Beta.log(). Output: 'Alpha Beta '."
-        },
-        {
-          "title": "Puzzle 6: Instanceof Check with Null Reference",
-          "problemStatement": "What is the output of this code?",
-          "code": "public class Main {\n    public static void main(String[] args) {\n        String str = null;\n        if (str instanceof String) {\n            System.out.println(\"Is String\");\n        } else {\n            System.out.println(\"Not String\");\n        }\n    }\n}",
-          "options": [
-            "Is String",
-            "Not String",
-            "Throws NullPointerException",
-            "Compilation error"
-          ],
-          "correctOptionIndex": 1,
-          "hint": "In Java, any evaluation of 'null instanceof T' returns false safely.",
-          "solution": "Not String",
-          "explanation": "The instanceof operator automatically evaluates to false if the operand is null, preventing NullPointerException."
-        },
-        {
-          "title": "Puzzle 7: Covariant Return Types in Polymorphic Method",
-          "problemStatement": "What does this code display?",
-          "code": "class Base { Number get() { return 10; } }\nclass Sub extends Base { Integer get() { return 20; } }\npublic class Main {\n    public static void main(String[] args) {\n        Base b = new Sub();\n        System.out.println(b.get().getClass().getSimpleName());\n    }\n}",
-          "options": [
-            "Number",
-            "Integer",
-            "Object",
-            "Compilation error: return type mismatch"
-          ],
-          "correctOptionIndex": 1,
-          "hint": "Sub.get() overrides Base.get() with a covariant return type (Integer is a subtype of Number).",
-          "solution": "Integer",
-          "explanation": "Dynamic dispatch routes b.get() to Sub's implementation on the heap, which returns Integer 20. getClass().getSimpleName() prints 'Integer'."
-        },
-        {
-          "title": "Puzzle 8: Polymorphism Inside Constructor Trap",
-          "problemStatement": "What does this program print? (Classic Java trap!)",
-          "code": "class Parent {\n    Parent() { print(); }\n    void print() { System.out.print(\"Parent \"); }\n}\nclass Child extends Parent {\n    int val = 42;\n    void print() { System.out.print(\"Child:\" + val + \" \"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        new Child();\n    }\n}",
-          "options": [
-            "Parent ",
-            "Child:42 ",
-            "Child:0 ",
-            "Compilation error"
-          ],
-          "correctOptionIndex": 2,
-          "hint": "When Parent's constructor runs, the object on the heap is Child, but Child's field initializers have not executed yet!",
-          "solution": "Child:0 ",
-          "explanation": "In Java, calling an overridable method inside a constructor is dangerous! When Parent() runs, it invokes the overridden print() in Child. However, Child's field 'val' has not been initialized to 42 yet\u2014it only has its default value (0). Thus, it prints 'Child:0 '!"
-        },
-        {
-          "title": "Puzzle 9: Double Downcasting in Class Hierarchy",
-          "problemStatement": "Does this code compile and run?",
-          "code": "class A {}\nclass B extends A {}\nclass C extends B {}\npublic class Main {\n    public static void main(String[] args) {\n        A a = new C();\n        B b = (B) a;\n        C c = (C) b;\n        System.out.println(c != null);\n    }\n}",
-          "options": [
-            "Prints true",
-            "Throws ClassCastException at line 8",
-            "Compilation error",
-            "Prints false"
-          ],
-          "correctOptionIndex": 0,
-          "hint": "The actual object on the heap is C. C is an instance of C, B, and A.",
-          "solution": "Prints true",
-          "explanation": "Because the underlying object is a C, casting it down to B and then to C is completely legal and safe. It prints 'true'."
-        },
-        {
-          "title": "Puzzle 10: Array Upcasting and ArrayStoreException",
-          "problemStatement": "What occurs when executing this code?",
-          "code": "public class Main {\n    public static void main(String[] args) {\n        Object[] arr = new String[3];\n        arr[0] = \"Hello\";\n        arr[1] = Integer.valueOf(42); // Line 5\n    }\n}",
-          "options": [
-            "Compiles and runs normally",
-            "Throws ArrayStoreException at Line 5",
-            "Throws ClassCastException",
-            "Compilation error: incompatible types"
-          ],
-          "correctOptionIndex": 1,
-          "hint": "Java arrays are covariant, but the JVM tracks the actual component type at runtime.",
-          "solution": "Throws ArrayStoreException at Line 5",
-          "explanation": "Although arr is declared as Object[], the underlying heap array was allocated as String[]. Attempting to store an Integer into a String[] causes the JVM to throw a java.lang.ArrayStoreException at runtime."
-        }
-      ],
-      "interviewQuestions": [
-        {
-          "question": "What is the fundamental difference between Compile-Time and Runtime Polymorphism?",
-          "answer": "Compile-Time Polymorphism (Static Polymorphism) is achieved through Method Overloading, where methods share the same name with different parameters. The compiler determines which method to call at compile time. Runtime Polymorphism (Dynamic Polymorphism) is achieved through Method Overriding, where a subclass provides its own implementation of an inherited method. The JVM determines which method to execute at runtime based on the actual object created on the heap.",
-          "focus": "Overloading (compile-time, parameters) vs Overriding (runtime, heap object, dynamic dispatch)."
-        },
-        {
-          "question": "How does Dynamic Method Dispatch work internally in the JVM?",
-          "answer": "Dynamic Method Dispatch is the mechanism by which a call to an overridden method is resolved at runtime rather than compile time. Internally, the JVM uses a Virtual Method Table (vtable) associated with each class. When an instance method is called on an object reference, the JVM inspects the object's actual class header in heap memory, locates its vtable, and jumps directly to the memory address of the overridden method. This lookup executes in O(1) constant time.",
-          "focus": "Virtual method table (vtable), O(1) lookup, inspection of heap object header, invokevirtual instruction."
-        },
-        {
-          "question": "Why are instance fields NOT polymorphic in Java?",
-          "answer": "In Java, polymorphism applies exclusively to instance methods, not variables. Fields are resolved at compile time based strictly on the declared reference type. If a subclass declares a field with the same name as a field in its superclass, this is 'field hiding', not overriding. The JVM allocates both fields in the object's heap layout, and accessing the field through a parent reference reads the parent's value, while accessing through a child reference reads the child's value.",
-          "focus": "Compile-time binding by reference type, field hiding vs method overriding, memory layout."
-        },
-        {
-          "question": "What is the difference between Upcasting and Downcasting?",
-          "answer": "Upcasting is casting a subclass object to a superclass reference (e.g. 'Animal a = new Dog();'). It is always implicit, safe, and never throws an exception because every Dog is guaranteed to be an Animal. Downcasting is casting a superclass reference back to a more specific subclass (e.g. 'Dog d = (Dog) a;'). It requires an explicit cast and carries runtime risk: if the underlying object is not actually an instance of that subclass, the JVM throws a ClassCastException.",
-          "focus": "Upcasting = implicit, safe, moves up hierarchy; Downcasting = explicit, requires instanceof check, risk of ClassCastException."
-        },
-        {
-          "question": "What is a ClassCastException and how do you prevent it?",
-          "answer": "ClassCastException is an unchecked RuntimeException thrown when code attempts to downcast an object reference to a class of which it is not an instance (for example, attempting to cast a Cat object into a Dog reference). You prevent it by always verifying the object's type before casting using the 'instanceof' operator, or by using modern Java 16+ pattern matching with instanceof.",
-          "focus": "Incompatible downcasting, runtime exception, prevention with instanceof and pattern matching."
-        },
-        {
-          "question": "How does Pattern Matching for instanceof work in Java 16+?",
-          "answer": "Pattern matching for instanceof combines type testing and downcasting into a single safe expression. Instead of writing 'if (obj instanceof String) { String s = (String) obj; ... }', you write 'if (obj instanceof String s) { ... }'. The compiler automatically binds the pattern variable 's' of type String inside the scope where the condition is true. It completely eliminates manual casting and prevents ClassCastExceptions.",
-          "focus": "Combines test + cast, eliminates boilerplate, flow-scoped variable, available in Java 16+."
-        },
-        {
-          "question": "Can you override a static method in Java?",
-          "answer": "No. Static methods belong to the class definition in Metaspace, not to any object instance on the heap. If a child class defines a static method with the exact same signature as a parent static method, this is called 'method hiding'. The call is resolved at compile time based on the declared reference type, so no dynamic method dispatch occurs.",
-          "focus": "Class-level binding, method hiding instead of overriding, no virtual dispatch."
-        },
-        {
-          "question": "What happens if you invoke an overridden method inside a superclass constructor?",
-          "answer": "This is a dangerous trap in Java! When a superclass constructor executes, calling an overridden method dispatches to the subclass implementation. However, the subclass constructor and its field initializers have NOT executed yet. If the overridden method accesses any subclass fields, it will read their uninitialized default values (0, false, or null), which frequently causes subtle bugs or NullPointerExceptions.",
-          "focus": "Dispatches to child method before child constructor completes; reads uninitialized default field values."
-        },
-        {
-          "question": "Why is 'null instanceof String' always false instead of throwing a NullPointerException?",
-          "answer": "The Java Language Specification specifically defines the instanceof operator to return false whenever the left-hand operand is null. Because 'null' is not an instance of any class or interface, returning false is logically sound and prevents code from having to write repetitive 'obj != null && obj instanceof T' checks.",
-          "focus": "Language specification rule, prevents repetitive null checks, safe evaluation."
-        },
-        {
-          "question": "What is the Liskov Substitution Principle (LSP) in relation to polymorphism?",
-          "answer": "The Liskov Substitution Principle states that objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. In Java, this means subclasses must honor the behavioral contract of their parents: overriding methods cannot throw new checked exceptions, cannot tighten access modifiers, and should not violate assumptions made by callers of the base class.",
-          "focus": "Subtypes must be substitutable for base types without breaking client expectations; exception and visibility rules."
-        },
-        {
-          "question": "What are Covariant Return Types, and when were they introduced in Java?",
-          "answer": "Introduced in Java 5, covariant return types allow an overriding method in a subclass to return a more specific subtype of the return type declared in the superclass method. For example, if a parent method returns 'Animal', a subclass method can override it to return 'Dog'. This eliminates the need for callers of the subclass method to cast the returned object.",
-          "focus": "Java 5+, allows overriding method to return narrower subtype, eliminates casting for callers."
-        },
-        {
-          "question": "Can an abstract class or interface be instantiated using 'new'?",
-          "answer": "No. Abstract classes and interfaces are incomplete contracts that cannot be instantiated directly using 'new'. However, they can serve as polymorphic reference types that point to concrete subclass instances on the heap (e.g. 'List<String> list = new ArrayList<>();').",
-          "focus": "Cannot instantiate directly; serve as polymorphic reference types for concrete implementations."
-        }
-      ],
-      "miniQuiz": [
-        {
-          "question": "What type of polymorphism is achieved using Method Overloading?",
-          "options": [
-            "Runtime Polymorphism",
-            "Compile-Time Polymorphism",
-            "Dynamic Polymorphism",
-            "Virtual Polymorphism"
-          ],
-          "correctIndex": 1,
-          "explanation": "Method overloading is resolved at compile time based on parameter signatures."
-        },
-        {
-          "question": "What mechanism does the JVM use to route virtual method calls to the correct subclass method at runtime?",
-          "options": [
-            "Reflection",
-            "Dynamic Method Dispatch via vtables",
-            "Garbage Collector inspection",
-            "Stack frame unwinding"
-          ],
-          "correctIndex": 1,
-          "explanation": "Dynamic method dispatch uses virtual method tables (vtables) to resolve calls at runtime."
-        },
-        {
-          "question": "Which of the following is true regarding fields in a class hierarchy?",
-          "options": [
-            "Fields are polymorphic just like methods",
-            "Fields are NOT polymorphic; they are resolved at compile time by reference type",
-            "Fields cannot be declared in subclasses",
-            "Fields override parent fields"
-          ],
-          "correctIndex": 1,
-          "explanation": "Fields are resolved at compile time based on the declared reference type, not the heap object."
-        },
-        {
-          "question": "Which cast is completely safe and never throws an exception?",
-          "options": [
-            "Downcasting without instanceof",
-            "Upcasting (subclass instance assigned to superclass reference)",
-            "Casting between sibling classes",
-            "Casting Object to String"
-          ],
-          "correctIndex": 1,
-          "explanation": "Upcasting is always type-safe and implicit."
-        },
-        {
-          "question": "What exception is thrown when an invalid downcast is attempted at runtime?",
-          "options": [
-            "NullPointerException",
-            "ClassCastException",
-            "IllegalArgumentException",
-            "TypeMismatchException"
-          ],
-          "correctIndex": 1,
-          "explanation": "Incompatible downcasting triggers a java.lang.ClassCastException."
-        },
-        {
-          "question": "What does 'null instanceof Object' evaluate to in Java?",
-          "options": [
-            "true",
-            "false",
-            "Throws NullPointerException",
-            "Compilation error"
-          ],
-          "correctIndex": 1,
-          "explanation": "instanceof always returns false when the operand is null."
-        },
-        {
-          "question": "In Java 16+, how is pattern matching written with instanceof?",
-          "options": [
-            "if (obj is String s)",
-            "if (obj instanceof String s)",
-            "if (String s = (String) obj)",
-            "if (instanceof(obj, String))"
-          ],
-          "correctIndex": 1,
-          "explanation": "'if (obj instanceof String s)' binds 's' safely and directly."
-        },
-        {
-          "question": "Can static methods be dynamically dispatched at runtime?",
-          "options": [
-            "Yes, if marked public",
-            "No, static methods belong to the class and are bound at compile time",
-            "Only if called via an object instance",
-            "Yes, in Java 21"
-          ],
-          "correctIndex": 1,
-          "explanation": "Static methods are bound at compile time using the declared reference type; they are not virtual."
-        },
-        {
-          "question": "What happens if a parent class constructor invokes an overridden method that uses a subclass field?",
-          "options": [
-            "Compiles with error",
-            "Subclass field has not been initialized yet and evaluates to its default value (e.g. 0/null)",
-            "Subclass field is initialized early",
-            "Parent method is forced to run"
-          ],
-          "correctIndex": 1,
-          "explanation": "Calling overridable methods in constructors executes before the subclass initializes its fields."
-        },
-        {
-          "question": "What is the term for a subclass defining a static method with the same signature as a superclass static method?",
-          "options": [
-            "Method Overriding",
-            "Method Hiding",
-            "Method Shadowing",
-            "Method Overloading"
-          ],
-          "correctIndex": 1,
-          "explanation": "Static methods cannot be overridden; they are hidden."
-        },
-        {
-          "question": "What is a covariant return type?",
-          "options": [
-            "A return type that changes from void to int",
-            "An overriding method returning a more specific subtype than the parent method",
-            "A method that takes covariant parameters",
-            "A method that returns arrays"
-          ],
-          "correctIndex": 1,
-          "explanation": "Covariant return types allow returning a narrower subtype in an overriding method."
-        },
-        {
-          "question": "What bytecode instruction does javac emit for non-interface virtual method dispatch?",
-          "options": [
-            "invokestatic",
-            "invokevirtual",
-            "invokespecial",
-            "invokedynamic"
-          ],
-          "correctIndex": 1,
-          "explanation": "invokevirtual is used for standard polymorphic instance method dispatch."
-        },
-        {
-          "question": "Which principle states that subtypes must be substitutable for their base types without altering correctness?",
-          "options": [
-            "Single Responsibility Principle",
-            "Open-Closed Principle",
-            "Liskov Substitution Principle",
-            "Dependency Inversion Principle"
-          ],
-          "correctIndex": 2,
-          "explanation": "The Liskov Substitution Principle (LSP) defines the rules for valid subtyping."
-        },
-        {
-          "question": "Can an overridden method reduce the visibility of the superclass method (e.g. public to protected)?",
-          "options": [
-            "Yes, anytime",
-            "No, overriding methods cannot reduce visibility",
-            "Only if marked final",
-            "Only within package-private scope"
-          ],
-          "correctIndex": 1,
-          "explanation": "Overriding methods can maintain or broaden visibility, but cannot reduce it."
-        },
-        {
-          "question": "What is the result of '((Parent) child).test()' if Child overrides test()?",
-          "options": [
-            "Parent's test() runs",
-            "Child's test() runs due to dynamic dispatch",
-            "Compilation error",
-            "Both run in sequence"
-          ],
-          "correctIndex": 1,
-          "explanation": "Casting the reference does not alter the underlying object; dynamic dispatch always executes Child's test()."
-        }
-      ]
-    }
+  }
 };
