@@ -234,7 +234,7 @@ export const JAVA_MODULES: JavaModule[] = [
     icon: 'Shield',
     topics: ['abstract class', 'interface', 'default methods', 'Multiple Inheritance of Type', 'Marker Interfaces'],
     prerequisites: ['java-inheritance'],
-    lessonCount: 4,
+    lessonCount: 5,
     mcqCount: 20,
     codingCount: 10,
     interviewCount: 10,
