@@ -568,7 +568,62 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "Assigning a subclass instance to a superclass reference ('A obj = new B();') is an upcast, which is completely implicit and type-safe."
-      }
+      },
+      {
+          "question": "Can a top-level Java class extend multiple classes simultaneously (e.g. 'class C extends A, B')?",
+          "options": [
+            "Yes, if both superclasses are abstract",
+            "No, Java strictly prohibits multiple class inheritance",
+            "Yes, up to 3 classes",
+            "Only if methods have different signatures"
+          ],
+          "correctIndex": 1,
+          "explanation": "Java strictly enforces single class inheritance to prevent the Diamond Problem and implementation ambiguity."
+        },
+        {
+          "question": "If class Dog extends Animal, and Animal extends Object, what is the superclass of Dog?",
+          "options": [
+            "Only Object",
+            "Direct superclass is Animal, and indirect superclass is Object",
+            "Dog has no superclass",
+            "Animal and Object are peers"
+          ],
+          "correctIndex": 1,
+          "explanation": "Dog directly extends Animal (its direct superclass) and transitively inherits from java.lang.Object (its indirect superclass)."
+        },
+        {
+          "question": "What happens when a subclass declares a field with the same name as a field in its superclass?",
+          "options": [
+            "The superclass field is overridden",
+            "The superclass field is shadowed/hidden, not overridden",
+            "Compilation error: duplicate field",
+            "Runtime exception"
+          ],
+          "correctIndex": 1,
+          "explanation": "Fields are NOT polymorphic in Java; declaring the same field name in a subclass shadows/hides the parent's field."
+        },
+        {
+          "question": "Which access modifier allows members to be accessed by subclasses in any package, but not by unrelated classes in other packages?",
+          "options": [
+            "private",
+            "default (package-private)",
+            "protected",
+            "public"
+          ],
+          "correctIndex": 2,
+          "explanation": "Protected visibility grants access to all classes in the same package AND to subclasses located in any package."
+        },
+        {
+          "question": "Does a subclass allocate a separate object on the heap for its superclass?",
+          "options": [
+            "Yes, two separate objects are linked by pointers",
+            "No, a single contiguous memory block is allocated containing all superclass and subclass fields",
+            "Only if super() is called",
+            "Yes, in Metaspace"
+          ],
+          "correctIndex": 1,
+          "explanation": "A subclass instantiation creates one unified object on the Heap containing fields from all levels of its hierarchy."
+        }
     ]
   },
   "super-constructor-chaining": {
@@ -1127,7 +1182,62 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 2,
         "explanation": "Constructors are invoked using 'invokespecial' targeting the '<init>' method, which statically binds the call without virtual dispatch."
-      }
+      },
+      {
+          "question": "What constructor call does the Java compiler automatically insert if you do not write super() or this() as line 1?",
+          "options": [
+            "super(null);",
+            "super(); (no-arg call to direct superclass)",
+            "this();",
+            "No call is inserted"
+          ],
+          "correctIndex": 1,
+          "explanation": "The compiler automatically inserts a parameterless 'super();' call as the first line of any constructor that lacks explicit chaining."
+        },
+        {
+          "question": "What happens if a parent class only defines 'Parent(int x)' and the child class writes a no-arg constructor without an explicit super() call?",
+          "options": [
+            "Compiles successfully",
+            "Compilation error: implicit super() constructor Parent() is undefined",
+            "Runtime NullPointerException",
+            "Parent receives x = 0 automatically"
+          ],
+          "correctIndex": 1,
+          "explanation": "Because Parent has a custom constructor, Parent() does not exist. The compiler tries to insert 'super();' in Child, which fails to compile."
+        },
+        {
+          "question": "Can 'super()' and 'this()' both appear inside the exact same constructor body?",
+          "options": [
+            "Yes, anywhere in the body",
+            "Yes, if super() is first and this() is second",
+            "No, both must be the first statement, so only one can be used",
+            "Only in abstract classes"
+          ],
+          "correctIndex": 2,
+          "explanation": "Both this() and super() are required to be line 1; thus, you can choose one or the other, but never both in the same constructor."
+        },
+        {
+          "question": "In what order are constructors executed when instantiating a subclass?",
+          "options": [
+            "Subclass constructor first, then superclass",
+            "Top-down: Object first, down through superclasses, finishing with the subclass",
+            "Simultaneously in parallel",
+            "Random order depending on JVM"
+          ],
+          "correctIndex": 1,
+          "explanation": "Java executes constructors top-down from java.lang.Object down to the leaf subclass."
+        },
+        {
+          "question": "Can you pass an instance variable of the subclass as an argument to 'super(field)'?",
+          "options": [
+            "Yes, freely",
+            "No, because the instance does not exist yet before super() completes",
+            "Only if the field is public",
+            "Only if the field is volatile"
+          ],
+          "correctIndex": 1,
+          "explanation": "Before super() finishes executing, the current object instance is uninitialized. You cannot pass instance members to super()."
+        }
     ]
   },
   "method-overriding-rules": {
@@ -1268,6 +1378,12 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         "description": "Showing how a subclass can expand the accessibility of an inherited protected method to public.",
         "code": "class SecretModule {\n    protected void performAudit() {\n        System.out.println(\"Protected audit log executed.\");\n    }\n}\n\nclass PublicAuditModule extends SecretModule {\n    // Valid: Broadening access from protected to public\n    @Override\n    public void performAudit() {\n        System.out.print(\"[PUBLIC REPORT] \");\n        super.performAudit();\n    }\n}\n\npublic class VisibilityDemo {\n    public static void main(String[] args) {\n        PublicAuditModule pam = new PublicAuditModule();\n        pam.performAudit();\n    }\n}",
         "output": "[PUBLIC REPORT] Protected audit log executed."
+      },
+      {
+        "title": "Factory Method Pattern with Covariant Return Types",
+        "description": "Showing how a subclass can override a factory method to return a specialized subtype, removing the need for caller-side casting.",
+        "code": "class Document {\n    public Document createCopy() {\n        System.out.println(\"Cloning generic document\");\n        return new Document();\n    }\n}\n\nclass PdfDocument extends Document {\n    // Covariant return type: returns PdfDocument instead of Document\n    @Override\n    public PdfDocument createCopy() {\n        System.out.println(\"Cloning vector-rendered PDF document\");\n        return new PdfDocument();\n    }\n\n    public void encryptPdf() {\n        System.out.println(\"Encrypting PDF with AES-256\");\n    }\n}\n\npublic class CovariantFactoryDemo {\n    public static void main(String[] args) {\n        PdfDocument original = new PdfDocument();\n        // Zero casting needed because createCopy() returns PdfDocument directly!\n        PdfDocument copy = original.createCopy();\n        copy.encryptPdf();\n    }\n}",
+        "output": "Cloning vector-rendered PDF document\nEncrypting PDF with AES-256"
       }
     ],
     "beginnerMistakes": [
@@ -1691,7 +1807,62 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 1,
         "explanation": "Because action() is overridden, dynamic method dispatch resolves the call to Child's action() at runtime."
-      }
+      },
+      {
+          "question": "Can an overriding method in a subclass specify a MORE restrictive access modifier than the superclass method?",
+          "options": [
+            "Yes, any modifier is allowed",
+            "No, overriding methods can only maintain or expand visibility (e.g. protected -> public)",
+            "Only if the method is void",
+            "Only if @Override is omitted"
+          ],
+          "correctIndex": 1,
+          "explanation": "The Liskov Substitution Principle dictates you cannot reduce visibility in an override (e.g. public cannot become protected or private)."
+        },
+        {
+          "question": "What is a 'covariant return type' in method overriding (Java 5+)?",
+          "options": [
+            "The return type must be void",
+            "The overriding method can return a subtype of the return type declared in the superclass",
+            "The return type must change from primitive to wrapper",
+            "Parameters and return types swap positions"
+          ],
+          "correctIndex": 1,
+          "explanation": "Covariant return types allow a subclass method to return a more specialized subtype (e.g. Dog instead of Animal)."
+        },
+        {
+          "question": "Can a subclass override a private method of its superclass?",
+          "options": [
+            "Yes, by adding @Override",
+            "No, private methods are not visible to subclasses, so writing the same method name is just a new unrelated method",
+            "Only within the same package",
+            "Yes, if marked protected"
+          ],
+          "correctIndex": 1,
+          "explanation": "Private methods are not inherited. A method with the same signature in the child is completely unrelated, not an override."
+        },
+        {
+          "question": "Can an overridden method throw broader checked exceptions than the superclass method?",
+          "options": [
+            "Yes, any exception can be thrown",
+            "No, an overriding method can only throw the same, narrower, or fewer checked exceptions",
+            "Only RuntimeExceptions can be narrowed",
+            "Only if wrapped in Error"
+          ],
+          "correctIndex": 1,
+          "explanation": "Overriding methods cannot throw new or broader checked exceptions, as that would break callers expecting the superclass contract."
+        },
+        {
+          "question": "What is the primary benefit of annotating an overriding method with '@Override'?",
+          "options": [
+            "It makes the method execute 20% faster",
+            "It causes the compiler to verify that the method actually overrides a superclass method, catching typos",
+            "It allows private methods to be overridden",
+            "It is required for polymorphism to work"
+          ],
+          "correctIndex": 1,
+          "explanation": "@Override directs the compiler to check that the method signature matches a parent method, catching typos at compile time."
+        }
     ]
   },
   "final-keyword-in-oop": {
@@ -2251,7 +2422,481 @@ export const oop11Lessons: Record<string, DetailedLesson> = {
         ],
         "correctIndex": 0,
         "explanation": "Final methods cannot be overridden, allowing the JIT compiler to inline the method body with certainty."
-      }
+      },
+      {
+          "question": "What happens if you attempt to inherit from a class declared as 'public final class SystemSecurity'?",
+          "options": [
+            "Compiles with a warning",
+            "Compilation error: cannot inherit from final SystemSecurity",
+            "Runtime SecurityException",
+            "Only static methods can be inherited"
+          ],
+          "correctIndex": 1,
+          "explanation": "Marking a class 'final' permanently disallows inheritance. Examples include java.lang.String and java.lang.Integer."
+        },
+        {
+          "question": "Can a final method in a superclass be overloaded in a subclass?",
+          "options": [
+            "No, final methods cannot be overloaded",
+            "Yes, final prevents overriding (same signature), but overloading (different parameters) is completely legal",
+            "Only if parameters are primitives",
+            "Only if marked static"
+          ],
+          "correctIndex": 1,
+          "explanation": "The 'final' modifier prevents overriding (same signature). Overloading creates a different method with different parameters, which is allowed."
+        },
+        {
+          "question": "When must a blank (uninitialized) final instance field be assigned a value?",
+          "options": [
+            "Anytime before program termination",
+            "By the end of every constructor in the class",
+            "Inside the finalize() method",
+            "When garbage collected"
+          ],
+          "correctIndex": 1,
+          "explanation": "Blank final instance fields must be assigned a value either at declaration, in an instance initializer block, or by the end of every constructor."
+        },
+        {
+          "question": "Can a final variable's reference be reassigned after initialization?",
+          "options": [
+            "Yes, using reflection only",
+            "No, once initialized, a final reference variable can never be reassigned to another memory address",
+            "Yes, if set to null",
+            "Only inside static methods"
+          ],
+          "correctIndex": 1,
+          "explanation": "The 'final' keyword on a variable makes the reference immutable: it cannot point to any other object once assigned."
+        },
+        {
+          "question": "Does declaring a final reference variable 'final int[] arr = {1, 2, 3};' prevent modifying array elements?",
+          "options": [
+            "Yes, the entire array becomes read-only",
+            "No, 'final' only prevents reassigning 'arr'; the contents of the array can still be mutated ('arr[0] = 99')",
+            "It causes a compilation error",
+            "Only if elements are Strings"
+          ],
+          "correctIndex": 1,
+          "explanation": "Final locks the reference address, NOT the contents of the object or array on the heap."
+        }
     ]
-  }
+  },
+  "inheritance-challenge": {
+      "id": "inheritance-challenge",
+      "moduleId": "java-inheritance",
+      "moduleTitle": "13. Inheritance & Hierarchy",
+      "lessonNumber": "Lesson 13.5",
+      "title": "Module 13 Challenge & Interview Assessment",
+      "subtitle": "Comprehensive assessment, real-world interview challenges, and capstone coding exercises combining all inheritance concepts",
+      "estimatedMinutes": 25,
+      "beginnerAnalogy": "This Capstone Challenge consolidates everything you have learned in Module 13. In production Java architectures, class inheritance is used with surgical precision: single-parent hierarchies model genuine IS-A taxonomy, `super()` guarantees clean top-down state initialization, `@Override` customizes polymorphic behavior while respecting contracts, and the `final` keyword secures critical business algorithms against unauthorized subclass tampering.\nUse this challenge to test your interview readiness, solve multi-concept output puzzles, and prove your hands-on mastery of inheritance!",
+      "coreExplanation": [
+        "Inheritance establishes an IS-A relationship using the 'extends' keyword. Java enforces single class inheritance to keep memory layout simple and avoid diamond ambiguity.",
+        "java.lang.Object is the universal root. Every class implicitly extends Object unless another superclass is explicitly declared.",
+        "Subclass Heap memory is allocated as a single unified block containing all superclass fields followed by subclass fields.",
+        "Constructors are NOT inherited. Subclass constructors must invoke super() explicitly or rely on the compiler's implicit super() call as the first statement.",
+        "Method overriding allows a subclass to provide a specific implementation of an inherited method. Overriding methods can maintain or expand visibility and return covariant subtypes.",
+        "The '@Override' annotation instructs the compiler to verify signature compatibility, catching subtle signature typos at compile time.",
+        "The 'final' keyword creates immutability and finality: final classes cannot be extended, final methods cannot be overridden, and final variables cannot be reassigned."
+      ],
+      "codeSnippet": {
+        "title": "Comprehensive Inheritance Architecture: Audited Bank Account Hierarchy",
+        "code": "public class InheritanceMasteryDemo {\n    public static class Account {\n        private final String accountNumber;\n        protected double balance;\n\n        public Account(String accNo, double initialBalance) {\n            this.accountNumber = accNo;\n            this.balance = Math.max(0.0, initialBalance);\n        }\n\n        public void deposit(double amount) {\n            if (amount > 0) balance += amount;\n        }\n\n        public boolean withdraw(double amount) {\n            if (amount > 0 && amount <= balance) {\n                balance -= amount;\n                return true;\n            }\n            return false;\n        }\n\n        public String getAccountNumber() { return accountNumber; }\n        public double getBalance() { return balance; }\n    }\n\n    public static final class PremiumCheckingAccount extends Account {\n        private final double overdraftLimit;\n\n        public PremiumCheckingAccount(String accNo, double balance, double overdraftLimit) {\n            super(accNo, balance); // Explicit super() chaining\n            this.overdraftLimit = Math.max(0.0, overdraftLimit);\n        }\n\n        @Override\n        public boolean withdraw(double amount) {\n            if (amount > 0 && amount <= (balance + overdraftLimit)) {\n                balance -= amount;\n                return true;\n            }\n            return false;\n        }\n\n        public double getAvailableFunds() {\n            return balance + overdraftLimit;\n        }\n    }\n\n    public static void main(String[] args) {\n        PremiumCheckingAccount acc = new PremiumCheckingAccount(\"PREM-901\", 100.0, 200.0);\n        acc.deposit(50.0); // Inherited from Account\n        boolean w1 = acc.withdraw(250.0); // Overridden in PremiumCheckingAccount\n        System.out.println(\"Withdraw $250 with overdraft: \" + w1);\n        System.out.printf(\"Current Balance: $%.2f | Total Available: $%.2f%n\",\n            acc.getBalance(), acc.getAvailableFunds());\n    }\n}",
+        "lineByLineExplanation": [
+          {
+            "line": "public static final class PremiumCheckingAccount extends Account",
+            "explanation": "Extends Account and declares the class final, preventing any further subclassing."
+          },
+          {
+            "line": "super(accNo, balance);",
+            "explanation": "Delegates constructor execution upward to initialize superclass private fields properly."
+          },
+          {
+            "line": "@Override public boolean withdraw(double amount)",
+            "explanation": "Customizes withdrawal logic to incorporate the overdraft limit while maintaining signature compatibility."
+          }
+        ],
+        "output": "Withdraw $250 with overdraft: true\nCurrent Balance: $-100.00 | Total Available: $100.00"
+      },
+      "practiceProblems": [
+        {
+          "title": "Puzzle 1: Constructor Execution Order in Multi-Level Inheritance",
+          "problemStatement": "What is printed when 'new C()' is called?",
+          "code": "class A { A() { System.out.print(\"A \"); } }\nclass B extends A { B() { System.out.print(\"B \"); } }\nclass C extends B { C() { System.out.print(\"C \"); } }\npublic class Main {\n    public static void main(String[] args) {\n        new C();\n    }\n}",
+          "options": [
+            "C B A ",
+            "A B C ",
+            "C A B ",
+            "Compilation Error"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Constructors execute top-down starting from java.lang.Object down through each superclass to the leaf subclass.",
+          "solution": "A B C ",
+          "explanation": "C's constructor implicitly calls super() (B's constructor), which calls super() (A's constructor), which calls Object(). A completes and prints 'A ', then B prints 'B ', then C prints 'C '."
+        },
+        {
+          "title": "Puzzle 2: Method Overriding vs Field Hiding",
+          "problemStatement": "What does this program print?",
+          "code": "class Parent {\n    String name = \"Parent\";\n    String getName() { return name; }\n}\nclass Child extends Parent {\n    String name = \"Child\";\n    String getName() { return name; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Parent p = new Child();\n        System.out.println(p.name + \" \" + p.getName());\n    }\n}",
+          "options": [
+            "Parent Parent",
+            "Child Child",
+            "Parent Child",
+            "Child Parent"
+          ],
+          "correctOptionIndex": 2,
+          "hint": "In Java, fields are resolved by reference type at compile-time (field hiding); methods are resolved by object type at runtime (overriding).",
+          "solution": "Parent Child",
+          "explanation": "p.name accesses the field using the declared reference type Parent, giving 'Parent'. In contrast, p.getName() dynamically dispatches to Child's overridden method, returning 'Child'."
+        },
+        {
+          "title": "Puzzle 3: Super Keyword with Overridden Methods",
+          "problemStatement": "What is the output of this code?",
+          "code": "class Base {\n    int compute(int x) { return x * 2; }\n}\nclass Sub extends Base {\n    int compute(int x) { return super.compute(x) + 5; }\n}\npublic class Main {\n    public static void main(String[] args) {\n        Sub s = new Sub();\n        System.out.println(s.compute(10));\n    }\n}",
+          "options": [
+            "20",
+            "25",
+            "30",
+            "Compilation Error"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "super.compute(x) invokes the base class method directly, bypassing the override.",
+          "solution": "25",
+          "explanation": "s.compute(10) calls super.compute(10) which evaluates to 10 * 2 = 20, then adds 5 to produce 25."
+        },
+        {
+          "title": "Puzzle 4: Static Method Hiding vs Overriding",
+          "problemStatement": "What does this program print?",
+          "code": "class SuperClass {\n    static void printMessage() { System.out.print(\"Super \"); }\n}\nclass SubClass extends SuperClass {\n    static void printMessage() { System.out.print(\"Sub \"); }\n}\npublic class Main {\n    public static void main(String[] args) {\n        SuperClass obj = new SubClass();\n        obj.printMessage();\n    }\n}",
+          "options": [
+            "Sub ",
+            "Super ",
+            "Compilation Error: static methods cannot be hidden",
+            "Runtime exception"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "Static methods are NOT polymorphic; they cannot be overridden, only hidden, and are resolved by reference type at compile time.",
+          "solution": "Super ",
+          "explanation": "Because printMessage() is static, the compiler binds the call to SuperClass.printMessage() based on the reference type of obj (SuperClass)."
+        },
+        {
+          "title": "Puzzle 5: Missing Parent No-Arg Constructor Trap",
+          "problemStatement": "Why does this code fail to compile?",
+          "code": "class Vehicle {\n    Vehicle(String type) {}\n}\nclass Car extends Vehicle {\n    Car() {}\n}",
+          "options": [
+            "Car must be declared abstract",
+            "Vehicle cannot have parameters in its constructor",
+            "Implicit super() constructor Vehicle() is undefined for default constructor in Car",
+            "Car must declare an extends Object clause"
+          ],
+          "correctOptionIndex": 2,
+          "hint": "Car() tries to call super() implicitly, but Vehicle does not have a no-arg constructor.",
+          "solution": "Implicit super() constructor Vehicle() is undefined for default constructor in Car",
+          "explanation": "Because Vehicle declared a parameterized constructor, the compiler did not generate a default Vehicle(). Car() implicitly invokes super(), causing a compile-time error. Car must explicitly call super(\"...\")."
+        },
+        {
+          "title": "Puzzle 6: Final Method Overriding Legality",
+          "problemStatement": "What occurs when attempting to compile this class definition?",
+          "code": "class Document {\n    public final void printHeader() {\n        System.out.println(\"Header\");\n    }\n}\nclass Report extends Document {\n    public void printHeader() {\n        System.out.println(\"Report Header\");\n    }\n}",
+          "options": [
+            "Compiles and runs normally",
+            "Compilation Error: printHeader() in Report cannot override printHeader() in Document (overridden method is final)",
+            "Runtime SecurityException",
+            "Warning only"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "The 'final' modifier on a method strictly prohibits subclasses from overriding it.",
+          "solution": "Compilation Error: printHeader() in Report cannot override printHeader() in Document (overridden method is final)",
+          "explanation": "Marking a method final in a superclass prevents any subclass from overriding it. The compiler halts with an error."
+        },
+        {
+          "title": "Puzzle 7: Covariant Return Types in Overriding",
+          "problemStatement": "Is this method overriding legal in Java?",
+          "code": "class Food {}\nclass Fruit extends Food {}\n\nclass Producer {\n    Food produce() { return new Food(); }\n}\nclass FruitProducer extends Producer {\n    @Override\n    Fruit produce() { return new Fruit(); }\n}",
+          "options": [
+            "Legal: Java allows covariant return types",
+            "Illegal: Return type must be exactly Food",
+            "Illegal: @Override cannot be used on custom types",
+            "Causes ClassCastException at runtime"
+          ],
+          "correctOptionIndex": 0,
+          "hint": "Since Java 5, an overriding method may return a subtype of the return type declared in the parent class.",
+          "solution": "Legal: Java allows covariant return types",
+          "explanation": "Fruit is a subtype of Food. Java supports covariant return types, allowing FruitProducer.produce() to return Fruit legally."
+        },
+        {
+          "title": "Puzzle 8: Final Parameter Mutation Inside Method",
+          "problemStatement": "What does this code print?",
+          "code": "class Demo {\n    static void process(final int[] nums) {\n        nums[0] = 99;\n        // nums = new int[5]; // Line A\n    }\n    public static void main(String[] args) {\n        int[] values = {1, 2, 3};\n        process(values);\n        System.out.println(values[0]);\n    }\n}",
+          "options": [
+            "1",
+            "99",
+            "Compilation Error: nums is final",
+            "NullPointerException"
+          ],
+          "correctOptionIndex": 1,
+          "hint": "The 'final' modifier on a reference parameter prevents reassigning the reference (Line A), but does NOT prevent mutating array elements.",
+          "solution": "99",
+          "explanation": "nums is final, so the reference cannot point to a new array. However, mutating the array elements through that reference (nums[0] = 99) is completely legal."
+        },
+        {
+          "title": "Puzzle 9: Accessing Overridden Method From External Code",
+          "problemStatement": "Can external code outside the class hierarchy bypass Child's override and invoke Parent.test() on a Child instance?",
+          "code": "class Parent { void test() { System.out.println(\"Parent\"); } }\nclass Child extends Parent { void test() { System.out.println(\"Child\"); } }\npublic class Main {\n    public static void main(String[] args) {\n        Parent p = new Child();\n        // Can main() somehow call Parent's test()?\n    }\n}",
+          "options": [
+            "Yes, by casting: ((Parent)p).test()",
+            "Yes, by calling super.test() from main",
+            "No, dynamic method dispatch always invokes Child.test() regardless of casting",
+            "Yes, via Object.test()"
+          ],
+          "correctOptionIndex": 2,
+          "hint": "Casting alters only the reference type at compile time; runtime method dispatch always targets the actual object on the heap.",
+          "solution": "No, dynamic method dispatch always invokes Child.test() regardless of casting",
+          "explanation": "In Java, instance method calls are virtual. Even with '((Parent)p).test()', the JVM inspects the heap object (Child) and executes Child.test(). Super can only be called from inside the subclass itself."
+        },
+        {
+          "title": "Puzzle 10: Private Field Allocation in Subclass Memory",
+          "problemStatement": "What is the output of this code?",
+          "code": "class Base {\n    private int secret = 42;\n    public int getSecret() { return secret; }\n}\nclass Derived extends Base {\n    private int secret = 999;\n}\npublic class Main {\n    public static void main(String[] args) {\n        Derived d = new Derived();\n        System.out.println(d.getSecret());\n    }\n}",
+          "options": [
+            "42",
+            "999",
+            "0",
+            "Compilation Error: secret is private in Base"
+          ],
+          "correctOptionIndex": 0,
+          "hint": "getSecret() is declared in Base and bound to Base's private secret field.",
+          "solution": "42",
+          "explanation": "Derived defines its own separate field 'secret', which shadows Base's secret. But getSecret() was defined in Base, where it returns Base's secret (42)."
+        }
+      ],
+      "interviewQuestions": [
+        {
+          "question": "What is the Diamond Problem, and how does Java prevent it?",
+          "answer": "The Diamond Problem is an ambiguity that arises in multiple inheritance when a class inherits from two parent classes that both extend a common ancestor and both override the same method. If the child calls that method, the compiler cannot determine which parent implementation to execute. Java prevents this by supporting only single inheritance for classes. A class can extend at most one superclass, making the inheritance tree completely unambiguous.",
+          "focus": "Explain multiple class ambiguity, single class inheritance rule, and interfaces as the safe alternative."
+        },
+        {
+          "question": "What is the difference between this() and super() in constructors?",
+          "answer": "Both this() and super() are constructor call statements, but they serve different purposes. this() invokes another constructor within the same class (constructor chaining to reduce duplication). super() invokes a constructor of the immediate parent class (to initialize inherited fields). Both statements must be the very first line of a constructor body, which means a single constructor can use either this() or super(), but never both.",
+          "focus": "this() calls overloaded sibling constructor; super() calls parent constructor; both must be on line 1."
+        },
+        {
+          "question": "What are the core rules for Method Overriding in Java?",
+          "answer": "To override a method: 1) The method name, parameter count, and parameter types must be identical to the parent method. 2) The return type must be identical or a covariant subtype. 3) The access modifier cannot be more restrictive (it can be the same or more visible). 4) It cannot throw broader or new checked exceptions. 5) Private, static, and final methods cannot be overridden.",
+          "focus": "Same signature, covariant return, equal or broader visibility, no new checked exceptions, not private/static/final."
+        },
+        {
+          "question": "Why should you always use the @Override annotation?",
+          "answer": "The @Override annotation asks the Java compiler to verify that the annotated method actually overrides a method from a superclass or interface. If you make a typo in the method name or mismatch a parameter type, the compiler issues an immediate error instead of silently treating your code as an overloaded new method. It acts as an automated safety net.",
+          "focus": "Compile-time validation, prevents accidental overloading typos, improves code readability."
+        },
+        {
+          "question": "Can static methods be overridden in Java?",
+          "answer": "No. Static methods belong to the class itself, not to any object instance on the heap. If a subclass declares a static method with the same signature as a static method in its superclass, this is called method hiding, not overriding. Static method calls are bound at compile time based on the declared reference type, not dynamically dispatched at runtime.",
+          "focus": "Static belongs to class; method hiding instead of overriding; resolved at compile-time by reference type."
+        },
+        {
+          "question": "What are the three distinct uses of the 'final' keyword in Java?",
+          "answer": "1) Final variable: Its value (for primitives) or memory reference (for objects) cannot be reassigned once initialized. 2) Final method: Subclasses are prohibited from overriding the method, preserving core algorithm integrity. 3) Final class: The class cannot be extended by any other class, ensuring security and complete immutability (like java.lang.String).",
+          "focus": "Final variable (no reassignment), final method (no overriding), final class (no inheritance)."
+        },
+        {
+          "question": "Does a subclass inherit private members of its superclass?",
+          "answer": "In terms of direct visibility and syntax, no\u2014a subclass cannot access private fields or methods of its parent by name. However, in terms of JVM memory allocation, yes\u2014when a subclass instance is created on the heap, memory is allocated for all superclass fields, including private ones. The subclass possesses the private state and can interact with it via inherited public or protected getter and setter methods.",
+          "focus": "Not visible syntactically; allocated in memory; accessible through inherited public/protected methods."
+        },
+        {
+          "question": "What is the difference between Method Overloading and Method Overriding?",
+          "answer": "Method Overloading happens within the same class (or across hierarchy) where methods share the same name but have different parameter lists (different types or counts); it is resolved at compile time. Method Overriding happens between a parent and child class where the child provides a specific implementation of a method with the exact same signature; it is resolved at runtime based on the actual heap object.",
+          "focus": "Overloading = same name, different parameters, compile-time; Overriding = same signature, subclass customization, runtime dispatch."
+        },
+        {
+          "question": "What happens if a parent class does not have a no-argument constructor?",
+          "answer": "If a parent class only defines parameterized constructors, the compiler does not generate a default no-arg constructor for it. Any subclass will fail to compile unless its constructors explicitly call an existing parameterized constructor using 'super(arguments)' as line 1, because the compiler otherwise attempts to insert an implicit 'super()' call which does not exist.",
+          "focus": "Compiler's implicit super() fails; subclass must explicitly call super(args)."
+        },
+        {
+          "question": "Why is java.lang.String declared as a final class in Java?",
+          "answer": "String is final for security, caching, and thread safety. If String could be subclassed, a malicious subclass could override methods like substring() or charAt() to mutate or leak sensitive information like passwords, file paths, or network tokens. Making String final guarantees that any String reference is truly immutable and safe to share across threads and cache in the String Pool.",
+          "focus": "Security, String Pool integrity, thread safety, preventing malicious overrides."
+        },
+        {
+          "question": "What is the purpose of the 'protected' access modifier?",
+          "answer": "The protected modifier allows members to be accessed by any class within the same package, and by any subclass regardless of what package it resides in. It is used to design inheritance hooks\u2014allowing child classes to access or override internal helper methods or fields without exposing them as public to unrelated outside callers.",
+          "focus": "Same package + subclasses anywhere; designed for inheritance hooks and internal collaboration."
+        },
+        {
+          "question": "Can you call a superclass method from a subclass after overriding it?",
+          "answer": "Yes, using the 'super' keyword (e.g. 'super.myMethod()'). This is commonly used in subclass extensions where you want to execute the base implementation and then add custom specialized behavior before or after.",
+          "focus": "super.methodName() invokes immediate parent implementation; enables code reuse and enhancement."
+        }
+      ],
+      "miniQuiz": [
+        {
+          "question": "Which keyword is used by a class to inherit from a superclass?",
+          "options": [
+            "implements",
+            "extends",
+            "inherits",
+            "subclasses"
+          ],
+          "correctIndex": 1,
+          "explanation": "The 'extends' keyword is used to establish class inheritance."
+        },
+        {
+          "question": "What is the ultimate root class of every reference type in Java?",
+          "options": [
+            "java.lang.System",
+            "java.lang.Class",
+            "java.lang.Object",
+            "java.lang.Root"
+          ],
+          "correctIndex": 2,
+          "explanation": "java.lang.Object is the universal superclass of all classes in Java."
+        },
+        {
+          "question": "Where must the 'super()' statement be located in a constructor?",
+          "options": [
+            "As the very first statement",
+            "Anywhere before returning",
+            "At the end of the constructor",
+            "Inside a try block"
+          ],
+          "correctIndex": 0,
+          "explanation": "super() must be the very first statement in a constructor body."
+        },
+        {
+          "question": "What happens if you mark a class with the 'final' keyword?",
+          "options": [
+            "It cannot be instantiated",
+            "It cannot be subclassed/extended",
+            "All its fields become static",
+            "It can only have final methods"
+          ],
+          "correctIndex": 1,
+          "explanation": "A final class cannot be extended by any other class."
+        },
+        {
+          "question": "Can an overriding method declare a more restrictive access modifier than the parent method?",
+          "options": [
+            "Yes, any modifier is valid",
+            "No, visibility cannot be reduced (e.g., public cannot become protected)",
+            "Only if the method returns void",
+            "Only within the same package"
+          ],
+          "correctIndex": 1,
+          "explanation": "An overriding method cannot reduce the visibility of the parent method."
+        },
+        {
+          "question": "What is the purpose of the '@Override' annotation?",
+          "options": [
+            "Forces runtime dispatch to run faster",
+            "Asks the compiler to verify that the method actually overrides a parent method",
+            "Allows overriding private methods",
+            "Disables constructor chaining"
+          ],
+          "correctIndex": 1,
+          "explanation": "@Override is a compile-time check that prevents typos in method signatures."
+        },
+        {
+          "question": "Can a constructor in Java be overridden by a subclass?",
+          "options": [
+            "Yes, by using the same signature",
+            "No, constructors are not inherited and cannot be overridden",
+            "Only if marked protected",
+            "Only if marked virtual"
+          ],
+          "correctIndex": 1,
+          "explanation": "Constructors are unique to the declaring class; they are not inherited and cannot be overridden."
+        },
+        {
+          "question": "What is method hiding in Java?",
+          "options": [
+            "Declaring a method private",
+            "Declaring a static method in a subclass with the same signature as a static method in the superclass",
+            "Overriding an instance method",
+            "Throwing an exception to abort dispatch"
+          ],
+          "correctIndex": 1,
+          "explanation": "When a subclass defines a static method with the same signature as a parent static method, it hides the parent method instead of overriding it."
+        },
+        {
+          "question": "Which of the following is true about Java's class inheritance model?",
+          "options": [
+            "Supports multiple class inheritance",
+            "Supports single class inheritance only",
+            "Classes cannot extend other classes",
+            "Requires all methods to be abstract"
+          ],
+          "correctIndex": 1,
+          "explanation": "Java strictly enforces single class inheritance."
+        },
+        {
+          "question": "What does 'super.display();' do inside a subclass method?",
+          "options": [
+            "Calls display() in java.lang.Object",
+            "Invokes the parent class's version of display()",
+            "Calls display() on all sibling classes",
+            "Creates a new superclass object"
+          ],
+          "correctIndex": 1,
+          "explanation": "'super.display()' bypasses the subclass override and invokes the direct superclass implementation."
+        },
+        {
+          "question": "What is a covariant return type?",
+          "options": [
+            "Returning void instead of a type",
+            "An overriding method returning a narrower subtype of the parent method's return type",
+            "Returning a primitive instead of an object",
+            "Passing parameters in reverse"
+          ],
+          "correctIndex": 1,
+          "explanation": "Covariant returns allow an overriding method to return a more specialized subtype."
+        },
+        {
+          "question": "Can a final variable's value or reference be changed once assigned?",
+          "options": [
+            "Yes, inside a subclass",
+            "No, final variables cannot be reassigned once initialized",
+            "Only if it is declared public",
+            "Yes, using super"
+          ],
+          "correctIndex": 1,
+          "explanation": "A final variable is a constant reference that cannot be reassigned."
+        },
+        {
+          "question": "What is printed if Parent has field 'int x = 10' and Child has field 'int x = 20', and we run 'Parent p = new Child(); System.out.println(p.x);'?",
+          "options": [
+            "10",
+            "20",
+            "Compilation error",
+            "0"
+          ],
+          "correctIndex": 0,
+          "explanation": "Fields are resolved by declared reference type (Parent), so p.x evaluates to 10."
+        },
+        {
+          "question": "Why is composition (HAS-A) often favored over inheritance (IS-A)?",
+          "options": [
+            "Composition runs 10x faster",
+            "Composition avoids fragile base class coupling and offers greater flexibility",
+            "Inheritance is deprecated in Java",
+            "Composition eliminates the need for constructors"
+          ],
+          "correctIndex": 1,
+          "explanation": "Composition provides loose coupling and shields child classes from unexpected changes in parent internals."
+        },
+        {
+          "question": "What constructor call is made first when 'new Subclass()' is executed?",
+          "options": [
+            "Subclass constructor body runs first",
+            "Constructors are executed top-down starting with java.lang.Object",
+            "No parent constructor is called unless explicitly written",
+            "Only static blocks run"
+          ],
+          "correctIndex": 1,
+          "explanation": "Constructor execution begins at the root (java.lang.Object) and proceeds downward."
+        }
+      ]
+    }
 };
