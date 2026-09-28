@@ -575,27 +575,6 @@ export default function JavaSubLessonPage() {
                 {lesson.subtitle}
               </p>
             )}
-
-            {isChallenge && (
-              <div className="mt-3 pt-3 border-t border-slate-800/80 flex flex-wrap items-center gap-2">
-                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-300 font-semibold flex items-center gap-1.5">
-                  <Code2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>{lesson.programmingExercises?.length || 0} Coding Challenges</span>
-                </span>
-                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 font-semibold flex items-center gap-1.5">
-                  <CheckSquare className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>{lesson.miniQuiz?.length || 0} Quiz MCQs</span>
-                </span>
-                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/40 border border-indigo-500/30 text-indigo-300 font-semibold flex items-center gap-1.5">
-                  <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>{lesson.interviewQuestions?.length || 0} Interview Q&As</span>
-                </span>
-                <span className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-950/40 border border-purple-500/30 text-purple-300 font-semibold flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-purple-400" />
-                  <span>{practiceProblemsList.length} Code Puzzles</span>
-                </span>
-              </div>
-            )}
           </div>
 
           {/* ── EASY NAVIGATION TABS FOR EACH TOPIC (STICKY & MOBILE-OPTIMIZED) ── */}
