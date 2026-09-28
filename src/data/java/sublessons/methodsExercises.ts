@@ -1,10 +1,12 @@
 import { ProgrammingExercise } from '../detailedLessons';
 import { methodsExercises as rawMethodsExercises } from './methods/methodsExercises';
+import { methodsChallenge_exercises } from './methods/methodsChallenge_exercises';
 
 // ============================================================
-// MODULE 8: METHODS & RECURSION EXERCISES (LESSONS 8.1 - 8.4)
-// 10 dedicated coding assignments per lesson (40 total)
+// MODULE 7: METHODS IN JAVA EXERCISES (LESSONS 7.1 - 7.4)
+// Exactly 10 dedicated coding assignments per lesson (40 total)
 // ============================================================
 export const methodsExercises: Record<string, ProgrammingExercise[]> = {
   ...rawMethodsExercises,
+  ...methodsChallenge_exercises,
 };
