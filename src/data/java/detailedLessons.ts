@@ -25,6 +25,7 @@ export interface PracticeProblem {
 export interface ProgrammingExercise {
   id?: string;
   title: string;
+  difficulty?: 'Easy' | 'Medium' | 'Hard';
   problemStatement: string;
   hint?: string;
   solutionCode: string;

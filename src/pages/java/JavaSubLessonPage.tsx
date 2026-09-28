@@ -1164,7 +1164,7 @@ export default function JavaSubLessonPage() {
                       const isHint = showExerciseHints[pIdx];
                       const assignmentKey = `${lesson.id}-ex-${pIdx}`;
                       const isSolved = solvedAssignments.includes(assignmentKey);
-                      const difficultyTier = pIdx < 3 ? 'Easy' : pIdx < 7 ? 'Medium' : 'Hard';
+                      const difficultyTier = prog.difficulty || (pIdx < 2 ? 'Easy' : pIdx < 5 ? 'Medium' : 'Hard');
                       const diffColor = difficultyTier === 'Easy'
                         ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30'
                         : difficultyTier === 'Medium'
