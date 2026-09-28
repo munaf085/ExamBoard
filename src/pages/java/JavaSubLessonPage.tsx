@@ -1361,6 +1361,7 @@ export default function JavaSubLessonPage() {
                             Click "Reveal" to view the model answer and technical explanation.
                           </div>
                         ) : (
+                          <div className="space-y-3 pt-1">
                             <div className="text-xs sm:text-sm text-slate-200 leading-relaxed bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
                               <strong className="text-blue-300 block mb-1.5 font-semibold">
                                 Answer:
