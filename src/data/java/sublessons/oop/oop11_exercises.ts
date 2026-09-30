@@ -2,489 +2,614 @@ import { ProgrammingExercise } from '../../detailedLessons';
 
 // ============================================================
 // MODULE 11: INHERITANCE & HIERARCHY - PROGRAMMING EXERCISES
-// Total: 40 exercises (10 per sub-lesson)
-// Progressive difficulty: Beginner to Medium-Hard
+// Total: 52 exercises across 7 lessons (Beginner to Capstone)
 // ============================================================
 
 export const oop11Exercises: Record<string, ProgrammingExercise[]> = {
-  "extends-and-is-a": [
+  "what-is-inheritance": [
     {
-      "id": "oop11-ex01",
-      "title": "Vehicle Base Class and Car Extension",
-      "problemStatement": "Create a base class `Vehicle` with fields `brand` (String) and `speed` (int), along with a method `displaySpecs()`. Then create a subclass `Car` that extends `Vehicle`, adding an integer field `doors` and a method `displayCarDetails()`. In `main()`, instantiate a `Car`, configure all fields, and call both methods to verify inheritance.",
-      "hint": "Use the `extends` keyword in the class header: `class Car extends Vehicle`. The subclass automatically inherits all accessible non-private fields and methods from its superclass.",
-      "solutionCode": "class Vehicle {\n    String brand;\n    int speed;\n\n    void displaySpecs() {\n        System.out.println(\"Vehicle: \" + brand + \" running at \" + speed + \" km/h\");\n    }\n}\n\nclass Car extends Vehicle {\n    int doors;\n\n    void displayCarDetails() {\n        System.out.println(\"Car with \" + doors + \" doors, brand: \" + brand);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Car myCar = new Car();\n        myCar.brand = \"Toyota\";\n        myCar.speed = 120;\n        myCar.doors = 4;\n\n        myCar.displaySpecs();\n        myCar.displayCarDetails();\n    }\n}",
-      "output": "Vehicle: Toyota running at 120 km/h\nCar with 4 doors, brand: Toyota",
-      "explanation": "Car extends Vehicle, inheriting the brand and speed fields as well as the displaySpecs() method. The Car instance holds its own doors field alongside the inherited state on the heap."
+      "id": "inh-ex01",
+      "title": "Vehicle Base Class & Car Extension",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Vehicle` with variables `brand` (String) and `speed` (int), and a method `drive()` that prints `\"Vehicle is driving at \" + speed + \" km/h\"`. Then create a child class `Car` that extends `Vehicle` and adds `int doors = 4;` and a method `displayDoors()` printing `\"Number of doors: \" + doors`. In `main()`, instantiate a `Car`, set `brand = \"Toyota\"` and `speed = 100`, then call both `drive()` and `displayDoors()`.",
+      "hint": "Use `class Car extends Vehicle`. Notice how `Car` can access `brand` and `speed` directly because it inherits them.",
+      "solutionCode": "class Vehicle {\n    String brand;\n    int speed;\n\n    void drive() {\n        System.out.println(\"Vehicle is driving at \" + speed + \" km/h\");\n    }\n}\n\nclass Car extends Vehicle {\n    int doors = 4;\n\n    void displayDoors() {\n        System.out.println(\"Number of doors: \" + doors);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Car car = new Car();\n        car.brand = \"Toyota\";\n        car.speed = 100;\n        car.drive();\n        car.displayDoors();\n    }\n}",
+      "output": "Vehicle is driving at 100 km/h\nNumber of doors: 4",
+      "explanation": "Car extends Vehicle. A Car object contains both the inherited Vehicle fields (brand, speed) and its own doors field."
     },
     {
-      "id": "oop11-ex02",
-      "title": "Employee Compensation and Manager State Specialization",
-      "problemStatement": "Define an `Employee` class with fields `name` (String) and `baseSalary` (double), and a method `displayCompensation()`. Create a subclass `Manager` extending `Employee` with an additional field `bonus` (double) and a method `getTotalCompensation()` returning baseSalary + bonus. In `main()`, instantiate a Manager, populate the fields, and print the total compensation.",
-      "hint": "The subclass inherits `baseSalary` from `Employee`. Because `baseSalary` has package-private access, `Manager` can read it directly.",
-      "solutionCode": "class Employee {\n    String name;\n    double baseSalary;\n\n    void displayCompensation() {\n        System.out.println(name + \" Base Salary: $\" + baseSalary);\n    }\n}\n\nclass Manager extends Employee {\n    double bonus;\n\n    double getTotalCompensation() {\n        return baseSalary + bonus;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Manager mgr = new Manager();\n        mgr.name = \"Alice Chen\";\n        mgr.baseSalary = 85000.0;\n        mgr.bonus = 15000.0;\n\n        mgr.displayCompensation();\n        System.out.println(\"Total Compensation: $\" + mgr.getTotalCompensation());\n    }\n}",
-      "output": "Alice Chen Base Salary: $85000.0\nTotal Compensation: $100000.0",
-      "explanation": "Manager specializes Employee by adding bonus. The subclass method getTotalCompensation() computes the combined salary using both inherited state and its own field."
+      "id": "inh-ex02",
+      "title": "Employee & Manager Salary Specialization",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Employee` with fields `name` (String) and `baseSalary` (double), and a method `displayBase()` that prints `name + \" Base Salary: $\" + baseSalary`. Create a child class `Manager` that extends `Employee` with an additional field `bonus` (double) and a method `displayTotal()` that prints `name + \" Total: $\" + (baseSalary + bonus)`. In `main()`, create a `Manager` named `\"Alice\"` with base salary `60000.0` and bonus `12000.0`, then call both methods.",
+      "hint": "Manager inherits `name` and `baseSalary` from Employee and adds its own `bonus` field.",
+      "solutionCode": "class Employee {\n    String name;\n    double baseSalary;\n\n    void displayBase() {\n        System.out.println(name + \" Base Salary: $\" + baseSalary);\n    }\n}\n\nclass Manager extends Employee {\n    double bonus;\n\n    void displayTotal() {\n        System.out.println(name + \" Total: $\" + (baseSalary + bonus));\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Manager mgr = new Manager();\n        mgr.name = \"Alice\";\n        mgr.baseSalary = 60000.0;\n        mgr.bonus = 12000.0;\n        mgr.displayBase();\n        mgr.displayTotal();\n    }\n}",
+      "output": "Alice Base Salary: $60000.0\nAlice Total: $72000.0",
+      "explanation": "Manager specializes Employee by adding a bonus field. It computes total salary using both inherited and child fields."
     },
     {
-      "id": "oop11-ex03",
-      "title": "Geometric Rectangle Perimeter and Area Derivation",
-      "problemStatement": "Implement a base class `Shape` with a field `name` (String) and method `identify()`. Create a derived class `Rectangle` that extends `Shape`, declaring `width` (double) and `height` (double). Include methods `getArea()` and `getPerimeter()`. In `main()`, set up a rectangle with dimensions 8.0 by 5.0 and display its name, area, and perimeter.",
-      "hint": "Initialize shape name using `rect.name = \"Rectangle\";`. Area is width * height, and perimeter is 2 * (width + height).",
-      "solutionCode": "class Shape {\n    String name;\n\n    void identify() {\n        System.out.println(\"Shape type: \" + name);\n    }\n}\n\nclass Rectangle extends Shape {\n    double width;\n    double height;\n\n    double getArea() {\n        return width * height;\n    }\n\n    double getPerimeter() {\n        return 2 * (width + height);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Rectangle rect = new Rectangle();\n        rect.name = \"Rectangle\";\n        rect.width = 8.0;\n        rect.height = 5.0;\n\n        rect.identify();\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }\n}",
-      "output": "Shape type: Rectangle\nArea: 40.0\nPerimeter: 26.0",
-      "explanation": "Rectangle establishes an IS-A relationship with Shape. The derived class inherits identify() and adds specialized geometric calculations."
+      "id": "inh-ex03",
+      "title": "Geometric Shape & Rectangle Derivation",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Shape` with a field `color` (String) and a method `printColor()` printing `\"Color: \" + color`. Create a child class `Rectangle` extending `Shape` with fields `double width` and `double height`. Add methods `double getArea()` returning `width * height` and `double getPerimeter()` returning `2 * (width + height)`. In `main()`, create a blue rectangle of dimensions 6.0 x 4.0 and print its color, area, and perimeter.",
+      "hint": "Rectangle inherits `color` and adds `width` and `height`.",
+      "solutionCode": "class Shape {\n    String color;\n\n    void printColor() {\n        System.out.println(\"Color: \" + color);\n    }\n}\n\nclass Rectangle extends Shape {\n    double width;\n    double height;\n\n    double getArea() {\n        return width * height;\n    }\n\n    double getPerimeter() {\n        return 2 * (width + height);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Rectangle rect = new Rectangle();\n        rect.color = \"Blue\";\n        rect.width = 6.0;\n        rect.height = 4.0;\n        rect.printColor();\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }\n}",
+      "output": "Color: Blue\nArea: 24.0\nPerimeter: 20.0",
+      "explanation": "Rectangle establishes an IS-A relationship with Shape, inheriting printColor() and adding area and perimeter calculations."
     },
     {
-      "id": "oop11-ex04",
-      "title": "Bank Account Interest Accumulation",
-      "problemStatement": "Write a `BankAccount` class with `accountNumber` (String) and `balance` (double), plus a method `deposit(double amount)`. Create a subclass `SavingsAccount` that adds an `interestRate` (double) and an `applyInterest()` method that calculates interest (`balance * interestRate`) and adds it to `balance`. In `main()`, create an account with $2000.0, deposit $500.0, apply 5% interest (0.05), and display the final balance.",
-      "hint": "In `applyInterest()`, compute the earned amount and modify the inherited `balance` field directly.",
-      "solutionCode": "class BankAccount {\n    String accountNumber;\n    double balance;\n\n    void deposit(double amount) {\n        if (amount > 0) {\n            balance += amount;\n        }\n    }\n}\n\nclass SavingsAccount extends BankAccount {\n    double interestRate;\n\n    void applyInterest() {\n        double interest = balance * interestRate;\n        balance += interest;\n        System.out.println(\"Interest applied: $\" + interest);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        SavingsAccount sa = new SavingsAccount();\n        sa.accountNumber = \"SA-9012\";\n        sa.balance = 2000.0;\n        sa.interestRate = 0.05;\n\n        sa.deposit(500.0);\n        sa.applyInterest();\n        System.out.println(\"Final Balance: $\" + sa.balance);\n    }\n}",
-      "output": "Interest applied: $125.0\nFinal Balance: $2625.0",
-      "explanation": "SavingsAccount inherits the balance state and deposit() capability. It manipulates the inherited balance within applyInterest() seamlessly."
+      "id": "inh-ex04",
+      "title": "Animal & Dog Method Inheritance",
+      "difficulty": "Easy",
+      "problemStatement": "Create an `Animal` parent class with methods `eat()` printing `\"Eating food\"` and `sleep()` printing `\"Sleeping soundly\"`. Create child class `Dog` extending `Animal` with method `bark()` printing `\"Barking loudly\"`. In `main()`, create a `Dog` and call `eat()`, `sleep()`, and `bark()` in order.",
+      "hint": "Dog inherits both eat() and sleep() from Animal without needing to rewrite them.",
+      "solutionCode": "class Animal {\n    void eat() {\n        System.out.println(\"Eating food\");\n    }\n    void sleep() {\n        System.out.println(\"Sleeping soundly\");\n    }\n}\n\nclass Dog extends Animal {\n    void bark() {\n        System.out.println(\"Barking loudly\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Dog dog = new Dog();\n        dog.eat();\n        dog.sleep();\n        dog.bark();\n    }\n}",
+      "output": "Eating food\nSleeping soundly\nBarking loudly",
+      "explanation": "Dog inherits eat() and sleep() from Animal and defines its own bark() method."
     },
     {
-      "id": "oop11-ex05",
-      "title": "Three-Tier Biological Taxonomy Hierarchy",
-      "problemStatement": "Construct a three-level inheritance hierarchy: `Animal` (field `species`, method `eat()`), `Mammal` extending `Animal` (field `furColor`, method `walk()`), and `Dog` extending `Mammal` (field `breed`, method `bark()`). In `main()`, instantiate a `Dog`, assign values to all three fields, and invoke all three methods.",
-      "hint": "Java supports multilevel inheritance (A -> B -> C). A Dog object contains the state and behavior of Animal, Mammal, and Dog.",
-      "solutionCode": "class Animal {\n    String species;\n\n    void eat() {\n        System.out.println(species + \" is consuming food.\");\n    }\n}\n\nclass Mammal extends Animal {\n    String furColor;\n\n    void walk() {\n        System.out.println(\"Walking with \" + furColor + \" fur.\");\n    }\n}\n\nclass Dog extends Mammal {\n    String breed;\n\n    void bark() {\n        System.out.println(breed + \" says: Woof!\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.species = \"Canis lupus\";\n        d.furColor = \"Golden\";\n        d.breed = \"Retriever\";\n\n        d.eat();\n        d.walk();\n        d.bark();\n    }\n}",
-      "output": "Canis lupus is consuming food.\nWalking with Golden fur.\nRetriever says: Woof!",
-      "explanation": "Through transitive inheritance in Java, Dog inherits everything from Mammal and Animal. A single instance on the heap holds all three string fields."
+      "id": "inh-ex05",
+      "title": "Book Catalog & Academic Textbook",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `Book` with `title` (String) and `author` (String). Create child class `Textbook` extending `Book` with `subject` (String). In `Textbook`, write method `displayInfo()` that prints `\"[Textbook] Title: \" + title + \", Author: \" + author + \", Subject: \" + subject`. In `main()`, instantiate a `Textbook` with title `\"Physics Fundamentals\"`, author `\"Dr. Hall\"`, subject `\"Science\"`, and call `displayInfo()`.",
+      "hint": "Textbook can directly access title and author declared in Book.",
+      "solutionCode": "class Book {\n    String title;\n    String author;\n}\n\nclass Textbook extends Book {\n    String subject;\n\n    void displayInfo() {\n        System.out.println(\"[Textbook] Title: \" + title + \", Author: \" + author + \", Subject: \" + subject);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Textbook tb = new Textbook();\n        tb.title = \"Physics Fundamentals\";\n        tb.author = \"Dr. Hall\";\n        tb.subject = \"Science\";\n        tb.displayInfo();\n    }\n}",
+      "output": "[Textbook] Title: Physics Fundamentals, Author: Dr. Hall, Subject: Science",
+      "explanation": "Textbook inherits book metadata (title, author) and adds subject classification."
     },
     {
-      "id": "oop11-ex06",
-      "title": "Protected State Access Across Inheritance Boundary",
-      "problemStatement": "Build a `UserProfile` class with `protected String username` and `protected String role`. Subclass it with `AdminUser` having `private int accessLevel`. Add a method `displayAdminBadge()` in `AdminUser` that prints the inherited protected fields alongside `accessLevel`. In `main()`, test this relationship.",
-      "hint": "The `protected` modifier allows subclasses to access the member directly, providing encapsulation against unrelated non-child classes while permitting inheritance.",
-      "solutionCode": "class UserProfile {\n    protected String username;\n    protected String role;\n}\n\nclass AdminUser extends UserProfile {\n    private int accessLevel;\n\n    public void setAccessLevel(int level) {\n        this.accessLevel = level;\n    }\n\n    public void displayAdminBadge() {\n        System.out.println(\"ADMIN BADGE: \" + username + \" | Role: \" + role + \" | Level: \" + accessLevel);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        AdminUser admin = new AdminUser();\n        admin.username = \"sys_admin\";\n        admin.role = \"SuperUser\";\n        admin.setAccessLevel(5);\n\n        admin.displayAdminBadge();\n    }\n}",
-      "output": "ADMIN BADGE: sys_admin | Role: SuperUser | Level: 5",
-      "explanation": "The protected fields username and role are accessible to AdminUser because of inheritance. Encapsulation is preserved while child classes get access."
+      "id": "inh-ex06",
+      "title": "Electronic Device & Smartphone Features",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `Device` with `brand` (String) and `powerOn()` printing `brand + \" powered on\"`. Create child class `Phone` extending `Device` with method `makeCall(String number)` printing `\"Calling \" + number + \" from \" + brand`. In `main()`, create a `Phone` with brand `\"Samsung\"`, call `powerOn()`, and call `makeCall(\"9876543210\")`.",
+      "hint": "Phone inherits brand and powerOn() from Device.",
+      "solutionCode": "class Device {\n    String brand;\n\n    void powerOn() {\n        System.out.println(brand + \" powered on\");\n    }\n}\n\nclass Phone extends Device {\n    void makeCall(String number) {\n        System.out.println(\"Calling \" + number + \" from \" + brand);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Phone p = new Phone();\n        p.brand = \"Samsung\";\n        p.powerOn();\n        p.makeCall(\"9876543210\");\n    }\n}",
+      "output": "Samsung powered on\nCalling 9876543210 from Samsung",
+      "explanation": "Phone is a specialization of Device that can perform communication actions."
     },
     {
-      "id": "oop11-ex07",
-      "title": "Book Catalog and Academic Textbook Distinction",
-      "problemStatement": "Create a `Book` class with fields `title` (String), `author` (String), and `pages` (int). Create a subclass `TextBook` with `subject` (String) and `gradeLevel` (int). Write a static method `summarizeBook(Book b)` that prints the title and author. In `main()`, pass both a standard `Book` and a `TextBook` to `summarizeBook` to demonstrate that a TextBook IS-A Book.",
-      "hint": "Because `TextBook extends Book`, a method expecting a `Book` parameter happily accepts a `TextBook` without casting.",
-      "solutionCode": "class Book {\n    String title;\n    String author;\n    int pages;\n}\n\nclass TextBook extends Book {\n    String subject;\n    int gradeLevel;\n}\n\npublic class Solution {\n    static void summarizeBook(Book b) {\n        System.out.println(\"Title: \" + b.title + \" | Author: \" + b.author);\n    }\n\n    public static void main(String[] args) {\n        Book novel = new Book();\n        novel.title = \"To Kill a Mockingbird\";\n        novel.author = \"Harper Lee\";\n        novel.pages = 281;\n\n        TextBook math = new TextBook();\n        math.title = \"Advanced Calculus\";\n        math.author = \"Dr. Smith\";\n        math.pages = 650;\n        math.subject = \"Mathematics\";\n        math.gradeLevel = 12;\n\n        summarizeBook(novel);\n        summarizeBook(math);\n    }\n}",
-      "output": "Title: To Kill a Mockingbird | Author: Harper Lee\nTitle: Advanced Calculus | Author: Dr. Smith",
-      "explanation": "The IS-A relationship guarantees that wherever a Book reference is required, a TextBook object can be passed directly."
+      "id": "inh-ex07",
+      "title": "Basic BankAccount & Savings Interest",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `BankAccount` with `accountNumber` (String) and `balance` (double). Add method `deposit(double amt)` that adds `amt` to `balance`. Create child class `SavingsAccount` extending `BankAccount` with `double interestRate = 0.04;` and method `addInterest()` that computes `balance * interestRate` and adds it to `balance`. In `main()`, create a `SavingsAccount`, deposit `1000.0`, call `addInterest()`, and print `\"Final Balance: $\" + account.balance`.",
+      "hint": "addInterest() multiplies current balance by interestRate and adds the result to balance.",
+      "solutionCode": "class BankAccount {\n    String accountNumber;\n    double balance;\n\n    void deposit(double amt) {\n        balance += amt;\n    }\n}\n\nclass SavingsAccount extends BankAccount {\n    double interestRate = 0.04;\n\n    void addInterest() {\n        double interest = balance * interestRate;\n        balance += interest;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        SavingsAccount sa = new SavingsAccount();\n        sa.accountNumber = \"ACC-101\";\n        sa.deposit(1000.0);\n        sa.addInterest();\n        System.out.println(\"Final Balance: $\" + sa.balance);\n    }\n}",
+      "output": "Final Balance: $1040.0",
+      "explanation": "SavingsAccount directly modifies inherited balance through addInterest()."
+    }
+  ],
+  "types-of-inheritance": [
+    {
+      "id": "inh-ex08",
+      "title": "Three-Tier Biological Multilevel Hierarchy",
+      "difficulty": "Easy",
+      "problemStatement": "Implement a 3-level multilevel inheritance hierarchy: `Animal` (method `eat()` printing `\"Animal eats\"`), `Mammal extends Animal` (method `breathe()` printing `\"Mammal breathes air\"`), and `Dog extends Mammal` (method `bark()` printing `\"Dog barks\"`). In `main()`, create a `Dog` and call `eat()`, `breathe()`, and `bark()`.",
+      "hint": "Multilevel inheritance chains: Animal -> Mammal -> Dog. The child Dog has access to methods from all levels.",
+      "solutionCode": "class Animal {\n    void eat() {\n        System.out.println(\"Animal eats\");\n    }\n}\n\nclass Mammal extends Animal {\n    void breathe() {\n        System.out.println(\"Mammal breathes air\");\n    }\n}\n\nclass Dog extends Mammal {\n    void bark() {\n        System.out.println(\"Dog barks\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.eat();\n        d.breathe();\n        d.bark();\n    }\n}",
+      "output": "Animal eats\nMammal breathes air\nDog barks",
+      "explanation": "Dog inherits breathe() from Mammal and eat() from Animal transitively."
     },
     {
-      "id": "oop11-ex08",
-      "title": "Hardware Device Hierarchy with Battery Specification",
-      "problemStatement": "Build an `ElectronicDevice` class with fields `model` (String) and `voltage` (double). Subclass `Laptop` extends it, adding `batteryWh` (double) and `powerDrawWatts` (double). Include a method `estimateBatteryLife()` in `Laptop` that returns `batteryWh / powerDrawWatts` (in hours). In `main()`, set up a laptop with 60.0 Wh and 15.0 W draw, and print its specs.",
-      "hint": "Inherited fields are accessed just like local fields within the child class methods.",
-      "solutionCode": "class ElectronicDevice {\n    String model;\n    double voltage;\n}\n\nclass Laptop extends ElectronicDevice {\n    double batteryWh;\n    double powerDrawWatts;\n\n    double estimateBatteryLife() {\n        if (powerDrawWatts <= 0) return 0;\n        return batteryWh / powerDrawWatts;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Laptop lap = new Laptop();\n        lap.model = \"XPS Pro 15\";\n        lap.voltage = 19.5;\n        lap.batteryWh = 60.0;\n        lap.powerDrawWatts = 15.0;\n\n        System.out.println(\"Model: \" + lap.model + \" (\" + lap.voltage + \"V)\");\n        System.out.println(\"Battery Life: \" + lap.estimateBatteryLife() + \" hours\");\n    }\n}",
-      "output": "Model: XPS Pro 15 (19.5V)\nBattery Life: 4.0 hours",
-      "explanation": "Laptop derives from ElectronicDevice. It inherits model and voltage while providing domain-specific computation for battery life."
+      "id": "inh-ex09",
+      "title": "Multilevel Computing Device Hierarchy",
+      "difficulty": "Easy",
+      "problemStatement": "Build a multilevel hierarchy: `Device` (field `brand`), `Computer extends Device` (field `int ramGB`), and `Laptop extends Computer` (field `double weightKg`). In `Laptop`, add method `printSpecs()` that prints `brand + \" Laptop | RAM: \" + ramGB + \"GB | Weight: \" + weightKg + \"kg\"`. In `main()`, instantiate a `Laptop` (`\"Dell\"`, `16`, `1.5`) and invoke `printSpecs()`.",
+      "hint": "Laptop extends Computer, which in turn extends Device. Laptop has access to brand, ramGB, and weightKg.",
+      "solutionCode": "class Device {\n    String brand;\n}\n\nclass Computer extends Device {\n    int ramGB;\n}\n\nclass Laptop extends Computer {\n    double weightKg;\n\n    void printSpecs() {\n        System.out.println(brand + \" Laptop | RAM: \" + ramGB + \"GB | Weight: \" + weightKg + \"kg\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Laptop lap = new Laptop();\n        lap.brand = \"Dell\";\n        lap.ramGB = 16;\n        lap.weightKg = 1.5;\n        lap.printSpecs();\n    }\n}",
+      "output": "Dell Laptop | RAM: 16GB | Weight: 1.5kg",
+      "explanation": "Laptop combines fields from all three levels of the inheritance chain."
     },
     {
-      "id": "oop11-ex09",
-      "title": "Warehouse Inventory and Perishable Food Lifespan",
-      "problemStatement": "Construct an `InventoryItem` class with `sku` (String), `name` (String), and `unitPrice` (double). Subclass `PerishableItem` with `shelfLifeDays` (int) and `daysInStorage` (int). Add a method `isExpired()` returning true if `daysInStorage > shelfLifeDays`, and `getRemainingDays()`. In `main()`, test two perishable goods and print their status.",
-      "hint": "Remaining days can be calculated as `Math.max(0, shelfLifeDays - daysInStorage)`.",
-      "solutionCode": "class InventoryItem {\n    String sku;\n    String name;\n    double unitPrice;\n}\n\nclass PerishableItem extends InventoryItem {\n    int shelfLifeDays;\n    int daysInStorage;\n\n    boolean isExpired() {\n        return daysInStorage > shelfLifeDays;\n    }\n\n    int getRemainingDays() {\n        return Math.max(0, shelfLifeDays - daysInStorage);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        PerishableItem milk = new PerishableItem();\n        milk.sku = \"DAIRY-101\";\n        milk.name = \"Whole Milk\";\n        milk.unitPrice = 3.49;\n        milk.shelfLifeDays = 14;\n        milk.daysInStorage = 10;\n\n        PerishableItem yogurt = new PerishableItem();\n        yogurt.sku = \"DAIRY-202\";\n        yogurt.name = \"Greek Yogurt\";\n        yogurt.unitPrice = 1.99;\n        yogurt.shelfLifeDays = 20;\n        yogurt.daysInStorage = 25;\n\n        System.out.println(milk.name + \" - Expired: \" + milk.isExpired() + \", Days left: \" + milk.getRemainingDays());\n        System.out.println(yogurt.name + \" - Expired: \" + yogurt.isExpired() + \", Days left: \" + yogurt.getRemainingDays());\n    }\n}",
-      "output": "Whole Milk - Expired: false, Days left: 4\nGreek Yogurt - Expired: true, Days left: 0",
-      "explanation": "PerishableItem extends InventoryItem with perishable-specific attributes and methods, showing how inheritance models specialized domain rules."
+      "id": "inh-ex10",
+      "title": "Hierarchical Inheritance with Geometric Shapes",
+      "difficulty": "Easy",
+      "problemStatement": "Demonstrate Hierarchical Inheritance: Create a common parent `Shape` with field `color` and method `displayColor()`. Create two sibling child classes: `Circle extends Shape` (field `radius`, method `printArea()`) and `Square extends Shape` (field `side`, method `printArea()`). In `main()`, instantiate a red Circle of radius 5 (use 3.14159 * r * r) and a green Square of side 4, and display their colors and areas.",
+      "hint": "Hierarchical inheritance means one parent (Shape) has multiple children (Circle, Square).",
+      "solutionCode": "class Shape {\n    String color;\n    void displayColor() {\n        System.out.println(\"Color: \" + color);\n    }\n}\n\nclass Circle extends Shape {\n    double radius;\n    void printArea() {\n        System.out.println(\"Circle Area: \" + (3.14159 * radius * radius));\n    }\n}\n\nclass Square extends Shape {\n    double side;\n    void printArea() {\n        System.out.println(\"Square Area: \" + (side * side));\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Circle c = new Circle();\n        c.color = \"Red\";\n        c.radius = 5.0;\n        c.displayColor();\n        c.printArea();\n\n        Square s = new Square();\n        s.color = \"Green\";\n        s.side = 4.0;\n        s.displayColor();\n        s.printArea();\n    }\n}",
+      "output": "Color: Red\nCircle Area: 78.53975\nColor: Green\nSquare Area: 16.0",
+      "explanation": "Both Circle and Square share Shape as their common parent."
     },
     {
-      "id": "oop11-ex10",
-      "title": "University Course Enrollment with Laboratory Component",
-      "problemStatement": "Create a `Course` class with fields `courseCode` (String), `title` (String), and `credits` (int). Derive `LabCourse` adding `labFee` (double) and `maxLabCapacity` (int). Add a method `calculateTotalCost(double costPerCredit)` in `LabCourse` that returns `(credits * costPerCredit) + labFee`. In `main()`, compute costs for a 4-credit lab course with $120.0 fee at $300.0/credit.",
-      "hint": "The inherited `credits` field participates in the financial calculation alongside `labFee`.",
-      "solutionCode": "class Course {\n    String courseCode;\n    String title;\n    int credits;\n}\n\nclass LabCourse extends Course {\n    double labFee;\n    int maxLabCapacity;\n\n    double calculateTotalCost(double costPerCredit) {\n        return (credits * costPerCredit) + labFee;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        LabCourse chem = new LabCourse();\n        chem.courseCode = \"CHEM-201\";\n        chem.title = \"Organic Chemistry with Lab\";\n        chem.credits = 4;\n        chem.labFee = 120.0;\n        chem.maxLabCapacity = 24;\n\n        double cost = chem.calculateTotalCost(300.0);\n        System.out.println(\"Course: \" + chem.courseCode + \" - \" + chem.title);\n        System.out.println(\"Max Lab Capacity: \" + chem.maxLabCapacity);\n        System.out.println(\"Total Tuition & Fee: $\" + cost);\n    }\n}",
-      "output": "Course: CHEM-201 - Organic Chemistry with Lab\nMax Lab Capacity: 24\nTotal Tuition & Fee: $1320.0",
-      "explanation": "LabCourse combines inherited credit hours from Course with specialized laboratory fees, demonstrating real-world domain specialization."
+      "id": "inh-ex11",
+      "title": "Hierarchical Vehicle Categorization",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Vehicle` with `brand` (String) and method `start()` printing `brand + \" engine started\"`. Create two children: `Bike extends Vehicle` (method `kickStart()`) and `Truck extends Vehicle` (method `loadCargo(int tons)`). In `main()`, test both classes with appropriate calls.",
+      "hint": "Vehicle is the single parent; Bike and Truck are sibling child classes.",
+      "solutionCode": "class Vehicle {\n    String brand;\n    void start() {\n        System.out.println(brand + \" engine started\");\n    }\n}\n\nclass Bike extends Vehicle {\n    void kickStart() {\n        System.out.println(brand + \" kick started\");\n    }\n}\n\nclass Truck extends Vehicle {\n    void loadCargo(int tons) {\n        System.out.println(brand + \" loaded with \" + tons + \" tons of cargo\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Bike b = new Bike();\n        b.brand = \"Yamaha\";\n        b.start();\n        b.kickStart();\n\n        Truck t = new Truck();\n        t.brand = \"Volvo\";\n        t.start();\n        t.loadCargo(10);\n    }\n}",
+      "output": "Yamaha engine started\nYamaha kick started\nVolvo engine started\nVolvo loaded with 10 tons of cargo",
+      "explanation": "Hierarchical inheritance allows Bike and Truck to share Vehicle's start() while having custom methods."
+    },
+    {
+      "id": "inh-ex12",
+      "title": "Multilevel Corporate Org Hierarchy",
+      "difficulty": "Medium",
+      "problemStatement": "Create multilevel hierarchy: `Person` (field `name`), `Employee extends Person` (field `int empId`), and `TechLead extends Employee` (field `int teamSize`). In `TechLead`, write method `printSummary()` that prints `\"Lead: \" + name + \" | ID: \" + empId + \" | Team: \" + teamSize`. In `main()`, create a TechLead for `\"Pooja\"`, ID `204`, teamSize `8`.",
+      "hint": "Person -> Employee -> TechLead. All three levels contribute state.",
+      "solutionCode": "class Person {\n    String name;\n}\n\nclass Employee extends Person {\n    int empId;\n}\n\nclass TechLead extends Employee {\n    int teamSize;\n\n    void printSummary() {\n        System.out.println(\"Lead: \" + name + \" | ID: \" + empId + \" | Team: \" + teamSize);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        TechLead lead = new TechLead();\n        lead.name = \"Pooja\";\n        lead.empId = 204;\n        lead.teamSize = 8;\n        lead.printSummary();\n    }\n}",
+      "output": "Lead: Pooja | ID: 204 | Team: 8",
+      "explanation": "TechLead inherits name from Person and empId from Employee."
+    },
+    {
+      "id": "inh-ex13",
+      "title": "Multilevel Video Game Entity Progression",
+      "difficulty": "Medium",
+      "problemStatement": "Create a multilevel game hierarchy: `Entity` (field `int health`), `Character extends Entity` (field `String characterName`), and `Hero extends Character` (field `String weapon`). In `Hero`, write method `attack()` printing `characterName + \" attacks with \" + weapon + \"! (Health: \" + health + \")\"`. In `main()`, create a Hero with health 100, name `\"Arthur\"`, weapon `\"Excalibur\"`, and trigger `attack()`.",
+      "hint": "Health is at Entity level, name is at Character level, weapon is at Hero level.",
+      "solutionCode": "class Entity {\n    int health;\n}\n\nclass Character extends Entity {\n    String characterName;\n}\n\nclass Hero extends Character {\n    String weapon;\n\n    void attack() {\n        System.out.println(characterName + \" attacks with \" + weapon + \"! (Health: \" + health + \")\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Hero hero = new Hero();\n        hero.health = 100;\n        hero.characterName = \"Arthur\";\n        hero.weapon = \"Excalibur\";\n        hero.attack();\n    }\n}",
+      "output": "Arthur attacks with Excalibur! (Health: 100)",
+      "explanation": "Hero synthesizes state across the three tiers of the multilevel hierarchy."
+    },
+    {
+      "id": "inh-ex14",
+      "title": "Hierarchical Banking with Overdraft & Savings Accounts",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `Account` with field `double balance = 500.0`. Create two child classes: `CheckingAccount extends Account` (field `double overdraftLimit = 200.0`, method `canWithdraw(double amt)` returning `(balance + overdraftLimit) >= amt`) and `FixedDeposit extends Account` (field `int lockYears = 3`, method `printLock()` printing `\"Locked for \" + lockYears + \" years\"`). In `main()`, test checking withdrawal for 650.0 and print lock on fixed deposit.",
+      "hint": "Both classes inherit the initial balance of 500.0 from Account.",
+      "solutionCode": "class Account {\n    double balance = 500.0;\n}\n\nclass CheckingAccount extends Account {\n    double overdraftLimit = 200.0;\n\n    boolean canWithdraw(double amt) {\n        return (balance + overdraftLimit) >= amt;\n    }\n}\n\nclass FixedDeposit extends Account {\n    int lockYears = 3;\n\n    void printLock() {\n        System.out.println(\"Locked for \" + lockYears + \" years\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        CheckingAccount ca = new CheckingAccount();\n        System.out.println(\"Can withdraw 650? \" + ca.canWithdraw(650.0));\n\n        FixedDeposit fd = new FixedDeposit();\n        fd.printLock();\n    }\n}",
+      "output": "Can withdraw 650? true\nLocked for 3 years",
+      "explanation": "Demonstrates hierarchical inheritance where two different account models share common balance state."
     }
   ],
   "super-constructor-chaining": [
     {
-      "id": "oop11-ex11",
-      "title": "Basic Two-Tier Constructor Execution Order",
-      "problemStatement": "Create a base class `Component` whose default constructor prints 'Component initialized'. Create a subclass `Button` whose default constructor prints 'Button initialized'. In `main()`, instantiate a `Button` to observe top-down constructor execution order.",
-      "hint": "When `new Button()` is called, Java automatically inserts `super()` as the first line of Button's constructor if omitted.",
-      "solutionCode": "class Component {\n    Component() {\n        System.out.println(\"Component initialized\");\n    }\n}\n\nclass Button extends Component {\n    Button() {\n        // compiler inserts implicit super();\n        System.out.println(\"Button initialized\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Button btn = new Button();\n    }\n}",
-      "output": "Component initialized\nButton initialized",
-      "explanation": "Constructor chaining guarantees the superclass initializes its state before the subclass constructor body begins executing."
+      "id": "inh-ex15",
+      "title": "Verifying Constructor Execution Sequence",
+      "difficulty": "Easy",
+      "problemStatement": "Write a parent class `ParentClass` whose constructor prints `\"1. Parent Constructor\"` and a child class `ChildClass extends ParentClass` whose constructor prints `\"2. Child Constructor\"`. In `main()`, instantiate `new ChildClass();` to demonstrate the order in which Java runs constructors.",
+      "hint": "Java guarantees that the parent constructor executes before the child constructor body.",
+      "solutionCode": "class ParentClass {\n    ParentClass() {\n        System.out.println(\"1. Parent Constructor\");\n    }\n}\n\nclass ChildClass extends ParentClass {\n    ChildClass() {\n        System.out.println(\"2. Child Constructor\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new ChildClass();\n    }\n}",
+      "output": "1. Parent Constructor\n2. Child Constructor",
+      "explanation": "The child constructor automatically calls super() on line 1, executing ParentClass() first."
     },
     {
-      "id": "oop11-ex12",
-      "title": "Forwarding Parameters to Superclass Constructor",
-      "problemStatement": "Create a `Vehicle` class with a constructor accepting `String make, int year`. Create a subclass `Truck` with fields `double payloadTons`. Truck's constructor must accept `(String make, int year, double payloadTons)` and forward make and year to `super(make, year)`. Print vehicle details from a method in Truck.",
-      "hint": "`super(make, year)` must be the very first statement inside the Truck constructor.",
-      "solutionCode": "class Vehicle {\n    String make;\n    int year;\n\n    Vehicle(String make, int year) {\n        this.make = make;\n        this.year = year;\n    }\n}\n\nclass Truck extends Vehicle {\n    double payloadTons;\n\n    Truck(String make, int year, double payloadTons) {\n        super(make, year);\n        this.payloadTons = payloadTons;\n    }\n\n    void displayTruck() {\n        System.out.println(year + \" \" + make + \" (Payload: \" + payloadTons + \" tons)\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Truck t = new Truck(\"Volvo\", 2022, 18.5);\n        t.displayTruck();\n    }\n}",
-      "output": "2022 Volvo (Payload: 18.5 tons)",
-      "explanation": "Because Vehicle has no default constructor, Truck must explicitly call super(make, year) as its first statement."
+      "id": "inh-ex16",
+      "title": "Passing Arguments to Parent with super(name, age)",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `Person` with constructor `Person(String name, int age)`. Create child class `Student extends Person` with constructor `Student(String name, int age, int rollNo)`. Use `super(name, age)` in `Student` to initialize parent fields, and set `this.rollNo = rollNo`. Add method `show()` to print `name + \" \" + age + \" \" + rollNo`. In `main()`, create a student `\"Kiran\"`, age `19`, roll `42`.",
+      "hint": "`super(name, age);` must be the first line of Student's constructor.",
+      "solutionCode": "class Person {\n    String name;\n    int age;\n\n    Person(String name, int age) {\n        this.name = name;\n        this.age = age;\n    }\n}\n\nclass Student extends Person {\n    int rollNo;\n\n    Student(String name, int age, int rollNo) {\n        super(name, age);\n        this.rollNo = rollNo;\n    }\n\n    void show() {\n        System.out.println(name + \" \" + age + \" \" + rollNo);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Student s = new Student(\"Kiran\", 19, 42);\n        s.show();\n    }\n}",
+      "output": "Kiran 19 42",
+      "explanation": "Student constructor passes name and age up to Person constructor using super(name, age)."
     },
     {
-      "id": "oop11-ex13",
-      "title": "Three-Tier Constructor Call Stack Tracing",
-      "problemStatement": "Implement three classes: `Device`, `Computer`, and `Laptop` forming a three-level hierarchy. Each constructor must print a log message indicating its execution: 'Device: <brand>', 'Computer: <ram>GB RAM', 'Laptop: <weight>kg'. Pass arguments through constructors using `super()`. In `main()`, instantiate a `Laptop` with ('Dell', 16, 1.8).",
-      "hint": "Constructor calls cascade upward: Laptop -> Computer -> Device, and then execute downward: Device body -> Computer body -> Laptop body.",
-      "solutionCode": "class Device {\n    Device(String brand) {\n        System.out.println(\"Device: \" + brand);\n    }\n}\n\nclass Computer extends Device {\n    Computer(String brand, int ram) {\n        super(brand);\n        System.out.println(\"Computer: \" + ram + \"GB RAM\");\n    }\n}\n\nclass Laptop extends Computer {\n    Laptop(String brand, int ram, double weight) {\n        super(brand, ram);\n        System.out.println(\"Laptop: \" + weight + \"kg\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Laptop myLap = new Laptop(\"Dell\", 16, 1.8);\n    }\n}",
-      "output": "Device: Dell\nComputer: 16GB RAM\nLaptop: 1.8kg",
-      "explanation": "Execution strictly flows from the highest superclass down to the most specific subclass, ensuring base state is ready first."
+      "id": "inh-ex17",
+      "title": "Vehicle & Car Parameterized Constructors",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `Vehicle` with `Vehicle(String brand)`. Create child `Car extends Vehicle` with `Car(String brand, String model)`. Forward `brand` to `Vehicle` using `super(brand)`. In `Car`, write method `details()` printing `brand + \" \" + model`. Test in `main()` with brand `\"Honda\"` and model `\"Civic\"`.",
+      "hint": "super(brand) initializes the inherited brand field.",
+      "solutionCode": "class Vehicle {\n    String brand;\n    Vehicle(String brand) {\n        this.brand = brand;\n    }\n}\n\nclass Car extends Vehicle {\n    String model;\n    Car(String brand, String model) {\n        super(brand);\n        this.model = model;\n    }\n    void details() {\n        System.out.println(brand + \" \" + model);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Car c = new Car(\"Honda\", \"Civic\");\n        c.details();\n    }\n}",
+      "output": "Honda Civic",
+      "explanation": "Car forwards brand to Vehicle constructor via super(brand)."
     },
     {
-      "id": "oop11-ex14",
-      "title": "Overloaded Constructor Delegation via this() and super()",
-      "problemStatement": "Create a `Person` class with `Person(String name, int age)`. Create an `Employee` subclass with `(String name, int age, String department)`. Add an overloaded constructor `Employee(String name)` that delegates to the 3-arg constructor using `this(name, 25, \"General\")`. In `main()`, instantiate an employee using the 1-arg constructor.",
-      "hint": "A constructor can invoke `this(...)` as its first statement. The target constructor then invokes `super(...)`.",
-      "solutionCode": "class Person {\n    String name;\n    int age;\n\n    Person(String name, int age) {\n        this.name = name;\n        this.age = age;\n    }\n}\n\nclass Employee extends Person {\n    String department;\n\n    Employee(String name, int age, String department) {\n        super(name, age);\n        this.department = department;\n    }\n\n    Employee(String name) {\n        this(name, 25, \"General\");\n    }\n\n    void printBadge() {\n        System.out.println(name + \" (\" + age + \") - \" + department);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Employee emp = new Employee(\"Marcus\");\n        emp.printBadge();\n    }\n}",
-      "output": "Marcus (25) - General",
-      "explanation": "Employee(name) calls this(name, 25, 'General'), which in turn calls super(name, age) to initialize Person, demonstrating constructor delegation."
+      "id": "inh-ex18",
+      "title": "Product Pricing & Discount Constructor Chain",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `Product` with fields `name` and `price`, initialized via `Product(String name, double price)`. Create child class `DiscountedProduct` with an additional `discountPercent` (double) initialized via `DiscountedProduct(String name, double price, double discountPercent)`. Add method `getFinalPrice()` returning `price - (price * discountPercent / 100)`. In `main()`, create a product `\"Headphones\"` costing `$100.0` with `20%` discount and print `getFinalPrice()`.",
+      "hint": "Pass name and price to super(name, price).",
+      "solutionCode": "class Product {\n    String name;\n    double price;\n\n    Product(String name, double price) {\n        this.name = name;\n        this.price = price;\n    }\n}\n\nclass DiscountedProduct extends Product {\n    double discountPercent;\n\n    DiscountedProduct(String name, double price, double discountPercent) {\n        super(name, price);\n        this.discountPercent = discountPercent;\n    }\n\n    double getFinalPrice() {\n        return price - (price * discountPercent / 100.0);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        DiscountedProduct dp = new DiscountedProduct(\"Headphones\", 100.0, 20.0);\n        System.out.println(\"Final Price: $\" + dp.getFinalPrice());\n    }\n}",
+      "output": "Final Price: $80.0",
+      "explanation": "DiscountedProduct initializes parent state via super(name, price) and calculates discounted cost."
     },
     {
-      "id": "oop11-ex15",
-      "title": "Defensive State Validation in Superclass Constructor",
-      "problemStatement": "Design a `BankAccount` class where the constructor validates the initial balance: if `initialBalance < 0`, it sets `balance = 0.0` and prints 'Warning: Initial balance cannot be negative; defaulted to 0.0'. Subclass `PremiumAccount` calls `super(initialBalance)` and adds `cashbackRate = 0.02`. In `main()`, instantiate with `-500.0` and print balance.",
-      "hint": "The superclass constructor encapsulates validation logic so derived classes automatically benefit from defensive guarantees.",
-      "solutionCode": "class BankAccount {\n    double balance;\n\n    BankAccount(double initialBalance) {\n        if (initialBalance < 0.0) {\n            System.out.println(\"Warning: Initial balance cannot be negative; defaulted to 0.0\");\n            this.balance = 0.0;\n        } else {\n            this.balance = initialBalance;\n        }\n    }\n}\n\nclass PremiumAccount extends BankAccount {\n    double cashbackRate;\n\n    PremiumAccount(double initialBalance, double cashbackRate) {\n        super(initialBalance);\n        this.cashbackRate = cashbackRate;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        PremiumAccount pa = new PremiumAccount(-500.0, 0.02);\n        System.out.println(\"Account Balance: $\" + pa.balance);\n    }\n}",
-      "output": "Warning: Initial balance cannot be negative; defaulted to 0.0\nAccount Balance: $0.0",
-      "explanation": "By putting validation in BankAccount's constructor, all subclasses are protected from having invalid initial balances."
+      "id": "inh-ex19",
+      "title": "Three-Level Multilevel Constructor Chaining",
+      "difficulty": "Medium",
+      "problemStatement": "Create 3 classes: `Grandparent(int a)` printing `\"Grandparent: \" + a`, `Parent(int a, int b) extends Grandparent` that calls `super(a)` and prints `\"Parent: \" + b`, and `Child(int a, int b, int c) extends Parent` that calls `super(a, b)` and prints `\"Child: \" + c`. In `main()`, instantiate `new Child(10, 20, 30);`.",
+      "hint": "Grandparent constructor finishes first, then Parent, then Child.",
+      "solutionCode": "class Grandparent {\n    Grandparent(int a) {\n        System.out.println(\"Grandparent: \" + a);\n    }\n}\n\nclass Parent extends Grandparent {\n    Parent(int a, int b) {\n        super(a);\n        System.out.println(\"Parent: \" + b);\n    }\n}\n\nclass Child extends Parent {\n    Child(int a, int b, int c) {\n        super(a, b);\n        System.out.println(\"Child: \" + c);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new Child(10, 20, 30);\n    }\n}",
+      "output": "Grandparent: 10\nParent: 20\nChild: 30",
+      "explanation": "Constructors execute in top-down order from the root superclass down to the leaf subclass."
     },
     {
-      "id": "oop11-ex16",
-      "title": "Employee and Contractor Hourly Rate Initialization",
-      "problemStatement": "Create a `Worker` class with fields `String name, String id` and constructor `Worker(String name, String id)`. Create subclass `Contractor` with `double hourlyRate` and `int contractMonths`. In Contractor's constructor, invoke `super(name, id)`. Add a method `estimateEarnings(int hoursPerMonth)` and print results in `main()`.",
-      "hint": "Hourly earnings calculation: `hourlyRate * hoursPerMonth * contractMonths`.",
-      "solutionCode": "class Worker {\n    String name;\n    String id;\n\n    Worker(String name, String id) {\n        this.name = name;\n        this.id = id;\n    }\n}\n\nclass Contractor extends Worker {\n    double hourlyRate;\n    int contractMonths;\n\n    Contractor(String name, String id, double hourlyRate, int contractMonths) {\n        super(name, id);\n        this.hourlyRate = hourlyRate;\n        this.contractMonths = contractMonths;\n    }\n\n    double estimateTotalContractValue(int hoursPerMonth) {\n        return hourlyRate * hoursPerMonth * contractMonths;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Contractor c = new Contractor(\"Elena Rostova\", \"CTR-88\", 65.0, 6);\n        System.out.println(\"Contractor: \" + c.name + \" (\" + c.id + \")\");\n        System.out.println(\"Contract Value (160 hrs/mo): $\" + c.estimateTotalContractValue(160));\n    }\n}",
-      "output": "Contractor: Elena Rostova (CTR-88)\nContract Value (160 hrs/mo): $62400.0",
-      "explanation": "Contractor relies on Worker's constructor to set identity fields, then sets financial terms in its own constructor."
+      "id": "inh-ex20",
+      "title": "Explicit super() to Avoid No-Default-Constructor Trap",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `BaseConfig` with constructor `BaseConfig(String env)`. Notice it has NO default constructor! Create child class `AppConfig extends BaseConfig`. Provide a no-argument constructor `AppConfig()` that explicitly calls `super(\"PRODUCTION\")` to satisfy the parent requirement. In `AppConfig`, print the active environment in `printEnv()`. Test in `main()`.",
+      "hint": "Because BaseConfig defines BaseConfig(String), Java does not provide a default no-arg constructor. AppConfig must call super(\"PRODUCTION\").",
+      "solutionCode": "class BaseConfig {\n    String env;\n    BaseConfig(String env) {\n        this.env = env;\n    }\n}\n\nclass AppConfig extends BaseConfig {\n    AppConfig() {\n        super(\"PRODUCTION\");\n    }\n    void printEnv() {\n        System.out.println(\"Active Environment: \" + env);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        AppConfig config = new AppConfig();\n        config.printEnv();\n    }\n}",
+      "output": "Active Environment: PRODUCTION",
+      "explanation": "When parent has only parameterized constructors, the child constructor must explicitly call super(args)."
     },
     {
-      "id": "oop11-ex17",
-      "title": "Vehicle Chassis Unique Identifier Propagation",
-      "problemStatement": "Create a `Chassis` base class with a static counter `nextVin = 1001` and instance field `int vin`. The constructor sets `this.vin = nextVin++`. Create a subclass `Motorcycle` with constructor `Motorcycle(String model)` that calls `super()` implicitly or explicitly. In `main()`, instantiate two motorcycles and display their VINs.",
-      "hint": "Each time `super()` executes, the static counter increments, assigning a distinct VIN to every instance.",
-      "solutionCode": "class Chassis {\n    private static int nextVin = 1001;\n    int vin;\n\n    Chassis() {\n        this.vin = nextVin++;\n    }\n}\n\nclass Motorcycle extends Chassis {\n    String model;\n\n    Motorcycle(String model) {\n        super();\n        this.model = model;\n    }\n\n    void displayInfo() {\n        System.out.println(\"Motorcycle VIN #\" + vin + \" - Model: \" + model);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Motorcycle m1 = new Motorcycle(\"Harley Sportster\");\n        Motorcycle m2 = new Motorcycle(\"Ducati Panigale\");\n\n        m1.displayInfo();\n        m2.displayInfo();\n    }\n}",
-      "output": "Motorcycle VIN #1001 - Model: Harley Sportster\nMotorcycle VIN #1002 - Model: Ducati Panigale",
-      "explanation": "Superclass constructor runs during each subclass creation, managing shared static state across all derived instances."
-    },
-    {
-      "id": "oop11-ex18",
-      "title": "Geometric Point and Circle Super Constructor Chaining",
-      "problemStatement": "Implement class `Point` with `(int x, int y)`. Derive class `Circle` with `Point` coordinates and a `double radius`. Circle's constructor must take `(int x, int y, double radius)`, passing `(x, y)` to `super(x, y)`. Add `getArea()` using `Math.PI * radius * radius`. In `main()`, instantiate a circle at (3, 4) with radius 5.0 and print its coordinates and area formatted to 2 decimals.",
-      "hint": "Access inherited x and y directly or through methods. Use `System.out.printf(\"Area: %.2f%n\", c.getArea())`.",
-      "solutionCode": "class Point {\n    int x;\n    int y;\n\n    Point(int x, int y) {\n        this.x = x;\n        this.y = y;\n    }\n}\n\nclass Circle extends Point {\n    double radius;\n\n    Circle(int x, int y, double radius) {\n        super(x, y);\n        this.radius = radius;\n    }\n\n    double getArea() {\n        return Math.PI * radius * radius;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Circle c = new Circle(3, 4, 5.0);\n        System.out.println(\"Center: (\" + c.x + \", \" + c.y + \")\");\n        System.out.printf(\"Area: %.2f%n\", c.getArea());\n    }\n}",
-      "output": "Center: (3, 4)\nArea: 78.54",
-      "explanation": "Circle reuses the point coordinate initialization from Point, ensuring center coordinates are properly bound."
-    },
-    {
-      "id": "oop11-ex19",
-      "title": "Building and Skyscraper Floor Allocation",
-      "problemStatement": "Create a `Building` class with `(String address, int floors)`. Create subclass `Skyscraper` with `(String address, int floors, double spireHeightMeters)`. If floors is less than 40, Skyscraper constructor prints 'Notice: Classified as standard high-rise'. In `main()`, instantiate a skyscraper with address '101 Tower Way', 55 floors, and 45.0m spire.",
-      "hint": "Call `super(address, floors)` first, then check the condition on floors in the constructor body.",
-      "solutionCode": "class Building {\n    String address;\n    int floors;\n\n    Building(String address, int floors) {\n        this.address = address;\n        this.floors = floors;\n    }\n}\n\nclass Skyscraper extends Building {\n    double spireHeightMeters;\n\n    Skyscraper(String address, int floors, double spireHeightMeters) {\n        super(address, floors);\n        this.spireHeightMeters = spireHeightMeters;\n        if (floors < 40) {\n            System.out.println(\"Notice: Classified as standard high-rise\");\n        }\n    }\n\n    void displayProfile() {\n        System.out.println(\"Skyscraper at \" + address + \" has \" + floors + \" floors and \" + spireHeightMeters + \"m spire.\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Skyscraper sky = new Skyscraper(\"101 Tower Way\", 55, 45.0);\n        sky.displayProfile();\n    }\n}",
-      "output": "Skyscraper at 101 Tower Way has 55 floors and 45.0m spire.",
-      "explanation": "Skyscraper initializes base building attributes via super() and performs custom validation in its constructor body."
-    },
-    {
-      "id": "oop11-ex20",
-      "title": "RPG Character Stat Initialization and Mana Pool",
-      "problemStatement": "Create a `GameCharacter` class with `(String name, int health)`. Create a subclass `Mage` with constructor `(String name, int health, int mana)`. Mage constructor must call `super(name, health)` and set mana. Add a method `castSpell(int manaCost)` in Mage that deducts mana if sufficient, or prints 'Not enough mana'. In `main()`, cast two spells with costs 40 and 70 starting from 100 mana.",
-      "hint": "Ensure `super(name, health)` is on line 1 of Mage's constructor.",
-      "solutionCode": "class GameCharacter {\n    String name;\n    int health;\n\n    GameCharacter(String name, int health) {\n        this.name = name;\n        this.health = health;\n    }\n}\n\nclass Mage extends GameCharacter {\n    int mana;\n\n    Mage(String name, int health, int mana) {\n        super(name, health);\n        this.mana = mana;\n    }\n\n    void castSpell(int manaCost) {\n        if (mana >= manaCost) {\n            mana -= manaCost;\n            System.out.println(name + \" cast spell! Remaining mana: \" + mana);\n        } else {\n            System.out.println(name + \" failed: Not enough mana!\");\n        }\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Mage wizard = new Mage(\"Gandalf\", 120, 100);\n        wizard.castSpell(40);\n        wizard.castSpell(70);\n    }\n}",
-      "output": "Gandalf cast spell! Remaining mana: 60\nGandalf failed: Not enough mana!",
-      "explanation": "The Mage constructor properly chains to the GameCharacter base constructor to initialize name and health before handling mana."
+      "id": "inh-ex21",
+      "title": "Point2D to Point3D Coordinate Extension",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `Point2D` with `int x, y;` and constructor `Point2D(int x, int y)`. Create child class `Point3D extends Point2D` with `int z;` and constructor `Point3D(int x, int y, int z)` calling `super(x, y)`. Add method `printCoordinates()` printing `\"(\" + x + \", \" + y + \", \" + z + \")\"`. In `main()`, create `Point3D(3, 7, 9)` and print.",
+      "hint": "Pass x and y to Point2D using super(x, y).",
+      "solutionCode": "class Point2D {\n    int x, y;\n    Point2D(int x, int y) {\n        this.x = x;\n        this.y = y;\n    }\n}\n\nclass Point3D extends Point2D {\n    int z;\n    Point3D(int x, int y, int z) {\n        super(x, y);\n        this.z = z;\n    }\n    void printCoordinates() {\n        System.out.println(\"(\" + x + \", \" + y + \", \" + z + \")\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Point3D p = new Point3D(3, 7, 9);\n        p.printCoordinates();\n    }\n}",
+      "output": "(3, 7, 9)",
+      "explanation": "Point3D reuses Point2D's 2D coordinate initialization and adds the z dimension."
     }
   ],
   "method-overriding-rules": [
     {
-      "id": "oop11-ex21",
-      "title": "Animal Sound Specialization",
-      "problemStatement": "Create an `Animal` base class with a method `makeSound()` printing 'Generic animal sound'. Create a subclass `Dog` that overrides `makeSound()` using the `@Override` annotation to print 'Bark! Bark!'. In `main()`, instantiate a Dog and call `makeSound()`.",
-      "hint": "Method overriding requires the exact same method signature (name and parameter list). Always use `@Override`.",
-      "solutionCode": "class Animal {\n    void makeSound() {\n        System.out.println(\"Generic animal sound\");\n    }\n}\n\nclass Dog extends Animal {\n    @Override\n    void makeSound() {\n        System.out.println(\"Bark! Bark!\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.makeSound();\n    }\n}",
-      "output": "Bark! Bark!",
-      "explanation": "Dog overrides makeSound(), replacing Animal's generic implementation with its own specialized behavior."
+      "id": "inh-ex22",
+      "title": "Animal Sound Overriding in Dog and Cat",
+      "difficulty": "Easy",
+      "problemStatement": "Create parent class `Animal` with method `void makeSound()` printing `\"Generic sound\"`. Create child `Dog` that overrides `makeSound()` to print `\"Woof Woof\"`. Create child `Cat` that overrides `makeSound()` to print `\"Meow Meow\"`. Mark both with `@Override`. In `main()`, create a Dog and a Cat and call `makeSound()` on each.",
+      "hint": "Use `@Override` directly above `void makeSound()` in each child class.",
+      "solutionCode": "class Animal {\n    void makeSound() {\n        System.out.println(\"Generic sound\");\n    }\n}\n\nclass Dog extends Animal {\n    @Override\n    void makeSound() {\n        System.out.println(\"Woof Woof\");\n    }\n}\n\nclass Cat extends Animal {\n    @Override\n    void makeSound() {\n        System.out.println(\"Meow Meow\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.makeSound();\n        Cat c = new Cat();\n        c.makeSound();\n    }\n}",
+      "output": "Woof Woof\nMeow Meow",
+      "explanation": "Each child class replaces the generic parent sound with its own specific implementation."
     },
     {
-      "id": "oop11-ex22",
-      "title": "Augmenting Base Behavior with super Method Call",
-      "problemStatement": "Create a class `Order` with `void printReceipt(double amount)` that prints 'Standard Order: $' + amount. Subclass `InternationalOrder` overrides `printReceipt(double amount)`, first calling `super.printReceipt(amount)` and then printing 'Import Duty (10%): $' + (amount * 0.10). In `main()`, print a receipt for $300.0.",
-      "hint": "Use `super.printReceipt(amount)` inside the overriding method to extend rather than replace parent logic.",
-      "solutionCode": "class Order {\n    void printReceipt(double amount) {\n        System.out.println(\"Standard Order: $\" + amount);\n    }\n}\n\nclass InternationalOrder extends Order {\n    @Override\n    void printReceipt(double amount) {\n        super.printReceipt(amount);\n        double duty = amount * 0.10;\n        System.out.println(\"Import Duty (10%): $\" + duty);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        InternationalOrder order = new InternationalOrder();\n        order.printReceipt(300.0);\n    }\n}",
-      "output": "Standard Order: $300.0\nImport Duty (10%): $30.0",
-      "explanation": "super.printReceipt(amount) delegates to the superclass implementation, allowing InternationalOrder to augment behavior cleanly."
+      "id": "inh-ex23",
+      "title": "Shape Draw Method Overriding",
+      "difficulty": "Easy",
+      "problemStatement": "Create parent `Shape` with `public void draw()` printing `\"Drawing generic shape\"`. Create child `Circle` that overrides `draw()` to print `\"Drawing a round circle\"`. Create child `Square` that overrides `draw()` to print `\"Drawing a four-sided square\"`. Annotate both with `@Override`. In `main()`, test both classes.",
+      "hint": "Because Shape.draw() is public, the overriding methods in Circle and Square must also be public.",
+      "solutionCode": "class Shape {\n    public void draw() {\n        System.out.println(\"Drawing generic shape\");\n    }\n}\n\nclass Circle extends Shape {\n    @Override\n    public void draw() {\n        System.out.println(\"Drawing a round circle\");\n    }\n}\n\nclass Square extends Shape {\n    @Override\n    public void draw() {\n        System.out.println(\"Drawing a four-sided square\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Circle c = new Circle();\n        c.draw();\n        Square s = new Square();\n        s.draw();\n    }\n}",
+      "output": "Drawing a round circle\nDrawing a four-sided square",
+      "explanation": "Demonstrates runtime polymorphism where subclasses specialize drawing logic."
     },
     {
-      "id": "oop11-ex23",
-      "title": "Retail Order vs Wholesale Tiered Discount Calculation",
-      "problemStatement": "Create a `RetailOrder` class with method `double calculateDiscount(double subtotal)` returning 5% discount (subtotal * 0.05). Create subclass `WholesaleOrder` overriding `calculateDiscount(double subtotal)`: if subtotal >= 1000, discount is 20%; otherwise 10%. In `main()`, test a wholesale order of $1500.0 and $600.0.",
-      "hint": "Both methods must have the signature `double calculateDiscount(double)`.",
-      "solutionCode": "class RetailOrder {\n    double calculateDiscount(double subtotal) {\n        return subtotal * 0.05;\n    }\n}\n\nclass WholesaleOrder extends RetailOrder {\n    @Override\n    double calculateDiscount(double subtotal) {\n        if (subtotal >= 1000.0) {\n            return subtotal * 0.20;\n        }\n        return subtotal * 0.10;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        WholesaleOrder wo = new WholesaleOrder();\n        System.out.println(\"Wholesale $1500 discount: $\" + wo.calculateDiscount(1500.0));\n        System.out.println(\"Wholesale $600 discount: $\" + wo.calculateDiscount(600.0));\n    }\n}",
-      "output": "Wholesale $1500 discount: $300.0\nWholesale $600 discount: $60.0",
-      "explanation": "WholesaleOrder overrides the pricing policy of RetailOrder, tailoring the calculation to wholesale purchase volumes."
+      "id": "inh-ex24",
+      "title": "Bank Account Fee Calculation Overriding",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `StandardAccount` with method `double getMonthlyFee()` returning `10.0`. Create child `PremiumAccount` that overrides `getMonthlyFee()` to return `0.0` (zero fee for VIPs). In `main()`, instantiate both and print their fees.",
+      "hint": "Return types must match (double).",
+      "solutionCode": "class StandardAccount {\n    double getMonthlyFee() {\n        return 10.0;\n    }\n}\n\nclass PremiumAccount extends StandardAccount {\n    @Override\n    double getMonthlyFee() {\n        return 0.0;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        StandardAccount sa = new StandardAccount();\n        PremiumAccount pa = new PremiumAccount();\n        System.out.println(\"Standard fee: $\" + sa.getMonthlyFee());\n        System.out.println(\"Premium fee: $\" + pa.getMonthlyFee());\n    }\n}",
+      "output": "Standard fee: $10.0\nPremium fee: $0.0",
+      "explanation": "PremiumAccount overrides the standard fee calculation to waive monthly charges."
     },
     {
-      "id": "oop11-ex24",
-      "title": "Vehicle Fuel Economy Overriding",
-      "problemStatement": "Build a `Vehicle` class with method `double calculateRange(double fuelLiters)` where fuel economy is 12.0 km/liter (returns `fuelLiters * 12.0`). Create a subclass `HybridVehicle` that overrides `calculateRange(double fuelLiters)` with an economy of 22.0 km/liter plus a fixed 50.0 km electric battery reserve. In `main()`, compute range for 10 liters.",
-      "hint": "Formula for HybridVehicle: `(fuelLiters * 22.0) + 50.0`.",
-      "solutionCode": "class Vehicle {\n    double calculateRange(double fuelLiters) {\n        return fuelLiters * 12.0;\n    }\n}\n\nclass HybridVehicle extends Vehicle {\n    @Override\n    double calculateRange(double fuelLiters) {\n        return (fuelLiters * 22.0) + 50.0;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Vehicle v = new Vehicle();\n        HybridVehicle hv = new HybridVehicle();\n\n        System.out.println(\"Standard Vehicle Range (10L): \" + v.calculateRange(10.0) + \" km\");\n        System.out.println(\"Hybrid Vehicle Range (10L): \" + hv.calculateRange(10.0) + \" km\");\n    }\n}",
-      "output": "Standard Vehicle Range (10L): 120.0 km\nHybrid Vehicle Range (10L): 270.0 km",
-      "explanation": "The hybrid subclass provides a more specific range calculation, demonstrating method specialization."
+      "id": "inh-ex25",
+      "title": "Role Description Specialization",
+      "difficulty": "Easy",
+      "problemStatement": "Create parent `Employee` with method `String getRole()` returning `\"General Employee\"`. Create child `Developer` returning `\"Java Developer\"` and `Designer` returning `\"UI/UX Designer\"`. In `main()`, print the roles of both.",
+      "hint": "Match method name and empty parameter list exactly.",
+      "solutionCode": "class Employee {\n    String getRole() {\n        return \"General Employee\";\n    }\n}\n\nclass Developer extends Employee {\n    @Override\n    String getRole() {\n        return \"Java Developer\";\n    }\n}\n\nclass Designer extends Employee {\n    @Override\n    String getRole() {\n        return \"UI/UX Designer\";\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        System.out.println(new Developer().getRole());\n        System.out.println(new Designer().getRole());\n    }\n}",
+      "output": "Java Developer\nUI/UX Designer",
+      "explanation": "Subclasses override the general role description with specialized titles."
     },
     {
-      "id": "oop11-ex25",
-      "title": "Employee Performance Bonus Override",
-      "problemStatement": "Define `Employee` with `double getBonus(double rating)` returning `rating * 1000.0`. Define `Manager` extending `Employee` and overriding `getBonus(double rating)` to return `super.getBonus(rating) * 1.5 + 2000.0`. In `main()`, compute bonuses for an employee and a manager with a rating of 4.5.",
-      "hint": "The manager bonus utilizes `super.getBonus(rating)` as the base calculation before scaling.",
-      "solutionCode": "class Employee {\n    double getBonus(double rating) {\n        return rating * 1000.0;\n    }\n}\n\nclass Manager extends Employee {\n    @Override\n    double getBonus(double rating) {\n        return (super.getBonus(rating) * 1.5) + 2000.0;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Employee emp = new Employee();\n        Manager mgr = new Manager();\n\n        System.out.println(\"Employee Bonus (4.5): $\" + emp.getBonus(4.5));\n        System.out.println(\"Manager Bonus (4.5): $\" + mgr.getBonus(4.5));\n    }\n}",
-      "output": "Employee Bonus (4.5): $4500.0\nManager Bonus (4.5): $8750.0",
-      "explanation": "Manager calls super.getBonus(rating) which evaluates to 4500.0, multiplies by 1.5 (6750.0), and adds 2000.0 to get 8750.0."
+      "id": "inh-ex26",
+      "title": "Printer Capability Overriding",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `Printer` with `void printDocument(String text)` printing `\"[Monochrome Print] \" + text`. Create child `ColorPrinter` that overrides `printDocument(String text)` to print `\"[Color Print] \" + text`. In `main()`, test both.",
+      "hint": "The parameter String text must remain identical in the child class.",
+      "solutionCode": "class Printer {\n    void printDocument(String text) {\n        System.out.println(\"[Monochrome Print] \" + text);\n    }\n}\n\nclass ColorPrinter extends Printer {\n    @Override\n    void printDocument(String text) {\n        System.out.println(\"[Color Print] \" + text);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Printer p1 = new Printer();\n        p1.printDocument(\"Invoice\");\n        ColorPrinter p2 = new ColorPrinter();\n        p2.printDocument(\"Photo\");\n    }\n}",
+      "output": "[Monochrome Print] Invoice\n[Color Print] Photo",
+      "explanation": "ColorPrinter replaces monochrome printing with color output."
     },
     {
-      "id": "oop11-ex26",
-      "title": "Covariant Return Type in Hierarchy Cloner",
-      "problemStatement": "Demonstrate covariant return types: create a class `Document` with a method `Document cloneDocument()`. Create a subclass `Spreadsheet` with an integer field `cells`. Override `cloneDocument()` with return type `Spreadsheet` (not Document). In `main()`, call the method on a Spreadsheet reference and access `cells` directly without casting.",
-      "hint": "Java allows an overriding method to return a more specific subtype of the superclass method's return type.",
-      "solutionCode": "class Document {\n    String title = \"Generic Doc\";\n\n    Document cloneDocument() {\n        Document d = new Document();\n        d.title = this.title;\n        return d;\n    }\n}\n\nclass Spreadsheet extends Document {\n    int cells = 100;\n\n    @Override\n    Spreadsheet cloneDocument() {\n        Spreadsheet s = new Spreadsheet();\n        s.title = this.title;\n        s.cells = this.cells;\n        return s;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Spreadsheet original = new Spreadsheet();\n        original.cells = 500;\n\n        Spreadsheet copy = original.cloneDocument();\n        System.out.println(\"Cloned Spreadsheet cells: \" + copy.cells);\n    }\n}",
-      "output": "Cloned Spreadsheet cells: 500",
-      "explanation": "Covariant return types eliminate the need for casting when calling cloneDocument() through a Spreadsheet reference."
+      "id": "inh-ex27",
+      "title": "Electric Vehicle Engine Ignition Overriding",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `Vehicle` with `void startEngine()` printing `\"Piston engine roaring to life\"`. Create child `ElectricCar` that overrides `startEngine()` to print `\"Silent electric motor powered on\"`. In `main()`, instantiate an `ElectricCar` and call `startEngine()`.",
+      "hint": "ElectricCar customizes startEngine behavior for electric powertrains.",
+      "solutionCode": "class Vehicle {\n    void startEngine() {\n        System.out.println(\"Piston engine roaring to life\");\n    }\n}\n\nclass ElectricCar extends Vehicle {\n    @Override\n    void startEngine() {\n        System.out.println(\"Silent electric motor powered on\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        ElectricCar ev = new ElectricCar();\n        ev.startEngine();\n    }\n}",
+      "output": "Silent electric motor powered on",
+      "explanation": "ElectricCar overrides the noisy engine behavior with silent electric startup."
     },
     {
-      "id": "oop11-ex27",
-      "title": "Custom Object Description Overriding",
-      "problemStatement": "Create a `Product` class with `name` and `price`, and a method `String getDetails()`. Create a subclass `DigitalProduct` with `downloadSizeMb` (int). Override `getDetails()` to include both the product details and the download size. In `main()`, print details for an e-book ($14.99, 25MB).",
-      "hint": "Invoke `super.getDetails()` and concatenate `\" [Size: \" + downloadSizeMb + \" MB]\"`.",
-      "solutionCode": "class Product {\n    String name;\n    double price;\n\n    Product(String name, double price) {\n        this.name = name;\n        this.price = price;\n    }\n\n    String getDetails() {\n        return name + \" ($\" + price + \")\";\n    }\n}\n\nclass DigitalProduct extends Product {\n    int downloadSizeMb;\n\n    DigitalProduct(String name, double price, int downloadSizeMb) {\n        super(name, price);\n        this.downloadSizeMb = downloadSizeMb;\n    }\n\n    @Override\n    String getDetails() {\n        return super.getDetails() + \" [Size: \" + downloadSizeMb + \" MB]\";\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        DigitalProduct dp = new DigitalProduct(\"Java Masterclass E-Book\", 14.99, 25);\n        System.out.println(dp.getDetails());\n    }\n}",
-      "output": "Java Masterclass E-Book ($14.99) [Size: 25 MB]",
-      "explanation": "DigitalProduct enhances getDetails() while preserving Product's formatting logic through super.getDetails()."
+      "id": "inh-ex28",
+      "title": "Delivery Service Transit Time Overriding",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `DeliveryService` with method `int getEstimatedDays(String distance)`: if distance is `\"local\"`, return 3, otherwise return 7. Create child `ExpressDelivery` that overrides `getEstimatedDays(String distance)`: if distance is `\"local\"`, return 1, otherwise return 2. In `main()`, print estimated days for both services on `\"local\"`.",
+      "hint": "Check distance.equals(\"local\") inside both methods.",
+      "solutionCode": "class DeliveryService {\n    int getEstimatedDays(String distance) {\n        return distance.equals(\"local\") ? 3 : 7;\n    }\n}\n\nclass ExpressDelivery extends DeliveryService {\n    @Override\n    int getEstimatedDays(String distance) {\n        return distance.equals(\"local\") ? 1 : 2;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        DeliveryService standard = new DeliveryService();\n        ExpressDelivery express = new ExpressDelivery();\n        System.out.println(\"Standard local days: \" + standard.getEstimatedDays(\"local\"));\n        System.out.println(\"Express local days: \" + express.getEstimatedDays(\"local\"));\n    }\n}",
+      "output": "Standard local days: 3\nExpress local days: 1",
+      "explanation": "ExpressDelivery provides faster delivery transit estimates by overriding getEstimatedDays."
+    }
+  ],
+  "super-method-and-variable": [
+    {
+      "id": "inh-ex29",
+      "title": "Extending Parent Method with super.displayDetails()",
+      "difficulty": "Easy",
+      "problemStatement": "Create parent `Employee` with `name` and `salary`, and method `display()` printing `\"Name: \" + name + \", Salary: $\" + salary`. Create child `Manager` with `String department = \"IT\";`. In `Manager`, override `display()` to first call `super.display()` and then print `\"Department: \" + department`. In `main()`, create a Manager `\"Sita\"`, salary `75000.0`, and call `display()`.",
+      "hint": "Call `super.display();` inside Manager's `display()` method.",
+      "solutionCode": "class Employee {\n    String name;\n    double salary;\n    Employee(String name, double salary) {\n        this.name = name;\n        this.salary = salary;\n    }\n    void display() {\n        System.out.println(\"Name: \" + name + \", Salary: $\" + salary);\n    }\n}\n\nclass Manager extends Employee {\n    String department = \"IT\";\n    Manager(String name, double salary) {\n        super(name, salary);\n    }\n    @Override\n    void display() {\n        super.display();\n        System.out.println(\"Department: \" + department);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Manager m = new Manager(\"Sita\", 75000.0);\n        m.display();\n    }\n}",
+      "output": "Name: Sita, Salary: $75000.0\nDepartment: IT",
+      "explanation": "Manager reuses Employee.display() and adds its own department output."
     },
     {
-      "id": "oop11-ex28",
-      "title": "Combat Entity Attack Damage Multiplier Override",
-      "problemStatement": "Create a `Fighter` class with method `int attack(int basePower)` returning `basePower`. Create a subclass `Berserker` with field `boolean isEnraged`. Override `attack(int basePower)`: if `isEnraged` is true, return `basePower * 2`; otherwise return `basePower`. In `main()`, test a berserker attacking normally and enraged with base power 40.",
-      "hint": "Check the boolean condition inside the overridden attack method.",
-      "solutionCode": "class Fighter {\n    int attack(int basePower) {\n        return basePower;\n    }\n}\n\nclass Berserker extends Fighter {\n    boolean isEnraged;\n\n    @Override\n    int attack(int basePower) {\n        if (isEnraged) {\n            return basePower * 2;\n        }\n        return super.attack(basePower);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Berserker b = new Berserker();\n        b.isEnraged = false;\n        System.out.println(\"Normal Attack: \" + b.attack(40));\n\n        b.isEnraged = true;\n        System.out.println(\"Enraged Attack: \" + b.attack(40));\n    }\n}",
-      "output": "Normal Attack: 40\nEnraged Attack: 80",
-      "explanation": "Berserker conditionally delegates to super.attack() or applies a 2x rage multiplier, customizing base behavior."
+      "id": "inh-ex30",
+      "title": "Adding Fee with super.withdraw()",
+      "difficulty": "Easy",
+      "problemStatement": "Create `BankAccount` with `double balance = 500.0;` and method `void withdraw(double amt)` that deducts `amt` and prints `\"Withdrawn: $\" + amt + \" | Balance: $\" + balance`. Create child `FeeAccount extends BankAccount` that overrides `withdraw(double amt)`: it prints `\"$2 transaction fee applied\"` and then calls `super.withdraw(amt + 2.0)`. In `main()`, withdraw 100.0 from FeeAccount.",
+      "hint": "Pass amt + 2.0 into super.withdraw().",
+      "solutionCode": "class BankAccount {\n    double balance = 500.0;\n    void withdraw(double amt) {\n        balance -= amt;\n        System.out.println(\"Withdrawn: $\" + amt + \" | Balance: $\" + balance);\n    }\n}\n\nclass FeeAccount extends BankAccount {\n    @Override\n    void withdraw(double amt) {\n        System.out.println(\"$2 transaction fee applied\");\n        super.withdraw(amt + 2.0);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        FeeAccount fa = new FeeAccount();\n        fa.withdraw(100.0);\n    }\n}",
+      "output": "$2 transaction fee applied\nWithdrawn: $102.0 | Balance: $398.0",
+      "explanation": "FeeAccount uses super.withdraw() to perform the balance deduction while factoring in fees."
     },
     {
-      "id": "oop11-ex29",
-      "title": "Progressive Tax Calculator Override",
-      "problemStatement": "Implement a `TaxCalculator` class with `double computeTax(double income)` calculating a flat 15% (income * 0.15). Create `LuxuryTaxCalculator` that overrides `computeTax(double income)`: flat 15% on income up to $100,000, plus 25% on the portion above $100,000. In `main()`, compute tax on $150,000 income using both calculators.",
-      "hint": "For income > 100000: `(100000 * 0.15) + ((income - 100000) * 0.25)`.",
-      "solutionCode": "class TaxCalculator {\n    double computeTax(double income) {\n        return income * 0.15;\n    }\n}\n\nclass LuxuryTaxCalculator extends TaxCalculator {\n    @Override\n    double computeTax(double income) {\n        if (income <= 100000.0) {\n            return super.computeTax(income);\n        }\n        double baseTax = 100000.0 * 0.15;\n        double excessTax = (income - 100000.0) * 0.25;\n        return baseTax + excessTax;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        TaxCalculator standard = new TaxCalculator();\n        LuxuryTaxCalculator luxury = new LuxuryTaxCalculator();\n\n        double income = 150000.0;\n        System.out.println(\"Standard Tax on $150k: $\" + standard.computeTax(income));\n        System.out.println(\"Luxury Tax on $150k: $\" + luxury.computeTax(income));\n    }\n}",
-      "output": "Standard Tax on $150k: $22500.0\nLuxury Tax on $150k: $27500.0",
-      "explanation": "The luxury tax calculator overrides the flat rate logic with progressive tax brackets."
+      "id": "inh-ex31",
+      "title": "Disambiguating Shadowed Variable with super.speed",
+      "difficulty": "Easy",
+      "problemStatement": "Create parent `Vehicle` with `int maxSpeed = 120;`. Create child `SportsCar` with `int maxSpeed = 260;`. In `SportsCar`, write method `compareSpeeds()` that prints `\"Standard max: \" + super.maxSpeed + \" | Sports max: \" + this.maxSpeed`. In `main()`, call `compareSpeeds()`.",
+      "hint": "Use super.maxSpeed for parent value and this.maxSpeed for child value.",
+      "solutionCode": "class Vehicle {\n    int maxSpeed = 120;\n}\n\nclass SportsCar extends Vehicle {\n    int maxSpeed = 260;\n\n    void compareSpeeds() {\n        System.out.println(\"Standard max: \" + super.maxSpeed + \" | Sports max: \" + this.maxSpeed);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new SportsCar().compareSpeeds();\n    }\n}",
+      "output": "Standard max: 120 | Sports max: 260",
+      "explanation": "super.maxSpeed reaches the shadowed variable in Vehicle."
     },
     {
-      "id": "oop11-ex30",
-      "title": "Three-Level Method Override and Super Chain",
-      "problemStatement": "Create a 3-level hierarchy: `UIElement` with `render()` printing '[UIElement]', `Window` overriding `render()` to call `super.render()` and print '[Window]', and `DialogBox` overriding `render()` to call `super.render()` and print '[DialogBox]'. In `main()`, invoke `render()` on a `DialogBox`.",
-      "hint": "Each tier calls its immediate superclass's `render()` method, creating an execution chain.",
-      "solutionCode": "class UIElement {\n    void render() {\n        System.out.print(\"[UIElement]\");\n    }\n}\n\nclass Window extends UIElement {\n    @Override\n    void render() {\n        super.render();\n        System.out.print(\" -> [Window]\");\n    }\n}\n\nclass DialogBox extends Window {\n    @Override\n    void render() {\n        super.render();\n        System.out.print(\" -> [DialogBox]\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        DialogBox dialog = new DialogBox();\n        dialog.render();\n        System.out.println();\n    }\n}",
-      "output": "[UIElement] -> [Window] -> [DialogBox]",
-      "explanation": "The super calls propagate up to UIElement and then print on the way down, establishing a layered rendering pipeline."
+      "id": "inh-ex32",
+      "title": "Document Watermarking using super.print()",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `Document` with `void print(String content)` printing `\"Content: \" + content`. Create child `WatermarkedDocument` that overrides `print(String content)`: it first prints `\"[CONFIDENTIAL WATERMARK]\"` and then calls `super.print(content)`. In `main()`, print `\"Annual Report 2026\"`.",
+      "hint": "Call super.print(content) after printing the watermark header.",
+      "solutionCode": "class Document {\n    void print(String content) {\n        System.out.println(\"Content: \" + content);\n    }\n}\n\nclass WatermarkedDocument extends Document {\n    @Override\n    void print(String content) {\n        System.out.println(\"[CONFIDENTIAL WATERMARK]\");\n        super.print(content);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        WatermarkedDocument doc = new WatermarkedDocument();\n        doc.print(\"Annual Report 2026\");\n    }\n}",
+      "output": "[CONFIDENTIAL WATERMARK]\nContent: Annual Report 2026",
+      "explanation": "WatermarkedDocument augments parent printing with a security banner."
+    },
+    {
+      "id": "inh-ex33",
+      "title": "Game Score Bonus Augmentation",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `Score` with `int points = 0;` and `void addPoints(int p)` that adds `p` to `points`. Create child `MultiplierScore` with `int multiplier = 2;`. Override `addPoints(int p)` to call `super.addPoints(p * multiplier)`. In `main()`, add 50 points to MultiplierScore and print `points`.",
+      "hint": "Multiply p by multiplier before passing into super.addPoints().",
+      "solutionCode": "class Score {\n    int points = 0;\n    void addPoints(int p) {\n        points += p;\n    }\n}\n\nclass MultiplierScore extends Score {\n    int multiplier = 2;\n    @Override\n    void addPoints(int p) {\n        super.addPoints(p * multiplier);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        MultiplierScore ms = new MultiplierScore();\n        ms.addPoints(50);\n        System.out.println(\"Final Points: \" + ms.points);\n    }\n}",
+      "output": "Final Points: 100",
+      "explanation": "MultiplierScore doubles points before delegating to Score.addPoints()."
+    },
+    {
+      "id": "inh-ex34",
+      "title": "Shadowed Dimension in 3D Shapes",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `Shape2D` with `double dimension = 5.0;`. Create child `Shape3D` with `double dimension = 10.0;`. In `Shape3D`, write method `printDimensions()` that prints `\"2D: \" + super.dimension + \" | 3D: \" + this.dimension`. In `main()`, invoke `printDimensions()`.",
+      "hint": "super.dimension accesses Shape2D's dimension.",
+      "solutionCode": "class Shape2D {\n    double dimension = 5.0;\n}\n\nclass Shape3D extends Shape2D {\n    double dimension = 10.0;\n\n    void printDimensions() {\n        System.out.println(\"2D: \" + super.dimension + \" | 3D: \" + this.dimension);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new Shape3D().printDimensions();\n    }\n}",
+      "output": "2D: 5.0 | 3D: 10.0",
+      "explanation": "Resolves shadowed dimension variable between parent and child."
+    },
+    {
+      "id": "inh-ex35",
+      "title": "Order Processing with Audit Logging",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `OrderService` with method `void process(int orderId)` printing `\"Processing order #\" + orderId`. Create child `AuditedOrderService` that overrides `process(int orderId)`: it prints `\"[AUDIT START] Order \" + orderId`, calls `super.process(orderId)`, and prints `\"[AUDIT END] Order \" + orderId + \" completed\"`. Test in `main()` with order `99`.",
+      "hint": "Wrap super.process() with audit statements.",
+      "solutionCode": "class OrderService {\n    void process(int orderId) {\n        System.out.println(\"Processing order #\" + orderId);\n    }\n}\n\nclass AuditedOrderService extends OrderService {\n    @Override\n    void process(int orderId) {\n        System.out.println(\"[AUDIT START] Order \" + orderId);\n        super.process(orderId);\n        System.out.println(\"[AUDIT END] Order \" + orderId + \" completed\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new AuditedOrderService().process(99);\n    }\n}",
+      "output": "[AUDIT START] Order 99\nProcessing order #99\n[AUDIT END] Order 99 completed",
+      "explanation": "Demonstrates the decorator-like pattern using super.method() for logging."
     }
   ],
   "final-keyword-in-oop": [
     {
-      "id": "oop11-ex31",
-      "title": "Immutable 2D Coordinate Point",
-      "problemStatement": "Create an immutable `Point2D` class with `final int x` and `final int y`. Provide a constructor initializing both fields and public getters. Provide a method `Point2D translate(int dx, int dy)` that returns a new `Point2D` instance without altering `this`. In `main()`, test translation.",
-      "hint": "Because x and y are `final`, they cannot be changed after constructor initialization. Any transformation must return a brand new instance.",
-      "solutionCode": "class Point2D {\n    private final int x;\n    private final int y;\n\n    public Point2D(int x, int y) {\n        this.x = x;\n        this.y = y;\n    }\n\n    public int getX() { return x; }\n    public int getY() { return y; }\n\n    public Point2D translate(int dx, int dy) {\n        return new Point2D(this.x + dx, this.y + dy);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Point2D p1 = new Point2D(10, 20);\n        Point2D p2 = p1.translate(5, -3);\n\n        System.out.println(\"Original: (\" + p1.getX() + \", \" + p1.getY() + \")\");\n        System.out.println(\"Translated: (\" + p2.getX() + \", \" + p2.getY() + \")\");\n    }\n}",
-      "output": "Original: (10, 20)\nTranslated: (15, 17)",
-      "explanation": "The final fields guarantee that p1 never mutates. translate() produces a new Point2D instance, embodying the immutable value object pattern."
+      "id": "inh-ex36",
+      "title": "Securing Critical Method with final",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `BankAccount` with method `final void generateLegalStatement()` that prints `\"Legal Statement: FDIC Insured\"` and a normal method `void sendNotice()` printing `\"Notice sent by mail\"`. Create child `CheckingAccount extends BankAccount` that overrides `sendNotice()` to print `\"Notice sent by SMS\"`. In `main()`, call both methods on a CheckingAccount.",
+      "hint": "generateLegalStatement() cannot be overridden because it is final. sendNotice() can be overridden.",
+      "solutionCode": "class BankAccount {\n    final void generateLegalStatement() {\n        System.out.println(\"Legal Statement: FDIC Insured\");\n    }\n    void sendNotice() {\n        System.out.println(\"Notice sent by mail\");\n    }\n}\n\nclass CheckingAccount extends BankAccount {\n    @Override\n    void sendNotice() {\n        System.out.println(\"Notice sent by SMS\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        CheckingAccount ca = new CheckingAccount();\n        ca.generateLegalStatement();\n        ca.sendNotice();\n    }\n}",
+      "output": "Legal Statement: FDIC Insured\nNotice sent by SMS",
+      "explanation": "CheckingAccount inherits the final method unchanged and overrides the non-final method."
     },
     {
-      "id": "oop11-ex32",
-      "title": "Sealing a Class with the final Keyword",
-      "problemStatement": "Create a `final class SecurityToken` with `final String token` and `final long expirationEpoch`. Add a method `isExpired(long currentEpoch)` returning `currentEpoch > expirationEpoch`. In `main()`, instantiate the token, verify expiration, and document why no other class can extend SecurityToken.",
-      "hint": "Adding `final` to a class header (`final class ...`) prevents any subclassing, protecting security invariants.",
-      "solutionCode": "final class SecurityToken {\n    private final String token;\n    private final long expirationEpoch;\n\n    public SecurityToken(String token, long expirationEpoch) {\n        this.token = token;\n        this.expirationEpoch = expirationEpoch;\n    }\n\n    public boolean isExpired(long currentEpoch) {\n        return currentEpoch > expirationEpoch;\n    }\n\n    public String getToken() {\n        return token;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        SecurityToken st = new SecurityToken(\"AUTH_XYZ_987\", 1700000000L);\n        System.out.println(\"Token: \" + st.getToken());\n        System.out.println(\"Expired at 1700005000: \" + st.isExpired(1700005000L));\n    }\n}",
-      "output": "Token: AUTH_XYZ_987\nExpired at 1700005000: true",
-      "explanation": "Declaring SecurityToken final ensures no rogue subclass can override methods or compromise cryptographic token validity."
+      "id": "inh-ex37",
+      "title": "Standalone Utility final Class",
+      "difficulty": "Easy",
+      "problemStatement": "Create a `final class TaxCalculator` with static method `double calculateTax(double amount)` that returns `amount * 0.18`. In `main()`, compute tax on `500.0` and print `\"Tax: $\" + TaxCalculator.calculateTax(500.0)`. Explain why making TaxCalculator final is good design.",
+      "hint": "Declare `final class TaxCalculator { ... }`.",
+      "solutionCode": "final class TaxCalculator {\n    public static double calculateTax(double amount) {\n        return amount * 0.18;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        System.out.println(\"Tax: $\" + TaxCalculator.calculateTax(500.0));\n    }\n}",
+      "output": "Tax: $90.0",
+      "explanation": "Making utility classes final prevents subclasses from extending them and altering tax calculations."
     },
     {
-      "id": "oop11-ex33",
-      "title": "Enforcing Template Method Invariance with final Method",
-      "problemStatement": "Implement the Template Method pattern: class `DataExporter` has a `public final void exportPipeline()` method that invokes three steps in order: `openStream()`, `formatContent()`, and `closeStream()`. `openStream()` and `closeStream()` are private/final, while `formatContent()` is protected and can be overridden. Subclass `CsvExporter` overrides `formatContent()`. In `main()`, run the pipeline.",
-      "hint": "Marking `exportPipeline()` final guarantees subclasses cannot alter the sequence of execution.",
-      "solutionCode": "class DataExporter {\n    public final void exportPipeline() {\n        openStream();\n        formatContent();\n        closeStream();\n    }\n\n    private void openStream() {\n        System.out.println(\"1. Stream opened.\");\n    }\n\n    protected void formatContent() {\n        System.out.println(\"2. Default raw content formatted.\");\n    }\n\n    private void closeStream() {\n        System.out.println(\"3. Stream flushed and closed.\");\n    }\n}\n\nclass CsvExporter extends DataExporter {\n    @Override\n    protected void formatContent() {\n        System.out.println(\"2. CSV rows formatted with comma separators.\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        DataExporter exporter = new CsvExporter();\n        exporter.exportPipeline();\n    }\n}",
-      "output": "1. Stream opened.\n2. CSV rows formatted with comma separators.\n3. Stream flushed and closed.",
-      "explanation": "The final keyword on exportPipeline() locks down the execution skeleton, allowing CsvExporter to customize step 2 without altering the pipeline order."
+      "id": "inh-ex38",
+      "title": "Final Physical Constants",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `PhysicsConstants` with `public static final double GRAVITY = 9.8;` and `public static final double SPEED_OF_LIGHT = 299792458.0;`. In `main()`, print both constants formatted clearly.",
+      "hint": "Use public static final for constants in Java.",
+      "solutionCode": "class PhysicsConstants {\n    public static final double GRAVITY = 9.8;\n    public static final double SPEED_OF_LIGHT = 299792458.0;\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        System.out.println(\"Gravity: \" + PhysicsConstants.GRAVITY + \" m/s^2\");\n        System.out.println(\"Speed of Light: \" + PhysicsConstants.SPEED_OF_LIGHT + \" m/s\");\n    }\n}",
+      "output": "Gravity: 9.8 m/s^2\nSpeed of Light: 2.99792458E8 m/s",
+      "explanation": "Constants marked final cannot be reassigned once initialized."
     },
     {
-      "id": "oop11-ex34",
-      "title": "Blank Final Field Initialization Across Multiple Constructors",
-      "problemStatement": "Create a `ServerConfig` class with `final String hostname` and `final int port`. Implement two constructors: a 2-arg constructor `(String hostname, int port)` and a 0-arg default constructor that initializes them to 'localhost' and 8080. In `main()`, create an instance with each constructor and print their configurations.",
-      "hint": "A blank final variable MUST be assigned exactly once in every constructor path.",
-      "solutionCode": "class ServerConfig {\n    final String hostname;\n    final int port;\n\n    ServerConfig() {\n        this.hostname = \"localhost\";\n        this.port = 8080;\n    }\n\n    ServerConfig(String hostname, int port) {\n        this.hostname = hostname;\n        this.port = port;\n    }\n\n    void display() {\n        System.out.println(\"Server listening on \" + hostname + \":\" + port);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        ServerConfig defaultConfig = new ServerConfig();\n        ServerConfig customConfig = new ServerConfig(\"api.production.com\", 443);\n\n        defaultConfig.display();\n        customConfig.display();\n    }\n}",
-      "output": "Server listening on localhost:8080\nServer listening on api.production.com:443",
-      "explanation": "Every constructor assigns hostname and port exactly once, satisfying the compiler's strict definite assignment rule for blank finals."
+      "id": "inh-ex39",
+      "title": "Security Gate with final Authentication Verification",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `SecurityGate` with `final boolean verifyKey(String key)` returning `key.equals(\"ACCESS_2026\")`. Add non-final method `void openGate()` printing `\"Standard gate swinging open\"`. Create child `SpeedGate extends SecurityGate` that overrides `openGate()` to print `\"High-speed glass barrier retracting\"`. In `main()`, verify key `\"ACCESS_2026\"` on SpeedGate and open the gate if true.",
+      "hint": "verifyKey() is final and cannot be bypassed by SpeedGate.",
+      "solutionCode": "class SecurityGate {\n    final boolean verifyKey(String key) {\n        return key.equals(\"ACCESS_2026\");\n    }\n    void openGate() {\n        System.out.println(\"Standard gate swinging open\");\n    }\n}\n\nclass SpeedGate extends SecurityGate {\n    @Override\n    void openGate() {\n        System.out.println(\"High-speed glass barrier retracting\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        SpeedGate gate = new SpeedGate();\n        if (gate.verifyKey(\"ACCESS_2026\")) {\n            gate.openGate();\n        }\n    }\n}",
+      "output": "High-speed glass barrier retracting",
+      "explanation": "verifyKey() enforces critical security invariants that child classes cannot tamper with."
     },
     {
-      "id": "oop11-ex35",
-      "title": "Final Array Reference vs Array Element Mutation",
-      "problemStatement": "Demonstrate that making an array reference `final` prevents reassigning the reference itself, but DOES NOT prevent modifying array elements. In `main()`, declare `final int[] numbers = {10, 20, 30}`. Modify element at index 1 to 99 and print the array. Explain why `numbers = new int[3];` would fail to compile.",
-      "hint": "The `final` modifier freezes the reference pointer, not the contents of the heap object it refers to.",
-      "solutionCode": "public class Solution {\n    public static void main(String[] args) {\n        final int[] numbers = {10, 20, 30};\n\n        // Modifying elements is completely valid\n        numbers[1] = 99;\n\n        System.out.println(\"Index 0: \" + numbers[0]);\n        System.out.println(\"Index 1: \" + numbers[1]);\n        System.out.println(\"Index 2: \" + numbers[2]);\n\n        // Attempting numbers = new int[]{1, 2, 3}; would trigger:\n        // \"cannot assign a value to final variable numbers\"\n    }\n}",
-      "output": "Index 0: 10\nIndex 1: 99\nIndex 2: 30",
-      "explanation": "A final reference cannot point to another array, but the heap array object itself remains mutable."
+      "id": "inh-ex40",
+      "title": "Software License Validator with Locked Algorithm",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `LicenseValidator` with a `final boolean isValid(String licenseKey)` method that checks if key starts with `\"LIC-\"` and length is 10. Add extensible method `String getTier()` returning `\"Standard Tier\"`. Create child `EnterpriseValidator` overriding `getTier()` to return `\"Enterprise Tier\"`. In `main()`, test key `\"LIC-123456\"`.",
+      "hint": "Use licenseKey.startsWith(\"LIC-\") && licenseKey.length() == 10.",
+      "solutionCode": "class LicenseValidator {\n    final boolean isValid(String licenseKey) {\n        return licenseKey.startsWith(\"LIC-\") && licenseKey.length() == 10;\n    }\n    String getTier() {\n        return \"Standard Tier\";\n    }\n}\n\nclass EnterpriseValidator extends LicenseValidator {\n    @Override\n    String getTier() {\n        return \"Enterprise Tier\";\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        EnterpriseValidator ev = new EnterpriseValidator();\n        System.out.println(\"Key valid: \" + ev.isValid(\"LIC-123456\"));\n        System.out.println(\"Tier: \" + ev.getTier());\n    }\n}",
+      "output": "Key valid: true\nTier: Enterprise Tier",
+      "explanation": "isValid() ensures validation logic is locked, while getTier() can be specialized."
     },
     {
-      "id": "oop11-ex36",
-      "title": "Mathematical Physics Constants Utility",
-      "problemStatement": "Create a `PhysicsConstants` utility class containing `public static final double SPEED_OF_LIGHT = 299792458.0;` and `public static final double GRAVITATIONAL_ACCELERATION = 9.80665;`. Make its constructor private so it cannot be instantiated. In `main()`, calculate distance traveled by light in 0.001 seconds.",
-      "hint": "Use the class name directly: `PhysicsConstants.SPEED_OF_LIGHT`.",
-      "solutionCode": "class PhysicsConstants {\n    public static final double SPEED_OF_LIGHT = 299792458.0; // m/s\n    public static final double GRAVITATIONAL_ACCELERATION = 9.80665; // m/s^2\n\n    private PhysicsConstants() {\n        // Suppress default constructor to prevent instantiation\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        double timeSeconds = 0.001;\n        double distanceMeters = PhysicsConstants.SPEED_OF_LIGHT * timeSeconds;\n\n        System.out.println(\"Speed of Light: \" + PhysicsConstants.SPEED_OF_LIGHT + \" m/s\");\n        System.out.println(\"Distance in 1ms: \" + distanceMeters + \" meters\");\n    }\n}",
-      "output": "Speed of Light: 2.99792458E8 m/s\nDistance in 1ms: 299792.458 meters",
-      "explanation": "public static final defines compile-time constants accessible class-wide without object instantiation."
+      "id": "inh-ex41",
+      "title": "Payment Gateway with final Encryption Checksum",
+      "difficulty": "Medium",
+      "problemStatement": "Create `PaymentGateway` with `final String createChecksum(int orderId)` returning `\"HASH_\" + (orderId * 31)`. Add non-final method `void execute(int orderId)` printing `\"Executing payment with checksum: \" + createChecksum(orderId)`. Create child `CryptoPaymentGateway` that overrides `execute(int orderId)` to print `\"[Crypto Network] Checksum: \" + createChecksum(orderId)`. Test in `main()` with order `100`.",
+      "hint": "Child can call createChecksum(orderId), but cannot override it.",
+      "solutionCode": "class PaymentGateway {\n    final String createChecksum(int orderId) {\n        return \"HASH_\" + (orderId * 31);\n    }\n    void execute(int orderId) {\n        System.out.println(\"Executing payment with checksum: \" + createChecksum(orderId));\n    }\n}\n\nclass CryptoPaymentGateway extends PaymentGateway {\n    @Override\n    void execute(int orderId) {\n        System.out.println(\"[Crypto Network] Checksum: \" + createChecksum(orderId));\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        CryptoPaymentGateway cpg = new CryptoPaymentGateway();\n        cpg.execute(100);\n    }\n}",
+      "output": "[Crypto Network] Checksum: HASH_3100",
+      "explanation": "createChecksum is locked via final to prevent tampering across gateways."
     },
     {
-      "id": "oop11-ex37",
-      "title": "Final Method Parameters for Integrity Protection",
-      "problemStatement": "Write a class `AccountService` with a static method `double computeTransferFee(final double amount, final double feePercent)`. Verify that declaring parameters `final` prevents accidental reassignments inside the method body. In `main()`, compute fee on $5000.0 with 1.5% fee.",
-      "hint": "Final parameters cannot be reassigned; any `amount = ...` statement will fail compilation.",
-      "solutionCode": "class AccountService {\n    public static double computeTransferFee(final double amount, final double feePercent) {\n        // amount = amount * 2; // COMPILE ERROR: cannot assign a value to final variable\n        return (amount * feePercent) / 100.0;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        double fee = AccountService.computeTransferFee(5000.0, 1.5);\n        System.out.println(\"Transfer Fee: $\" + fee);\n    }\n}",
-      "output": "Transfer Fee: $75.0",
-      "explanation": "Marking method arguments final protects against inadvertent parameter mutation inside long or complex methods."
-    },
-    {
-      "id": "oop11-ex38",
-      "title": "Secure Database Credentials with Blank Final Fields",
-      "problemStatement": "Design a `DbCredentials` class with `final String username`, `final String connectionUrl`, and `final int maxPoolSize`. Create a constructor initializing all three. Provide a method `maskSummary()` that prints the username and maxPoolSize with a masked URL. In `main()`, verify that the fields cannot be changed once set.",
-      "hint": "All fields are blank final and set inside the constructor.",
-      "solutionCode": "class DbCredentials {\n    private final String username;\n    private final String connectionUrl;\n    private final int maxPoolSize;\n\n    public DbCredentials(String username, String connectionUrl, int maxPoolSize) {\n        this.username = username;\n        this.connectionUrl = connectionUrl;\n        this.maxPoolSize = maxPoolSize;\n    }\n\n    public void maskSummary() {\n        System.out.println(\"DB User: \" + username + \" | Pool Size: \" + maxPoolSize + \" | URL: jdbc:***masked***\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        DbCredentials creds = new DbCredentials(\"admin_read\", \"jdbc:postgresql://db.corp:5432/finance\", 20);\n        creds.maskSummary();\n    }\n}",
-      "output": "DB User: admin_read | Pool Size: 20 | URL: jdbc:***masked***",
-      "explanation": "Blank final fields ensure credentials are bound during creation and remain immutable throughout application lifecycle."
-    },
-    {
-      "id": "oop11-ex39",
-      "title": "Final Algorithm Implementation in Cryptographic Hasher",
-      "problemStatement": "Create a `CryptoProvider` base class with a `public final int generateChecksum(int data)` that implements an immutable checksum algorithm: `((data ^ 0x5A5A) * 31) & 0xFFFF`. Add an overridable method `String getProviderName()` returning 'GenericCrypto'. Subclass `CustomCrypto` overrides `getProviderName()` returning 'CustomHashedCrypto'. In `main()`, run the checksum for data `1234`.",
-      "hint": "Subclass can change its name but CANNOT override `generateChecksum` because it is marked `final`.",
-      "solutionCode": "class CryptoProvider {\n    public final int generateChecksum(int data) {\n        return ((data ^ 0x5A5A) * 31) & 0xFFFF;\n    }\n\n    public String getProviderName() {\n        return \"GenericCrypto\";\n    }\n}\n\nclass CustomCrypto extends CryptoProvider {\n    @Override\n    public String getProviderName() {\n        return \"CustomHashedCrypto\";\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        CustomCrypto crypto = new CustomCrypto();\n        int checksum = crypto.generateChecksum(1234);\n\n        System.out.println(\"Provider: \" + crypto.getProviderName());\n        System.out.println(\"Calculated Checksum: \" + checksum);\n    }\n}",
-      "output": "Provider: CustomHashedCrypto\nCalculated Checksum: 64147",
-      "explanation": "The final method generateChecksum() protects cryptographic consistency while allowing provider naming to be overridden."
-    },
-    {
-      "id": "oop11-ex40",
-      "title": "Defensive Copying with Final Array Fields in Immutable Object",
-      "problemStatement": "Build an immutable `StudentScores` class with `final String studentName` and `final int[] scores`. The constructor must perform a defensive copy of the incoming array. The getter `getScores()` must also return a defensive clone to ensure the internal final array cannot be mutated from outside. In `main()`, demonstrate that modifying the external array does not affect `StudentScores`.",
-      "hint": "Use `this.scores = scores.clone();` in the constructor and `return scores.clone();` in the getter.",
-      "solutionCode": "class StudentScores {\n    private final String studentName;\n    private final int[] scores;\n\n    public StudentScores(String studentName, int[] scores) {\n        this.studentName = studentName;\n        // Defensive copy on construction\n        this.scores = (scores != null) ? scores.clone() : new int[0];\n    }\n\n    public String getStudentName() {\n        return studentName;\n    }\n\n    public int[] getScores() {\n        // Defensive copy on retrieval\n        return scores.clone();\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        int[] externalScores = {88, 92, 95};\n        StudentScores record = new StudentScores(\"Siddharth\", externalScores);\n\n        // Mutate external array\n        externalScores[0] = 0;\n\n        int[] retrieved = record.getScores();\n        System.out.println(\"Student: \" + record.getStudentName());\n        System.out.println(\"Record score 0: \" + retrieved[0]);\n        System.out.println(\"External score 0: \" + externalScores[0]);\n    }\n}",
-      "output": "Student: Siddharth\nRecord score 0: 88\nExternal score 0: 0",
-      "explanation": "A final reference only prevents reassignment; defensive cloning is essential to achieve true immutability for mutable objects like arrays."
+      "id": "inh-ex42",
+      "title": "Final Reference Variable vs Object Mutation",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `Counter` with `int count = 0;`. In `main()`, declare `final Counter c = new Counter();`. Increment `c.count` twice. Then explain why `c.count = 2;` is allowed, but `c = new Counter();` would cause a compilation error.",
+      "hint": "final on an object reference locks the pointer address, not the internal fields.",
+      "solutionCode": "class Counter {\n    int count = 0;\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        final Counter c = new Counter();\n        c.count++;\n        c.count++;\n        System.out.println(\"Count: \" + c.count);\n        // c = new Counter(); // COMPILE ERROR: cannot assign value to final variable c\n    }\n}",
+      "output": "Count: 2",
+      "explanation": "final on reference variable c prevents reassigning c to another object. The internal state count remains mutable."
     }
   ],
   "inheritance-challenge": [
-      {
-        "id": "ex-oop11-chal-1",
-        "title": "Problem 1: Base Employee and Specialized Developer Class",
-        "difficulty": "Easy",
-        "problemStatement": "Create a base `Employee` class with fields `String name` and `double baseSalary`. Provide a method `double getSalary()` that returns `baseSalary`. Create a subclass `Developer extends Employee` with an additional field `double bonus`. In `Developer`, provide a constructor `Developer(String name, double baseSalary, double bonus)` that initializes the parent fields using `super(name, baseSalary)` and overrides `getSalary()` to return `baseSalary + bonus`. In `main()`, instantiate an Employee with $60,000 and a Developer with $80,000 base and $15,000 bonus. Print their respective salaries.",
-        "hint": "Use super(name, baseSalary) inside Developer constructor, and return baseSalary + bonus in getSalary().",
-        "solutionCode": "public class Solution {\n    static class Employee {\n        String name;\n        double baseSalary;\n\n        public Employee(String name, double baseSalary) {\n            this.name = name;\n            this.baseSalary = baseSalary;\n        }\n\n        public double getSalary() {\n            return baseSalary;\n        }\n    }\n\n    static class Developer extends Employee {\n        double bonus;\n\n        public Developer(String name, double baseSalary, double bonus) {\n            super(name, baseSalary);\n            this.bonus = bonus;\n        }\n\n        @Override\n        public double getSalary() {\n            return baseSalary + bonus;\n        }\n    }\n\n    public static void main(String[] args) {\n        Employee emp = new Employee(\"Alice\", 60000.0);\n        Developer dev = new Developer(\"Bob\", 80000.0, 15000.0);\n\n        System.out.printf(\"Employee %s Salary: $%.2f%n\", emp.name, emp.getSalary());\n        System.out.printf(\"Developer %s Salary: $%.2f%n\", dev.name, dev.getSalary());\n    }\n}",
-        "output": "Employee Alice Salary: $60000.00\nDeveloper Bob Salary: $95000.00",
-        "explanation": "Subclasses extend parent state and specialize behavior by overriding methods to include role-specific logic."
-      },
-      {
-        "id": "ex-oop11-chal-2",
-        "title": "Problem 2: Multi-Level Animal Taxonomic Hierarchy",
-        "difficulty": "Easy",
-        "problemStatement": "Build a 3-level inheritance hierarchy: 1) Class `Animal` with field `String name` and method `void eat()` printing '<name> is eating.'. 2) Class `Mammal extends Animal` with field `boolean hasFur = true;` and method `void nurse()`. 3) Class `Dog extends Mammal` with field `String breed` and method `void bark()`. In `main()`, instantiate a Dog ('Buddy', 'Golden Retriever'). Demonstrate that Dog inherits and can invoke methods from all levels of the hierarchy: `eat()`, `nurse()`, and `bark()`.",
-        "hint": "Each subclass passes the name to its superclass constructor via super(name).",
-        "solutionCode": "public class Solution {\n    static class Animal {\n        String name;\n        public Animal(String name) { this.name = name; }\n        public void eat() { System.out.println(name + \" is eating.\"); }\n    }\n\n    static class Mammal extends Animal {\n        boolean hasFur = true;\n        public Mammal(String name) { super(name); }\n        public void nurse() { System.out.println(name + \" is nursing offspring.\"); }\n    }\n\n    static class Dog extends Mammal {\n        String breed;\n        public Dog(String name, String breed) {\n            super(name);\n            this.breed = breed;\n        }\n        public void bark() { System.out.println(name + \" (\" + breed + \") says Woof!\"); }\n    }\n\n    public static void main(String[] args) {\n        Dog dog = new Dog(\"Buddy\", \"Golden Retriever\");\n        dog.eat();   // Inherited from Animal\n        dog.nurse(); // Inherited from Mammal\n        dog.bark();  // Defined in Dog\n    }\n}",
-        "output": "Buddy is eating.\nBuddy is nursing offspring.\nBuddy (Golden Retriever) says Woof!",
-        "explanation": "Multi-level inheritance allows child classes to transitively inherit state and behavior from ancestors all the way up the chain."
-      },
-      {
-        "id": "ex-oop11-chal-3",
-        "title": "Problem 3: Reusing Parent Logic with super.method()",
-        "difficulty": "Easy",
-        "problemStatement": "Create a `Message` class with `String content` and a method `void send()` that prints 'Sending: <content>'. Create a subclass `SecureMessage extends Message` with `String encryptionAlgorithm`. In `SecureMessage`, override `send()`: first print 'Encrypting with <encryptionAlgorithm>...', and then call `super.send()` to reuse the base delivery mechanism. In `main()`, instantiate and send a SecureMessage with 'Secret Coordinates' and 'AES-256'.",
-        "hint": "Call super.send() inside the overridden send() method.",
-        "solutionCode": "public class Solution {\n    static class Message {\n        String content;\n        public Message(String content) { this.content = content; }\n        public void send() {\n            System.out.println(\"Sending: \" + content);\n        }\n    }\n\n    static class SecureMessage extends Message {\n        String encryptionAlgorithm;\n        public SecureMessage(String content, String algo) {\n            super(content);\n            this.encryptionAlgorithm = algo;\n        }\n        @Override\n        public void send() {\n            System.out.println(\"Encrypting with \" + encryptionAlgorithm + \"...\");\n            super.send(); // Reusing parent delivery logic\n        }\n    }\n\n    public static void main(String[] args) {\n        SecureMessage msg = new SecureMessage(\"Secret Coordinates\", \"AES-256\");\n        msg.send();\n    }\n}",
-        "output": "Encrypting with AES-256...\nSending: Secret Coordinates",
-        "explanation": "Using super.method() avoids rewriting existing baseline logic when enhancing a method in a derived class."
-      },
-      {
-        "id": "ex-oop11-chal-4",
-        "title": "Problem 4: Explicit Constructor Delegation via super(args)",
-        "difficulty": "Easy",
-        "problemStatement": "Create a `Vehicle` class that ONLY defines a parameterized constructor `Vehicle(String make, int year)`. Notice it has NO default no-arg constructor! Create a subclass `Truck extends Vehicle` with an additional field `double payloadTons`. Implement constructor `Truck(String make, int year, double payload)` that explicitly delegates to `super(make, year)`. In `main()`, instantiate a 'Ford' 2024 with 3.5 tons payload, and display its make, year, and payload capacity.",
-        "hint": "When the parent lacks a default constructor, the child constructor must explicitly call super(make, year) as line 1.",
-        "solutionCode": "public class Solution {\n    static class Vehicle {\n        String make;\n        int year;\n        public Vehicle(String make, int year) {\n            this.make = make;\n            this.year = year;\n        }\n    }\n\n    static class Truck extends Vehicle {\n        double payloadTons;\n        public Truck(String make, int year, double payloadTons) {\n            super(make, year); // Explicit delegation to parent constructor\n            this.payloadTons = payloadTons;\n        }\n    }\n\n    public static void main(String[] args) {\n        Truck truck = new Truck(\"Ford\", 2024, 3.5);\n        System.out.println(\"Truck: \" + truck.year + \" \" + truck.make + \" | Payload: \" + truck.payloadTons + \" tons\");\n    }\n}",
-        "output": "Truck: 2024 Ford | Payload: 3.5 tons",
-        "explanation": "Explicit super(args) constructor calls are required whenever a parent class omits a default no-argument constructor."
-      },
-      {
-        "id": "ex-oop11-chal-5",
-        "title": "Problem 5: Protected Field Access in Inheritance Hierarchy",
-        "difficulty": "Easy",
-        "problemStatement": "Declare a base class `BankAccount` with `protected double balance;`. Provide a constructor and a getter `getBalance()`. Create a subclass `CheckingAccount extends BankAccount` with an additional field `double feePerTransaction = 1.50;`. Implement method `withdrawWithFee(double amount)` in `CheckingAccount` that directly checks and updates `balance` (`balance -= (amount + feePerTransaction)`). In `main()`, instantiate a checking account with $100.0, withdraw $30.0, and print the remaining balance.",
-        "hint": "Because balance is protected, CheckingAccount can access and mutate it directly.",
-        "solutionCode": "public class Solution {\n    static class BankAccount {\n        protected double balance;\n        public BankAccount(double initialBalance) {\n            this.balance = Math.max(0.0, initialBalance);\n        }\n        public double getBalance() { return balance; }\n    }\n\n    static class CheckingAccount extends BankAccount {\n        double feePerTransaction = 1.50;\n        public CheckingAccount(double initialBalance) {\n            super(initialBalance);\n        }\n        public boolean withdrawWithFee(double amount) {\n            double total = amount + feePerTransaction;\n            if (amount > 0 && balance >= total) {\n                balance -= total;\n                return true;\n            }\n            return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        CheckingAccount acc = new CheckingAccount(100.0);\n        acc.withdrawWithFee(30.0);\n        System.out.printf(\"Final Checking Balance: $%.2f%n\", acc.getBalance());\n    }\n}",
-        "output": "Final Checking Balance: $68.50",
-        "explanation": "Protected fields give derived subclasses direct access to internal state without exposing the state as public to outside classes."
-      },
-      {
-        "id": "ex-oop11-chal-6",
-        "title": "Problem 6: Preventing Subclassing with a Final Class",
-        "difficulty": "Easy",
-        "problemStatement": "In secure application design, cryptographic tokens and immutable identifiers must never be subclassed. Create a `public static final class ApiToken` with fields `private final String tokenId;` and `private final String secretHash;`. Provide a constructor and getters. In `main()`, instantiate an ApiToken with ID 'TOK-770' and hash 'SHA_abc123'. Print its details and explain why marking the class 'final' protects API security.",
-        "hint": "Mark the class declaration with 'public static final class ApiToken'.",
-        "solutionCode": "public class Solution {\n    public static final class ApiToken {\n        private final String tokenId;\n        private final String secretHash;\n\n        public ApiToken(String tokenId, String secretHash) {\n            this.tokenId = tokenId;\n            this.secretHash = secretHash;\n        }\n\n        public String getTokenId() { return tokenId; }\n        public String getSecretHash() { return secretHash; }\n    }\n\n    public static void main(String[] args) {\n        ApiToken token = new ApiToken(\"TOK-770\", \"SHA_abc123\");\n        System.out.println(\"Token ID: \" + token.getTokenId());\n        System.out.println(\"Hash: \" + token.getSecretHash());\n        System.out.println(\"Class is final: cannot be subverted by subclasses!\");\n    }\n}",
-        "output": "Token ID: TOK-770\nHash: SHA_abc123\nClass is final: cannot be subverted by subclasses!",
-        "explanation": "Declaring a class final permanently locks the class hierarchy, preventing untrusted subclasses from overriding methods or compromising security."
-      },
-      {
-        "id": "ex-oop11-chal-7",
-        "title": "Problem 7: Bank Account Hierarchy with Specialized Overdraft Protection",
-        "difficulty": "Medium",
-        "problemStatement": "Build an account hierarchy: 1) Base `Account` with `protected double balance;`. Method `boolean withdraw(double amount)`: returns true and deducts amount if balance >= amount. 2) Subclass `OverdraftAccount extends Account` with `private double overdraftLimit;` and `private double overdraftFee = 10.0;`. In `OverdraftAccount`, override `withdraw(double amount)`: if balance >= amount, deduct normally; if balance < amount but balance + overdraftLimit >= amount, deduct amount PLUS the $10 fee. In `main()`, create an OverdraftAccount with $50.0 balance and $100.0 limit. Withdraw $80.0 (uses overdraft, total deduction = $80 + $10 fee = $90). Print final balance (-$40.0).",
-        "hint": "Check conditions: if (balance >= amount) ... else if (balance + overdraftLimit >= amount) ...",
-        "solutionCode": "public class Solution {\n    static class Account {\n        protected double balance;\n        public Account(double balance) { this.balance = balance; }\n        public boolean withdraw(double amount) {\n            if (amount > 0 && balance >= amount) {\n                balance -= amount;\n                return true;\n            }\n            return false;\n        }\n        public double getBalance() { return balance; }\n    }\n\n    static class OverdraftAccount extends Account {\n        private double overdraftLimit;\n        private double overdraftFee = 10.0;\n\n        public OverdraftAccount(double balance, double overdraftLimit) {\n            super(balance);\n            this.overdraftLimit = overdraftLimit;\n        }\n\n        @Override\n        public boolean withdraw(double amount) {\n            if (amount <= 0) return false;\n            if (balance >= amount) {\n                balance -= amount;\n                return true;\n            } else if (balance + overdraftLimit >= amount) {\n                balance -= (amount + overdraftFee);\n                return true;\n            }\n            return false;\n        }\n    }\n\n    public static void main(String[] args) {\n        OverdraftAccount acc = new OverdraftAccount(50.0, 100.0);\n        boolean success = acc.withdraw(80.0);\n        System.out.println(\"Withdraw Success: \" + success);\n        System.out.printf(\"Balance after overdraft: $%.2f%n\", acc.getBalance());\n    }\n}",
-        "output": "Withdraw Success: true\nBalance after overdraft: $-40.00",
-        "explanation": "Specialized subclasses extend base business rules cleanly without altering or risking breaking the original base Account class."
-      },
-      {
-        "id": "ex-oop11-chal-8",
-        "title": "Problem 8: Vehicle Fleet Maintenance Cost Calculator",
-        "difficulty": "Medium",
-        "problemStatement": "Create a fleet management hierarchy: 1) Base `Vehicle` with `String model` and `int mileage`. Method `double calculateMaintenanceCost()` returns `mileage * 0.05`. 2) Subclass `CommercialTruck extends Vehicle` with `int cargoWeightTons`. Overrides `calculateMaintenanceCost()` returning `super.calculateMaintenanceCost() + (cargoWeightTons * 75.0)`. In `main()`, instantiate a Vehicle with 10,000 miles and a CommercialTruck with 10,000 miles and 4 tons cargo. Compare their calculated maintenance costs.",
-        "hint": "In CommercialTruck, call super.calculateMaintenanceCost() and add the weight surcharge.",
-        "solutionCode": "public class Solution {\n    static class Vehicle {\n        String model;\n        int mileage;\n\n        public Vehicle(String model, int mileage) {\n            this.model = model;\n            this.mileage = mileage;\n        }\n\n        public double calculateMaintenanceCost() {\n            return mileage * 0.05;\n        }\n    }\n\n    static class CommercialTruck extends Vehicle {\n        int cargoWeightTons;\n\n        public CommercialTruck(String model, int mileage, int cargoWeightTons) {\n            super(model, mileage);\n            this.cargoWeightTons = cargoWeightTons;\n        }\n\n        @Override\n        public double calculateMaintenanceCost() {\n            return super.calculateMaintenanceCost() + (cargoWeightTons * 75.0);\n        }\n    }\n\n    public static void main(String[] args) {\n        Vehicle car = new Vehicle(\"Standard Car\", 10000);\n        CommercialTruck truck = new CommercialTruck(\"Freightliner\", 10000, 4);\n\n        System.out.printf(\"Car Maintenance: $%.2f%n\", car.calculateMaintenanceCost());\n        System.out.printf(\"Truck Maintenance: $%.2f%n\", truck.calculateMaintenanceCost());\n    }\n}",
-        "output": "Car Maintenance: $500.00\nTruck Maintenance: $800.00",
-        "explanation": "Subclasses can combine base mathematical formulas with specialized surcharges using super.methodName()."
-      },
-      {
-        "id": "ex-oop11-chal-9",
-        "title": "Problem 9: Secure Config with Final Validation Template Method",
-        "difficulty": "Medium",
-        "problemStatement": "In the Template Method pattern, a base class defines the skeleton of an algorithm using a `final` method so child classes cannot alter execution order. Create class `BaseConfig`: 1) `public final void initialize()` which calls `loadProperties()` then `validate()` then `logStatus()`. Mark `initialize()` as `final`. 2) Provide empty or default implementations for `loadProperties()` and `validate()`. Create subclass `DatabaseConfig extends BaseConfig` which provides custom logic for `loadProperties()` and `validate()`. In `main()`, call `config.initialize()` and verify that the base workflow executed in exact order.",
-        "hint": "Mark the driver method final: public final void initialize() { loadProperties(); validate(); logStatus(); }",
-        "solutionCode": "public class Solution {\n    static class BaseConfig {\n        public void loadProperties() {\n            System.out.println(\"1. Loading standard properties...\");\n        }\n\n        public void validate() {\n            System.out.println(\"2. Validating baseline invariants...\");\n        }\n\n        public void logStatus() {\n            System.out.println(\"3. Configuration initialized successfully.\");\n        }\n\n        // Final template method: children cannot change the lifecycle order\n        public final void initialize() {\n            loadProperties();\n            validate();\n            logStatus();\n        }\n    }\n\n    static class DatabaseConfig extends BaseConfig {\n        @Override\n        public void loadProperties() {\n            System.out.println(\"1. [DB] Reading jdbc.properties from vault...\");\n        }\n\n        @Override\n        public void validate() {\n            System.out.println(\"2. [DB] Verifying database credentials & SSL certificates...\");\n        }\n    }\n\n    public static void main(String[] args) {\n        BaseConfig dbConfig = new DatabaseConfig();\n        dbConfig.initialize();\n    }\n}",
-        "output": "1. [DB] Reading jdbc.properties from vault...\n2. [DB] Verifying database credentials & SSL certificates...\n3. Configuration initialized successfully.",
-        "explanation": "Marking template methods final guarantees that sub-steps execute in the exact mandatory architectural sequence."
-      },
-      {
-        "id": "ex-oop11-chal-10",
-        "title": "Problem 10: Deep 4-Level Constructor Chaining & Field Initialization Trace",
-        "difficulty": "Hard",
-        "problemStatement": "Implement a 4-tier network device model to trace constructor execution order: `Device` (id) -> `NetworkDevice` (ipAddress) -> `Switch` (portsCount) -> `ManagedSwitch` (managementVlan). Each class must print its initialization step in its constructor. In `main()`, instantiate a ManagedSwitch with ID 'SW-01', IP '192.168.1.1', 24 ports, and VLAN 10. Print the execution trace and verify all 4 levels of fields are accessible on the child object.",
-        "hint": "Each constructor must call super(args) as line 1.",
-        "solutionCode": "public class Solution {\n    static class Device {\n        String id;\n        public Device(String id) {\n            this.id = id;\n            System.out.println(\"[Step 1] Device initialized with ID: \" + id);\n        }\n    }\n\n    static class NetworkDevice extends Device {\n        String ipAddress;\n        public NetworkDevice(String id, String ip) {\n            super(id);\n            this.ipAddress = ip;\n            System.out.println(\"[Step 2] NetworkDevice initialized with IP: \" + ip);\n        }\n    }\n\n    static class Switch extends NetworkDevice {\n        int portsCount;\n        public Switch(String id, String ip, int ports) {\n            super(id, ip);\n            this.portsCount = ports;\n            System.out.println(\"[Step 3] Switch initialized with \" + ports + \" ports\");\n        }\n    }\n\n    static class ManagedSwitch extends Switch {\n        int managementVlan;\n        public ManagedSwitch(String id, String ip, int ports, int vlan) {\n            super(id, ip, ports);\n            this.managementVlan = vlan;\n            System.out.println(\"[Step 4] ManagedSwitch ready on VLAN: \" + vlan);\n        }\n    }\n\n    public static void main(String[] args) {\n        ManagedSwitch sw = new ManagedSwitch(\"SW-01\", \"192.168.1.1\", 24, 10);\n        System.out.println(\"Managed Device Summary: \" + sw.id + \" (\" + sw.ipAddress + \") PortCount: \" + sw.portsCount);\n    }\n}",
-        "output": "[Step 1] Device initialized with ID: SW-01\n[Step 2] NetworkDevice initialized with IP: 192.168.1.1\n[Step 3] Switch initialized with 24 ports\n[Step 4] ManagedSwitch ready on VLAN: 10\nManaged Device Summary: SW-01 (192.168.1.1) PortCount: 24",
-        "explanation": "Constructors execute strictly top-down: the root superclass establishes baseline state before each successive derived class initializes specialized state."
-      },
-      {
-        "id": "ex-oop11-chal-11",
-        "title": "Problem 11: Extensible Payment Audit Pipeline with Protected Hooks",
-        "difficulty": "Hard",
-        "problemStatement": "Build an enterprise payment processing pipeline using inheritance and protected hooks: 1) Base `PaymentProcessor`: declare `public final boolean process(double amount)` which executes: `beforePayment(amount)`, `executePayment(amount)`, `afterPayment(amount)`. Provide default protected implementations for `beforePayment` (prints 'Auditing start') and `afterPayment` (prints 'Auditing complete'). 2) Subclass `CryptoPaymentProcessor extends PaymentProcessor`: override `beforePayment` to verify wallet address, and override `executePayment` to simulate blockchain confirmation. In `main()`, instantiate and execute a $500.0 payment.",
-        "hint": "Keep process() final so the audit cycle cannot be bypassed by child processors.",
-        "solutionCode": "public class Solution {\n    static class PaymentProcessor {\n        protected void beforePayment(double amount) {\n            System.out.printf(\"[Audit] Starting transaction check for $%.2f%n\", amount);\n        }\n\n        protected boolean executePayment(double amount) {\n            System.out.printf(\"[Processing] Executing standard transfer of $%.2f%n\", amount);\n            return true;\n        }\n\n        protected void afterPayment(double amount) {\n            System.out.printf(\"[Audit] Transaction settled and recorded for $%.2f%n\", amount);\n        }\n\n        // Final template method\n        public final boolean process(double amount) {\n            if (amount <= 0) return false;\n            beforePayment(amount);\n            boolean result = executePayment(amount);\n            if (result) afterPayment(amount);\n            return result;\n        }\n    }\n\n    static class CryptoPaymentProcessor extends PaymentProcessor {\n        private String walletAddress;\n\n        public CryptoPaymentProcessor(String wallet) {\n            this.walletAddress = wallet;\n        }\n\n        @Override\n        protected void beforePayment(double amount) {\n            System.out.println(\"[Crypto] Validating wallet network for: \" + walletAddress);\n            super.beforePayment(amount);\n        }\n\n        @Override\n        protected boolean executePayment(double amount) {\n            System.out.printf(\"[Crypto] Broadcasting $%.2f to mempool... Confirmed!%n\", amount);\n            return true;\n        }\n    }\n\n    public static void main(String[] args) {\n        PaymentProcessor processor = new CryptoPaymentProcessor(\"0x71C...9B1\");\n        processor.process(500.0);\n    }\n}",
-        "output": "[Crypto] Validating wallet network for: 0x71C...9B1\n[Audit] Starting transaction check for $500.00\n[Crypto] Broadcasting $500.00 to mempool... Confirmed!\n[Audit] Transaction settled and recorded for $500.00",
-        "explanation": "Protected hooks combined with final driver methods allow subclasses to inject custom domain logic without sacrificing system-wide audit invariants."
-      }
-    ]
+    {
+      "id": "inh-ch01",
+      "title": "Level 1: Library Media Catalog Hierarchy",
+      "difficulty": "Easy",
+      "problemStatement": "Create a base class `LibraryItem` with `id` (int), `title` (String), and method `displayItem()`. Extend it with `BookItem` adding `author` (String) and `pageCount` (int), calling `super(id, title)`. In `main()`, instantiate a BookItem (`101`, `\"Java Basics\"`, `\"James Gosling\"`, `350`) and print all details.",
+      "hint": "Pass id and title to super(id, title) in BookItem's constructor.",
+      "solutionCode": "class LibraryItem {\n    int id;\n    String title;\n    LibraryItem(int id, String title) {\n        this.id = id;\n        this.title = title;\n    }\n    void displayItem() {\n        System.out.println(\"ID: \" + id + \" | Title: \" + title);\n    }\n}\n\nclass BookItem extends LibraryItem {\n    String author;\n    int pageCount;\n    BookItem(int id, String title, String author, int pageCount) {\n        super(id, title);\n        this.author = author;\n        this.pageCount = pageCount;\n    }\n    void displayBook() {\n        displayItem();\n        System.out.println(\"Author: \" + author + \" | Pages: \" + pageCount);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        BookItem book = new BookItem(101, \"Java Basics\", \"James Gosling\", 350);\n        book.displayBook();\n    }\n}",
+      "output": "ID: 101 | Title: Java Basics\nAuthor: James Gosling | Pages: 350",
+      "explanation": "Establishes clean single inheritance with proper constructor delegation."
+    },
+    {
+      "id": "inh-ch02",
+      "title": "Level 2: Multilevel Architectural Property Hierarchy",
+      "difficulty": "Easy",
+      "problemStatement": "Model a 3-level property hierarchy: `Property` (field `address`), `ResidentialProperty extends Property` (field `int bedrooms`), and `LuxuryPenthouse extends ResidentialProperty` (field `boolean hasPool`). In `LuxuryPenthouse`, write `printFeatures()` displaying address, bedrooms, and pool status. In `main()`, instantiate a penthouse at `\"100 Marine Drive\"` with 4 bedrooms and pool=true.",
+      "hint": "Multilevel constructor chaining: Property -> ResidentialProperty -> LuxuryPenthouse.",
+      "solutionCode": "class Property {\n    String address;\n    Property(String address) {\n        this.address = address;\n    }\n}\n\nclass ResidentialProperty extends Property {\n    int bedrooms;\n    ResidentialProperty(String address, int bedrooms) {\n        super(address);\n        this.bedrooms = bedrooms;\n    }\n}\n\nclass LuxuryPenthouse extends ResidentialProperty {\n    boolean hasPool;\n    LuxuryPenthouse(String address, int bedrooms, boolean hasPool) {\n        super(address, bedrooms);\n        this.hasPool = hasPool;\n    }\n    void printFeatures() {\n        System.out.println(\"Address: \" + address + \" | Bedrooms: \" + bedrooms + \" | Pool: \" + hasPool);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        LuxuryPenthouse lp = new LuxuryPenthouse(\"100 Marine Drive\", 4, true);\n        lp.printFeatures();\n    }\n}",
+      "output": "Address: 100 Marine Drive | Bedrooms: 4 | Pool: true",
+      "explanation": "Constructors cascade state up to Property and allow LuxuryPenthouse to display complete information."
+    },
+    {
+      "id": "inh-ch03",
+      "title": "Level 3: Hospital Medical Staff System with super()",
+      "difficulty": "Easy",
+      "problemStatement": "Create `Person` with `name` and `age`. Create `Doctor extends Person` with `String specialization` and `double consultationFee`. Initialize all fields through constructors using `super(name, age)`. Add method `printDoctorInfo()` printing `\"Dr. \" + name + \" (\" + age + \" yrs) - \" + specialization + \" | Fee: $\" + consultationFee`. In `main()`, create Dr. `\"Sarah\"`, age 40, specialization `\"Cardiology\"`, fee `$150.0`.",
+      "hint": "super(name, age) handles Person initialization.",
+      "solutionCode": "class Person {\n    String name;\n    int age;\n    Person(String name, int age) {\n        this.name = name;\n        this.age = age;\n    }\n}\n\nclass Doctor extends Person {\n    String specialization;\n    double consultationFee;\n    Doctor(String name, int age, String specialization, double consultationFee) {\n        super(name, age);\n        this.specialization = specialization;\n        this.consultationFee = consultationFee;\n    }\n    void printDoctorInfo() {\n        System.out.println(\"Dr. \" + name + \" (\" + age + \" yrs) - \" + specialization + \" | Fee: $\" + consultationFee);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Doctor doc = new Doctor(\"Sarah\", 40, \"Cardiology\", 150.0);\n        doc.printDoctorInfo();\n    }\n}",
+      "output": "Dr. Sarah (40 yrs) - Cardiology | Fee: $150.0",
+      "explanation": "Demonstrates parameterized super() constructor invocation."
+    },
+    {
+      "id": "inh-ch04",
+      "title": "Level 4: Transport Fleet Fuel Efficiency with @Override",
+      "difficulty": "Medium",
+      "problemStatement": "Create base `Vehicle` with `double computeRange(double fuelLiters)` returning `fuelLiters * 15.0`. Create child `Truck` overriding `computeRange` to return `fuelLiters * 8.0`. Create child `HybridCar` overriding `computeRange` to return `fuelLiters * 28.0`. In `main()`, print range for 50 liters on both Truck and HybridCar.",
+      "hint": "Truck and HybridCar override the fuel consumption calculation formula.",
+      "solutionCode": "class Vehicle {\n    double computeRange(double fuelLiters) {\n        return fuelLiters * 15.0;\n    }\n}\n\nclass Truck extends Vehicle {\n    @Override\n    double computeRange(double fuelLiters) {\n        return fuelLiters * 8.0;\n    }\n}\n\nclass HybridCar extends Vehicle {\n    @Override\n    double computeRange(double fuelLiters) {\n        return fuelLiters * 28.0;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Truck truck = new Truck();\n        HybridCar hybrid = new HybridCar();\n        System.out.println(\"Truck range on 50L: \" + truck.computeRange(50.0) + \" km\");\n        System.out.println(\"Hybrid range on 50L: \" + hybrid.computeRange(50.0) + \" km\");\n    }\n}",
+      "output": "Truck range on 50L: 400.0 km\nHybrid range on 50L: 1400.0 km",
+      "explanation": "Each vehicle category models its unique fuel consumption via method overriding."
+    },
+    {
+      "id": "inh-ch05",
+      "title": "Level 5: Bank Transaction Pipeline with super.process()",
+      "difficulty": "Medium",
+      "problemStatement": "Create `Transaction` with `void process(double amount)` printing `\"Base Transaction: Deducting $\" + amount`. Create child `InternationalTransaction` that overrides `process(double amount)`: it adds a $15 foreign exchange fee, prints `\"FX Fee applied: $15.0\"`, and calls `super.process(amount + 15.0)`. In `main()`, execute international transaction for `$200.0`.",
+      "hint": "Call super.process(amount + 15.0).",
+      "solutionCode": "class Transaction {\n    void process(double amount) {\n        System.out.println(\"Base Transaction: Deducting $\" + amount);\n    }\n}\n\nclass InternationalTransaction extends Transaction {\n    @Override\n    void process(double amount) {\n        System.out.println(\"FX Fee applied: $15.0\");\n        super.process(amount + 15.0);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        InternationalTransaction it = new InternationalTransaction();\n        it.process(200.0);\n    }\n}",
+      "output": "FX Fee applied: $15.0\nBase Transaction: Deducting $215.0",
+      "explanation": "InternationalTransaction augments parent transaction processing with exchange fees."
+    },
+    {
+      "id": "inh-ch06",
+      "title": "Level 6: Vector Disambiguation with super.var",
+      "difficulty": "Medium",
+      "problemStatement": "Create parent `Vector2D` with `double magnitude = 10.0;`. Create child `Vector3D` with `double magnitude = 17.3;`. In `Vector3D`, write method `printMagnitudes()` printing `\"2D Magnitude: \" + super.magnitude + \" | 3D Magnitude: \" + this.magnitude`. In `main()`, test this method.",
+      "hint": "super.magnitude reaches Vector2D's field.",
+      "solutionCode": "class Vector2D {\n    double magnitude = 10.0;\n}\n\nclass Vector3D extends Vector2D {\n    double magnitude = 17.3;\n\n    void printMagnitudes() {\n        System.out.println(\"2D Magnitude: \" + super.magnitude + \" | 3D Magnitude: \" + this.magnitude);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        new Vector3D().printMagnitudes();\n    }\n}",
+      "output": "2D Magnitude: 10.0 | 3D Magnitude: 17.3",
+      "explanation": "Demonstrates how super disambiguates shadowed member fields."
+    },
+    {
+      "id": "inh-ch07",
+      "title": "Level 7: Security Vault Access with final Invariants",
+      "difficulty": "Medium",
+      "problemStatement": "Create class `Vault` with `final boolean checkPin(int pin)` returning `pin == 9876` and a non-final method `void openDoor()` printing `\"Standard mechanical vault opened\"`. Create child `BioMetricVault` that overrides `openDoor()` to print `\"Retina scan passed, titanium vault opened\"`. In `main()`, authenticate with pin 9876 on BioMetricVault and open the door.",
+      "hint": "checkPin is final to prevent child classes from relaxing PIN security checks.",
+      "solutionCode": "class Vault {\n    final boolean checkPin(int pin) {\n        return pin == 9876;\n    }\n    void openDoor() {\n        System.out.println(\"Standard mechanical vault opened\");\n    }\n}\n\nclass BioMetricVault extends Vault {\n    @Override\n    void openDoor() {\n        System.out.println(\"Retina scan passed, titanium vault opened\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        BioMetricVault vault = new BioMetricVault();\n        if (vault.checkPin(9876)) {\n            vault.openDoor();\n        }\n    }\n}",
+      "output": "Retina scan passed, titanium vault opened",
+      "explanation": "The final method protects PIN validation from being overridden."
+    },
+    {
+      "id": "inh-ch08",
+      "title": "Level 8: Private Fields & Encapsulated Inheritance",
+      "difficulty": "Hard",
+      "problemStatement": "Create class `Vehicle` with private fields `String vin` and `double basePrice`. Provide constructor `Vehicle(String vin, double basePrice)` and public getters. Create child `ElectricVehicle` extending `Vehicle` with private field `double batterySubsidy`. Add method `double calculateCustomerPrice()` that computes `getBasePrice() - batterySubsidy`. In `main()`, instantiate an ElectricVehicle with vin `\"EV-88\"`, basePrice `45000.0`, subsidy `7500.0`, and print customer price.",
+      "hint": "Child cannot read `basePrice` directly; it must call the inherited `getBasePrice()` getter method.",
+      "solutionCode": "class Vehicle {\n    private String vin;\n    private double basePrice;\n\n    Vehicle(String vin, double basePrice) {\n        this.vin = vin;\n        this.basePrice = basePrice;\n    }\n    public String getVin() { return vin; }\n    public double getBasePrice() { return basePrice; }\n}\n\nclass ElectricVehicle extends Vehicle {\n    private double batterySubsidy;\n\n    ElectricVehicle(String vin, double basePrice, double batterySubsidy) {\n        super(vin, basePrice);\n        this.batterySubsidy = batterySubsidy;\n    }\n    double calculateCustomerPrice() {\n        return getBasePrice() - batterySubsidy;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        ElectricVehicle ev = new ElectricVehicle(\"EV-88\", 45000.0, 7500.0);\n        System.out.println(\"VIN: \" + ev.getVin() + \" | Final Price: $\" + ev.calculateCustomerPrice());\n    }\n}",
+      "output": "VIN: EV-88 | Final Price: $37500.0",
+      "explanation": "Demonstrates proper encapsulation where child classes access private parent fields via public accessors."
+    },
+    {
+      "id": "inh-ch09",
+      "title": "Level 9: Bug Fixer Challenge: Repairing Inheritance Compilation Errors",
+      "difficulty": "Hard",
+      "problemStatement": "Fix the compilation errors in this code:\n1. Base has constructor `Base(int x)` with no default constructor.\n2. Child constructor attempts to put `System.out.println` before `super(x)`.\n3. Base has `public void run()`, but Child has `void run()` (visibility reduction).\nWrite the corrected program and verify it prints `\"Ready\"` followed by `\"Child running\"`.",
+      "hint": "Move super(x) to line 1 of Child constructor, and add `public` to Child's `run()` method.",
+      "solutionCode": "class Base {\n    int x;\n    Base(int x) {\n        this.x = x;\n    }\n    public void run() {\n        System.out.println(\"Base running\");\n    }\n}\n\nclass Child extends Base {\n    Child(int x) {\n        super(x); // MUST be first statement\n        System.out.println(\"Ready\");\n    }\n    @Override\n    public void run() { // MUST remain public\n        System.out.println(\"Child running\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Child c = new Child(10);\n        c.run();\n    }\n}",
+      "output": "Ready\nChild running",
+      "explanation": "Corrects the two most common inheritance errors: constructor call order and visibility reduction."
+    },
+    {
+      "id": "inh-ch10",
+      "title": "Level 10: Capstone Enterprise E-Commerce Hierarchy",
+      "difficulty": "Hard",
+      "problemStatement": "Design a complete e-commerce hierarchy:\n1. Base class `Order`: private `String orderId`, protected `double totalAmount`. Constructor `Order(orderId, totalAmount)`, `final void printInvoiceHeader()` printing `\"=== INVOICE: \" + orderId + \" ===\"`, and method `double calculateFinalPayable()` returning `totalAmount`.\n2. Subclass `OnlineOrder extends Order`: adds `double deliveryFee`. Overrides `calculateFinalPayable()` to return `super.calculateFinalPayable() + deliveryFee`.\n3. Subclass `ExpressOnlineOrder extends OnlineOrder`: adds `double expressHandlingFee`. Overrides `calculateFinalPayable()` to return `super.calculateFinalPayable() + expressHandlingFee`.\nIn `main()`, create an ExpressOnlineOrder for orderId `\"ORD-999\"`, totalAmount `250.0`, deliveryFee `15.0`, expressFee `20.0`. Print invoice header and final payable.",
+      "hint": "Chained super.calculateFinalPayable() calls build up the total dynamically ($250 + $15 + $20 = $285).",
+      "solutionCode": "class Order {\n    private String orderId;\n    protected double totalAmount;\n\n    Order(String orderId, double totalAmount) {\n        this.orderId = orderId;\n        this.totalAmount = totalAmount;\n    }\n    final void printInvoiceHeader() {\n        System.out.println(\"=== INVOICE: \" + orderId + \" ===\");\n    }\n    double calculateFinalPayable() {\n        return totalAmount;\n    }\n}\n\nclass OnlineOrder extends Order {\n    protected double deliveryFee;\n\n    OnlineOrder(String orderId, double totalAmount, double deliveryFee) {\n        super(orderId, totalAmount);\n        this.deliveryFee = deliveryFee;\n    }\n    @Override\n    double calculateFinalPayable() {\n        return super.calculateFinalPayable() + deliveryFee;\n    }\n}\n\nclass ExpressOnlineOrder extends OnlineOrder {\n    private double expressHandlingFee;\n\n    ExpressOnlineOrder(String orderId, double totalAmount, double deliveryFee, double expressHandlingFee) {\n        super(orderId, totalAmount, deliveryFee);\n        this.expressHandlingFee = expressHandlingFee;\n    }\n    @Override\n    double calculateFinalPayable() {\n        return super.calculateFinalPayable() + expressHandlingFee;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        ExpressOnlineOrder order = new ExpressOnlineOrder(\"ORD-999\", 250.0, 15.0, 20.0);\n        order.printInvoiceHeader();\n        System.out.println(\"Final Payable: $\" + order.calculateFinalPayable());\n    }\n}",
+      "output": "=== INVOICE: ORD-999 ===\nFinal Payable: $285.0",
+      "explanation": "Combines multilevel inheritance, constructor chaining, super.method() augmentation, and final security locks into an enterprise architecture."
+    }
+  ],
+  "extends-and-is-a": [
+    {
+      "id": "inh-ex01",
+      "title": "Vehicle Base Class & Car Extension",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Vehicle` with variables `brand` (String) and `speed` (int), and a method `drive()` that prints `\"Vehicle is driving at \" + speed + \" km/h\"`. Then create a child class `Car` that extends `Vehicle` and adds `int doors = 4;` and a method `displayDoors()` printing `\"Number of doors: \" + doors`. In `main()`, instantiate a `Car`, set `brand = \"Toyota\"` and `speed = 100`, then call both `drive()` and `displayDoors()`.",
+      "hint": "Use `class Car extends Vehicle`. Notice how `Car` can access `brand` and `speed` directly because it inherits them.",
+      "solutionCode": "class Vehicle {\n    String brand;\n    int speed;\n\n    void drive() {\n        System.out.println(\"Vehicle is driving at \" + speed + \" km/h\");\n    }\n}\n\nclass Car extends Vehicle {\n    int doors = 4;\n\n    void displayDoors() {\n        System.out.println(\"Number of doors: \" + doors);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Car car = new Car();\n        car.brand = \"Toyota\";\n        car.speed = 100;\n        car.drive();\n        car.displayDoors();\n    }\n}",
+      "output": "Vehicle is driving at 100 km/h\nNumber of doors: 4",
+      "explanation": "Car extends Vehicle. A Car object contains both the inherited Vehicle fields (brand, speed) and its own doors field."
+    },
+    {
+      "id": "inh-ex02",
+      "title": "Employee & Manager Salary Specialization",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Employee` with fields `name` (String) and `baseSalary` (double), and a method `displayBase()` that prints `name + \" Base Salary: $\" + baseSalary`. Create a child class `Manager` that extends `Employee` with an additional field `bonus` (double) and a method `displayTotal()` that prints `name + \" Total: $\" + (baseSalary + bonus)`. In `main()`, create a `Manager` named `\"Alice\"` with base salary `60000.0` and bonus `12000.0`, then call both methods.",
+      "hint": "Manager inherits `name` and `baseSalary` from Employee and adds its own `bonus` field.",
+      "solutionCode": "class Employee {\n    String name;\n    double baseSalary;\n\n    void displayBase() {\n        System.out.println(name + \" Base Salary: $\" + baseSalary);\n    }\n}\n\nclass Manager extends Employee {\n    double bonus;\n\n    void displayTotal() {\n        System.out.println(name + \" Total: $\" + (baseSalary + bonus));\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Manager mgr = new Manager();\n        mgr.name = \"Alice\";\n        mgr.baseSalary = 60000.0;\n        mgr.bonus = 12000.0;\n        mgr.displayBase();\n        mgr.displayTotal();\n    }\n}",
+      "output": "Alice Base Salary: $60000.0\nAlice Total: $72000.0",
+      "explanation": "Manager specializes Employee by adding a bonus field. It computes total salary using both inherited and child fields."
+    },
+    {
+      "id": "inh-ex03",
+      "title": "Geometric Shape & Rectangle Derivation",
+      "difficulty": "Easy",
+      "problemStatement": "Create a parent class `Shape` with a field `color` (String) and a method `printColor()` printing `\"Color: \" + color`. Create a child class `Rectangle` extending `Shape` with fields `double width` and `double height`. Add methods `double getArea()` returning `width * height` and `double getPerimeter()` returning `2 * (width + height)`. In `main()`, create a blue rectangle of dimensions 6.0 x 4.0 and print its color, area, and perimeter.",
+      "hint": "Rectangle inherits `color` and adds `width` and `height`.",
+      "solutionCode": "class Shape {\n    String color;\n\n    void printColor() {\n        System.out.println(\"Color: \" + color);\n    }\n}\n\nclass Rectangle extends Shape {\n    double width;\n    double height;\n\n    double getArea() {\n        return width * height;\n    }\n\n    double getPerimeter() {\n        return 2 * (width + height);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Rectangle rect = new Rectangle();\n        rect.color = \"Blue\";\n        rect.width = 6.0;\n        rect.height = 4.0;\n        rect.printColor();\n        System.out.println(\"Area: \" + rect.getArea());\n        System.out.println(\"Perimeter: \" + rect.getPerimeter());\n    }\n}",
+      "output": "Color: Blue\nArea: 24.0\nPerimeter: 20.0",
+      "explanation": "Rectangle establishes an IS-A relationship with Shape, inheriting printColor() and adding area and perimeter calculations."
+    },
+    {
+      "id": "inh-ex04",
+      "title": "Animal & Dog Method Inheritance",
+      "difficulty": "Easy",
+      "problemStatement": "Create an `Animal` parent class with methods `eat()` printing `\"Eating food\"` and `sleep()` printing `\"Sleeping soundly\"`. Create child class `Dog` extending `Animal` with method `bark()` printing `\"Barking loudly\"`. In `main()`, create a `Dog` and call `eat()`, `sleep()`, and `bark()` in order.",
+      "hint": "Dog inherits both eat() and sleep() from Animal without needing to rewrite them.",
+      "solutionCode": "class Animal {\n    void eat() {\n        System.out.println(\"Eating food\");\n    }\n    void sleep() {\n        System.out.println(\"Sleeping soundly\");\n    }\n}\n\nclass Dog extends Animal {\n    void bark() {\n        System.out.println(\"Barking loudly\");\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Dog dog = new Dog();\n        dog.eat();\n        dog.sleep();\n        dog.bark();\n    }\n}",
+      "output": "Eating food\nSleeping soundly\nBarking loudly",
+      "explanation": "Dog inherits eat() and sleep() from Animal and defines its own bark() method."
+    },
+    {
+      "id": "inh-ex05",
+      "title": "Book Catalog & Academic Textbook",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `Book` with `title` (String) and `author` (String). Create child class `Textbook` extending `Book` with `subject` (String). In `Textbook`, write method `displayInfo()` that prints `\"[Textbook] Title: \" + title + \", Author: \" + author + \", Subject: \" + subject`. In `main()`, instantiate a `Textbook` with title `\"Physics Fundamentals\"`, author `\"Dr. Hall\"`, subject `\"Science\"`, and call `displayInfo()`.",
+      "hint": "Textbook can directly access title and author declared in Book.",
+      "solutionCode": "class Book {\n    String title;\n    String author;\n}\n\nclass Textbook extends Book {\n    String subject;\n\n    void displayInfo() {\n        System.out.println(\"[Textbook] Title: \" + title + \", Author: \" + author + \", Subject: \" + subject);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Textbook tb = new Textbook();\n        tb.title = \"Physics Fundamentals\";\n        tb.author = \"Dr. Hall\";\n        tb.subject = \"Science\";\n        tb.displayInfo();\n    }\n}",
+      "output": "[Textbook] Title: Physics Fundamentals, Author: Dr. Hall, Subject: Science",
+      "explanation": "Textbook inherits book metadata (title, author) and adds subject classification."
+    },
+    {
+      "id": "inh-ex06",
+      "title": "Electronic Device & Smartphone Features",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `Device` with `brand` (String) and `powerOn()` printing `brand + \" powered on\"`. Create child class `Phone` extending `Device` with method `makeCall(String number)` printing `\"Calling \" + number + \" from \" + brand`. In `main()`, create a `Phone` with brand `\"Samsung\"`, call `powerOn()`, and call `makeCall(\"9876543210\")`.",
+      "hint": "Phone inherits brand and powerOn() from Device.",
+      "solutionCode": "class Device {\n    String brand;\n\n    void powerOn() {\n        System.out.println(brand + \" powered on\");\n    }\n}\n\nclass Phone extends Device {\n    void makeCall(String number) {\n        System.out.println(\"Calling \" + number + \" from \" + brand);\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        Phone p = new Phone();\n        p.brand = \"Samsung\";\n        p.powerOn();\n        p.makeCall(\"9876543210\");\n    }\n}",
+      "output": "Samsung powered on\nCalling 9876543210 from Samsung",
+      "explanation": "Phone is a specialization of Device that can perform communication actions."
+    },
+    {
+      "id": "inh-ex07",
+      "title": "Basic BankAccount & Savings Interest",
+      "difficulty": "Easy",
+      "problemStatement": "Create class `BankAccount` with `accountNumber` (String) and `balance` (double). Add method `deposit(double amt)` that adds `amt` to `balance`. Create child class `SavingsAccount` extending `BankAccount` with `double interestRate = 0.04;` and method `addInterest()` that computes `balance * interestRate` and adds it to `balance`. In `main()`, create a `SavingsAccount`, deposit `1000.0`, call `addInterest()`, and print `\"Final Balance: $\" + account.balance`.",
+      "hint": "addInterest() multiplies current balance by interestRate and adds the result to balance.",
+      "solutionCode": "class BankAccount {\n    String accountNumber;\n    double balance;\n\n    void deposit(double amt) {\n        balance += amt;\n    }\n}\n\nclass SavingsAccount extends BankAccount {\n    double interestRate = 0.04;\n\n    void addInterest() {\n        double interest = balance * interestRate;\n        balance += interest;\n    }\n}\n\npublic class Solution {\n    public static void main(String[] args) {\n        SavingsAccount sa = new SavingsAccount();\n        sa.accountNumber = \"ACC-101\";\n        sa.deposit(1000.0);\n        sa.addInterest();\n        System.out.println(\"Final Balance: $\" + sa.balance);\n    }\n}",
+      "output": "Final Balance: $1040.0",
+      "explanation": "SavingsAccount directly modifies inherited balance through addInterest()."
+    }
+  ]
 };
