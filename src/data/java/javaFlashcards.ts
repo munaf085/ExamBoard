@@ -490,5 +490,85 @@ export const javaFlashcards: JavaFlashcard[] = [
     back: "Primary Key uniquely identifies a record. Foreign Key establishes a relationship between two tables, pointing to a PK.",
     difficulty: "Easy",
     tags: ["SQL", "Databases"]
+  },
+  {
+    id: "jf_61",
+    moduleId: "java_basics",
+    front: "Optional<T> in Java 8+",
+    back: "A container object which may or may not contain a non-null value. Designed to avoid NullPointerExceptions and explicitly model return types that may be absent.",
+    difficulty: "Medium",
+    tags: ["Basics", "Java 8"]
+  },
+  {
+    id: "jf_62",
+    moduleId: "java_basics",
+    front: "Record in Java 14+",
+    back: "A compact class syntax for immutable data carriers. Automatically generates private final fields, canonical constructor, getters, equals(), hashCode(), and toString().",
+    difficulty: "Easy",
+    tags: ["Modern Java", "OOP"]
+  },
+  {
+    id: "jf_63",
+    moduleId: "java_oop",
+    front: "Sealed Classes in Java 17",
+    back: "Classes or interfaces that restrict which other classes or interfaces may extend or implement them using the 'permits' keyword, enabling exhaustive pattern matching.",
+    difficulty: "Medium",
+    tags: ["Modern Java", "OOP"]
+  },
+  {
+    id: "jf_64",
+    moduleId: "java_basics",
+    front: "Pattern Matching for switch (Java 21)",
+    back: "Allows switch expressions and statements to test against patterns with types, null checks, and 'when' guards instead of only primitive constants and strings.",
+    difficulty: "Medium",
+    tags: ["Modern Java", "Syntax"]
+  },
+  {
+    id: "jf_65",
+    moduleId: "java_concurrency",
+    front: "Virtual Threads (Java 21)",
+    back: "Lightweight threads managed by the JVM rather than the OS. Enables high-throughput concurrent applications with millions of simultaneous tasks without thread pool overhead.",
+    difficulty: "Hard",
+    tags: ["Concurrency", "Modern Java"]
+  },
+  {
+    id: "jf_66",
+    moduleId: "java_collections",
+    front: "ConcurrentHashMap vs Collections.synchronizedMap()",
+    back: "ConcurrentHashMap uses bucket-level / CAS-level fine-grained locking allowing concurrent reads and segmented writes. SynchronizedMap locks the entire map for every operation.",
+    difficulty: "Hard",
+    tags: ["Collections", "Concurrency"]
+  },
+  {
+    id: "jf_67",
+    moduleId: "java_concurrency",
+    front: "CompletableFuture in Java 8+",
+    back: "An asynchronous reactive programming utility that implements Future and CompletionStage, supporting non-blocking composition, callbacks, and exception handling.",
+    difficulty: "Hard",
+    tags: ["Concurrency", "Java 8"]
+  },
+  {
+    id: "jf_68",
+    moduleId: "java_streams",
+    front: "Core Functional Interfaces in java.util.function",
+    back: "Predicate<T> (T -> boolean), Function<T, R> (T -> R), Consumer<T> (T -> void), and Supplier<T> (() -> T). All are single-abstract-method (SAM) interfaces.",
+    difficulty: "Medium",
+    tags: ["Lambdas", "Streams"]
+  },
+  {
+    id: "jf_69",
+    moduleId: "java_basics",
+    front: "G1 GC vs ZGC in Java",
+    back: "G1 is a regionalized, generational collector optimizing for throughput with predictable pauses. ZGC is a scalable low-latency collector targeting sub-millisecond pause times.",
+    difficulty: "Hard",
+    tags: ["JVM", "Internals"]
+  },
+  {
+    id: "jf_70",
+    moduleId: "java_basics",
+    front: "Text Blocks in Java 15+",
+    back: "Multi-line string literals enclosed in triple double quotes (\"\"\") that avoid string concatenation and escape sequences while automatically stripping common incidental whitespace.",
+    difficulty: "Easy",
+    tags: ["Modern Java", "Strings"]
   }
 ];

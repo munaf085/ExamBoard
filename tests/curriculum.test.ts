@@ -44,4 +44,19 @@ describe('Java Curriculum Integrity', () => {
     const uniqueIds = new Set(ids);
     expect(uniqueIds.size).toBe(ids.length);
   });
+
+  it('should have at least 70 flashcards', async () => {
+    const { javaFlashcards } = await import('@/data/java/javaFlashcards');
+    expect(javaFlashcards.length).toBeGreaterThanOrEqual(70);
+  });
+
+  it('should have at least 80 interview questions across pools', async () => {
+    const { javaRound2Questions } = await import('@/data/java/interviews/javaRound2Questions');
+    const { javaRound3Questions } = await import('@/data/java/interviews/javaRound3Questions');
+    const { javaInterviewTraps } = await import('@/data/java/interviews/javaInterviewTraps');
+
+    const totalQuestions = javaRound2Questions.length + javaRound3Questions.length + javaInterviewTraps.length;
+    expect(totalQuestions).toBeGreaterThanOrEqual(80);
+    expect(totalQuestions).toBe(105);
+  });
 });

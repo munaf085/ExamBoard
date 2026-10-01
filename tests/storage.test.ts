@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  ProgressService,
   getJavaProgress,
   markLessonComplete,
   unmarkLessonComplete,
@@ -84,5 +83,60 @@ describe('ProgressService & Local Storage Abstraction', () => {
     expect(getJavaProgress().lessonsCompleted).toEqual([]);
     expect(getSelfEvaluations()).toEqual({});
     expect(getSolvedAssignments()).toEqual([]);
+  });
+
+  describe('Corrupted Storage Recovery & Defensive Fallbacks', () => {
+    it('should recover gracefully when java_progress contains malformed JSON', () => {
+      window.localStorage.setItem('java_progress', 'INVALID_JSON{{{---');
+      const progress = getJavaProgress();
+      expect(progress).toBeDefined();
+      expect(progress.lessonsCompleted).toEqual([]);
+      expect(progress.mcqResults).toEqual({});
+    });
+
+    it('should recover gracefully when java_self_eval contains malformed JSON', () => {
+      window.localStorage.setItem('java_self_eval', '{corrupt json');
+      const evals = getSelfEvaluations();
+      expect(evals).toEqual({});
+    });
+
+    it('should recover gracefully when java_solved_assignments is not an array', () => {
+      window.localStorage.setItem('java_solved_assignments', '{"not":"an array"}');
+      const solved = getSolvedAssignments();
+      expect(solved).toEqual([]);
+    });
+  });
+
+  describe('LocalProgressRepository Class (Standard Interface)', () => {
+    it('should implement the async ProgressRepository interface', async () => {
+      const { localProgressRepository } = await import('@/lib/storage/localProgressRepository');
+      await localProgressRepository.resetProgress();
+
+      const p0 = await localProgressRepository.getProgress();
+      expect(p0.lessonsCompleted).toEqual([]);
+
+      p0.lessonsCompleted.push('lesson-test-1');
+      await localProgressRepository.saveProgress(p0);
+
+      const p1 = await localProgressRepository.getProgress();
+      expect(p1.lessonsCompleted).toContain('lesson-test-1');
+
+      await localProgressRepository.saveSelfEvaluation('lesson-test-1', 'mastered');
+      const evals = await localProgressRepository.getSelfEvaluations();
+      expect(evals['lesson-test-1'].rating).toBe('mastered');
+
+      const isSolved = await localProgressRepository.toggleSolvedAssignment('assign-1');
+      expect(isSolved).toBe(true);
+      const solved = await localProgressRepository.getSolvedAssignments();
+      expect(solved).toContain('assign-1');
+
+      await localProgressRepository.markInterviewReviewed('jt-1');
+      const reviewed = await localProgressRepository.getReviewedInterviews();
+      expect(reviewed).toContain('jt-1');
+
+      await localProgressRepository.markFlashcardKnown('jf_1');
+      const known = await localProgressRepository.getKnownFlashcards();
+      expect(known).toContain('jf_1');
+    });
   });
 });

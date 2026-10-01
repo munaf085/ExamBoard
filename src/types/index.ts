@@ -130,6 +130,15 @@ export interface MockInterviewResult {
   selfScore: 'know' | 'partial' | 'dont-know';
 }
 
+export type SelfEvalRating = 'mastered' | 'partial' | 'revise';
+
+export interface SelfEvaluation {
+  lessonId: string;
+  rating: SelfEvalRating;
+  evaluatedAt?: string;
+  timestamp?: number;
+}
+
 export interface MiniQuizQuestion {
   id?: string;
   question: string;

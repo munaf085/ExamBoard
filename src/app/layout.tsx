@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     default: 'ExamBoard | Java Placement & Interview Mastery Platform',
   },
   description:
-    'Comprehensive, zero-gap technical Java preparation: 37 modules, 77 sub-lessons, 671 hand-crafted coding exercises, JVM interview traps, and full F2F mock interview simulations.',
+    'Comprehensive, zero-gap technical Java preparation: 38 modules, 77 sub-lessons, 671 hand-crafted coding exercises, JVM interview traps, and full F2F mock interview simulations.',
   keywords: [
     'Java',
     'Interview Preparation',

@@ -1,4 +1,5 @@
-import { JavaProgress, MockInterviewResult } from '@/types';
+import { JavaProgress, MockInterviewResult, SelfEvaluation } from '@/types';
+export type { SelfEvaluation };
 
 const JAVA_PROGRESS_KEY = 'java_progress';
 const JAVA_SELF_EVAL_KEY = 'java_self_eval';
@@ -58,31 +59,15 @@ function getDefaultProgress(): JavaProgress {
   };
 }
 
+import { localProgressRepository } from './localProgressRepository';
+
 export class ProgressService {
   static getProgress(): JavaProgress {
-    const raw = safeGetItem(JAVA_PROGRESS_KEY);
-    if (!raw) return { ...getDefaultProgress(), lastUpdated: Date.now() };
-    try {
-      const parsed = JSON.parse(raw);
-      return {
-        ...getDefaultProgress(),
-        ...parsed,
-        lessonsCompleted: Array.isArray(parsed.lessonsCompleted) ? [...parsed.lessonsCompleted] : [],
-        mcqResults: parsed.mcqResults ? { ...parsed.mcqResults } : {},
-        codingAttempted: Array.isArray(parsed.codingAttempted) ? [...parsed.codingAttempted] : [],
-        interviewReviewed: Array.isArray(parsed.interviewReviewed) ? [...parsed.interviewReviewed] : [],
-        flashcardsKnown: Array.isArray(parsed.flashcardsKnown) ? [...parsed.flashcardsKnown] : [],
-        weakModules: Array.isArray(parsed.weakModules) ? [...parsed.weakModules] : [],
-        strongModules: Array.isArray(parsed.strongModules) ? [...parsed.strongModules] : [],
-      };
-    } catch {
-      return { ...getDefaultProgress(), lastUpdated: Date.now() };
-    }
+    return localProgressRepository.getProgressSync();
   }
 
   static saveProgress(progress: JavaProgress): void {
-    progress.lastUpdated = Date.now();
-    safeSetItem(JAVA_PROGRESS_KEY, JSON.stringify(progress));
+    localProgressRepository.saveProgressSync(progress);
   }
 
   static markLessonComplete(lessonId: string): void {
@@ -119,19 +104,11 @@ export class ProgressService {
   }
 
   static markFlashcardKnown(cardId: string): void {
-    const p = this.getProgress();
-    if (!p.flashcardsKnown.includes(cardId)) {
-      p.flashcardsKnown.push(cardId);
-      this.saveProgress(p);
-    }
+    localProgressRepository.markFlashcardKnownSync(cardId);
   }
 
   static markInterviewReviewed(qId: string): void {
-    const p = this.getProgress();
-    if (!p.interviewReviewed.includes(qId)) {
-      p.interviewReviewed.push(qId);
-      this.saveProgress(p);
-    }
+    localProgressRepository.markInterviewReviewedSync(qId);
   }
 
   static updateWeakStrong(moduleId: string, score: number): void {
@@ -147,43 +124,23 @@ export class ProgressService {
   }
 
   static resetProgress(): void {
-    safeRemoveItem(JAVA_PROGRESS_KEY);
-    safeRemoveItem(JAVA_SELF_EVAL_KEY);
-    safeRemoveItem(JAVA_SOLVED_ASSIGNMENTS_KEY);
+    localProgressRepository.resetProgress();
   }
 
-  static getSelfEvaluations(): Record<string, SelfEvalRecord> {
-    const raw = safeGetItem(JAVA_SELF_EVAL_KEY);
-    if (!raw) return {};
-    try {
-      return JSON.parse(raw);
-    } catch {
-      return {};
-    }
+  static getSelfEvaluations(): Record<string, SelfEvaluation> {
+    return localProgressRepository.getSelfEvaluationsSync();
   }
 
   static saveSelfEvaluation(lessonId: string, rating: SelfEvalRating): void {
-    const evals = this.getSelfEvaluations();
-    evals[lessonId] = { lessonId, rating, timestamp: Date.now() };
-    safeSetItem(JAVA_SELF_EVAL_KEY, JSON.stringify(evals));
+    localProgressRepository.saveSelfEvaluationSync(lessonId, rating);
   }
 
   static getSolvedAssignments(): string[] {
-    const raw = safeGetItem(JAVA_SOLVED_ASSIGNMENTS_KEY);
-    if (!raw) return [];
-    try {
-      return JSON.parse(raw) as string[];
-    } catch {
-      return [];
-    }
+    return localProgressRepository.getSolvedAssignmentsSync();
   }
 
   static toggleSolvedAssignment(assignmentKey: string): boolean {
-    const solved = this.getSolvedAssignments();
-    const exists = solved.includes(assignmentKey);
-    const updated = exists ? solved.filter(k => k !== assignmentKey) : [...solved, assignmentKey];
-    safeSetItem(JAVA_SOLVED_ASSIGNMENTS_KEY, JSON.stringify(updated));
-    return !exists;
+    return localProgressRepository.toggleSolvedAssignmentSync(assignmentKey);
   }
 }
 
